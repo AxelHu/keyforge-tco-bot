@@ -1,12 +1,12 @@
-# Runtime setup and boundaries
+# 运行环境与边界
 
-This package contains the local strategy host, player-view adapter, browser bridge, one-seat launcher, watchdog, campaign supervisor, and bounded recovery tools. It does not run a local KeyForge rules server or an arena. The shared strategy chooses only from the observed native action surface; the remote server remains responsible for the game.
+本包包含本机策略宿主、玩家视角适配器、浏览器桥接、单席启动器、看门狗、连续对局监督器和有明确适用条件的恢复工具。它不运行本地 KeyForge 规则服务器或竞技场。策略从观察到的原生动作中选择，远端服务器负责实际对局。
 
-The automated UI flow was observed on a localized Keyteki deployment. The userscript includes a TCO URL match, but this extracted package has not been live-tested against the official TCO domain. Configuring an origin does not certify its login, deck-selection, room, or node UI. A changed or unsupported native surface stops the binding rather than guessing a room, account, deck, or action.
+自动 UI 流程以一个本地化 Keyteki 部署的实际界面为依据。用户脚本包含 TCO 网址匹配规则，但本独立包尚未在官方 TCO 域名完成实战验证。配置 origin 不能证明其登录、选牌、房间或游戏节点界面兼容。原生界面变化或缺乏支持时，程序会停止绑定，不会猜测房间、账号、牌组或动作。
 
-## Installation
+## 安装
 
-The runtime currently supports Linux, Node 22.12 through 24.x, Python 3 with `fcntl`, and Chromium. Managed process signals require Python/Linux `pidfd_open` and `pidfd_send_signal`; unavailable or unverifiable identity does not fall back to a reusable PID.
+当前运行时支持 Linux、Node 22.12–24.x、带 `fcntl` 的 Python 3 和 Chromium。托管进程信号需要 Python/Linux 的 `pidfd_open` 与 `pidfd_send_signal`；能力不可用或身份无法核实时，不会降级为可能被复用的裸 PID。
 
 ```sh
 npm ci
@@ -15,11 +15,11 @@ npx playwright install chromium
 node bin/kf-auto.mjs --help
 ```
 
-Playwright is a declared package dependency. No global agent configuration or separately installed browser helper is required. By default its matching Chromium executable is used. To select another installation, set `KF_BOT_CHROME` to the direct ELF Chromium binary; shell launcher wrappers are rejected. Chromium sandboxing is enabled by default. `KF_BOT_NO_SANDBOX=1` is an explicit deployment option for environments that require it.
+Playwright 是包声明的依赖，不需要全局 agent 配置或额外安装的浏览器辅助程序。默认使用对应版本的 Chromium 可执行文件。要选择其他安装，将 `KF_BOT_CHROME` 设为直接 ELF Chromium 二进制；shell 启动包装脚本会被拒绝。Chromium 沙箱默认开启；确有需要的环境可以显式设置 `KF_BOT_NO_SANDBOX=1`。
 
-## Create local configuration
+## 创建本地配置
 
-Use values belonging to your account and selected deck. The server deck ID is the native site's deck-selection ID, not a guessed Master Vault identifier.
+填写自己的账号和选定牌组。服务器牌组 ID 是站点选牌界面使用的原生 ID，不能猜测为 Master Vault 标识。
 
 ```sh
 node bin/kf-auto.mjs init \
@@ -30,28 +30,28 @@ node bin/kf-auto.mjs init \
   --deck-name 'Your deck name'
 ```
 
-This writes `seat.json` with absolute local paths and a private `credentials.json` template. Fill its empty password locally. The initializer never starts a browser and refuses to overwrite an existing directory. The JSON files under `examples/` describe the same schemas with placeholder paths; `init` avoids having to edit absolute paths by hand.
+该命令写入带绝对本地路径的 `seat.json` 和私有 `credentials.json` 模板。在本地凭据文件中填入实际密码。初始化不会启动浏览器，也不会覆盖已有目录。`examples/` 中的 JSON 使用占位路径描述相同配置格式；用 `init` 可以避免逐项手填绝对路径。
 
-`origin` is required and must be an exact HTTP(S) origin with no credentials, path, query, or fragment. Account and deck identities are explicit. `ownAccountNames` defaults to the one controlled account; add any other accounts you own so matchmaking will exclude them.
+`origin` 必填，必须是精确的 HTTP(S) 源地址，不能包含凭据、路径、查询参数或片段。账号和牌组身份需要显式指定。`ownAccountNames` 默认只有受控账号；将自己拥有的其他账号也加入，方便匹配时排除。
 
-The default transport policy accepts same-origin node paths. If an observed deployment uses a different game-node origin, configure each exact HTTP(S) node path in `gameSocketPaths`, for example a complete `/node1/socket.io` URL on that deployment. There are no implicit IP, port, wildcard, or neighboring-node exceptions. Repeated `--game-socket-path` options are supported by `init`.
+默认传输策略只接受同源游戏节点路径。如果实际部署使用不同的游戏节点 origin，在 `gameSocketPaths` 中逐项配置精确的 HTTP(S) 节点路径，例如该部署上完整的 `/node1/socket.io` URL。没有隐含的 IP、端口、通配符或相邻节点例外。`init` 支持多次传入 `--game-socket-path`。
 
-Table chat is disabled by default and is independent of the pure-code strategy. To enable the optional MiniMax provider, set `social.enabled` in the seat configuration and provide `MINIMAX_API_KEY` explicitly in the process environment. No home-directory account store is read and no model key is required for code-only play.
+牌桌聊天默认关闭，且与纯代码策略独立。要启用可选的 MiniMax 服务，在席位配置中设置 `social.enabled`，并在进程环境中显式提供 `MINIMAX_API_KEY`。程序不会读取主目录账号存储；仅运行代码策略不需要模型密钥。
 
-## One seat
+## 单席运行
 
 ```sh
 node bin/kf-auto.mjs preflight --config "$PWD/.local/demo/seat.json" --create-public
 node bin/kf-auto.mjs seat create --config "$PWD/.local/demo/seat.json"
 ```
 
-Preflight is offline. It checks configuration, required files, private credential-file permissions, and a fresh output directory; runtime checks still verify the configured policy, actual login, selected deck, native room, both participants, and initial player view.
+preflight 是离线检查，核对配置、必要文件、私有凭据文件权限和全新输出目录。实际运行时仍会核验所配置的策略、真实登录、已选牌组、原生房间、双方参与者和初始玩家视角。预检查不读取密码，也不能认证登录成功。
 
-To join a room, fill the exact observed `room.gameId`, `room.opponentName`, room name and type in a fresh seat configuration, then use `seat run`. Public creation uses a beginner/normal room whose name identifies it as an AI game. There is one controlled seat; the opponent's private hand or unknown deck composition is not a policy input.
+加入房间时，在新的席位配置中填写准确观察到的 `room.gameId`、`room.opponentName`、房间名和类型，然后使用 `seat run`。公开建房使用名称中标明 AI 的 beginner/normal 房间。只控制一个席位，对手的私有手牌和未知牌组构成不进入策略输入。
 
-The local host exposes `host start/status/pause/resume/stop --profile DIR`; `start` also requires `--config FILE`. Resuming a host does not repair an unsupported game mechanism or automatically override a browser's explicit manual takeover.
+本机宿主提供 `host start/status/pause/resume/stop --profile DIR`；其中 `start` 还需要 `--config FILE`，应指向启动器生成的 `bridge-config.json`，不能使用 `seat.json`。恢复宿主运行不会修复不受支持的游戏机制，也不会自动覆盖浏览器中显式的人工接管。
 
-## Freeze and run a campaign
+## 冻结并运行连续对局
 
 ```sh
 node bin/kf-auto.mjs runtime freeze --output "$PWD/.local/runtime-example"
@@ -64,32 +64,32 @@ node bin/kf-auto.mjs campaign prepare \
 node .local/runtime-example/tools/cli.mjs campaign run --config "$PWD/.local/demo/campaign.json"
 ```
 
-Run the campaign entry point from the frozen runtime named by its manifest. `campaign prepare` binds the actual manifest bytes; it does not start a browser or authorize an automatic change of account. The default code policy is `tactical-style-engine-v3`; another exported code policy can be configured without changing the lifecycle checks. This default is not a claim of comparative playing strength.
+从 manifest 指定的冻结运行时入口启动连续对局。`campaign prepare` 绑定 manifest 的实际字节，不会启动浏览器或自动更换账号。默认代码策略为 `tactical-style-engine-v3`；可以配置其他已导出的代码策略，同时保留生命周期检查。默认选择不代表经过比较后的棋力排名。
 
-A campaign uses a kernel-held account lock and an individual worker per attempt. It validates the runtime before dispatch, observes native matchmaking, and records attempts separately from natural game outcomes. It keeps existing manual pause, unresolved-send, identity, retirement, and technical-failure conditions. The existing observation phase pauses after the required stable natural games; `campaign enable-unattended --config FILE` only applies when that existing state is eligible. `campaign pause --config FILE` requests a stop after the current attempt.
+连续对局使用内核持有的账号锁，每次尝试由独立 worker 运行。它在派发前核验运行时，观察原生匹配情况，并将尝试记录与自然对局结果分开。人工暂停、未解决发送、身份、退役和技术失败条件都会保留。现有观察阶段会在达到要求的稳定自然对局数后暂停；`campaign enable-unattended --config FILE` 只适用于符合条件的现有状态。`campaign pause --config FILE` 请求在当前尝试结束后停止。
 
-The standalone disk guard defaults to 5 GiB free and accepts an explicit `minimumFreeBytes` budget of at least 128 MiB. It checks before a new attempt; it does not delete historical results to recover space. This setting is independent of any development checkout's storage policy.
+独立包的磁盘检查默认要求 5 GiB 可用空间，可以通过 `minimumFreeBytes` 显式配置不低于 128 MiB 的值。检查发生在新尝试前，不会删除历史结果来腾出空间。该设置独立于开发仓库本身的存储策略。
 
-## Browser ownership and shutdown
+## 浏览器归属与关闭
 
-Browser profiles and leases use the `keyforge-tco-bot` namespace. The default registry is below `~/.cache/keyforge-tco-bot/browsers`; `KF_BOT_BROWSER_ROOT` or the exact `KF_BOT_BROWSER_REGISTRY` path can override it. Launch, release and recovery use the same path functions. Use a consistent environment for one campaign and its recovery operations.
+浏览器 profile 和租约使用 `keyforge-tco-bot` 命名空间。默认注册表位于 `~/.cache/keyforge-tco-bot/browsers` 下；可以通过 `KF_BOT_BROWSER_ROOT` 或精确的 `KF_BOT_BROWSER_REGISTRY` 路径覆盖。启动、释放和恢复使用相同的路径函数；同一连续对局及其恢复操作应保持一致的环境配置。
 
-Each profile has a kernel lock, a managed process binding, an exact CDP endpoint, and individually identified clients. Unknown process/client observations are preserved. No private shared browser is silently adopted. Shell wrappers, symlinked profile paths, unknown leases and mismatched process identity do not trigger a replacement browser. Automatic retirement never deletes a user profile or a lock inode.
+每个 profile 都有内核锁、托管进程绑定、精确 CDP 端点和逐一标识的客户端。无法确定的进程或客户端状态会保留，不会静默接管私有共享浏览器。shell 包装脚本、包含符号链接的 profile 路径、未知租约或进程身份不匹配，都不会触发替换浏览器。自动退役不会删除用户 profile 或锁文件 inode。
 
-SIGINT/SIGTERM preserve the launcher's operator-pause behavior. Stopping a supervisor is not proof that its native seat, driver, host or managed browser has disappeared. A service wrapper must honor the campaign's current-attempt and retirement state rather than using unconditional restart or blanket process cleanup. A new campaign cannot quietly replace an unresolved active attempt.
+SIGINT/SIGTERM 保留启动器的操作者暂停行为。停止监督器不能证明原生席位、driver、宿主或托管浏览器已经消失。服务包装层必须尊重当前尝试和退役状态，不能无条件重启或批量清理进程。新连续对局不会静默替换尚未解决的 active attempt。
 
-## Recovery and evidence
+## 恢复与证据
 
-The ordinary strategy ingress and independent native watchdog observation remain distinct. A bounded local request can time out without undoing an accepted host write. Recovery from an unknown delivery requires the existing exact owner, ticket, sequence and observed-effect proof; it does not infer an ACK from an empty queue or resend an uncertain game command. A successful reconciliation keeps the old context paused and uses the guarded reload/reattach path.
+普通策略请求通路与独立的原生看门狗观察通路彼此分开。一次本地请求达到期限，并不会撤销宿主已经接受的写入。未知送达恢复需要原有的精确控制方、凭证、序号和已观察效果证明；它不会从空队列推导出 ACK，也不会重发可能已经执行的游戏命令。成功对账后，旧上下文保持暂停，并使用受保护的刷新/重新附着流程。
 
-`recovery storage prepare|commit` retains its configuration/runtime/record bindings and transactional recovery checks. `recovery unjoined prepare|commit` is limited to the explicitly pinned pre-join guard version and requires a stop receipt, preserved originals, zero gameplay evidence, fresh native absence, process/lease checks and compare-and-swap writes. It is not a generic clear-checkpoint command. Pins in this package identify this package's reviewed files; this is not a migration promise for unrelated historical installations.
+`recovery storage prepare|commit` 保留配置、运行时、记录绑定及事务恢复检查。`recovery unjoined prepare|commit` 只适用于明确绑定的入座前保护版本，并要求停止回执、原件保全、零游戏发送证据、新鲜的原生无席位观察、进程/租约核验和比较后交换写入。它不能用于任意清空 checkpoint。本包的固定哈希识别本包已审查文件，不承诺迁移无关的历史安装。
 
-Campaign output is private operational state. It can contain account identifiers, endpoints, player-view diagnostic files, and credentials in a separate configured file. Do not copy it into a public release. Published examples contain no actual account, deck UUID, credentials or installation paths.
+连续对局输出属于私有运行状态，可能包含账号标识、端点和玩家视角诊断文件；凭据保存在另行配置的私有文件中。这些数据不要复制进公开发布包。公开示例不含真实账号、牌组 UUID、凭据或安装路径。
 
-## What a runtime manifest proves
+## 运行时 manifest 能证明什么
 
-Freeze uses an explicit allowlist: production `tools` JavaScript, compiled `dist/src`, the binary wrapper, package metadata, and the production npm dependency closure. It excludes tests, examples, private state, campaign data, source engine and Git metadata. Compiled replica/server directories and symlinked inputs are refused. Existing output directories are never replaced, and the manifest is published after the copied files; a failed partial output is retained for inspection.
+冻结使用显式允许清单：生产 `tools` JavaScript、编译后的 `dist/src`、二进制入口包装、包元数据和生产 npm 依赖闭包。测试、示例、私有状态、连续对局数据、引擎源码和 Git 元数据不在其中。编译后的复刻引擎/服务器目录和带符号链接的输入会被拒绝。已有输出目录不会被替换；文件复制完成后才发布 manifest，失败的部分输出会保留供诊断。
 
-The manifest records content hashes and local Node, Python and Chromium execution paths. New content-fingerprint manifests also re-collect the exact runtime/dependency file set before dispatch, so newly added modules cannot silently shadow a frozen dependency. Legacy manifests keep their explicitly narrower verification contract. A new manifest also requires the same executable selection at campaign verification, so an environment override cannot silently select an unpinned browser. External browser resources are hashed for a Playwright-managed installation; system installations pin the direct executable. This is not a hermetic operating-system image. No Git commit is fabricated: `sourceCommit` is null and `sourceFingerprint` identifies the frozen runtime bytes.
+manifest 记录内容哈希，以及本地 Node、Python、Chromium 的执行路径。带内容指纹的新格式还会在派发前重新收集运行时及依赖的精确文件集合，防止新增模块悄悄遮蔽冻结依赖。旧格式 manifest 保留其原有、较窄的核验范围。新 manifest 在连续对局核验时还要求可执行文件选择一致，环境变量不能静默改用未绑定浏览器。Playwright 管理的安装会绑定外部浏览器资源；系统安装会绑定直接可执行文件。这不是隔离完整操作系统依赖的镜像。`sourceCommit` 为 null，不伪造 Git 提交；`sourceFingerprint` 标识冻结运行时的实际字节。
 
-The extraction author added offline tests for configuration, exact endpoint scope, process identity, pidfd signaling, lease identity, CLI routing, and frozen-file scope. Test execution and live-site validation are separate work owned by the release maintainer; these notes do not claim a new live game or TCO validation.
+公开离线测试覆盖配置、精确端点范围、进程身份、pidfd 信号、租约身份、CLI 路由和冻结文件范围。实际测试执行与实服验收分别记录，具体见[验证记录](validation.md)；本说明不主张新的实战结果或 TCO 验收。

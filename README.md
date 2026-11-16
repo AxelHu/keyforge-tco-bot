@@ -1,52 +1,32 @@
 # KeyForge TCO Bot
 
-An experimental, observation-based strategy and browser automation stack for
-Keyteki-compatible servers. It includes the strategy host, native player-view
-adapter, browser bridge, watchdog, room lifecycle and sequential game campaigns.
+面向 Keyteki 兼容服务器的实验性策略与浏览器自动打牌工具。包含代码策略、原生玩家视角适配、本机策略宿主、浏览器桥接、看门狗、房间生命周期管理和顺序连续对局。
 
-This is a standalone extraction of the client and strategy components. The
-private KeyForge rules engine, game server, game UI and historical match data
-are not included.
+本仓是独立整理的客户端与策略项目，保留策略使用的静态卡牌知识。原私有项目的 KF 复刻引擎、游戏服务端、游戏界面和历史实战原始数据不在本仓中。
 
-[中文说明](README.zh-CN.md) · [Architecture](docs/architecture.md) ·
-[Card knowledge](docs/card-knowledge.md) · [Operations](docs/operations.md) ·
-[Validation](docs/validation.md)
+[English](README.en.md) · [架构](docs/architecture.md) ·
+[卡牌知识](docs/card-knowledge.md) · [使用与恢复](docs/operations.md) ·
+[验证记录](docs/validation.md)
 
-## What is included
+## 包含哪些能力
 
-- Code strategies operating on the player's own visible information and the
-  opponent's public information, including the Engine V3 strategy family.
-- Projection of native player state, menu navigation, physical card binding,
-  allocation and native command compilation.
-- A loopback strategy host with per-document ownership, send tickets and
-  separate prepared / queued / effect-observed accounting.
-- A browser bridge with bounded request timeouts and an independent watchdog.
-  Exact observed-delivery reconciliation does not replay an uncertain command.
-- Single-seat join/create flows, normal terminal retirement, account locks,
-  campaign health gates, explicit pause and bounded recovery procedures.
-- A portable Chromium backend and explicit local configuration. OpenClaw,
-  subscription credentials and the original research repository are not runtime
-  dependencies. Optional social chat is disabled by default.
+- 基于己方可见信息和对手公开信息的代码策略，包含 Engine V3 策略系列。
+- 原生玩家状态投影、菜单导航、物理卡牌身份绑定、分配操作和原生命令编译。
+- 仅监听本机回环地址的策略宿主，通过页面文档身份和发送凭证管理控制权，并分别记录“已准备”“已进入浏览器队列”“已观察到效果”。
+- 带明确请求期限的浏览器桥接和独立看门狗。精确的已观察回执对账不会重放送达情况不明的命令。
+- 单席加入/建房、自然终局退场、账号锁、连续对局健康检查、显式暂停和有明确适用条件的恢复流程。
+- 包内 Chromium 管理与显式本地配置。运行不依赖 OpenClaw、订阅凭据或原研究仓库；可选的牌桌聊天功能默认关闭。
 
-## Compatibility
+## 兼容范围
 
-The protocol adapter was developed against Keyteki revision
-`361c085bcd401c20976ee9bcc4e4e5b8c061d56c`. The predecessor was used on a
-Keyteki-derived deployment; the extracted package is a new build with its own
-knowledge boundary.
+协议适配器以 Keyteki 修订版
+`361c085bcd401c20976ee9bcc4e4e5b8c061d56c` 为参考开发。项目前身曾在一个 Keyteki 衍生部署上使用；本独立包有自己的构建、知识内容和验证范围。
 
-The browser user script includes The Crucible Online matching, but that alone
-does not establish end-to-end compatibility with the current public site's
-login, lobby and deck-picker UI. Public TCO unattended operation has not been
-validated for this release. Set the origin explicitly and consult the
-[compatibility and validation notes](docs/validation.md).
+浏览器用户脚本包含 The Crucible Online 的网址匹配规则，但这不能证明它已兼容当前公开站点的完整登录、大厅和选牌界面。**本次独立包尚未完成公开 TCO 无人值守实战验收。** 请显式填写服务器 origin，并阅读[兼容与验证说明](docs/validation.md)。
 
-The managed CLI currently targets **Linux or Linux inside WSL**, Node.js
-**22.12–24.x**, Python 3 and Chromium. Process identity and recovery use Linux
-`/proc` and kernel file locks. Native Windows and macOS supervision are not
-claimed to be supported.
+后台 CLI 当前面向 **Linux 或 WSL 内的 Linux**，需要 Node.js **22.12–24.x**、Python 3 和 Chromium。进程身份核验与恢复使用 Linux `/proc` 和内核文件锁；当前不承诺原生 Windows、macOS 的后台监督支持。
 
-## Install
+## 安装
 
 ```sh
 git clone https://github.com/AxelHu/keyforge-tco-bot.git
@@ -57,52 +37,31 @@ npx playwright install chromium
 node bin/kf-auto.mjs --help
 ```
 
-A system Chromium executable can be configured instead of downloading one.
-Installing dependencies, building and running the offline tests do not log
-into a server or start a game.
+也可以显式配置系统中已有的 Chromium 可执行文件。安装依赖、构建和运行离线测试不会登录服务器或开始对局。
 
-Configure your own server origin, username, deck identifier and private
-credential file using the examples and the [operation guide](docs/operations.md).
-Keep local configuration, profiles and decision logs under the ignored
-`.local/` directory. The credential file must be private to its owner.
+根据示例和[操作指南](docs/operations.md)，填写自己的服务器 origin、账号、牌组标识和私有凭据文件路径。将真实配置、浏览器 profile 和决策日志放在 Git 忽略的 `.local/` 目录下；凭据文件必须只允许其所有者访问。
 
-The CLI exposes preflight, single-seat run/create, host management, campaign
-management, runtime freezing and explicit recovery. Run preflight before an
-actual seat run. The operation guide distinguishes a paused process from a
-confirmed native seat exit and completed resource retirement.
+CLI 提供预检查、单席加入/建房、宿主管理、连续对局管理、运行时冻结和显式恢复。实际开局前先执行 preflight。操作指南会区分进程暂停、已确认原生席位退出和运行资源完全退役。
 
-## Strategy and knowledge boundary
+## 策略与卡牌知识
 
-Strategies are heuristics over the current observation. The remote server
-remains the authority for legality and game resolution. The package's card
-knowledge is a limited evaluation format, not the private project's complete
-card-rule database. Unmodeled effects and additional rules remain explicit;
-they are not silently removed to make a card appear safe or fully understood.
+策略基于当前观察进行启发式评分，远端服务器负责动作合法性与实际规则结算。默认知识包保留原目录中全部 2,546 份静态卡牌定义、`summary` 说明和 `ruleInterpretations` 解释标注。这些内容是只读的策略输入；本包不包含用于本地运行对局的规则引擎。
 
-See [card knowledge](docs/card-knowledge.md) for the included coverage, public
-metadata, evaluation hints, unsupported shapes and the treatment of card text.
-No bulk upstream card-text archive is bundled.
+策略估计器只能处理其中一部分效果。保留一张牌的完整定义，不等于已经完整模拟它的所有交互；未知效果、额外规则和估计的不确定性仍需要明确处理，不能当作确定的零影响。
 
-## Development
+[卡牌知识说明](docs/card-knowledge.md)介绍静态数据、估值能力、未支持的效果和扩展接口。策略数据中的卡名、卡文和解释标注保留原语言，不随中文文档翻译。
+
+## 开发
 
 ```sh
 npm test
 npm run check:package
 ```
 
-Tests use synthetic observations, timers, transport and HTTP boundaries. They
-exercise the production components without constructing a private-engine game
-or connecting to a public game server. The package-boundary check also checks
-relative module dependencies and accidental inclusion of engine/data paths.
+离线回归使用合成观察、计时器、传输和 HTTP 边界，直接覆盖生产组件；不会构造私有引擎中的 Game，也不会连接公开游戏服务器。包边界检查还会核对相对模块依赖，以及是否意外带入引擎或私有数据路径。
 
-Historical predecessor results included 17 wins and 3 losses in 20 natural
-games against one fixed external opponent/deck, plus one separate technical
-concession. Those results belong to their original frozen build, **not this
-extracted release**. They are not an estimate of this package's current win
-rate. See [validation](docs/validation.md) for what has actually been tested.
+前身曾在一个固定外部对手/牌组上完成 20 场自然对局，17 胜 3 负，另有一次技术认输。该战绩属于当时的冻结构建，**不属于这个独立发布包**，也不能估计本包当前的胜率。已经实际完成的检查见[验证记录](docs/validation.md)。
 
-## License
+## 许可
 
-Original code is provided under [MIT](LICENSE). Dependency licenses and protocol
-references are described in [NOTICE](NOTICE.md). This is an unofficial project
-and is not affiliated with the game publisher or The Crucible Online operators.
+原创代码按 [MIT](LICENSE) 提供。第三方依赖许可、协议参考及独立标注的来源卡文见 [NOTICE](NOTICE.md)；项目的 MIT 声明不对第三方文字另授许可。这是非官方项目，与游戏发行方及 The Crucible Online 运营方没有隶属或背书关系。

@@ -1,80 +1,86 @@
-# Validation and compatibility
+# 验证与兼容范围
 
-This is the initial standalone public package, version 0.1.0. The checks below were actually executed on 2026-11-16. They validate the extracted package; they do not establish a live win rate or certify every current Keyteki/TCO deployment.
+本页记录 **0.2.0** 在 **2026-11-16** 实际完成的验证：默认文档改为中文，并恢复完整静态知识。原代码策略、适配器和后台工具的实现未改动；静态知识输入发生了变化，因此本版重新构建并执行回归与逐卡差分检查。
 
-## Executed release checks
+验证环境为 WSL 内的 Linux、Node.js 22.22.3、TypeScript 5.9.3。命令限制在两个 CPU 上，以较低进程优先级执行。所有时间使用北京时间（UTC+8）。
 
-The validation host ran Linux inside WSL, Node.js 22.22.3 and Python 3.12.3. Dependencies were installed from this package's own lockfile, including Playwright 1.59.1 and TypeScript 5.9.3. No global browser helper or private game engine was used by the package.
+## 本版实际完成的检查
 
-| Check | Actual result |
+| 检查 | 实际结果 |
 | --- | --- |
-| Independent TypeScript build | Passed; strict type checking and no emit on compiler errors. |
-| `npm test` | **181 passed, 0 failed, 0 skipped, 0 cancelled**. Includes the build. |
-| Real local Chromium smoke | Passed with sandbox enabled, fresh profile and separate package registry. |
-| Runtime freeze | Passed; 772 package/dependency files and 307 external execution/resource files were bound. |
-| Frozen CLI | Help, initialization, offline preflight, campaign preparation and runtime verification passed. Status before first start correctly returned `CAMPAIGN_NOT_STARTED`. |
-| Live games for this extraction | **0**. No server login or public game was started during these checks. |
+| 严格 TypeScript 构建 | 通过；包含在 `npm test` 中。 |
+| `npm test` | **185 项通过，0 失败、0 跳过、0 取消**；11:25:30 开始，13.867 秒完成。 |
+| 全库静态定义对照 | **2,546 / 2,546** 完整字段与原定义一致；全部 `summary` 字节一致。 |
+| 原有文本谓词对照 | **30,552 / 30,552** 一致，即 2,546 份定义 × 12 个实际文本谓词。 |
+| 有限策略与输入对照 | 四组合成场景的完整评分一致；Survey、禁用牌名正反例及模型可见输入一致。 |
+| 输入稳定性 | 构建回归和差分检查前后源码哈希保持一致。 |
+| 本版新增实战对局 | **0 场**；本次验证不产生新的胜率结论。 |
 
-The full suite ran at 10:48:35 Asia/Shanghai. The final browser smoke ran at 10:51:43 and frozen CLI validation at 10:52:04. Source snapshots were stable during each run. After the full suite, only the optional browser-smoke helper received a bounded-wait/failure-cleanup correction; that exact helper was then rerun successfully. The production runtime and ordinary test inputs remained unchanged.
+[PUBLICATION.json](../PUBLICATION.json)记录版本、运行时间、原始日志/差分报告的 SHA-256，以及 136 个已验证源码、工具、测试和配置文件的输入哈希。文档与该发布记录本身由发布 Git tree 绑定，避免文件自引用哈希。
 
-### What the 181 tests exercise
+### 185 项公开测试
 
-The suite uses synthetic observations and local transport fixtures. It covers the real adapter, policy/controller, HTTP ingress, userscript and watchdog components:
+- **14 项策略与知识测试**：直接调用真实适配器、策略或模型输入构造函数，覆盖不可变知识、注册原子性、非法扩展拒绝、完整规则数据、原说明与研究约定、合法菜单动作、对手隐藏区域拒绝、物理身份绑定及保守判断。
+- **22 项便携运行时测试**：显式配置、精确 socket 范围、浏览器租约/进程身份、pidfd 信号边界、CLI 路由、冻结文件范围、依赖解析变化及已审查的入座前保护。
+- **149 项传输与看门狗用例**：延迟回复、超时与已接受写入的区分、精确排队前缀、重复回执拒绝、过期会话/文档身份、人工干预、有界重新附着、重连、未知发送及终局处理。
 
-- 10 strategy/adapter tests: nonempty immutable knowledge, extension rejection, summary feature preservation, canonical serialization, offered-menu actions, hidden opponent-zone rejection, unmapped identities, ready-resource ranking and conservative unknown-rule handling.
-- 22 portable runtime tests: explicit configuration, exact socket scope, browser lease/process identity, pidfd signal boundaries, CLI routing, frozen-file scope, dependency resolution changes and reviewed pre-join guard pins.
-- 149 transport/watchdog cases, including parameterized cases: delayed replies, timeout versus accepted write, precise queued prefixes, duplicate receipt rejection, stale session/document identity, manual intervention, bounded reattach and reconnect, unknown sends and terminal-state handling.
+新增或加强的知识回归包含：
 
-Two historical test cases that depended on a private native-capture fixture or a previous deployment's implicit endpoint exception were not copied into this public suite. The published tests do not require those fixtures, and an explicit endpoint configuration now has its own positive and negative coverage.
+1. **Etan’s Jar**：保留 `chooseForbiddenName`；带 Jar 和不带 Jar 的正反例分别触发和不触发实际阵营防守限制。
+2. **Survey / Tullibint**：在真实公开卡牌构成的合成观察中保留 `inspectTop`，实际 `guidedDeckRunway()` 保持 `known: false`，不因知识删减而伪装成已知过牌结果。
+3. **模型输入**：`buildJevInput()` 接收到真实 `summary` 和原研究约定，而非统一占位说明。
+4. **属性存在性**：Chronometer 的 `filter.kind: undefined` 仍作为显式属性存在；普通 JSON 丢失该属性的情形不能冒充完整字段一致。
+5. **来源文本**：107 条非空原文、1 个必要空值和 3 个原有 WoE 自写回退保持原语义；来源元数据不会污染卡牌定义。
 
-### Real browser and process checks
+这些测试使用合成观察及本地传输/HTTP 夹具，不构造私有 Game，不登录服务器。
 
-`npm run test:browser` uses inline HTML and test-owned processes only. The successful run proved that:
+### 全量静态知识与有限行为差分
 
-1. Two clients can share one managed browser/profile while retaining individual leases.
-2. Releasing the first client preserves the other client's page and browser process.
-3. Releasing the final client confirms browser exit and removes the lease record while preserving the profile and lock inode.
-4. The real pidfd signal helper rejects a changed process identity, then signals only the child created by the smoke test.
+另一项独立于 185 项公开测试的迁移检查于 **11:31:24** 开始，**1.364 秒**完成。它依赖私有前身和仅用于对照的运行器，不能只凭本仓复跑；公开回归中的代表性知识检查可以独立运行。
 
-The smoke creates temporary profiles, does not log into a game service, and starts no game. Successful temporary fixtures are removed; failed fixtures remain available for diagnosis.
+检查逐卡比较完整字段、说明文本和原有十二项文本谓词，保留两个研究约定与唯一的显式 `undefined`。原目录和公开目录的完整规范化 SHA-256 均为：
 
-### Standalone runtime checks
+```text
+77d3d8424cbf6f7f9b1f43f0fc3645f7416d878707bbdbe10d3349f1bf241ea6
+```
 
-The tested frozen runtime had its own production dependency closure and no Git directory. Its CLI generated a private 0600 empty-password template, reported that preflight had not read credential contents, and prepared a campaign without starting it.
+四个 Engine V3 评分场景为 They Tell No Tales 阵营选择、Unity Prism 阵营可用工作、结束回合前获取可用琥珀，以及 Divine Seal 的公开摧毁付款。新旧输入一致，完整候选评分、理由和选中动作一致。
 
-Verification bound the actual manifest, exact allowed runtime/dependency file set, file hashes and selected Node/Python/Chromium executables. A synthetic nested-dependency substitution test confirms that adding a new higher-priority dependency copy does not silently pass the new-format verifier.
+另外核对了 Survey 的特殊过牌判断、Etan’s Jar 的有无正反例，以及模型可见的 `state` 和 `questions`。原模型服务商的标签不属于策略可见载荷，因此未将它混入上述输入等价结论。
 
-The local manifest contains installation-specific paths and is not included in the repository. [PUBLICATION.json](../PUBLICATION.json) records public validation metadata and the hashes of the validated source inputs.
+总计执行 **16 次限定范围的直接 helper 调用**，其中 8 次为四组新旧评分。运行前按模块语法树检查导入闭包，拒绝引擎、重放、服务器、动态加载或 Game 创建；运行期间没有状态推进、控制器选择、网络请求或历史决策帧读取。
 
-### Limited migration comparison
+首轮私有检查因报告组装时的变量名笔误失败，失败回执保留，未计为通过。只修正报告字段后完整重跑，得到上述成功记录；生产源码没有因此变化。
 
-A separate private migration check ran at 10:56:40 Asia/Shanghai. It used five hand-built observations and 15 bounded pure scoring calls, with no game constructor, transition, controller, historical frame or network request. This is separate from the 181 public tests and requires the private predecessor, so its runner is not part of this repository.
+全库数据一致与少数合成场景一致，**不能证明整个策略在所有观察下行为等价，也不能证明全部规则已被估值或棋力提高**。静态知识和估值能力的区别见[卡牌知识说明](card-knowledge.md)。
 
-For the four modeled cases—They Tell No Tales house choice, Unity Prism house work, ready amber before ending the turn, and Divine Seal public destruction payment—the old and new evaluators returned identical complete candidate scores, reasons and selected actions on the same observation. Replacing those fixtures' knowledge with the published knowledge projection also preserved their assessments.
+## 浏览器与冻结运行时的历史验证
 
-The fifth fixture deliberately supplied an unmodeled effect. The new evaluator withheld the deterministic forge certification, and that conservative difference was recorded as expected. These five fixtures establish only this bounded migration result. They do not establish whole-package equivalence or live playing strength.
+[0.1.0 首次发布记录](https://github.com/AxelHu/keyforge-tco-bot/blob/c3194401ef28547b4fd6c97651fd543edbe874d8/docs/validation.md)保留了真实本地 Chromium、pidfd 进程身份、双客户端共享/释放、运行时冻结和冻结 CLI 的实际检查。该版本曾绑定 772 个包/依赖文件与 307 个外部执行/资源文件。
 
-## Compatibility boundary
+本版核对了 102 个策略、适配器、后台、CLI 和浏览器冒烟源码文件，它们与首次发布一致；依赖版本未改变。本版重跑了常规回归，没有重复运行真实浏览器冒烟或建立新的冻结运行时。历史检查明确归属于 0.1.0，不能改写成本版新运行的结果。
 
-| Surface | Current claim |
+## 兼容范围
+
+| 部分 | 当前可声明的范围 |
 | --- | --- |
-| Observation, action and transport adapter | Implemented against the documented/observed Keyteki reference protocol, with synthetic regression coverage. |
-| Local strategy and supervision | Builds and passes the listed checks on Linux inside WSL. |
-| Keyteki-derived deployment used by the predecessor | Historical live experience; it is not a new acceptance run of this extracted package. |
-| Current public TCO login, lobby, deck picker and unattended play | **Not validated for this release.** A userscript URL match is not an end-to-end acceptance result. |
-| Native Windows/macOS process supervision | Not claimed. Linux process identity, pidfd and kernel locks are required. |
-| Card knowledge completeness | Limited scoring/recognition knowledge; partial and unknown rules remain explicit. |
-| Arbitrary public capture/Veil allocation contracts | Require the operator's explicit audited local facts; historical private defaults are not included. |
+| 观察、动作和传输适配器 | 参考 Keyteki 协议实现，并有合成回归覆盖。 |
+| 本机策略与后台监督 | 在 WSL 内的 Linux 完成构建和离线回归；底层浏览器与冻结 CLI 有首次发布的历史检查。 |
+| 当前公开 TCO 的登录、大厅、选牌和无人值守对局 | **本独立包尚未完成实战验收。** 用户脚本网址匹配不代表端到端兼容。 |
+| 原生 Windows/macOS 进程监督 | 暂不承诺支持；需要 Linux 进程身份、pidfd 和内核锁。 |
+| 卡牌知识 | 恢复原目录的全部 2,546 份静态定义，不是所有已发行卡牌的覆盖声明。 |
+| 规则估值 | 保留完整数据不代表所有效果都已实现或模拟。合法动作与实际结算由远端服务器负责。 |
+| 公开捕获/Veil 分配契约 | 需显式注册经核验的本地事实，不附带历史私有默认绑定。 |
 
-Configuring a different origin does not prove its UI or server rules match the adapter. Unsupported or ambiguous bindings retain their existing stop/hold behavior. The remote server remains authoritative for legal actions and game settlement.
+配置不同 origin 不能证明其界面和服务器规则与参考部署一致。不受支持或含歧义的绑定仍会停止或保持暂停。
 
-## Historical results are separate
+## 历史战绩
 
-The predecessor recorded 17 wins and 3 losses in 20 natural games against one fixed external opponent/deck, with one additional technical concession. That is 85% among those natural outcomes, or 17 wins in 21 started attempts if the technical concession is included.
+前身在一个固定外部对手/牌组上取得 20 场自然对局中的 17 胜 3 负，另有一次技术认输。仅计算自然终局为 85%；将技术认输计入已开始的尝试，则为 21 次中的 17 胜。
 
-Those results belong to the predecessor's frozen runtime. This extraction changes the knowledge representation, runtime packaging and deployment configuration. It has no new live game result and no demonstrated equivalence across every decision. The historical sample is not a general TCO win-rate estimate and should not be presented as this release's benchmark.
+该样本属于前身的冻结运行时，不是 0.1.0 或 0.2.0 的实战成绩，也不能估计一般 TCO 胜率。本次工作修复了独立公开包提取时丢失的知识输入；是否进一步提高实战表现，需要另行验证。
 
-## Reproduce the public checks
+## 复现公开检查
 
 ```sh
 npm ci
@@ -82,13 +88,11 @@ npm test
 npm run check:package
 ```
 
-For the additional real local browser smoke:
+额外的真实本地浏览器冒烟检查：
 
 ```sh
 npx playwright install chromium
 npm run test:browser
 ```
 
-Use [the operation guide](operations.md) to initialize configuration and create a runtime snapshot. Preflight and campaign preparation are local checks; `seat run`, `seat create`, and `campaign run` are the explicit operations that can contact the configured site.
-
-The first extraction build exposed a missing intersection-type projection, an unused stale model constant and excessive TypeScript inference for the built-in data literal. Those were fixed before the successful checks above. No failed build is counted as a pass.
+初始化配置、创建运行时快照和启动方法见[操作指南](operations.md)。preflight 和连续对局准备是本地检查；`seat run`、`seat create`、`campaign run` 会访问所配置站点。

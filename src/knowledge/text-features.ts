@@ -1,4 +1,4 @@
-/** Finite legacy heuristic predicates. No printed card text is stored. */
+/** 原有的十二项文本启发式；默认直接读取原 summary。可选 mask 仅供兼容的自定义知识。 */
 import type { CardDefinition } from '../contracts/observation.js';
 export const TEXT_FEATURE_PATTERNS = [
   {

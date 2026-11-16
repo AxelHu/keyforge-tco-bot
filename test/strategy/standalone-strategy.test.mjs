@@ -1,7 +1,12 @@
 import { getPublicCaptureReference, getVerifiedVeilConfiguration, configurePublicCaptureFacts } from '../../dist/src/adapters/keyteki-public-capture-facts.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ALL_DEFINITIONS, registerCardKnowledge, validateCardKnowledge, KNOWLEDGE_COVERAGE } from '../../dist/src/knowledge/catalog.js';
+import { ALL_DEFINITIONS, registerCardKnowledge, validateCardKnowledge, cardKnowledgeIsPartial, KNOWLEDGE_COVERAGE } from '../../dist/src/knowledge/catalog.js';
+import { PRINTED_TEXT_BY_DEFINITION } from '../../dist/src/knowledge/printed-text.js';
+import { guidedDeckRunway } from '../../dist/src/ai/tullibint-guided-policy.js';
+import { TULLIBINT_CARDS } from '../../dist/src/ai/tullibint-policy.js';
+import { assessPublicHouseDefense } from '../../dist/src/ai/public-house-defense.js';
+import { buildJevInput } from '../../dist/src/ai/jev-input.js';
 import { summaryFeature } from '../../dist/src/knowledge/text-features.js';
 import { canonical } from '../../dist/src/shared/canonical.js';
 import { projectKeytekiState, compileKeytekiCommand } from '../../dist/src/adapters/keyteki.js';
@@ -33,25 +38,34 @@ test('built-in knowledge is nonempty, immutable, and contains current specialist
   for (const id of ['unity-prism', 'sir-jaune', 'they-tell-no-tales', 'infurnace']) {
     assert.ok(ALL_DEFINITIONS[id]);
     assert.ok(Object.isFrozen(ALL_DEFINITIONS[id]));
-    assert.equal(ALL_DEFINITIONS[id].summary, 'Heuristic card knowledge; printed rules text is not included.');
+    assert.ok(ALL_DEFINITIONS[id].summary.length > 0);
+    assert.notEqual(ALL_DEFINITIONS[id].summary, 'Heuristic card knowledge; printed rules text is not included.');
+    assert.equal(ALL_DEFINITIONS[id].summaryFeatures, undefined);
     validateCardKnowledge(ALL_DEFINITIONS[id]);
   }
   assert.throws(() => { ALL_DEFINITIONS.troll = ALL_DEFINITIONS.urchin; }, /Read-only public knowledge/);
   assert.throws(() => { delete ALL_DEFINITIONS.troll; }, /Read-only public knowledge/);
-  assert.ok(KNOWLEDGE_COVERAGE.unmodeledEffectNodes > 0);
-  assert.ok(Object.values(ALL_DEFINITIONS).some(value => value.unmodeled));
-  assert.equal(ALL_DEFINITIONS["kiri-giltspine"].unmodeled, true, 'omitted research annotation retains uncertainty');
-  assert.equal(ALL_DEFINITIONS["kiri-giltspine"].ruleInterpretations, undefined);
+  assert.equal(KNOWLEDGE_COVERAGE.omittedEffectNodes, 0);
+  assert.equal(KNOWLEDGE_COVERAGE.generatedUnmodeledMarkers, 0);
+  assert.equal(ALL_DEFINITIONS['kiri-giltspine'].unmodeled, undefined);
+  assert.equal(ALL_DEFINITIONS['kiri-giltspine'].ruleInterpretations[0].status, 'research-convention');
+  assert.equal(ALL_DEFINITIONS['kiri-giltspine'].ruleInterpretations[0].officialRulingConfirmed, false);
+  assert.equal(cardKnowledgeIsPartial(ALL_DEFINITIONS['kiri-giltspine']), true);
+  assert.equal(ALL_DEFINITIONS.silvertooth.entersReady, true);
+  assert.equal(typeof ALL_DEFINITIONS['lava-ball'].abilities.play[0].splash, 'number');
+  const filter = ALL_DEFINITIONS.chronometer.abilities.endTurn[1].then[0].then[0].then[0].then[0].filter;
+  assert.equal(Object.hasOwn(filter, 'kind'), true);
+  assert.equal(filter.kind, undefined);
 });
 
-test('knowledge extensions reject engine instructions, extra root fields, and atomic duplicate packs', () => {
+test('knowledge extensions reject runtime continuation state, extra root fields, and atomic duplicate packs', () => {
   const base = { ...ALL_DEFINITIONS.troll, id: 'synthetic-owned-fact', name: 'Synthetic owned fact' };
-  assert.throws(() => validateCardKnowledge({ ...base, abilities: { play: [{ kind: 'pvSoulLockStore', key: 'private' }] } }), /effect kind/);
+  assert.throws(() => validateCardKnowledge({ ...base, abilities: { play: [{ kind: 'resumePaidUse', previous: null }] } }), /effect kind/);
   assert.throws(() => validateCardKnowledge({ ...base, queue: [] }), /Unknown card knowledge field/);
   for (const effect of [{ kind: 'target', filter: { side: 'enemy' }, operation: 'destroy' }, { kind: 'all', filter: {}, operation: 'damage', amount: 1 }, { kind: 'self', operation: 'heal', amount: 1 }, { kind: 'bound', key: 'public-choice', operation: 'purge' }])
     assert.doesNotThrow(() => validateCardKnowledge({ ...base, abilities: { play: [effect] } }));
   assert.throws(() => validateCardKnowledge({ ...base, abilities: { play: [null] } }), /effect object/);
-  assert.throws(() => validateCardKnowledge({ ...base, abilities: { play: [{ kind: 'useChoice', mode: 'reap', filter: {}, after: [{ kind: 'pvSoulLockStore', key: 'private' }] }] } }), /effect kind/);
+  assert.throws(() => validateCardKnowledge({ ...base, abilities: { play: [{ kind: 'useChoice', mode: 'reap', filter: {}, after: [{ kind: 'resumePaidUse', previous: null }] }] } }), /effect kind/);
   assert.throws(() => registerCardKnowledge([base, base]), /Duplicate card knowledge/);
   assert.equal(ALL_DEFINITIONS[base.id], undefined);
   registerCardKnowledge([base]);
@@ -59,7 +73,10 @@ test('knowledge extensions reject engine instructions, extra root fields, and at
   assert.throws(() => registerCardKnowledge([base]), /Duplicate card knowledge/);
 });
 
-test('fixed summary features retain legacy predicates without embedding card text', () => {
+test('legacy summary predicates read original text and retain an explicit custom-mask override', () => {
+  assert.equal(ALL_DEFINITIONS.troll.summaryFeatures, undefined);
+  assert.equal(summaryFeature(ALL_DEFINITIONS.troll, 3), true);
+  assert.equal(summaryFeature(ALL_DEFINITIONS.troll, 4), false);
   const c = { ...ALL_DEFINITIONS.troll, summary: 'Deliberately irrelevant authored description', summaryFeatures: (1 << 3) | (1 << 4) };
   assert.equal(summaryFeature(c, 3), true);
   assert.equal(summaryFeature(c, 4), true);
@@ -133,4 +150,55 @@ test('historical audited deck defaults are absent and invalid registration does 
   assert.throws(() => getVerifiedVeilConfiguration(), /explicitly registered/);
   assert.throws(() => configurePublicCaptureFacts({ referenceRules: { commit: 'unverified', sourceManifestSha256: '0'.repeat(64), serverDeploymentAttestation: false }, decks: {}, pairs: {} }), /Invalid local/);
   assert.throws(() => getPublicCaptureReference(), /explicitly registered/);
+});
+
+test('only actually consumed third-party text is separated and empty printed text stays empty', () => {
+  assert.equal(Object.keys(PRINTED_TEXT_BY_DEFINITION).length, 108);
+  assert.equal(Object.values(PRINTED_TEXT_BY_DEFINITION).filter(row => row.text.length > 0).length, 107);
+  for (const [id, row] of Object.entries(PRINTED_TEXT_BY_DEFINITION)) {
+    assert.equal(ALL_DEFINITIONS[id].summary, row.text);
+    assert.equal(ALL_DEFINITIONS[id].sourceId, undefined, 'provenance is not injected into a card definition');
+  }
+  assert.equal(ALL_DEFINITIONS['toc-token-guardian'].summary, '');
+  assert.equal(ALL_DEFINITIONS['woe-token-grunt'].summary, 'No additional printed abilities.');
+});
+
+test('model input receives original descriptions and unconfirmed research-convention labels', () => {
+  const o = observation();
+  o.players[0].hand = [card('model-troll', 'troll'), card('model-kiri', 'kiri-giltspine')];
+  o.players[0].handCount = 2;
+  const result = buildJevInput(o, 'baseline');
+  assert.equal(result.state.hand[0].rules, 'After reaping, heal three damage from itself.');
+  assert.deepEqual(result.state.hand[1].ruleInterpretations, ALL_DEFINITIONS['kiri-giltspine'].ruleInterpretations);
+  assert.equal(result.state.hand[1].ruleInterpretations[0].officialRulingConfirmed, false);
+});
+
+test('Tullibint Survey keeps its inspect-top uncertainty in the actual guided runway helper', () => {
+  const o = observation();
+  o.phase = 'main'; o.pending = null; o.activeHouse = 'staralliance';
+  o.players[0].houses = ['geistoid', 'staralliance', 'untamed'];
+  o.players[0].deckList = Object.entries(TULLIBINT_CARDS).map(([definition, count]) => ({ definition, count, name: ALL_DEFINITIONS[definition].name, house: ALL_DEFINITIONS[definition].house }));
+  o.players[0].hand = [card('survey-source', 'survey')]; o.players[0].handCount = 1;
+  o.players[0].deckCount = 4;
+  const action = { kind: 'play', card: 'survey-source' };
+  o.legalActions = [{ id: 'survey-play', action }, { id: 'end', action: { kind: 'endTurn' } }];
+  assert.equal(ALL_DEFINITIONS.survey.abilities.play[0].kind, 'inspectTop');
+  const result = guidedDeckRunway(o, action);
+  assert.equal(result.known, false, 'selective top-card information must not become a certified safe count');
+});
+
+test('Etans Jar retains the named-lock veto before public house-defense projections', () => {
+  const o = observation();
+  o.phase = 'house'; o.pending = null; o.activeHouse = null;
+  o.publicStateCoverage = { turnHistoryComplete: true, effectsComplete: true, turnOrdinalKnown: true };
+  o.players[0].hand = [card('charette-source', 'charette')]; o.players[0].handCount = 1;
+  o.players[1].keys = ['red', 'blue']; o.players[1].amber = o.players[1].forgeAvailable = 6;
+  let projections = 0;
+  const project = () => { projections++; return { opponentAmber: 3, opponentKeyCost: 6, skipsOpponentForge: false, unresolvedValues: false }; };
+  assert.ok(assessPublicHouseDefense(o, 'dis', project).score > 0, 'control fixture contains a real bounded defense opportunity');
+  assert.ok(projections > 0);
+  o.players[1].artifacts = [card('jar-source', 'etan-s-jar', 1)];
+  projections = 0;
+  assert.equal(assessPublicHouseDefense(o, 'dis', project).score, 0);
+  assert.equal(projections, 0, 'the named-lock guard must veto the future-action probe');
 });

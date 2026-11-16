@@ -1,8 +1,8 @@
 {
   "name": "keyforge-tco-bot",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Observation-based KeyForge strategies and browser automation for Keyteki-compatible servers.",
+  "description": "面向 Keyteki/TCO 的代码策略、完整静态知识与浏览器自动打牌工具。",
   "type": "module",
   "engines": {
     "node": ">=22.12 <25"
@@ -39,6 +39,7 @@
     "examples/",
     "docs/",
     "README.md",
+    "README.en.md",
     "README.zh-CN.md",
     "LICENSE",
     "NOTICE.md",
