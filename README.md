@@ -6,7 +6,7 @@
 
 [English](README.en.md) · [架构](docs/architecture.md) ·
 [卡牌知识](docs/card-knowledge.md) · [使用与恢复](docs/operations.md) ·
-[策略选单与历史 Elo](docs/strategy-guide.md) · [国际服与英文聊天](docs/international-tco.md) · [验证记录](docs/validation.md)
+[策略选单与历史 Elo](docs/strategy-guide.md) · [国际服与英文聊天](docs/international-tco.md) · [线路实测与后续对局](docs/international-network.md) · [验证记录](docs/validation.md)
 
 ## 包含哪些能力
 
@@ -15,16 +15,16 @@
 - 仅监听本机回环地址的策略宿主，通过页面文档身份和发送凭证管理控制权，并分别记录“已准备”“已进入浏览器队列”“已观察到效果”。
 - 带明确请求期限的浏览器桥接和独立看门狗。精确的已观察回执对账不会重放送达情况不明的命令。
 - 单席加入/建房、自然终局退场、账号锁、连续对局健康检查、显式暂停和有明确适用条件的恢复流程。
+- 显式选择浏览器直连或代理，并为连续对局设置自然局数、尝试次数和累计时间上限；到限后停止发起新局。
 - 包内 Chromium 管理与显式本地配置。运行不依赖 OpenClaw、订阅凭据或原研究仓库；可选的牌桌聊天功能默认关闭。
 
 ## 兼容范围
 
-协议适配器以 Keyteki 修订版
-`361c085bcd401c20976ee9bcc4e4e5b8c061d56c` 为参考开发。项目前身曾在一个 Keyteki 衍生部署上使用；本独立包有自己的构建、知识内容和验证范围。
+已适配福州服与国际服 TCO。本机本轮国际服实测建议优先使用代理线路：较大前端资源加载更稳定，但直连的 WebSocket 往返延迟更低，结论不代表所有网络。配置方法见[国际服指南](docs/international-tco.md)。
 
-0.4.0 已在真实国际服完成受控私房验收：2026-11-16 共 3 场自然终局，其中 **1 场完整自动通过，2 场保留人工收尾记录**；696 条游戏命令全部收到确认，英文备用开场取得原生回显。验证使用两个自有账号，覆盖登录、选牌、动态游戏节点握手、完整对局及终局退出释放。真人公房、付费模型聊天和故障恢复不在本次验证范围内，也没有新增 Elo 评测。配置、完整结果和局限见[国际服适配说明](docs/international-tco.md)。
+本轮受控私房完成 **3 场自然终局并自动收尾**，另有 1 场技术失败及人工清理。首场真人对局于 **2026-11-16 08:56:29 UTC** 以 **1:3 自然落败**，147／147 条动作确认并自动退出；5 次真实 MiniMax 调用与 5 条原生英文自动桌聊回显均有证据，专名保留原名。观察阶段目前在这份快照中完成 1／3 场，仍在继续；开始新尝试的截止为 **11:15:39 UTC（北京时间 19:15）**。这是早期适配样本，不据此估计 Elo 或真人胜率；版本归属与完整结果见[线路与对局实测](docs/international-network.md)。
 
-后台 CLI 当前面向 **Linux 或 WSL 内的 Linux**，需要 Node.js **22.12–24.x**、Python 3 和 Chromium。进程身份核验与恢复使用 Linux `/proc` 和内核文件锁；当前不承诺原生 Windows、macOS 的后台监督支持。
+最新完整测试 **262／262** 通过。后台 CLI 面向 **Linux 或 WSL 内的 Linux**，需要 Node.js **22.12–24.x**、Python 3 和 Chromium；原生 Windows、macOS 的后台监督尚未验证。完整能力边界见[验证说明](docs/validation.md)。
 
 ## 安装
 
@@ -54,6 +54,8 @@ node bin/kf-auto.mjs init \
   --deck-name 'Your deck name' \
   --policy tactical-style-engine-v3
 ```
+
+`init` 默认生成 `room.gameType: "beginner"`。需要公开休闲房时，在尚未启动的 `seat.json` 中将其改为 `"casual"`，保持 `room.gameFormat: "normal"`，房间名保留 `AI` 标识。房型通过配置字段选择，具体示例见[操作指南](docs/operations.md)。
 
 在本地生成的 `credentials.json` 中填入实际密码，再执行：
 

@@ -37,7 +37,7 @@ const config = {
 };
 const publicRoom = (names = [own], owner = own) => ({
   id: gameId, name: config.room.name, started: false, gamePrivate: false, needsPassword: false,
-  gameType: 'beginner', gameFormat: 'normal', owner,
+  gameType: config.room.gameType, gameFormat: 'normal', owner,
   players: Object.fromEntries(names.map(name => [name, {
     name, id: name === own ? 'fixture-own-socket' : 'fixture-other-socket',
     deck: { selected: false, name: name === own ? config.self.deckName : 'Other Fixture Deck' },
@@ -59,7 +59,7 @@ async function within(promise, milliseconds, code) {
     })]);
   } finally { clearTimeout(timer); }
 }
-function fixtureHtml(locale) {
+function fixtureHtml(locale, initiallySelectedType = 'casual') {
   const label = key => FIXTURE_CAPTIONS[locale][key];
   return `<!doctype html><html lang="${locale}"><meta charset="utf-8"><title>Local UI contract fixture</title>
   <body><p>Local synthetic component fixture only. No remote login or game.</p>
@@ -69,8 +69,8 @@ function fixtureHtml(locale) {
   <label><input type="checkbox" id="beginner">Beginner lobby filter</label>
   <form id="creation" hidden>
     <input id="name" name="name" type="text">
-    <label><input type="radio" name="gameType" value="casual" checked>Casual</label>
-    <label><input type="radio" name="gameType" value="beginner">Beginner</label>
+    <label><input type="radio" name="gameType" value="casual" ${initiallySelectedType === 'casual' ? 'checked' : ''}>Casual</label>
+    <label><input type="radio" name="gameType" value="beginner" ${initiallySelectedType === 'beginner' ? 'checked' : ''}>Beginner</label>
     <label><input type="radio" name="gameFormat" value="sealed" checked>Sealed</label>
     <label><input type="radio" name="gameFormat" value="normal">Archon</label>
     <label><input type="checkbox" id="gamePrivate" checked>Unlisted (link only)</label>
@@ -140,7 +140,7 @@ try {
     fixtureCommands.push({ phase: currentPhase, kind: event.kind });
     if (event.kind === 'create') {
       assert.equal(event.name, config.room.name);
-      assert.equal(event.gameType, 'beginner');
+      assert.equal(event.gameType, config.room.gameType);
       assert.equal(event.gameFormat, 'normal');
       assert.equal(event.gamePrivate, false);
       assert.equal(event.requirePassword, false);
@@ -167,24 +167,29 @@ try {
   });
 
   for (const locale of ['en', 'zh']) {
-    currentPhase = locale + '-public-create-select-leave';
-    html = fixtureHtml(locale);
-    await page.goto(origin + '/play', { waitUntil: 'domcontentloaded' });
-    observer = new PublicRoomObserver(page, config);
-    observer.ingest('40{"sid":"fixture-own-socket"}');
-    const created = await createPublicRoomUi(page, observer, config);
-    assert.equal(created.gameId, gameId);
-    const selected = await selectOwnDeckUi(page, observer, config);
-    assert.equal(selected.serverDeckId, 23);
-    assert.equal(selected.commandObserved, true);
-    const left = await leaveUnjoinedOwnRoomUi(page, observer, config);
-    assert.equal(left.serverLeaveReceipt.gameId, gameId);
-    assert.equal(left.serverLeaveReceipt.source, 'cleargamestate');
-    assert.equal(left.serverLeaveConfirmed, true);
-    assert.deepEqual(fixtureCommands.filter(value => value.phase === currentPhase).map(value => value.kind), ['create', 'deck', 'leave']);
-    checks[locale + 'PublicCreateExactDeckAndNativeLeave'] = true;
-    observer.dispose();
-    observer = null;
+    for (const gameType of ['beginner', 'casual']) {
+      currentPhase = locale + '-' + gameType + '-public-create-select-leave';
+      config.room.gameType = gameType;
+      html = fixtureHtml(locale, gameType === 'casual' ? 'beginner' : 'casual');
+      await page.goto(origin + '/play', { waitUntil: 'domcontentloaded' });
+      observer = new PublicRoomObserver(page, config);
+      observer.ingest('40{"sid":"fixture-own-socket"}');
+      const created = await createPublicRoomUi(page, observer, config);
+      assert.equal(created.gameId, gameId);
+      assert.equal(created.gameType, gameType);
+      const selected = await selectOwnDeckUi(page, observer, config);
+      assert.equal(selected.serverDeckId, 23);
+      assert.equal(selected.commandObserved, true);
+      const left = await leaveUnjoinedOwnRoomUi(page, observer, config);
+      assert.equal(left.serverLeaveReceipt.gameId, gameId);
+      assert.equal(left.serverLeaveReceipt.source, 'cleargamestate');
+      assert.equal(left.serverLeaveConfirmed, true);
+      assert.deepEqual(fixtureCommands.filter(value => value.phase === currentPhase).map(value => value.kind), ['create', 'deck', 'leave']);
+      checks[locale + (gameType === 'casual' ? 'Casual' : '') + 'PublicCreateExactDeckAndNativeLeave'] = true;
+      observer.dispose();
+      observer = null;
+    }
+    config.room.gameType = 'beginner';
 
     currentPhase = locale + '-bound-start';
     const startName = FIXTURE_CAPTIONS[locale].start;

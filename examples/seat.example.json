@@ -23,6 +23,11 @@
   "social": {
     "enabled": false
   },
-  "ownAccountNames": ["YourAccount"],
-  "gameSocketPaths": []
+  "ownAccountNames": [
+    "YourAccount"
+  ],
+  "gameSocketPaths": [],
+  "network": {
+    "mode": "system"
+  }
 }

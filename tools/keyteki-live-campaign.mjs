@@ -67,9 +67,19 @@ export function normalizeCampaignConfig(input) {
   const focusNaturalGameLimit =
     input.focusNaturalGameLimit == null ? null : bounded('focusNaturalGameLimit', null, 1, 10000);
   if (focusNaturalGameLimit !== null && focusOpponentName === null) fail('CAMPAIGN_FOCUS_OPPONENT_REQUIRED');
+  const budget = (key, max) => {
+    const value = input[key];
+    if (value === undefined || value === null) return null;
+    if (!Number.isSafeInteger(value) || value < 1 || value > max) fail('CAMPAIGN_BUDGET_INVALID');
+    return value;
+  };
   return {
     ...input,
     output,
+    network: seat.network,
+    maxNaturalGames: budget('maxNaturalGames', 10000),
+    maxAttempts: budget('maxAttempts', 100000),
+    maxElapsedMs: budget('maxElapsedMs', 30 * 24 * 60 * 60 * 1000),
     origin: seat.origin,
     selfName: seat.self.name,
     ownAccountNames: seat.ownAccountNames,
@@ -81,6 +91,38 @@ export function normalizeCampaignConfig(input) {
     heldGraceMs: bounded('heldGraceMs', 150000, 90000, 300000),
     setupDeadlineMs: bounded('setupDeadlineMs', 240000, 60000, 600000),
     minimumFreeBytes: bounded('minimumFreeBytes', 5 * 1024 ** 3, 128 * 1024 ** 2, 1024 ** 4),
+  };
+}
+
+/** Persistent wall-clock budget: pauses and restarts never buy a fresh allowance. */
+export function campaignBudget(config, state, now = Date.now()) {
+  const createdAt = Date.parse(state.createdAt ?? '');
+  const attemptsStarted = state.attemptsStarted ??
+    (state.records.length + (state.activeAttempt ? 1 : 0));
+  if (!Number.isSafeInteger(attemptsStarted) || attemptsStarted < state.records.length ||
+      !Number.isFinite(now) || (config.maxElapsedMs !== null &&
+      (!Number.isFinite(createdAt) || now < createdAt))) fail('CAMPAIGN_BUDGET_STATE_INVALID');
+  const naturalGames = new Set(state.records
+    .filter((row) => row.natural === true && row.canContinue === true)
+    .map((row) => row.gameId)).size;
+  const elapsedMs = Number.isFinite(createdAt) ? Math.max(0, now - createdAt) : null;
+  const reasons = [];
+  if (config.maxNaturalGames !== null && naturalGames >= config.maxNaturalGames)
+    reasons.push('natural-game-limit');
+  if (config.maxAttempts !== null && attemptsStarted >= config.maxAttempts)
+    reasons.push('attempt-limit');
+  if (config.maxElapsedMs !== null && elapsedMs >= config.maxElapsedMs)
+    reasons.push('elapsed-time-limit');
+  return {
+    maxNaturalGames: config.maxNaturalGames,
+    maxAttempts: config.maxAttempts,
+    maxElapsedMs: config.maxElapsedMs,
+    startedAt: state.createdAt,
+    elapsedMs,
+    naturalGames,
+    attemptsStarted,
+    reached: reasons.length > 0,
+    reasons,
   };
 }
 
@@ -232,6 +274,8 @@ export function campaignSummary(config, state) {
     paused: state.paused,
     pauseReasons: state.pauseReasons,
     strategy: config.seat.self.codePolicy,
+    network: config.network,
+    budget: state.budget ?? null,
     deckUuid: config.seat.self.deckSelector,
     source: state.runtime,
     activeAttempt: state.activeAttempt,
@@ -255,6 +299,7 @@ export function campaignSummary(config, state) {
 
 export async function runLiveCampaign(input, dependencies = {}) {
   const config = normalizeCampaignConfig(input);
+  const clock = dependencies.now ?? Date.now;
   fs.mkdirSync(config.output, { recursive: true, mode: 0o700 });
   const configSha256 = hash(JSON.stringify(input));
   const checkpointFile = path.join(config.output, 'checkpoint.json');
@@ -268,7 +313,8 @@ export async function runLiveCampaign(input, dependencies = {}) {
     id: config.id,
     configSha256,
     runId: randomUUID(),
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(clock()).toISOString(),
+    attemptsStarted: 0,
     phase: 'initializing',
     records: [],
     activeAttempt: null,
@@ -278,6 +324,7 @@ export async function runLiveCampaign(input, dependencies = {}) {
   const save = () => {
     state.health = campaignHealth(state.records);
     state.focus = focusedCampaignProgress(state.records, config);
+    state.budget = campaignBudget(config, state, clock());
     state.updatedAt = new Date().toISOString();
     state.pid = process.pid;
     atomicCampaignJson(checkpointFile, state);
@@ -289,7 +336,25 @@ export async function runLiveCampaign(input, dependencies = {}) {
     state.phase = 'paused';
     save();
   };
-  let stopRequested = false;
+  let stopRequested = false, budgetReached = false;
+  const completeBudget = () => {
+    // An in-flight game keeps its normal lifecycle even after the allowance expires.
+    if (state.activeAttempt) return false;
+    const budget = campaignBudget(config, state, clock());
+    if (!budget.reached) return false;
+    budgetReached = true;
+    state.phase = 'completed-budget';
+    state.completion ??= {
+      reason: 'campaign-budget',
+      reasons: budget.reasons,
+      naturalGames: budget.naturalGames,
+      attemptsStarted: budget.attemptsStarted,
+      elapsedMs: budget.elapsedMs,
+      completedAt: new Date(clock()).toISOString(),
+    };
+    save();
+    return true;
+  };
   const signal = () => {
     stopRequested = true;
     setPause('operator-stop-after-current');
@@ -309,14 +374,14 @@ export async function runLiveCampaign(input, dependencies = {}) {
         stopRequested = true;
       }
       if (json(controlFile)?.pauseAfterCurrent) setPause('operator-pause-after-current');
-      if (stopRequested || state.paused) break;
+      if (stopRequested || state.paused || completeBudget()) break;
       await pause(Math.min(1000, until - Date.now()));
     } while (Date.now() < until);
   };
   try {
     save();
-    while (!stopRequested && !state.paused) {
-      if (dispatchCancelled()) break;
+    while (!stopRequested && !state.paused && !budgetReached) {
+      if (dispatchCancelled() || completeBudget()) break;
       const health = campaignHealth(state.records);
       if (health.pause) {
         for (const reason of health.reasons) setPause(reason);
@@ -354,6 +419,7 @@ export async function runLiveCampaign(input, dependencies = {}) {
           profileDir: path.join(config.output, 'lobby-browser'),
           agentId: 'keyforge-tco-bot:lobby-' + config.id,
           origin: config.origin,
+          network: config.network,
         });
       } catch (error) {
         state.lobbyFailures = (state.lobbyFailures ?? 0) + 1;
@@ -369,7 +435,7 @@ export async function runLiveCampaign(input, dependencies = {}) {
         await poll(config.emptyRetryMs);
         continue;
       }
-      if (dispatchCancelled()) break;
+      if (dispatchCancelled() || completeBudget()) break;
       state.lobbyFailures = 0;
       if (snapshot.rooms.some((row) => Object.hasOwn(row.players, config.selfName))) {
         setPause('account-already-seated');
@@ -428,7 +494,8 @@ export async function runLiveCampaign(input, dependencies = {}) {
         choice,
         runtime: state.runtime,
       });
-      if (dispatchCancelled()) break;
+      if (dispatchCancelled() || completeBudget()) break;
+      state.attemptsStarted = (state.attemptsStarted ?? state.records.length) + 1;
       const startedAt = new Date().toISOString();
       state.activeAttempt = {
         attemptId,
@@ -547,7 +614,7 @@ export async function runLiveCampaign(input, dependencies = {}) {
       const nextHealth = campaignHealth(state.records);
       if (nextHealth.pause) for (const reason of nextHealth.reasons) setPause(reason);
       save();
-      if (!state.paused && !focusedCampaignProgress(state.records, config)?.targetReached)
+      if (!state.paused && !completeBudget() && !focusedCampaignProgress(state.records, config)?.targetReached)
         await poll(
           ['no-opponent', 'joined-pending-departure'].includes(record.outcome)
             ? config.emptyRetryMs
@@ -581,6 +648,7 @@ export function campaignControl(input, action) {
   if (action === 'pause') {
     atomicCampaignJson(controlFile, { ...old, pauseAfterCurrent: true, updatedAt: new Date().toISOString() });
   } else if (action === 'enable-unattended') {
+    if (campaignBudget(config, state).reached) fail('CAMPAIGN_BUDGET_EXHAUSTED');
     if (
       state.activeAttempt ||
       !campaignHealth(state.records).stable ||

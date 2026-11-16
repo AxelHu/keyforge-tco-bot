@@ -2,6 +2,7 @@
 import path from 'node:path';
 import { fuzhouSocketEvent } from './keyteki-fuzhou-ui.mjs';
 import { exactSiteOrigin } from './site-origin.mjs';
+import { browserNetworkArgs } from './browser-network.mjs';
 
 const object = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -164,11 +165,11 @@ export async function readLobbyFromBrowser(browser, { origin, timeoutMs = 15000 
   }
 }
 
-export async function readCampaignLobby({ profileDir, agentId, origin, timeoutMs = 60000 }) {
+export async function readCampaignLobby({ profileDir, agentId, origin, network, timeoutMs = 60000 }) {
   if (!path.isAbsolute(profileDir) || !text(agentId, 200)) throw Error('LOBBY_PROFILE_REQUIRED');
   exactSiteOrigin(origin);
   const { AgentBrowser } = await import('./browser-provider.mjs');
-  const pool = new AgentBrowser({ keepAlive: false, cleanupOnExit: true, extraArgs: [] });
+  const pool = new AgentBrowser({ keepAlive: false, cleanupOnExit: true, extraArgs: browserNetworkArgs(network) });
   try {
     const instance = await pool.getBrowser(agentId, {
       mode: 'per-agent',

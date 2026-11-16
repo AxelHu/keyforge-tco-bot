@@ -172,7 +172,7 @@ export function createPublicTransportDiagnostics({
         u.username ||
         u.password ||
         (httpOrigin !== site.origin && !allowedPaths.includes(httpPath)) ||
-        !/^\/node[1-9][0-9]*\/socket\.io\/?$/.test(u.pathname)
+        !/^\/node(?:[1-9][0-9]*|-(?:0|[1-9][0-9]*))\/socket\.io\/?$/.test(u.pathname)
       )
         return null;
       return {

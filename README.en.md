@@ -10,7 +10,7 @@ engine, game server, game UI and historical match data are not included.
 
 [中文说明](README.md) · [Architecture](docs/architecture.md) ·
 [Card knowledge](docs/card-knowledge.md) · [Operations](docs/operations.md) ·
-[Strategies and historical Elo](docs/strategy-guide.md) · [International TCO and chat language](docs/international-tco.md) · [Validation](docs/validation.md)
+[Strategies and historical Elo](docs/strategy-guide.md) · [International TCO and chat language](docs/international-tco.md) · [Network measurements and subsequent games](docs/international-network.md) · [Validation](docs/validation.md)
 
 ## What is included
 
@@ -24,30 +24,19 @@ engine, game server, game UI and historical match data are not included.
   Exact observed-delivery reconciliation does not replay an uncertain command.
 - Single-seat join/create flows, normal terminal retirement, account locks,
   campaign health gates, explicit pause and bounded recovery procedures.
+- Explicit browser direct/proxy routing and persistent campaign limits for natural
+  games, attempts and elapsed time; existing games finish before new matchmaking stops.
 - A portable Chromium backend and explicit local configuration. OpenClaw,
   subscription credentials and the original research repository are not runtime
   dependencies. Optional social chat is disabled by default.
 
 ## Compatibility
 
-The protocol adapter was developed against Keyteki revision
-`361c085bcd401c20976ee9bcc4e4e5b8c061d56c`. The predecessor was used on a
-Keyteki-derived deployment; the extracted package is a new build with its own
-knowledge boundary.
+The bot supports the Fuzhou deployment and international TCO. In this machine's measurements, proxy routing loaded the larger frontend assets more reliably, while direct routing had lower WebSocket round-trip latency. Prefer the proxy for this measured setup; this is not a claim about every network. See the [international guide](docs/international-tco.md) for configuration.
 
-Version 0.4.0 has completed controlled private-game acceptance on the real
-international site. On 2026-11-16, three games ended naturally: **one passed the
-complete automatic lifecycle, while two retain their manual-cleanup outcomes**.
-All 696 game commands were acknowledged, and English fallback openings received
-native echoes. Two owned accounts exercised login, deck selection, dynamic game-node
-handshakes, full games and terminal departure/resource release. Human opponents,
-paid model chat and fault recovery were not tested; these are not new Elo results.
-See [international TCO configuration, results and limitations](docs/international-tco.md).
+This round of controlled private testing produced **three natural finishes with automatic cleanup**, plus one technical failure requiring manual cleanup. The first human-opponent game ended in a **natural 1:3 loss at 08:56:29 UTC on 2026-11-16**, with all 147 commands acknowledged and automatic departure and runtime retirement. Five real MiniMax calls and five native echoes of English automated table-chat messages were verified, with proper names preserved. This snapshot covers one of the three planned observed natural games; observation continues, with a new-attempt deadline of **11:15:39 UTC (19:15 Beijing)**. These are early compatibility samples, not an Elo or human-opponent win-rate estimate. See the [network and game results](docs/international-network.md) for each phase's source binding.
 
-The managed CLI currently targets **Linux or Linux inside WSL**, Node.js
-**22.12–24.x**, Python 3 and Chromium. Process identity and recovery use Linux
-`/proc` and kernel file locks. Native Windows and macOS supervision are not
-claimed to be supported.
+The latest full suite passed **262/262 tests**. Managed operation targets **Linux or Linux inside WSL**, with Node.js **22.12–24.x**, Python 3 and Chromium. Native Windows and macOS supervision has not been validated. See the [validation scope](docs/validation.md).
 
 ## Install
 
@@ -84,6 +73,8 @@ node bin/kf-auto.mjs init \
   --deck-name 'Your deck name' \
   --policy tactical-style-engine-v3
 ```
+
+`init` generates `room.gameType: "beginner"` by default. To create a casual public room, set it to `"casual"` in the unused `seat.json`, keep `room.gameFormat: "normal"`, and retain the `AI` marker in the room name. Room type is selected in configuration; see the [operation guide](docs/operations.md).
 
 Fill the actual password in the generated local `credentials.json`, then run:
 

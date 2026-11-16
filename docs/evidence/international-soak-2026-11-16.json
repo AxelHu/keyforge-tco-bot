@@ -1,0 +1,1437 @@
+{
+  "schema": "keyforge-international-network-soak-evidence-v1",
+  "recordStatus": "first-human-natural-game-verified-observation-continues",
+  "snapshotAt": "2026-11-16T08:56:29.847Z",
+  "origin": "https://thecrucible.online",
+  "phaseSeparation": "Anonymous network measurements, prelogin browser attempts, controlled private games, synthetic model/API preflight and public human games are separate evidence phases. Each live phase retains its actual runner and production input binding.",
+  "anonymousNetwork": {
+    "status": "completed",
+    "reportGeneratedAt": "2026-11-16T06:38:42.268150+00:00",
+    "reportSha256": "23019f774ae1352f4e9767160a179a9c9e947969bce7de2eec4c28255670df6b",
+    "httpRequestCount": 48,
+    "roundsPerEndpointAndRoute": 8,
+    "endpoints": [
+      "homepage",
+      "deployed-javascript-bundle",
+      "anonymous-engineio-polling"
+    ],
+    "bundleBytes": 3008504,
+    "connectTimeoutSeconds": 10,
+    "transferDeadlineSeconds": 25,
+    "compressedRequested": true,
+    "responseContentEncodingPresentByRoute": {
+      "direct": false,
+      "proxy": false
+    },
+    "headerChecksAreAdditionalTo48MainRequests": true,
+    "http": {
+      "direct": {
+        "homepage": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 8,
+          "timeoutsOrFailures": 0,
+          "successfulTransferSeconds": {
+            "n": 8,
+            "median": 1.3700860000000001,
+            "p90": 1.949187,
+            "min": 0.654946,
+            "max": 1.949187
+          }
+        },
+        "bundle": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 0,
+          "timeoutsOrFailures": 8,
+          "successfulTransferSeconds": {
+            "n": 0,
+            "median": null,
+            "p90": null,
+            "min": null,
+            "max": null
+          }
+        },
+        "engineio": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 8,
+          "timeoutsOrFailures": 0,
+          "successfulTransferSeconds": {
+            "n": 8,
+            "median": 0.8438190000000001,
+            "p90": 1.563567,
+            "min": 0.655116,
+            "max": 1.563567
+          }
+        }
+      },
+      "proxy": {
+        "homepage": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 8,
+          "timeoutsOrFailures": 0,
+          "successfulTransferSeconds": {
+            "n": 8,
+            "median": 1.8376415000000001,
+            "p90": 2.776036,
+            "min": 1.092939,
+            "max": 2.776036
+          }
+        },
+        "bundle": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 7,
+          "timeoutsOrFailures": 1,
+          "successfulTransferSeconds": {
+            "n": 7,
+            "median": 12.103554,
+            "p90": 14.554998,
+            "min": 5.283848,
+            "max": 14.554998
+          }
+        },
+        "engineio": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 8,
+          "timeoutsOrFailures": 0,
+          "successfulTransferSeconds": {
+            "n": 8,
+            "median": 1.460124,
+            "p90": 2.628379,
+            "min": 1.08604,
+            "max": 2.628379
+          }
+        }
+      }
+    },
+    "websocket": {
+      "direct": {
+        "connections": 3,
+        "completed180SecondsAndClosedNormally": 3,
+        "errors": 0,
+        "unexpectedClosures": 0,
+        "controlPongs": 105,
+        "unresolvedScheduledPingsAtPlannedClose": 0,
+        "packetLossMeasured": false,
+        "controlPingRttMs": {
+          "n": 105,
+          "median": 195.249,
+          "p90": 221.622,
+          "min": 192.416,
+          "max": 1002.527
+        },
+        "socketioNamespaceDisconnectPackets": 2
+      },
+      "proxy": {
+        "connections": 3,
+        "completed180SecondsAndClosedNormally": 3,
+        "errors": 0,
+        "unexpectedClosures": 0,
+        "controlPongs": 105,
+        "unresolvedScheduledPingsAtPlannedClose": 3,
+        "packetLossMeasured": false,
+        "controlPingRttMs": {
+          "n": 105,
+          "median": 298.99,
+          "p90": 398.356,
+          "min": 288.162,
+          "max": 711.478
+        },
+        "socketioNamespaceDisconnectPackets": 2
+      }
+    },
+    "wsEndpoints": [
+      "/socket.io/",
+      "/node-0/socket.io/",
+      "/node-1/socket.io/"
+    ],
+    "plannedTransportDurationSeconds": 180,
+    "wsGameNodeNamespacesAuthenticated": false,
+    "anonymousGameNodeNamespacesDisconnectedAfterInitialAcknowledgement": true,
+    "websocketControlRttIsGameCommandLatency": false,
+    "packetLossEstimated": false,
+    "accountOperations": {
+      "logins": 0,
+      "roomCreates": 0,
+      "joins": 0,
+      "chatMessages": 0,
+      "gameCommands": 0,
+      "browserProfilesCreated": 0,
+      "globalProxyChanges": 0
+    },
+    "sharedWorkstationLoadNotIsolated": true,
+    "initialIncompleteNamespaceProbeExcluded": true,
+    "probeSourceBindings": {
+      "network-http-probe.py": "cff9c915e68ad03c9d735aacb7453884217d56ec478bbc3f138952df1aabddf3",
+      "network-ws-connected-probe.cjs": "71cc4d252a29bc3f63ef2d1dc52f847c4301facba228a47224dcc44790609b9a",
+      "network-header-probe.py": "a853e02249bb0ac56b14d0726a91aaa73a5980a4d223252976a8752af6ce19ac",
+      "network-build-report.py": "fa59e293d6f251ddd5d68329ea86818f27a826424a271602bf09f995021532de"
+    }
+  },
+  "preloginBrowserAttempts": [
+    {
+      "runId": "route01-direct",
+      "route": "direct",
+      "classification": "harness-validation-failure-before-login",
+      "failureCode": "BROWSER_NETWORK_ARGUMENTS_UNCONFIRMED",
+      "loginOrRoomSetupReached": false,
+      "hostStarted": false,
+      "isObservedNetworkConnectionFailure": false,
+      "naturalGameCompleted": false,
+      "allOwnedResourcesReleased": true,
+      "cleanupReceiptSha256": "641f0aa8598b52410f647b01bbf15b8039ff3967e33b49d9964d4cbedcdc0d9f",
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "d3f418a0e2ec446a065f06378f8891ad1c783afe02886fab04c04959d9ab2f27",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92"
+      }
+    },
+    {
+      "runId": "route01-direct-r2",
+      "route": "direct",
+      "classification": "login-page-navigation-timeout",
+      "routeArgumentsConfirmedViaCdp": true,
+      "stage": "navigate-login",
+      "deadlineSeconds": 45,
+      "roomSetupReached": false,
+      "hostStarted": false,
+      "naturalGameCompleted": false,
+      "retainedReadOnlyObservation": {
+        "approximatelyThreeMinutesAfterStart": true,
+        "cssLoadDurationSeconds": 78.8,
+        "mainModuleCompleted": false,
+        "domContentLoadedCompleted": false,
+        "inputCount": 0,
+        "passwordValuePresent": false
+      },
+      "allOwnedResourcesReleased": true,
+      "performanceReceiptSha256": "ee02c98072ef57b322c5989135681203b5f1658160391a8a1cb0df30ed3ced7c",
+      "cleanupReceiptSha256": "a8563c4a4b28a6e3697b1dca86b3cd995088cd3fd21ff738669f302673ab7a9f",
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "01655501aad489e9ebb93ee5ca803e45d5fb4d4c7299ee74319d80899da62e00",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92"
+      }
+    }
+  ],
+  "routeChoice": {
+    "mode": "proxy",
+    "privateNaturalGamesTarget": 3,
+    "reason": "Current sample showed better complete large-resource loading through proxy; a confirmed direct browser attempt timed out before login readiness. This does not predeclare proxy game success.",
+    "privateNaturalGamesTargetMet": true
+  },
+  "controlledPrivateRuns": [
+    {
+      "runId": "route02-proxy",
+      "route": "proxy",
+      "series": [
+        "PV",
+        "CotA"
+      ],
+      "status": "automatic-pass",
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "01655501aad489e9ebb93ee5ca803e45d5fb4d4c7299ee74319d80899da62e00",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92",
+        "isExactLiveAcceptanceOfNew050Runtime": false
+      },
+      "result": {
+        "naturalTerminal": true,
+        "winnerSeries": "CotA",
+        "score": "3:2",
+        "gameSecondsFromStartToBothTerminalViews": 303.712,
+        "wrapperReportedSeconds": 367.835,
+        "commands": 336,
+        "acknowledged": 336,
+        "states": 680,
+        "decisions": 336,
+        "evidenceRowsScanned": 5693,
+        "gameplayRowsScanned": 3653,
+        "gameplayFaultFlagsObserved": false,
+        "recordedPageErrorCount": 0,
+        "bothNativeFullVerified": true,
+        "bothOwnedEnglishFallbackAuthorsEchoed": true,
+        "realModelServiceCalls": 0,
+        "humanOpponents": 0,
+        "automaticNativeDepartureAndResourceRelease": true,
+        "operatorCleanupRequired": false,
+        "exitCode": 0,
+        "gameSocketUrl": "https://thecrucible.online/node-1/socket.io"
+      }
+    },
+    {
+      "runId": "route03-proxy-gr-woe",
+      "route": "proxy",
+      "series": [
+        "GR",
+        "WoE"
+      ],
+      "status": "automatic-pass",
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "01655501aad489e9ebb93ee5ca803e45d5fb4d4c7299ee74319d80899da62e00",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92",
+        "isExactLiveAcceptanceOfNew050Runtime": false
+      },
+      "result": {
+        "naturalTerminal": true,
+        "winnerSeries": "GR",
+        "score": "3:2",
+        "gameSecondsFromStartToBothTerminalViews": 326.376,
+        "wrapperReportedSeconds": 387.656,
+        "commands": 316,
+        "acknowledged": 316,
+        "states": 638,
+        "decisions": 316,
+        "evidenceRowsScanned": 5526,
+        "gameplayRowsScanned": 3612,
+        "gameplayFaultFlagsObserved": false,
+        "recordedPageErrorCount": 0,
+        "bothNativeFullVerified": true,
+        "bothOwnedEnglishFallbackAuthorsEchoed": true,
+        "realModelServiceCalls": 0,
+        "humanOpponents": 0,
+        "automaticNativeDepartureAndResourceRelease": true,
+        "operatorCleanupRequired": false,
+        "exitCode": 0,
+        "gameSocketUrl": "https://thecrucible.online/node-1/socket.io"
+      }
+    },
+    {
+      "runId": "route06-proxy-dt-dm",
+      "route": "proxy",
+      "series": [
+        "DT",
+        "DM"
+      ],
+      "status": "failed-unsupported",
+      "automaticPassClaimed": false,
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "01655501aad489e9ebb93ee5ca803e45d5fb4d4c7299ee74319d80899da62e00",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92",
+        "runtimeManifestSha256": "af04ee1bdb40831127c2ac7a4175ea550db9b41c80cb47cadb6bf5521725c9d0",
+        "isExactLiveAcceptanceOfNew050Runtime": false
+      },
+      "result": {
+        "naturalTerminal": false,
+        "automaticAcceptancePassed": false,
+        "commands": 35,
+        "acknowledged": 35,
+        "states": 81,
+        "decisions": 37,
+        "evidenceRowsScanned": 1867,
+        "gameplayRowsScanned": 1624,
+        "unsupportedObserved": true,
+        "unsupportedReason": "allocation-hypnotic-command-public-quota-unreported",
+        "strategyFaultObserved": false,
+        "commandRejectionObserved": false,
+        "loopGuardEventObserved": false,
+        "recordedPageErrorCount": 0,
+        "bothNativeFullVerified": true,
+        "bothOwnedEnglishFallbackAuthorsEchoed": true,
+        "realModelServiceCalls": 0,
+        "humanOpponents": 0,
+        "exitCode": 2,
+        "gameSocketUrl": "https://thecrucible.online/node-1/socket.io"
+      },
+      "recovery": {
+        "initialCondition": "brief native disconnect or bridge wait; transport-or-activity-stop pause",
+        "privateHarnessWatchdogEnabled": false,
+        "guardFailureWithoutReloadCount": 1,
+        "manualReloadAttempts": 1,
+        "manualReloadReturnedCount": 1,
+        "gameplayResumedAfterManualReload": true,
+        "subsequentStop": "STRATEGY_UNSUPPORTED",
+        "automaticRecoveryStartedEvents": 0,
+        "automaticRecoveryProved": false,
+        "manualReceiptSha256": [
+          "69265a4fb78107c53fd7326f88e93981e6bac5026d61282c99ffc874146313b9",
+          "965e777cec590c08ea78dfcab24981361b545cf6e851e2b512781760adac2475",
+          "6ca2f348f47fe1e5effce0a2ab3e1aee0b7937237ab8615da3c0fc18df790bfc"
+        ]
+      },
+      "technicalTermination": {
+        "kind": "native-ui-private-concession",
+        "nativeUiConcessionAttemptCount": 1,
+        "bothNativeTerminalViewsAgree": true,
+        "bothPlayerKeyCounts": [
+          0,
+          0
+        ],
+        "naturalGameResult": false,
+        "countedAsStrategyWin": false,
+        "receiptSha256": [
+          "da785faf7ab3563919b3de6a81b843e02cefc30b22d8bac2b90c65001429f22f",
+          "cfd688d09632eb01d13ec584fb0b7ec83fd3c967c9f31d8de19b24922ee77ced"
+        ]
+      },
+      "operatorCleanup": {
+        "required": true,
+        "completedAt": "2026-11-16T07:14:41.170Z",
+        "normalLeaveCallsPerSeat": [
+          1,
+          1
+        ],
+        "bothServerMembershipsPositiveThenAbsent": true,
+        "allBoundHostsBrowsersRegistriesAndProfilesReleased": true,
+        "accountCheckpointReleased": true,
+        "receiptSha256": "c0ba0d3ed1187d84b1e4702ed77219efb81acad823091fc9a8c0130896bb4a53",
+        "originalFailedHandoffAndExecutionPreserved": true
+      }
+    },
+    {
+      "runId": "route07-proxy-dt-dm-watchdog",
+      "route": "proxy",
+      "series": [
+        "DT",
+        "DM"
+      ],
+      "status": "automatic-pass",
+      "sourceBinding": {
+        "productionVersion": "0.5.0",
+        "productionCommit": "9706d6b90d2f88a93f9d8d8c8e8c11a2021dc3b9",
+        "runnerSha256": "bc99b349c3186c22e84484b368053b2377420de547c7542973110f6ba9c35c77",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 121,
+        "productionInputManifestSha256": "7376f893ed1baee4e100ccbba9f8fb85866a8367d3f5547f28cb27dc9e6cbb93",
+        "runtimeManifestSha256": "70e1c82709a17def726d93fcb8731c31bcde307d778be6ffbaf2168ff7392638",
+        "isExactLiveAcceptanceOfNew050Runtime": true,
+        "sourceInputsReportedAndCheckedUnchanged": true,
+        "providerExecutionBindingMatched": true
+      },
+      "result": {
+        "naturalTerminal": true,
+        "winnerSeries": "DT",
+        "score": "3:2",
+        "executionStartedAt": "2026-11-16T07:26:43.409201+00:00",
+        "executionEndedAt": "2026-11-16T07:35:00.117185+00:00",
+        "gameSecondsFromStartToBothTerminalViews": 409.233,
+        "wrapperReportedSeconds": 478.483,
+        "commands": 339,
+        "acknowledged": 339,
+        "commandsBySeries": {
+          "DT": 189,
+          "DM": 150
+        },
+        "states": 686,
+        "decisions": 342,
+        "evidenceRowsScanned": 6416,
+        "gameplayRowsScanned": 4358,
+        "gameplayFaultFlagsObserved": false,
+        "recordedPageErrorCount": 0,
+        "bothNativeFullVerified": true,
+        "bothOwnedEnglishFallbackAuthorsEchoed": true,
+        "realModelServiceCalls": 0,
+        "humanOpponents": 0,
+        "automaticNativeDepartureAndResourceRelease": true,
+        "normalLeaveCallsPerSeat": [
+          1,
+          1
+        ],
+        "operatorCleanupRequired": false,
+        "manualRecoveryAttempts": 0,
+        "exitCode": 0,
+        "gameSocketUrl": "https://thecrucible.online/node-0/socket.io"
+      },
+      "recoveryCoverage": {
+        "productionWatchdogEnabled": true,
+        "recoveryStartedEvents": 0,
+        "recoveryCallsReturnedOk": 0,
+        "automaticRecoveryProved": false
+      },
+      "allocationCoverage": {
+        "receiptSha256": "05c7446e2fdc35cc16738609a2a1d10309cdff4e08e9d1825c4157e052f53c4c",
+        "observedAt": "2026-11-16T07:34:42.593543+00:00",
+        "bothBoundHostSessionsFinished": true,
+        "dmAllocationPlans": 0,
+        "dmAllocationPlansDispatched": 0,
+        "dmAllocationPlansObserved": 0,
+        "dmAllocationPlansUnknown": 0,
+        "hypnoticNewBranchExecutedInThisRun": false,
+        "otherSeatAllocationPlans": 1,
+        "otherSeatAllocationCardIdentifiedByThisReceipt": false,
+        "newBranchProofScope": "The new Hypnotic branch was not exercised in this natural run; its evidence remains the earlier real fault projection, implementation reasoning and seven offline regression cases."
+      }
+    }
+  ],
+  "skippedUnstartedRuns": [
+    {
+      "runId": "route04-direct-gr-woe",
+      "started": false,
+      "countedAsGame": false,
+      "reason": "Equivalent direct cold-start failure was already observed."
+    },
+    {
+      "runId": "route05-direct-dt-dm",
+      "started": false,
+      "countedAsGame": false,
+      "reason": "Equivalent direct cold-start failure was already observed."
+    }
+  ],
+  "publicHumanPhase": {
+    "status": "first-human-natural-game-verified-observation-continues",
+    "asOf": "2026-11-16T08:56:29.847Z",
+    "snapshotScope": "The first completed r4 external-player game and the five preceding public attempts; later matchmaking and empty-room attempts are excluded.",
+    "observedPublicAttempts": 6,
+    "noOpponentAttempts": 4,
+    "preparationFailures": 1,
+    "observedHumanGames": 1,
+    "observedNaturalResults": 1,
+    "terminalHumanGames": 1,
+    "gameplayTechnicalFailures": 0,
+    "wins": 0,
+    "losses": 1,
+    "automaticGameRetirements": 1,
+    "actualModelCallsInPublicCampaigns": 5,
+    "providerAcceptedCallsInPublicCampaigns": 5,
+    "nativeQueuedMessagesInPublicCampaigns": 5,
+    "independentlyObservedOwnNativeEchoes": 5,
+    "completedEarlierPublicPhases": 2,
+    "currentPhaseRunning": true,
+    "currentWorkflowStartedAt": "2026-11-16T08:45:39.089898+00:00",
+    "currentWorkflowEndedAt": null,
+    "currentWorkflowExitCode": null,
+    "currentWorkflowSourceCommit": "80c3cd36157bca3873caf37563c152dc13fad6cd",
+    "observedNaturalGameTarget": 3,
+    "observedNaturalGamesCompletedInSnapshot": 1,
+    "observationTargetReached": false,
+    "unattendedBatchAcceptanceClaimed": false,
+    "firstHumanSummarySha256": "3da2defbee9af6ce9469a1aff91dbfdeaf65dda609c339041983b1a8acb64351",
+    "firstHumanTerminalProjectionSha256": "f8603c8ea22f6193de47de81e84d82d774b58a087ada01e09bbae85753f65975",
+    "casualR3RetirementSummarySha256": "42b50741649112f7f751ef372dd72f8e7a117987a77dd22a21f07908f9f84eef",
+    "firstEarlyHumanSnapshotSha256": "e05faa5686933bb91b4246387d072d5234924fa71ca3123eee430e5fba8884a7",
+    "laterMatchingExcluded": true
+  },
+  "historicalBaseline": {
+    "version": "0.4.0",
+    "codeCommit": "1379c0f03a44cdb3810da3afb860905599422655",
+    "publicationCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+    "evidencePath": "docs/evidence/international-2026-11-16.json",
+    "evidenceSha256": "80f803d0c01373638716b80d29ce6427691362dc2ba7a363bd5e21907b580275",
+    "naturalGames": 3,
+    "automaticPasses": 1,
+    "manualCleanupPartialGames": 2,
+    "unchanged": true
+  },
+  "privacyProjection": "No real account names, email addresses, proxy endpoint or operator details, private paths, secrets, tokens, room passwords or raw chat are included.",
+  "privateSummarySnapshot": {
+    "sha256": "9a2c415963e80afa425fe3b64eb5c138149200ae715ea054424bf965e0682d33",
+    "collectorSha256": "a6422583978f95f93ca37537a29431a7662c1f0334fbe867140cb33baa7e6093",
+    "schema": "kf-international-network-games-summary-v2",
+    "generatedAt": "2026-11-16T07:35:03.567574+00:00",
+    "final": true,
+    "recordedAttempts": 6,
+    "startedGames": 4,
+    "naturalGames": 3,
+    "automaticPasses": 3,
+    "preloginFailures": 2,
+    "failedUnsupportedRuns": 1,
+    "manualRecoveryAttemptRuns": 1,
+    "technicalConcessionRuns": 1,
+    "pendingDeclaredRunIds": [],
+    "declaredPlanExecutionsEnded": true,
+    "productionInputManifestsAgreeAcrossRuns": false,
+    "phaseSourceBindingsMustRemainSeparate": true,
+    "confirmedNaturalGameCounters": {
+      "states": 2004,
+      "decisions": 994,
+      "commands": 991,
+      "acknowledged": 991
+    },
+    "allStartedGameCounters": {
+      "states": 2085,
+      "decisions": 1031,
+      "commands": 1026,
+      "acknowledged": 1026
+    },
+    "evidenceRowsScanned": 19502,
+    "gameplayRowsScanned": 13247,
+    "countBasis": "Two prelogin failures count only as attempts. The unsupported run retains 35 completed commands but its technical concession is neither a natural game nor a strategy win. Two natural passes used the 0.4.0 baseline; the third used the fixed 0.5.0 runtime.",
+    "independentReviewSha256": "70fc9b6130e7c9961a39a94c04b8c7a80a2ddbcbcf6771f8e825e532bd8b1b92",
+    "independentReviewDecision": "PASS_PRIVATE_ACCEPTANCE_FOR_OBSERVED_PUBLIC_R2",
+    "independentlyVerifiedInputFiles": 47
+  },
+  "previousCandidateValidation": {
+    "version": "0.5.0",
+    "sourceCommit": "459f03db3006d3c2e8d34c6dcee6949b3896c78e",
+    "implementationReviewStatus": "approved-to-proceed-with-authorized-live-validation",
+    "implementationReviewSha256": "9c8dbe205461b525cd7f9e56faa843a1104db06704d8aecd6349c983fb9935f7",
+    "priorFullRegression": {
+      "tests": 245,
+      "passed": 245,
+      "failed": 0,
+      "receiptSha256": "4432ad2dc5a152fb9bb5588cbd20132added6ffc28fcfc10037e51eb1f484d80",
+      "scope": "v2 snapshot before the final two-path race fix"
+    },
+    "finalTargetedRegression": {
+      "tests": 78,
+      "passed": 78,
+      "failed": 0,
+      "receiptSha256": "36af5eb5479d4c1c17a6417f09fdc017463073ee551353a41dfeb1fe3a269d6c",
+      "scope": "final implementation changes; overlaps prior full suite"
+    },
+    "combinedTestCountClaimed": false,
+    "finalFull247RunClaimed": false,
+    "newTestRerunRequestedByDocumentationTask": false,
+    "packageBoundary": {
+      "files": 305,
+      "moduleEdges": 874,
+      "findings": 0,
+      "afterVersionBump": true
+    },
+    "runtimeFreeze": {
+      "sourceFingerprint": "e76577e0511bdfbef7096fcceca8cf431b43c387fa2fe99f14c3d30cda514ea7",
+      "runtimeManifestSha256": "51420abb48bcd81b1c024641438d438b72f6208208a44c6b1f9e209b8752648f",
+      "runtimeFiles": 781,
+      "externalFiles": 307
+    },
+    "actualNewRuntimeLiveStatus": "not-run-as-route07-fixed-candidate",
+    "testsExecutedByDocumentationTask": 0,
+    "status": "previous-reviewed-candidate-before-hypnotic-adapter-fix"
+  },
+  "currentCandidateValidation": {
+    "status": "full-regression-and-independent-review-passed-runtime-frozen",
+    "version": "0.5.0",
+    "sourceCommit": "80c3cd36157bca3873caf37563c152dc13fad6cd",
+    "baseCommitAtValidation": "749c5bfbfc45f326f78d57c1042916fd296e534e",
+    "changedInputSha256": {
+      "tools/keyteki-human-create-public.mjs": "cfb3463b6921204192bc744190ee01fc91c84037e67b7b31a2965887a40a0a38",
+      "test/runtime/public-preparation-failure.test.mjs": "81f09380cd397fb7775d92426160742cc79c5eedbf29a7d0d7fbcd3aa99beff7",
+      "test/transport/keyteki-observed-receipt.test.mjs": "748fcb4df64c9d922605356626f97791a82e6b009fc3e5db1da2062567d6fa70"
+    },
+    "receiptSha256": "3a5da4213c10aabbbb8ef4f0dd9d951cc967f1a4db0a7d5cdc56ba0c85b688c3",
+    "startedAt": "2026-11-16T08:26:35.642943+00:00",
+    "endedAt": "2026-11-16T08:27:10.959011+00:00",
+    "sourceFilesStableDuringChecks": true,
+    "fullRegression": {
+      "tests": 262,
+      "pass": 262,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "packageBoundary": {
+      "files": 309,
+      "moduleEdges": 893,
+      "findings": 0
+    },
+    "diffCheckPassed": true,
+    "implementationReviewSha256": "832f22a8245bd49a515de132e5e93eb64d1a9fcf937b0ebd242609ede65310cd",
+    "runtimeFreeze": {
+      "sourceCommit": "80c3cd36157bca3873caf37563c152dc13fad6cd",
+      "sourceFingerprint": "40f85f404b56db7cf6b1dd76a2ce0489dc75c57b82f96a83745b1773ab7e8068",
+      "runtimeManifestSha256": "5f69af229072bd7964d1b413ba25bc2f58bb421c4d53a2788afcbcdd32c774f1",
+      "runtimeFiles": 781,
+      "externalExecutionFiles": 307,
+      "freezeReceiptSha256": "e879cf196f22fb98493ff320e5a2d5718a4ec18d26a85c2c44bb55e8bc85c00f",
+      "comparisonReceiptSha256": "f5938bc24fba089cdc830edc3325348d3b5b2412afee37d75c05dd47142b0e28",
+      "changedRuntimeFilesFromPreviousFreeze": [
+        "tools/keyteki-human-create-public.mjs"
+      ],
+      "externalFilesUnchanged": true,
+      "strategyAdapterProviderUnchanged": true,
+      "provenance": {
+        "gitCommitSource": "freeze-receipt.sourceGitHead",
+        "runtimeManifestEmbeddedSourceCommit": null,
+        "gitCommitInferredFromNullManifestField": false,
+        "runtimeFilesBoundByManifestSha256": true
+      }
+    },
+    "actualNewRuntimeLiveStatus": "first-human-natural-game-verified-observation-continues",
+    "testsExecutedByDocumentationTask": 0,
+    "priorFullAttempt": {
+      "receiptSha256": "2931a473187f51f65d69c60f358fa97120a11a8aa0e90710a6edf2d4ab2c37bc",
+      "startedAt": "2026-11-16T08:24:30.824348+00:00",
+      "endedAt": "2026-11-16T08:25:04.648820+00:00",
+      "tests": 262,
+      "pass": 261,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "reason": "A pre-existing transport fixture waited a fixed 25 ms and assumed the recovery probe would finish within one tick.",
+      "resolution": "The fixture now waits up to 2 seconds for recovery-attempt-finished while retaining all original assertions.",
+      "retainedAsFailure": true
+    },
+    "targetedNewCasesIncludedInFullCount": 4,
+    "testCountsFromSeparateRunsAreNotAdded": true,
+    "scope": {
+      "productionFilesChanged": [
+        "tools/keyteki-human-create-public.mjs"
+      ],
+      "preparationFailureDiagnosticsAdded": true,
+      "previousGenericFailureStageReconstructed": false,
+      "strategyGameAdapterAndProviderChangedFromR3": false,
+      "publicRoomTypesSupportedForCreation": [
+        "beginner",
+        "casual"
+      ],
+      "roomGameFormat": "normal",
+      "aiRoomNameMarkerRequired": true,
+      "initDefaultGameType": "beginner",
+      "roomTypeSelectedThrough": "room.gameType",
+      "newRoomTypeCliOptionAdded": false
+    }
+  },
+  "modelApiPreflight": {
+    "status": "passed-synthetic-api-preflight",
+    "receiptSha256": "915240160ab8dec96f4f83d5a65f577443a2747f19d37999767069587d6839fd",
+    "provider": "minimax",
+    "providerSourceSha256": "47c64f338d5f130fc8a3f1ae2e35dc1943fb6dca9a77372041e7e23b9f23802a",
+    "model": "MiniMax-M3.1-Flash",
+    "modelCalls": 1,
+    "accepted": true,
+    "englishOnly": true,
+    "elapsedMs": 1706,
+    "syntheticContext": true,
+    "gameMessageSent": false,
+    "nativeChatEchoTested": false,
+    "humanGameTested": false,
+    "usage": {
+      "inputTokens": 508,
+      "outputTokens": 9,
+      "totalTokens": 517
+    }
+  },
+  "previousHypnoticCandidateValidation": {
+    "status": "full-regression-and-independent-review-passed-runtime-frozen",
+    "version": "0.5.0",
+    "baseCommit": "459f03db3006d3c2e8d34c6dcee6949b3896c78e",
+    "changedInputSha256": {
+      "src/adapters/keyteki-allocation.ts": "f2d7568319414247ce468856f2d18c7ff794bbe8921f3a700773a20f88f83886",
+      "test/strategy/hypnotic-single-pool.test.mjs": "7fc0c7840d766d6a5bd7f46024e00abce664a42262e8aefd6081fcf1ccb5d204"
+    },
+    "receiptSha256": "8b5b40aec15365f8a2cf6526e37981a0915d49e55f0479c4138a7958afdb71d0",
+    "startedAt": "2026-11-16T07:18:59.400611+00:00",
+    "endedAt": "2026-11-16T07:19:34.076970+00:00",
+    "fullRegression": {
+      "tests": 254,
+      "pass": 254,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "packageBoundary": {
+      "files": 306,
+      "moduleEdges": 885,
+      "findings": 0
+    },
+    "diffCheckPassed": true,
+    "targetedSevenTestsIncludedInFullCount": true,
+    "countsAddedToEarlier245Or78": false,
+    "testsExecutedByDocumentationTask": 0,
+    "actualNewRuntimeLiveStatus": "controlled-private-automatic-pass-public-game-unproven",
+    "sourceCommit": "9706d6b90d2f88a93f9d8d8c8e8c11a2021dc3b9",
+    "implementationReviewSha256": "9d082e95ad91926ea6cab2ee062dfa0d2a57c34a213094e544c052a3665aa6ee",
+    "runtimeFreeze": {
+      "sourceCommit": "9706d6b90d2f88a93f9d8d8c8e8c11a2021dc3b9",
+      "sourceFingerprint": "e97acc99c92cd26e0d3e74187c0a5487bf1ddbc7c076213358c291be25f0ca7f",
+      "runtimeManifestSha256": "70e1c82709a17def726d93fcb8731c31bcde307d778be6ffbaf2168ff7392638",
+      "runtimeFiles": 781,
+      "externalExecutionFiles": 307,
+      "freezeReceiptSha256": "6f92135f2df16dc693c42b750d927d5eda42a70f4dc0125a2850c384ef97d677",
+      "provenance": {
+        "gitCommitSource": "freeze-receipt.sourceGitHead",
+        "freezeReceiptSha256": "6f92135f2df16dc693c42b750d927d5eda42a70f4dc0125a2850c384ef97d677",
+        "runtimeManifestEmbeddedSourceCommit": null,
+        "runtimeFilesBoundByManifestSha256": true,
+        "gitCommitInferredFromNullManifestField": false
+      }
+    }
+  },
+  "publicObservationRuns": [
+    {
+      "phase": "observed-public-matchmaking",
+      "sourceBinding": {
+        "sourceGitHead": "9706d6b90d2f88a93f9d8d8c8e8c11a2021dc3b9",
+        "runtimeManifestSha256": "70e1c82709a17def726d93fcb8731c31bcde307d778be6ffbaf2168ff7392638",
+        "executionSha256": "2948bba90261615ae13f589c22ca44a0005fbacceecdff7330afd96f58577c34",
+        "launchReviewSha256": "bdf9cf2f490eca9f170a9e3099884ec3e869b21e718265f53b1004beb007bf06",
+        "precedingPrivateSummarySha256": "9a2c415963e80afa425fe3b64eb5c138149200ae715ea054424bf965e0682d33"
+      },
+      "attempts": [
+        {
+          "attemptId": "00001-create",
+          "attemptStartedAt": "2026-11-16T07:36:24.110Z",
+          "attemptEndedAt": "2026-11-16T07:39:55.241Z",
+          "outcome": "no-opponent",
+          "gameStarted": false,
+          "terminal": false,
+          "natural": false,
+          "technicalFailure": false,
+          "countedAsWinOrLoss": false,
+          "plannedOpponentWaitMs": 180000,
+          "waitStartedAt": "2026-11-16T07:36:52.112Z",
+          "nativeLeaveCompletedAt": "2026-11-16T07:39:52.613Z",
+          "normalUiLeaveConfirmed": true,
+          "serverNativeLeaveConfirmed": true,
+          "identityValid": true,
+          "seatReleased": true,
+          "runtimeRetired": true,
+          "canContinue": true,
+          "resultFinalized": true,
+          "awaitingDriverExit": false,
+          "bridgeStarted": false,
+          "aiChatRequested": false,
+          "recoveredIncidents": 0,
+          "hostRestarts": 0,
+          "resultSha256": "4bc84fbfbd20de6db4f7d9a8b4d62f1470fe2b6efdb75e75dd92bbb2b44de366",
+          "nativeNoOpponentReceiptSha256": "69b506dda59a190ad5dc2fca6a34345d90ae7ba479d109f24e0fc1d5d39f384f"
+        },
+        {
+          "attemptId": "00002-create",
+          "attemptStartedAt": "2026-11-16T07:41:11.286Z",
+          "attemptEndedAt": "2026-11-16T07:44:30.832Z",
+          "outcome": "no-opponent",
+          "gameStarted": false,
+          "terminal": false,
+          "natural": false,
+          "technicalFailure": false,
+          "countedAsWinOrLoss": false,
+          "plannedOpponentWaitMs": 180000,
+          "waitStartedAt": "2026-11-16T07:41:27.589Z",
+          "nativeLeaveCompletedAt": "2026-11-16T07:44:28.086Z",
+          "normalUiLeaveConfirmed": true,
+          "serverNativeLeaveConfirmed": true,
+          "identityValid": true,
+          "seatReleased": true,
+          "runtimeRetired": true,
+          "canContinue": true,
+          "resultFinalized": true,
+          "awaitingDriverExit": false,
+          "bridgeStarted": false,
+          "aiChatRequested": false,
+          "recoveredIncidents": 0,
+          "hostRestarts": 0,
+          "resultSha256": "795fd2713ba14f360e9f857edb8d79cf3edaf47eaffd4a9381393b22084dfd34",
+          "nativeNoOpponentReceiptSha256": "1b3057e9695c425b16bbc0bda22653b9fcea9494e89a3bc5ba9fed2401e4830f"
+        }
+      ],
+      "totals": {
+        "attempts": 2,
+        "noOpponentAttempts": 2,
+        "gamesStarted": 0,
+        "terminalGames": 0,
+        "naturalGames": 0,
+        "technicalFailures": 0,
+        "wins": 0,
+        "losses": 0,
+        "draws": 0,
+        "opponentConcessions": 0,
+        "realProviderCalls": 0,
+        "nativeChatMessagesProduced": 0,
+        "independentSyntheticApiPreflightIncluded": false
+      },
+      "resources": {
+        "observationSha256": "f7bf39f799243590cc528fa54987a8a5019d9eaeaaae1c94c6a9ce358d56be9e",
+        "observedAt": "2026-11-16T07:51:44.734Z",
+        "wrapperDriverAndCampaignAccountOwnerProcessesAbsent": true,
+        "browserRegistryRecordsAbsent": 3,
+        "profileDirectoriesRetained": 3,
+        "profileDirectoriesDeleted": 0,
+        "runtimeReleaseAndProfileDeletionAreDistinct": true
+      }
+    },
+    {
+      "phase": "casual-r3-public-observation",
+      "status": "paused-after-two-no-opponent-attempts-and-one-manually-retired-preparation-failure",
+      "snapshotAt": "2026-11-16T08:40:48.036952+00:00",
+      "sourceBinding": {
+        "sourceCommit": "749c5bfbfc45f326f78d57c1042916fd296e534e",
+        "runtimeManifestSha256": "8cef0ac3b6012a7d7afc48a363d708dc55007bbdc6fc0cdac9c0e1a19ff6b6bd"
+      },
+      "execution": {
+        "startedAt": "2026-11-16T08:03:24.289022+00:00",
+        "endedAt": "2026-11-16T08:39:40.210383+00:00",
+        "exitCode": 0,
+        "outerExitZeroMeansAttemptSucceeded": false
+      },
+      "attempts": [
+        {
+          "attemptId": "00001-create",
+          "startedAt": "2026-11-16T08:03:43.197Z",
+          "endedAt": "2026-11-16T08:07:08.949Z",
+          "outcome": "no-opponent",
+          "started": false,
+          "terminal": false,
+          "natural": false,
+          "technicalFailure": false,
+          "identityValid": true,
+          "seatReleased": true,
+          "runtimeRetired": true,
+          "canContinue": true,
+          "finalized": true,
+          "awaitingDriverExit": false,
+          "won": null,
+          "recoveredIncidents": 0,
+          "hostRestarts": 0,
+          "receiptSha256": "83f1787f72e08ed51dc3ba050541dc5051c8da69a95a5aa66424d1169e445ff9",
+          "classification": "no-opponent",
+          "automaticAcceptancePassed": null
+        },
+        {
+          "attemptId": "00002-create",
+          "startedAt": "2026-11-16T08:08:23.783Z",
+          "endedAt": "2026-11-16T08:11:58.839Z",
+          "outcome": "no-opponent",
+          "started": false,
+          "terminal": false,
+          "natural": false,
+          "technicalFailure": false,
+          "identityValid": true,
+          "seatReleased": true,
+          "runtimeRetired": true,
+          "canContinue": true,
+          "finalized": true,
+          "awaitingDriverExit": false,
+          "won": null,
+          "recoveredIncidents": 0,
+          "hostRestarts": 0,
+          "receiptSha256": "fa37d87af2ffc97e5453b0cc0e141d82e05270f7fa47d4f81a52aade979ca8f3",
+          "classification": "no-opponent",
+          "automaticAcceptancePassed": null
+        },
+        {
+          "attemptId": "00003-create",
+          "startedAt": "2026-11-16T08:13:14.442Z",
+          "endedAt": "2026-11-16T08:39:39.746Z",
+          "outcome": "identity-unverified",
+          "started": false,
+          "terminal": false,
+          "natural": false,
+          "technicalFailure": false,
+          "identityValid": false,
+          "seatReleased": false,
+          "runtimeRetired": false,
+          "canContinue": false,
+          "finalized": true,
+          "awaitingDriverExit": false,
+          "won": null,
+          "recoveredIncidents": 0,
+          "hostRestarts": 0,
+          "receiptSha256": "231240db007e05f67c19a8d44bccce94aa9dc69f6d72cea91b7fcd12b80dd9a5",
+          "classification": "preparation-failure-manually-retired",
+          "automaticAcceptancePassed": false
+        }
+      ],
+      "totals": {
+        "attempts": 3,
+        "noOpponentAttempts": 2,
+        "preparationFailures": 1,
+        "humanGamesStarted": 0,
+        "terminalGames": 0,
+        "naturalGames": 0,
+        "gameplayTechnicalFailures": 0,
+        "wins": 0,
+        "losses": 0,
+        "realProviderCalls": 0,
+        "nativeChatMessagesProduced": 0,
+        "manualRetirements": 1
+      },
+      "manualRetirement": {
+        "completedAt": "2026-11-16T08:40:48.036952+00:00",
+        "journalSha256": "a47fb63dfd95ef73de5e0b75daccc95806ab2dbe320f4d529d8ece088fb07a03",
+        "independentReviewSha256": "ffce814010a644c5ad3d2655f7502302909325960e2caa12b038dadd27fc173d",
+        "independentReviewStatus": "VERIFIED_MANUAL_RETIREMENT_COMPLETE",
+        "automaticRecovery": false,
+        "nativeChecks": [
+          {
+            "mode": "inspect",
+            "exitCode": 0
+          },
+          {
+            "mode": "close",
+            "exitCode": 0
+          },
+          {
+            "mode": "absent",
+            "exitCode": 0
+          }
+        ],
+        "worker": {
+          "signal": "SIGKILL",
+          "pidfdUsed": true,
+          "sent": true,
+          "sentAt": "2026-11-16T08:39:38.595043+00:00"
+        },
+        "browserClosedThrough": "CDP Browser.close",
+        "originalProcessIdentitiesGone": {
+          "worker": true,
+          "browser": true,
+          "campaign": true,
+          "cli": true,
+          "wrapper": true
+        },
+        "parentCampaignCliAndWrapperExitedWithoutSeparateSignal": true,
+        "registryRemoved": true,
+        "nativeAbsenceVerified": true,
+        "profilesRetained": true,
+        "accountMetadataAndLockInodesRetained": true,
+        "originalNativeResultFlagsUnchanged": true,
+        "checkpoint": {
+          "activeAttempt": null,
+          "phase": "paused",
+          "paused": true,
+          "nativeRecordsAndBudgetPreserved": true
+        }
+      },
+      "safeSummarySha256": "42b50741649112f7f751ef372dd72f8e7a117987a77dd22a21f07908f9f84eef"
+    },
+    {
+      "phase": "r4-first-completed-human-game",
+      "status": "natural-loss-with-automatic-retirement",
+      "sourceCommit": "80c3cd36157bca3873caf37563c152dc13fad6cd",
+      "runtimeManifestSha256": "5f69af229072bd7964d1b413ba25bc2f58bb421c4d53a2788afcbcdd32c774f1",
+      "strategyId": "tactical-style-engine-v3",
+      "endedAt": "2026-11-16T08:56:29.847Z",
+      "scoreKeys": {
+        "self": 1,
+        "external": 3
+      },
+      "natural": true,
+      "technicalFailure": false,
+      "commands": 147,
+      "acknowledged": 147,
+      "safeSummarySha256": "3da2defbee9af6ce9469a1aff91dbfdeaf65dda609c339041983b1a8acb64351",
+      "safeTerminalProjectionSha256": "f8603c8ea22f6193de47de81e84d82d774b58a087ada01e09bbae85753f65975",
+      "wholeCampaignEnded": false,
+      "laterAttemptsExcluded": true
+    }
+  ],
+  "continuingPublicBudget": {
+    "asOf": "2026-11-16T08:56:29.847Z",
+    "scope": "Counts stop at completion of the first r4 game; later attempts excluded.",
+    "originalStartedAt": "2026-11-16T07:36:08.346Z",
+    "originalAbsoluteDeadlineAt": "2026-11-16T11:36:08.346Z",
+    "preservedEarlierEffectiveDeadlineAt": "2026-11-16T11:33:24.883Z",
+    "effectiveNewAttemptDeadlineAt": "2026-11-16T11:15:39.703Z",
+    "maxAttemptsAcrossStages": 12,
+    "attemptsUsedInSnapshot": 6,
+    "remainingAttemptsUpperBoundAtSnapshot": 6,
+    "maxNaturalGamesAcrossStages": 10,
+    "naturalGamesCompletedInSnapshot": 1,
+    "unusedOriginalNaturalGameBudget": 9,
+    "remainingNaturalGamesUpperBoundAtSnapshot": 6,
+    "currentStageCreatedAt": "2026-11-16T08:45:39.703Z",
+    "currentStageMaxAttempts": 7,
+    "currentStageMaxNaturalGames": 7,
+    "currentStageMaxElapsedMs": 9000000,
+    "currentStageAttemptsIncludedInSnapshot": 1,
+    "currentStageNaturalGamesIncludedInSnapshot": 1,
+    "stageTransitionDidNotExtendOriginalDeadline": true,
+    "deadlineLimitsNewDispatchRatherThanForceEndingAnActiveGame": true
+  },
+  "previousCasualCandidateValidation": {
+    "status": "full-regression-and-independent-review-passed-runtime-frozen",
+    "version": "0.5.0",
+    "sourceCommit": "749c5bfbfc45f326f78d57c1042916fd296e534e",
+    "baseCommitAtValidation": "7b75200058d31a9c3f660c4f4e88335c6a158de6",
+    "changedInputSha256": {
+      "tools/keyteki-human-config.mjs": "a7dae9773ddf51442ec3827a86d975df049024f4c72aff18bc8f76b0167a2c58",
+      "tools/keyteki-human-create-public.mjs": "6e48039f60429d7995bb4ae513c7a83f143025146d2d281af816ccd34b26d1b6",
+      "tools/keyteki-human-public-room-ui.mjs": "f6c50a08d6ef70eee1b3d555183f765148c392ab497cd9bb95682b867ef9e9c7",
+      "test/runtime/portable-config.test.mjs": "92dff8817cc86066d714538c444ec11f4522f8c35ab98d9b8b55f8a3575dfdd6",
+      "test/runtime/international-ui.test.mjs": "5615f80c70bcabbbb33c0b00e3fe56eb1728aedd2ca78cefeba4a17f598b26e1",
+      "scripts/international-ui-smoke.mjs": "9d99b7768d93da39b382b0bd89fe312d70b4548fe0f0b63cba01161512658752",
+      "tools/keyteki-reconcile-unjoined.mjs": "3db2270645f2b9de580a10e52ed8d85a91568ff2a9d46fc4ef3067a7a2712059"
+    },
+    "receiptSha256": "44b66a1386bbd11a0ea37565da8c834783a8b9983fc9a6c7edbb77a35315bda9",
+    "startedAt": "2026-11-16T07:54:08.806893+00:00",
+    "endedAt": "2026-11-16T07:54:46.798573+00:00",
+    "sourceFilesStableDuringChecks": true,
+    "fullRegression": {
+      "tests": 258,
+      "pass": 258,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "packageBoundary": {
+      "files": 308,
+      "moduleEdges": 885,
+      "findings": 0
+    },
+    "diffCheckPassed": true,
+    "implementationReviewSha256": "a7ee8c416d15863ab4b97d0084f0205744f161c5a63e85e67d1874fa8873cb9c",
+    "runtimeFreeze": {
+      "sourceCommit": "749c5bfbfc45f326f78d57c1042916fd296e534e",
+      "sourceFingerprint": "6aeaa7b90edb5468e2c3e6b26da8cbe76fac0492d47edf582bb39bdf2542520e",
+      "runtimeManifestSha256": "8cef0ac3b6012a7d7afc48a363d708dc55007bbdc6fc0cdac9c0e1a19ff6b6bd",
+      "runtimeFiles": 781,
+      "externalExecutionFiles": 307,
+      "freezeReceiptSha256": "239251f68440bafa917f9503f3cf454837729211729159195794a0dae3e5cdc1",
+      "changedRuntimeFilesFromPreviousFreeze": [
+        "tools/keyteki-human-config.mjs",
+        "tools/keyteki-human-create-public.mjs",
+        "tools/keyteki-human-public-room-ui.mjs",
+        "tools/keyteki-reconcile-unjoined.mjs"
+      ],
+      "provenance": {
+        "gitCommitSource": "freeze-receipt.sourceGitHead",
+        "runtimeManifestEmbeddedSourceCommit": null,
+        "gitCommitInferredFromNullManifestField": false,
+        "runtimeFilesBoundByManifestSha256": true
+      }
+    },
+    "actualNewRuntimeLiveStatus": "native-casual-empty-room-lifecycle-observed-no-human-game-at-snapshot",
+    "testsExecutedByDocumentationTask": 0,
+    "priorFullAttempt": {
+      "receiptSha256": "6862a330e24027ba890f03e571ecfdc2e80a924dc256209ef6f98174095d23d2",
+      "startedAt": "2026-11-16T07:51:41.560578+00:00",
+      "endedAt": "2026-11-16T07:52:10.572775+00:00",
+      "tests": 258,
+      "pass": 257,
+      "fail": 1,
+      "reason": "The reviewed public-room UI changed but the recovery helper still pinned the prior exact UI hash.",
+      "resolution": "Pin updated to the exact reviewed UI SHA-256, followed by a new complete 258-test run.",
+      "retainedAsFailure": true
+    },
+    "testCountsFromSeparateRunsAreNotAdded": true,
+    "scope": {
+      "roomGameFormat": "normal",
+      "aiRoomNameMarkerRequired": true,
+      "initDefaultGameType": "beginner",
+      "roomTypeSelectedThrough": "room.gameType",
+      "newRoomTypeCliOptionAdded": false,
+      "strategyGameAdapterAndProviderChangedFromR2": false,
+      "publicRoomTypesSupportedForCreation": [
+        "beginner",
+        "casual"
+      ]
+    },
+    "liveStatusAsOf": "2026-11-16T08:07:29Z"
+  },
+  "historicalCasualFirstAttemptSnapshot": {
+    "status": "native-casual-empty-room-lifecycle-observed-matching-continues",
+    "asOf": "2026-11-16T08:07:29Z",
+    "sourceCommit": "749c5bfbfc45f326f78d57c1042916fd296e534e",
+    "runtimeManifestSha256": "8cef0ac3b6012a7d7afc48a363d708dc55007bbdc6fc0cdac9c0e1a19ff6b6bd",
+    "workflowStartedAt": "2026-11-16T08:03:24.289022+00:00",
+    "nativeCampaignCreatedAt": "2026-11-16T08:03:24.883Z",
+    "campaignIdentityVerified": true,
+    "nativeRoomCreation": {
+      "receiptSha256": "c420c737be70e6454f6b24b566ded1f0b9f5d8378d1f95c24a51a622270dcedd",
+      "observedAt": "2026-11-16T08:04:04.537Z",
+      "gameType": "casual",
+      "gameFormat": "normal",
+      "public": true,
+      "requiresPassword": false,
+      "gameStartedAtCreation": false,
+      "ownSelectedAtCreation": false
+    },
+    "deckSelection": {
+      "receiptSha256": "7cd41aa9aa67b276c2866f111282c3ac8a97087598e54ecda893e8408d422a6f",
+      "commandObserved": true,
+      "productionNativePendingSelectionCheckPassed": true,
+      "independentRawNativeSelectionFrameRetained": false,
+      "confirmationBasis": "Successful receipt through the frozen production create path requires a fresh selectdeck matching the game ID, server deck ID and non-standalone flag, plus native pending ownSelected=true and an exact deck-name match. The separate raw pending frame was not retained; this conclusion is supported by the production validation path and successful receipt.",
+      "creationReceiptOwnSelectedIsEarlierSnapshot": true,
+      "firstFullVerifiedOverrideSupplied": false,
+      "frozenSourceEvidence": {
+        "codeCommit": "749c5bfbfc45f326f78d57c1042916fd296e534e",
+        "uiFile": "tools/keyteki-human-public-room-ui.mjs",
+        "uiSha256": "f6c50a08d6ef70eee1b3d555183f765148c392ab497cd9bb95682b867ef9e9c7",
+        "createFile": "tools/keyteki-human-create-public.mjs",
+        "createSha256": "6e48039f60429d7995bb4ae513c7a83f143025146d2d281af816ccd34b26d1b6"
+      }
+    },
+    "completedNoOpponentAttempts": 1,
+    "gamesStarted": 0,
+    "terminalGames": 0,
+    "technicalFailures": 0,
+    "gameplayPassClaimed": false,
+    "wholeCampaignEnded": false,
+    "snapshotSha256": "af8eeafa797e6457acab4fbe45de08ea26c8ea578acaf083f9126b51d4001c86"
+  },
+  "preparationFailureFollowup": {
+    "status": "manual-retirement-complete-original-failure-preserved",
+    "preparationFailures": 1,
+    "gameplayTechnicalFailures": 0,
+    "originalGenericFailureExactStageKnown": false,
+    "newDiagnosticsRetroactivelyAppliedToOldFailure": false,
+    "overallZeroFailuresClaimed": false,
+    "cleanupSuccessClaimed": true,
+    "automaticRecoveryClaimed": false,
+    "safeSummarySha256": "42b50741649112f7f751ef372dd72f8e7a117987a77dd22a21f07908f9f84eef",
+    "journalSha256": "a47fb63dfd95ef73de5e0b75daccc95806ab2dbe320f4d529d8ece088fb07a03",
+    "independentReviewSha256": "ffce814010a644c5ad3d2655f7502302909325960e2caa12b038dadd27fc173d"
+  },
+  "historicalCasualFirstAttemptRunSnapshot": {
+    "phase": "casual-public-matchmaking",
+    "snapshotAt": "2026-11-16T08:07:29Z",
+    "status": "first-empty-room-attempt-complete-campaign-running",
+    "sourceBinding": {
+      "sourceGitHead": "749c5bfbfc45f326f78d57c1042916fd296e534e",
+      "runtimeManifestSha256": "8cef0ac3b6012a7d7afc48a363d708dc55007bbdc6fc0cdac9c0e1a19ff6b6bd",
+      "executionReceiptSha256": "eafed508b9357670072b79ce1e621befa5604cc734eb36b0182bf78a42b38e8f",
+      "launchReviewSha256": "8c91c4c6a3681cb5544518fb69c56b73480653d7118535aef8b68befabcba26f",
+      "budgetLedgerSha256": "974e192d32ae4dbf004c62b076ec3c4031c2443a4e17f0914f328204fde9f421"
+    },
+    "executionAtSnapshot": {
+      "startedAt": "2026-11-16T08:03:24.289022+00:00",
+      "stage": "running",
+      "campaignIdentityVerified": true,
+      "nativeCampaignCreatedAt": "2026-11-16T08:03:24.883Z",
+      "wholeCampaignEnded": false,
+      "activeAttempt": null,
+      "subsequentMatchingContinues": true
+    },
+    "attempts": [
+      {
+        "attemptId": "00001-create",
+        "attemptStartedAt": "2026-11-16T08:03:43.197Z",
+        "attemptEndedAt": "2026-11-16T08:07:08.949Z",
+        "outcome": "no-opponent",
+        "gameStarted": false,
+        "terminal": false,
+        "natural": false,
+        "technicalFailure": false,
+        "countedAsWinOrLoss": false,
+        "nativeRoomCreation": {
+          "receiptSha256": "c420c737be70e6454f6b24b566ded1f0b9f5d8378d1f95c24a51a622270dcedd",
+          "observedAt": "2026-11-16T08:04:04.537Z",
+          "gameType": "casual",
+          "gameFormat": "normal",
+          "public": true,
+          "requiresPassword": false,
+          "gameStartedAtCreation": false,
+          "ownSelectedAtCreation": false
+        },
+        "deckSelection": {
+          "receiptSha256": "7cd41aa9aa67b276c2866f111282c3ac8a97087598e54ecda893e8408d422a6f",
+          "commandObserved": true,
+          "productionNativePendingSelectionCheckPassed": true,
+          "independentRawNativeSelectionFrameRetained": false,
+          "confirmationBasis": "Successful receipt through the frozen production create path requires a fresh selectdeck matching the game ID, server deck ID and non-standalone flag, plus native pending ownSelected=true and an exact deck-name match. The separate raw pending frame was not retained; this conclusion is supported by the production validation path and successful receipt.",
+          "creationReceiptOwnSelectedIsEarlierSnapshot": true,
+          "firstFullVerifiedOverrideSupplied": false,
+          "frozenSourceEvidence": {
+            "codeCommit": "749c5bfbfc45f326f78d57c1042916fd296e534e",
+            "uiFile": "tools/keyteki-human-public-room-ui.mjs",
+            "uiSha256": "f6c50a08d6ef70eee1b3d555183f765148c392ab497cd9bb95682b867ef9e9c7",
+            "createFile": "tools/keyteki-human-create-public.mjs",
+            "createSha256": "6e48039f60429d7995bb4ae513c7a83f143025146d2d281af816ccd34b26d1b6"
+          }
+        },
+        "normalUiLeaveConfirmed": true,
+        "serverNativeLeaveConfirmed": true,
+        "nativeLeaveCompletedAt": "2026-11-16T08:07:07.271Z",
+        "seatReleased": true,
+        "runtimeRetired": true,
+        "canContinue": true,
+        "finalized": true,
+        "bridgeStarted": false,
+        "aiChatRequested": false,
+        "realProviderCalls": 0,
+        "nativeChatMessagesProduced": 0,
+        "resultSha256": "83f1787f72e08ed51dc3ba050541dc5051c8da69a95a5aa66424d1169e445ff9",
+        "nativeNoOpponentReceiptSha256": "a37ac8fd0a2cc74c1fe11ff8e230dc24d40ea4aa1894e71841419c703faa95ef"
+      }
+    ],
+    "totalsAtSnapshot": {
+      "attemptsRecorded": 1,
+      "noOpponentAttempts": 1,
+      "gamesStarted": 0,
+      "terminalGames": 0,
+      "naturalGames": 0,
+      "technicalFailures": 0,
+      "realProviderCalls": 0,
+      "nativeChatMessagesProduced": 0
+    },
+    "snapshotSha256": "af8eeafa797e6457acab4fbe45de08ea26c8ea578acaf083f9126b51d4001c86"
+  },
+  "earlyHumanInProgressSnapshot": {
+    "snapshotSha256": "e05faa5686933bb91b4246387d072d5234924fa71ca3123eee430e5fba8884a7",
+    "gameStateAsOf": "2026-11-16T08:54:43.417Z",
+    "commands": 137,
+    "acknowledged": 137,
+    "providerAcceptedCalls": 4,
+    "nativeQueuedSettled": 4,
+    "independentlySavedEarlyNativeEchoes": 1,
+    "earlyEchoReadbackAt": "2026-11-16T08:49:14.612Z",
+    "firstMessageCountDoesNotDescribeAllLaterEchoes": true,
+    "terminalResultClaimedInThatSnapshot": false
+  },
+  "firstCompletedHumanGame": {
+    "schema": "keyforge-tco-bot/public-first-human-terminal-projection/v1",
+    "snapshotScope": "The first completed r4 external-player game and the five preceding public attempts; later matchmaking and empty-room attempts are excluded.",
+    "resultEndedAt": "2026-11-16T08:56:29.847Z",
+    "summaryCapturedAt": "2026-11-16T09:00:06.500312+00:00",
+    "resourcesObservedAt": "2026-11-16T09:00:06.705425+00:00",
+    "source": {
+      "gitCommit": "80c3cd36157bca3873caf37563c152dc13fad6cd",
+      "version": "0.5.0",
+      "runtimeManifestSha256": "5f69af229072bd7964d1b413ba25bc2f58bb421c4d53a2788afcbcdd32c774f1",
+      "strategyId": "tactical-style-engine-v3",
+      "strategyField": "seat.self.codePolicy",
+      "strategyConfigSha256": "c4adf614fd7c44fccf62f5d259a0cb9702d5e3bf1fe33791443386a40bc9c03d",
+      "summaryStrategyNullIsProjectionOmission": true,
+      "origin": "https://thecrucible.online"
+    },
+    "result": {
+      "outcome": "natural-loss",
+      "winnerRole": "external",
+      "scoreKeys": {
+        "self": 1,
+        "external": 3
+      },
+      "attemptStartedAt": "2026-11-16T08:46:03.332Z",
+      "endedAt": "2026-11-16T08:56:29.847Z",
+      "nativeTerminalRecordedAt": "2026-11-16T08:56:15.492Z",
+      "fullVerified": true,
+      "natural": true,
+      "technicalFailure": false,
+      "canContinue": true,
+      "seatReleased": true,
+      "runtimeRetired": true,
+      "manualInterventionDuringGame": false
+    },
+    "gameplay": {
+      "finalStats": {
+        "states": 295,
+        "decisions": 147,
+        "commands": 147,
+        "queuedCommands": 147,
+        "acknowledged": 147,
+        "model": 0,
+        "fallbacks": 0,
+        "stale": 0
+      },
+      "ownerEpochsObserved": [
+        1
+      ],
+      "decisionEvidenceRows": 147,
+      "watchdogEnabled": true,
+      "watchdogRecoveryEvents": 0,
+      "maxHostRestarts": 0,
+      "loopGuardMaxHaltCount": 0,
+      "loopGuardMaxInterventionCount": 0
+    },
+    "historyFaultScan": {
+      "evidenceRows": 3970,
+      "decisionEvidenceRows": 147,
+      "structuredFaultCounts": {},
+      "knownWorkerFaultTextCounts": {
+        "STRATEGY_UNSUPPORTED": 0,
+        "KEYTEKI_UNSUPPORTED": 0,
+        "send-outcome-unknown": 0,
+        "send-not-confirmed": 0,
+        "unknown-send": 0,
+        "pageerror": 0,
+        "[KF bridge paused]": 0,
+        "[KF bridge invalid]": 0
+      },
+      "parseFailures": 0,
+      "noStructuredFaultObserved": true,
+      "noKnownWorkerFaultTextObserved": true
+    },
+    "social": {
+      "provider": "minimax",
+      "model": "MiniMax-M3.1-Flash",
+      "providerSourceSha256": "47c64f338d5f130fc8a3f1ae2e35dc1943fb6dca9a77372041e7e23b9f23802a",
+      "configuredLanguage": "en",
+      "realProviderAttempts": 5,
+      "acceptedProviderAttempts": 5,
+      "paidAttemptReceipts": 5,
+      "providerLatencyMs": [
+        1383,
+        4932,
+        1179,
+        5091,
+        1924
+      ],
+      "usageTotals": {
+        "freshInputTokens": 2083,
+        "cacheReadInputTokens": 632,
+        "cacheWriteInputTokens": 0,
+        "inputTokens": 2715,
+        "outputTokens": 670,
+        "totalTokens": 3385
+      },
+      "messagesReadyBySource": {
+        "model": 5
+      },
+      "messagesReadyByKind": {
+        "greeting": 1,
+        "key": 2,
+        "near_end": 1,
+        "game_end": 1
+      },
+      "nativeQueuedSettled": 5,
+      "serverEchoConfirmedInQueueReceipts": 0,
+      "independentlyObservedOwnNativeEchoCount": 5,
+      "allEchoProseEnglishAfterKnownProperNames": true,
+      "greetingEnglishAiDisclosureObserved": true,
+      "ownMessageCharacterCounts": [
+        181,
+        60,
+        45,
+        56,
+        36
+      ],
+      "allMessagesAreOpponentRepliesClaimed": false,
+      "providerAcceptanceAndQueueingAreNotServerEcho": true,
+      "rawChatIncluded": false,
+      "opponentIdentityIncluded": false
+    },
+    "retirement": {
+      "handoffPhase": "finished-left",
+      "leaveCommandAttempts": 1,
+      "serverSeatPresentBeforeLeave": true,
+      "serverSeatAbsentAfterLeave": true,
+      "nativeAbsenceObservedAt": "2026-11-16T08:56:26.908Z",
+      "hostStoppedAfterFinish": true,
+      "browserLeaseReleasedAfterFinish": true,
+      "runtimeRetired": true,
+      "workerPidAbsent": true,
+      "hostPidAbsent": true,
+      "hostRunIdMatchesRetirementCommit": true,
+      "registryEntriesReferencingExactProfile": 0,
+      "unreadableRegistryEntries": 0,
+      "chromeProcessesReferencingExactProfile": 0,
+      "browserProfileRetained": true,
+      "resourceObservationAt": "2026-11-16T09:00:06.705425+00:00"
+    },
+    "observation": {
+      "phase": "observed",
+      "naturalGameTarget": 3,
+      "naturalGamesCompletedInThisSnapshot": 1,
+      "observationTargetReached": false,
+      "unattendedBatchAcceptanceClaimed": false,
+      "campaignContinues": true,
+      "newAttemptDeadlineAt": "2026-11-16T11:15:39.703Z",
+      "laterAttemptsExcludedFromThisSnapshot": true
+    },
+    "bindings": {
+      "safeSummarySha256": "3da2defbee9af6ce9469a1aff91dbfdeaf65dda609c339041983b1a8acb64351",
+      "firstResultSha256": "e59feac77a1330f00d6ddc605d23ccb34cb3f71850c44759e2c810fa909b1a3c",
+      "terminalHandoffSha256": "01d9b129c2aea494ac277f38a1efd5e70473cc1e9cd1e74e561b14c538b05865",
+      "nativeTerminalViewSha256": "1ba460ccddf9ab637247478cc8cf7a04dd74c96a66e57f9af02b71d16334e163",
+      "firstEarlyHumanSnapshotSha256": "e05faa5686933bb91b4246387d072d5234924fa71ca3123eee430e5fba8884a7",
+      "launchReviewSha256": "bd75a68238489ad87e170dc7b46e89c95cf733f2a1a6a7b3da0020553836bd50"
+    },
+    "limits": [
+      "One human-opponent game is an early compatibility sample, not a strategy-strength, win-rate or Elo estimate.",
+      "No watchdog recovery occurred; this game does not demonstrate live recovery-path handling.",
+      "Provider acceptance, local native-queued confirmation and independent native echo observation are separate evidence.",
+      "The first greeting includes an English AI disclosure; known proper names are excluded only from prose language checking."
+    ]
+  },
+  "snapshotScope": "The first completed r4 external-player game and the five preceding public attempts; later matchmaking and empty-room attempts are excluded.",
+  "evidenceCollectedAt": "2026-11-16T09:00:06.500312+00:00",
+  "resourceEvidenceObservedAt": "2026-11-16T09:00:06.705425+00:00"
+}

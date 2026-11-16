@@ -8,6 +8,7 @@ import { exactSiteOrigin, normalizeGameSocketPaths } from './site-origin.mjs';
 import { normalizeWatchdogConfig } from './keyteki-human-watchdog.mjs';
 import { DEFAULT_CODE_POLICY, assertRegisteredCodePolicy } from './strategy-menu.mjs';
 import { normalizeChatLanguage } from './keyteki-language.mjs';
+import { normalizeBrowserNetwork } from './browser-network.mjs';
 
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const BROWSER_MODULE = new URL('./browser-provider.mjs', import.meta.url).href;
@@ -53,7 +54,7 @@ export function normalizeHumanConfig(value, { createPublic = false } = {}) {
     fail('OBSERVED_NORMAL_DECK_FLOW_REQUIRED');
   if (
     createPublic &&
-    (room.gameType !== 'beginner' ||
+    (!['beginner', 'casual'].includes(room.gameType) ||
       !/(?:\bAI\b|人工智能)/iu.test(room.name) ||
       room.gameId !== undefined ||
       room.opponentName !== undefined)
@@ -125,6 +126,7 @@ export function normalizeHumanConfig(value, { createPublic = false } = {}) {
     schema: HUMAN_SCHEMA,
     origin,
     gameSocketPaths: normalizeGameSocketPaths(value.gameSocketPaths),
+    network: normalizeBrowserNetwork(value.network),
     self: { name: self.name, ...ownDeck, mode: 'code', codePolicy },
     room: {
       name: room.name,
@@ -197,12 +199,14 @@ const sources = [
   'tools/keyteki-language.mjs',
   'tools/keyteki-ui-contract.mjs',
   'tools/browser-provider.mjs',
+  'tools/browser-network.mjs',
   'tools/browser-paths.mjs',
   'tools/site-origin.mjs',
   'tools/minimax-credentials.mjs',
   'tools/keyteki-human-watchdog.mjs',
   'tools/keyteki-human-watchdog-browser.mjs',
   'tools/keyteki-finished-room-exit.mjs',
+  'tools/keyteki-finished-runtime-retirement.mjs',
   'tools/keyteki-joined-pending-exit.mjs',
   'tools/keyteki-live-lobby.mjs',
   'tools/keyteki-finished-chat-drain.mjs',
@@ -253,9 +257,12 @@ export function humanPreflight(input, options) {
       networkRequests: 0,
       credentialContentsRead: false,
       origin: config.origin,
+      network: config.network,
       gameId: config.room.gameId ?? null,
       participants: config.participants,
-      entry: config.createPublic ? 'create-one-public-beginner-room' : 'join-observed-public-room',
+      entry: config.createPublic
+        ? 'create-one-public-' + config.room.gameType + '-room'
+        : 'join-observed-public-room',
       ...(config.createPublic
         ? { waitForOpponentMs: config.waitForOpponentMs, pairLockRequiredBeforeHost: true }
         : {}),
@@ -285,7 +292,8 @@ export function humanPreflight(input, options) {
         fs.existsSync(fileURLToPath(BROWSER_MODULE)),
       runtimeChecksStillRequired: [
         config.createPublic
-          ? 'Only our created public, unpassworded beginner/normal room may bind one non-owned opponent before host startup'
+          ? 'Only our created public, unpassworded ' + config.room.gameType +
+            '/normal room may bind one non-owned opponent before host startup'
           : 'Fresh native listing must match the supplied room/pair and remain public, unstarted, unpassworded and one-seat-open',
         'Observed SPA join and existing Select deck controls must be present on the current frontend',
         'Only our own selected deck and first native full game view may activate the controller',

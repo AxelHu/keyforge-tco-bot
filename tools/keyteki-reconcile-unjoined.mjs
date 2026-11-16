@@ -31,8 +31,8 @@ const preJoinGuard = 'CURRENT_PUBLIC_LISTING_NOT_OBSERVED';
 // This does not authorize migration of an unrelated private or older installation.
 // A generic PUBLIC_ROOM_PAIR_CHANGED is deliberately insufficient: it can occur after join.
 export const LEGACY_PREJOIN_GUARD_HASHES = Object.freeze({
-  "tools/keyteki-human-launcher.mjs": "b1cb27e39fca7735f811bc726aa37591ac32704d2b5143c1ab9e949eefb3fa67",
-  "tools/keyteki-human-public-room-ui.mjs": "91ebded2254bcc62094e9acd1bacf3255813b1c729bc1f9ad53f465b45732e11",
+  "tools/keyteki-human-launcher.mjs": "b51ea38059832c50ccae9bdfc192179c9c3c0d34e020e07071cc3a25b3c937cd",
+  "tools/keyteki-human-public-room-ui.mjs": "f6c50a08d6ef70eee1b3d555183f765148c392ab497cd9bb95682b867ef9e9c7",
   "tools/keyteki-fuzhou-ui.mjs": "6ddb20c7de53203db7c9a0515863a06bb15606a9f5fcd52cc2d414e454856a22",
   "tools/keyteki-ui-contract.mjs": "e58a29eabe7e34a5a21d1924226855bce9d78d1e4087c4d317e285786a496d76",
 });
@@ -669,6 +669,7 @@ export async function reconcileUnjoinedAttempt(configFile, requestFile, options 
       profileDir: path.join(config.output, 'reconcile-lobby', request.id),
       agentId: 'keyforge-tco-bot:reconcile-' + request.id,
       origin: config.origin,
+      network: config.network,
       timeoutMs: 15000,
     });
     requireThat(nativeAbsent(snapshot, config), 'RECONCILE_FRESH_NATIVE_ABSENCE_REQUIRED');
