@@ -425,9 +425,16 @@ async function harness(
     api: () => context.__kfHumanFaultGuardian,
     beforeReload: () => beforeReload,
     recover: async () => {
-      await delay(25);
-      await runtime.tick();
-      await flush();
+      // A health read may publish fresh progress on the first tick. Wait for the actual
+      // recovery completion instead of assuming one tick after 25 ms crosses its deadline.
+      const deadline = Date.now() + 2000;
+      while (Date.now() < deadline) {
+        await runtime.tick();
+        await flush();
+        if (events.some((row) => row.type === 'recovery-attempt-finished')) return;
+        await delay(5);
+      }
+      assert.fail('The watchdog did not finish the fixture recovery within 2 seconds');
     },
   };
 }

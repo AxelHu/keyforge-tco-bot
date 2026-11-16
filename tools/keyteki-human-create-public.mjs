@@ -62,7 +62,7 @@ export async function runCreatePublic(input, { onEvidence } = {}) {
     fs.renameSync(temp, dest);
   };
   write('preflight.json', preflight.report);
-  let pool, instance, observer;
+  let pool, instance, observer, setup, preparePlayerInFlight = false;
   const state = {
     schema: 'keyteki-public-room-preparation-v1',
     phase: 'opening-own-page',
@@ -133,17 +133,19 @@ export async function runCreatePublic(input, { onEvidence } = {}) {
     observer = new PublicRoomObserver(instance.page, config);
     state.phase = 'login-own-account';
     save();
-    const setup = ui.createFuzhouUiSetup({
+    setup = ui.createFuzhouUiSetup({
       origin: config.origin,
       gameType: config.room.gameType,
       timeoutMs: config.setupTimeoutMs,
     });
+    preparePlayerInFlight = true;
     await setup.preparePlayer({
       page: instance.page,
       player: config.self,
       credentials: readOwnCredentials(config),
       origin: config.origin,
     });
+    preparePlayerInFlight = false;
     healthy();
     state.phase = 'create-public-' + config.room.gameType + '-room';
     save();
@@ -223,6 +225,10 @@ export async function runCreatePublic(input, { onEvidence } = {}) {
     removeSignals();
     return await runOneSeat(bound.input, { output: config.output, pool, instance, observer }, { onEvidence });
   } catch (error) {
+    if (preparePlayerInFlight) {
+      const failure = setup?.getPreparePlayerFailure();
+      if (failure) state.setupFailure = failure;
+    }
     await hold(error?.code ?? 'PUBLIC_ROOM_PREPARATION_UNVERIFIED');
     return { config, state, pool, instance, hold, save };
   }
