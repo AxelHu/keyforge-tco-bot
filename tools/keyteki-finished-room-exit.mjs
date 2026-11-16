@@ -1,5 +1,6 @@
 /** Normal post-game UI leave with independent server membership readback. */
 import { fuzhouSocketEvent } from './keyteki-fuzhou-ui.mjs';
+import { keytekiUiButton } from './keyteki-ui-contract.mjs';
 import { waitForFinishedChat, FINISHED_CHAT_DRAIN_MS } from './keyteki-finished-chat-drain.mjs';
 
 const object = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
@@ -625,7 +626,7 @@ export async function leaveFinishedRoom({
     }
     if (!proof || operatorPaused() || new URL(page.url()).origin !== config.origin)
       throw Error('CURRENT_TERMINAL_VIEW_REQUIRED');
-    const leave = page.getByRole('button', { name: '离开游戏', exact: true });
+    const leave = keytekiUiButton(page, 'leaveFinished');
     if (!(await bounded(leave.isVisible(), Math.min(3000, remaining()))))
       throw Error('NORMAL_LEAVE_UNAVAILABLE');
     const ownSeatPresent = (receipt) =>

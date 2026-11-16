@@ -6,6 +6,7 @@ import { webcrypto } from 'node:crypto';
 import jsondiffpatch from 'jsondiffpatch';
 import { installHumanWatchdog } from "../../tools/keyteki-human-watchdog-browser.mjs";
 import { createWatchdogNativeObserver, WATCHDOG_APOLOGY } from "../../tools/keyteki-human-watchdog.mjs";
+import { watchdogApology } from '../../tools/keyteki-language.mjs';
 import { userscriptBootstrap } from "../../tools/keyteki-browser-bootstrap.mjs";
 
 const identity = { gameId: 'observation-fixture', playerName: 'Self', participants: ['Self', 'Visitor'] };
@@ -40,7 +41,7 @@ const raw = () => ({
 });
 
 /** Actual production userscript and watchdog, with in-memory native/server and page-boundary fixtures. */
-async function harness(t, { operatorPaused = false, dropFirst = false, callbackUnavailable = false } = {}) {
+async function harness(t, { operatorPaused = false, dropFirst = false, callbackUnavailable = false, language, apologyEchoMs = 10 } = {}) {
   const storage = new Map(),
     storageKey = 'kf-local-session:' + localUrl + ':Self',
     ledger = {
@@ -176,13 +177,14 @@ async function harness(t, { operatorPaused = false, dropFirst = false, callbackU
       room: { gameId: identity.gameId },
       self: { name: 'Self' },
       participants: identity.participants,
+      social: { enabled: false, ...(language !== undefined ? { language } : {}) },
       watchdog: {
         enabled: true,
         stallMs: 10,
         recoveryGraceMs: 10,
         modelGraceMs: 20,
         pollMs: 600000,
-        apologyEchoMs: 10,
+        apologyEchoMs,
         terminalAckMs: 10,
         maxRecoveries: 1,
       },
@@ -209,7 +211,7 @@ async function harness(t, { operatorPaused = false, dropFirst = false, callbackU
         token: 'a'.repeat(64),
         playerName: 'Self',
         managedSessions: true,
-        humanWatchdog: { enabled: true, gameId: identity.gameId, participants: identity.participants },
+        humanWatchdog: { enabled: true, gameId: identity.gameId, participants: identity.participants, ...(language !== undefined ? { language } : {}) },
       },
       fs.readFileSync(new URL("../../tools/keyteki-shared-strategy.user.js", import.meta.url), 'utf8'),
     ),
@@ -520,4 +522,28 @@ test('a pulled batch crossed by document replacement is ignored without changing
   assert.notEqual(h.runtime.watchdog.status().phase, 'disarmed');
   assert.equal(h.api.snapshot().observationPending, 1);
   assert.equal(h.writes.length, 0);
+});
+
+
+test('browser watchdog and actual userscript agree on English apology, pulled echo and one terminal concession', async (t) => {
+  const h = await harness(t, { language: 'en', apologyEchoMs: 1000 });
+  // Match the existing callback-failure scenario: consume the native echo through the independent pull.
+  h.setUnavailable(true);
+  await delay(20);
+  await h.runtime.tick();
+  await delay(20);
+  await h.runtime.tick();
+  await flush();
+  assert.deepEqual(h.writes, [['game', 'chat', watchdogApology('en')]]);
+  await h.runtime.tick();
+  await flush();
+  assert.equal(h.runtime.watchdog.status().episode.apologyEcho, true);
+  assert.deepEqual(h.writes, [['game', 'chat', watchdogApology('en')], ['game', 'concede']]);
+  await h.runtime.tick();
+  assert.equal(h.state.finished, true);
+  assert.equal(h.runtime.watchdog.status().episode.phase, 'terminal-confirmed');
+  await h.runtime.tick();
+  assert.equal(h.writes.length, 2);
+  assert.deepEqual(h.calls, { reload: 0, restart: 0 });
+  assert.deepEqual(h.ledger(), h.initialLedger);
 });

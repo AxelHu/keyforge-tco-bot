@@ -32,7 +32,7 @@ node bin/kf-auto.mjs init \
 
 origin 必须是精确的 HTTP(S) 源地址。服务器牌组 ID 不一定是 Master Vault UUID。如果部署的游戏 socket 位于另一个 origin，使用 `--game-socket-path` 显式提供每一个完整的 HTTP(S) socket 路径；默认只允许同源连接。包中没有内置前身使用的服务器地址。
 
-这些入口运行代码策略，不需要语言模型密钥。牌桌聊天默认关闭。`ownAccountNames` 应列出自己拥有的全部账号，方便匹配时排除。
+这些入口运行代码策略，不需要语言模型密钥。牌桌聊天默认关闭。国际服 `thecrucible.online` 默认使用英文聊天与故障说明，可用 `init --chat-language en` 明确写入；其他部署保持中文默认。启用模型聊天和国际服验收状态见[国际服说明](international-tco.md)。`ownAccountNames` 应列出自己拥有的全部账号，方便匹配时排除。
 
 尚未启动的席位配置可以直接修改 `self.codePolicy`，然后重新预检查；全部 89 个注册 ID 均可选择，未注册的 ID 会在配置校验阶段拒绝。不要在已经开始的 campaign 上热改策略，它绑定了配置摘要和已有记录。需要更换时，准备新的配置与输出目录，并保留原尝试的未解决状态。
 
@@ -61,7 +61,7 @@ node bin/kf-auto.mjs seat create \
 
 加入已经观察到的房间时，使用新的席位配置，填写准确的 `room.gameId`、`room.opponentName`、房间名和类型。先执行不带 `--create-public` 的 preflight，再执行 `seat run`。旧输出目录不会被静默复用于另一局。
 
-登录、选牌和房间自动操作以一个本地化的 Keyteki 部署为开发依据。当前流程使用 `/login` 和 `/api/account/login`，要求 `Select deck`、`Select row <serverDeckId>` 选牌控件，以及“新游戏”“开始”等中文房间按钮。它是具体的中英混合 UI 绑定。**当前公开 TCO 的完整无人值守流程尚未端到端实战验证**；只修改 origin 或匹配用户脚本网址，不能证明该站点已经兼容。
+登录流程使用 `/login` 和 `/api/account/login`，选牌使用 `Select deck`、`Select row <serverDeckId>` 及精确牌组名。0.4.0 补充英文房间按钮适配，保留既有中文部署的控件支持。当前国际站已有匿名页面实测，**登录后的完整无人值守对局仍未完成端到端验收**；详见[国际服配置与验收](international-tco.md)。
 
 ## 4. 为连续对局冻结运行时
 

@@ -166,6 +166,8 @@ export async function installHumanWatchdog({
   watchdog = createHumanWatchdog({
     identity,
     config: config.watchdog,
+    language: config.social?.language,
+    origin: config.origin,
     onEvent: event,
     inspect,
     recover: async ({ binding, signal, isCurrent, unknownSend }) => {

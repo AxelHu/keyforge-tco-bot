@@ -136,6 +136,7 @@ if (config.social?.enabled === true) {
   social = createBridgeSocial({
     manager,
     generate: socialProvider.generate,
+    language: config.social.language,
     strategies: strategyByName,
     knownBotNames: [...new Set([...strategyByName.keys(), ...(config.social.knownBotNames ?? [])])],
     policy: config.social.policy,

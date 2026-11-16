@@ -1,8 +1,10 @@
 /** Single-seat liveness policy. Independent of the strategy host and of any chat model. */
 import { createHash } from 'node:crypto';
 import jsondiffpatch from 'jsondiffpatch';
+import { watchdogApology } from './keyteki-language.mjs';
 
-export const WATCHDOG_APOLOGY = '抱歉，我这边的自动对战程序卡住了，恢复没有成功。这局我认输，不耽误你时间。';
+// Legacy named export remains the original Chinese text for existing callers.
+export const WATCHDOG_APOLOGY = watchdogApology('zh-CN');
 export const DEFAULT_WATCHDOG_CONFIG = Object.freeze({
   enabled: true,
   stallMs: 45000,
@@ -216,6 +218,8 @@ export function createWatchdogNativeObserver({ identity, validateFull, onState }
 export function createHumanWatchdog({
   identity,
   config: input,
+  language,
+  origin,
   clock = Date.now,
   recover,
   inspect,
@@ -224,6 +228,7 @@ export function createHumanWatchdog({
   onEvent = () => {},
 }) {
   const config = normalizeWatchdogConfig(input);
+  const apology = watchdogApology(language, origin);
   let raw = null,
     receipt = null,
     progress = null,
@@ -514,13 +519,13 @@ export function createHumanWatchdog({
               m[0]?.name === identity.playerName &&
               m[0]?.argType === 'player' &&
               m[1] === ' ' &&
-              m[2] === WATCHDOG_APOLOGY) ||
+              m[2] === apology) ||
               (m.length === 5 &&
                 m[0] === '' &&
                 m[1]?.name === identity.playerName &&
                 m[1]?.argType === 'player' &&
                 m[2] === ' ' &&
-                m[3] === WATCHDOG_APOLOGY &&
+                m[3] === apology &&
                 m[4] === ''))
           );
         });

@@ -1,7 +1,7 @@
 {
-  "schema": "keyforge-tco-publication-v3",
+  "schema": "keyforge-tco-publication-v4",
   "package": "keyforge-tco-bot",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "repository": "https://github.com/AxelHu/keyforge-tco-bot",
   "date": "2026-11-16",
   "defaultDocumentationLanguage": "zh-CN",
@@ -9,7 +9,7 @@
   "licenseScope": "Original implementation and authored knowledge; separately attributed third-party text retains its underlying rights. See NOTICE.md.",
   "validatedSourceDigest": {
     "algorithm": "sha256 of UTF-8 JSON.stringify(validatedFiles), sorted by path",
-    "sha256": "35c311f9ee05e3d6ff0404630ca7e5441d7be319875b55de789c26a8c34a5580"
+    "sha256": "459643cee32fafe5d71dbbc9e2b2c8244c0fb01682ca4eac738a0886bae2c92d"
   },
   "validatedFilesScope": "Production source, tools, CLI, scripts, tests, manifests, TypeScript configuration and the public benchmark JSON read by tests. Prose documentation and this non-recursive publication record are bound by the release Git tree.",
   "strategySelection": {
@@ -35,22 +35,88 @@
     },
     "offlineSuite": {
       "command": "npm test",
-      "startedAt": "2026-11-16T04:08:01.357485+00:00",
-      "durationSeconds": 14.7,
-      "passed": 194,
+      "startedAt": "2026-11-16T04:35:19.308587+00:00",
+      "durationSeconds": 16.862,
+      "passed": 219,
       "failed": 0,
       "skipped": 0,
       "cancelled": 0,
       "strategyTests": 14,
-      "runtimeTests": 31,
-      "transportTests": 149,
+      "runtimeTests": 53,
+      "transportTests": 152,
       "sourceStable": true,
-      "stdoutSha256": "fadd10fdbd6423b07bda0d4a3ddc5aa3ef4e8ade6b6b7350c5be8fa84b59e585"
+      "stdoutSha256": "15a563a62387c4967bc47d51a5bd2b3002bcc3c8124550449cb1bfa3e37d1a41"
+    },
+    "anonymousInternationalSite": {
+      "origin": "https://thecrucible.online",
+      "visits": 2,
+      "pages": [
+        {
+          "path": "/",
+          "status": 200
+        },
+        {
+          "path": "/login",
+          "status": 200
+        },
+        {
+          "path": "/play",
+          "status": 200
+        }
+      ],
+      "firstStartedAt": "2026-11-16T04:25:55.122Z",
+      "secondStartedAt": "2026-11-16T04:31:26.543Z",
+      "productionObserver": {
+        "connected": true,
+        "connectionEvidence": "polling:40",
+        "socketCount": 1,
+        "liveSocketCount": 1,
+        "errorCode": null,
+        "disconnected": false,
+        "hasSocketIdentity": true,
+        "noOwnPending": true,
+        "noGameObserved": true
+      },
+      "authenticated": false,
+      "loginSubmissions": 0,
+      "gameOrChatCommands": 0,
+      "gameSocketObserved": false,
+      "firstReceiptSha256": "5262b449ece016f0d5d6ac3aac8b857fa176ddefe42b811ed456c063d58708de",
+      "secondReceiptSha256": "3b09ed63e97e07717d8fb96e1268022aeada6b0263eaa64593b289c4c91ce3ab",
+      "secondScriptSha256": "931c8637f75b92858d2b5ebcf9688d5dc83bdb0681b99d61aafa107106e70edf",
+      "siteAsset": {
+        "url": "https://thecrucible.online/assets/index-CJUMV9Um.js",
+        "sha256": "383a27ffe00df3f46c336bdb925c388371fa07a8aed1af5ad803a4aaad035256",
+        "bytes": 3008504
+      },
+      "allTemporaryProfilesRemoved": true
+    },
+    "localBrowserUi": {
+      "command": "npm run test:ui",
+      "passed": true,
+      "startedAt": "2026-11-16T04:35:55.311494+00:00",
+      "durationSeconds": 6.041,
+      "evidenceKind": "real Chromium with local synthetic DOM and native-message fixtures",
+      "checks": {
+        "enPublicCreateExactDeckAndNativeLeave": true,
+        "enBoundStartKeepsDisabledGuard": true,
+        "enFinishedLeaveJoinAndSpectatorsStayExact": true,
+        "zhPublicCreateExactDeckAndNativeLeave": true,
+        "zhBoundStartKeepsDisabledGuard": true,
+        "zhFinishedLeaveJoinAndSpectatorsStayExact": true,
+        "ambiguousBilingualControlsAreRejected": true,
+        "ownedBrowserExitAndLeaseReleaseConfirmed": true
+      },
+      "remoteAuthenticatedUiVerified": false,
+      "sourceStable": true,
+      "chromiumSandbox": true,
+      "temporaryProfileRemoved": true,
+      "stdoutSha256": "0bff5c06dcc6e5ccc2b5034fde499a9ca4ed8ea1ec959cd59712c6c931126908"
     },
     "cliAndFrozenRuntime": {
       "passed": true,
-      "startedAt": "2026-11-16T04:08:58.741599+00:00",
-      "durationSeconds": 8.813,
+      "startedAt": "2026-11-16T04:35:56.741351+00:00",
+      "durationSeconds": 12.324,
       "sourceStable": true,
       "checks": [
         "help",
@@ -66,39 +132,46 @@
         "runtime-verify-api",
         "not-started"
       ],
-      "runtimeFiles": 777,
-      "runtimeBytes": 20216460,
+      "runtimeFiles": 779,
+      "runtimeBytes": 20223605,
       "externalExecutionFiles": 307,
-      "sourceFingerprint": "9f955933692a24ad6fd9012cca489db4012019de1b552a3c9c8e3dfa166d8ad6",
-      "manifestSha256": "5f24c572b1e8d43c5eb59f53c95618fe8fcaff15884e54c033e3861c13b646f0",
+      "sourceFingerprint": "6462af839d167df802a86be9b4d5b0545b4f650ef5d6c29ad156cb11802b2696",
+      "manifestSha256": "0131630dbe543312e2b08e282e06770c242a2ff3030ca646769c1bb5dc1f1694",
       "withoutSourceDocsOrGit": true,
       "credentialContentsRead": false,
       "browserStarted": false,
-      "reportSha256": "b88a50a38d9961a8c0d0b14116906982ddbbeb0b9b094a9539f350fbcfab0c76",
+      "internationalLanguageInFrozenConfig": "en",
+      "reportSha256": "62c531e4e28da66e6d8a431bd18ac6f2abf6c8c6df4d88e863488786c2339e12",
       "temporaryRuntimeRemoved": true
     },
-    "interactiveTerminal": {
-      "passed": true,
-      "realPty": true,
-      "selection": "3",
-      "writtenPolicy": "tactical-style-cycle-v2",
-      "sourceStable": true,
-      "browserStarted": false,
-      "temporaryConfigRemoved": true,
-      "reportSha256": "40c2aabbf9342cbf7a9e04d792fda0e7385c44c085d0d76e31217c221eb612ab"
+    "packageBoundary": {
+      "files": 300,
+      "moduleEdges": 848,
+      "findings": 0,
+      "stdoutSha256": "77c93c113e13bde9631bec74aae106ab51fb27ef64467db250f446210065ab3e"
     },
-    "earlierAttempts": [
-      {
-        "passed": 193,
-        "failed": 1,
-        "cause": "Isolated fixture omitted the required Playwright production dependency; the fixture now includes the real production closure."
-      },
-      {
-        "passed": 193,
-        "failed": 1,
-        "cause": "The missing-build test exposed offline preflight importing the live launcher before it could report missing compiled files; CLI preflight now calls the pure preflight function directly."
-      }
-    ],
+    "developmentChatChecks": {
+      "runs": [
+        {
+          "passed": 37,
+          "failed": 0
+        },
+        {
+          "passed": 38,
+          "failed": 0
+        },
+        {
+          "passed": 51,
+          "failed": 1
+        },
+        {
+          "passed": 52,
+          "failed": 0
+        }
+      ],
+      "failure": "A new synthetic echo arrived before the fixture recorded the attempted apology; the fixture was aligned with the existing callback-failure and independent native-pull scenario. Production recovery guards were unchanged.",
+      "finalUnifiedSuiteIncludesSubsequentCliErrorCodeRegression": true
+    },
     "newLiveGames": 0,
     "newStrategyRatingGames": 0,
     "officialTcoUnattendedValidated": false,
@@ -111,11 +184,10 @@
       "sourceUnchanged": true,
       "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/d2ab1ccc34c903d9fc5825f12db55f91156728cc/docs/validation.md"
     },
-    "historicalBrowserValidation": {
-      "version": "0.1.0",
-      "commit": "c3194401ef28547b4fd6c97651fd543edbe874d8",
-      "currentVersionRerun": false,
-      "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/c3194401ef28547b4fd6c97651fd543edbe874d8/docs/validation.md"
+    "previousRelease": {
+      "version": "0.3.0",
+      "commit": "bc440490ee71db3209a07d4a1f756e32b0da78c5",
+      "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/bc440490ee71db3209a07d4a1f756e32b0da78c5/docs/validation.md"
     }
   },
   "historicalStrategyBenchmark": {
@@ -164,11 +236,11 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "e05ee061db3fb32ed2203f981146977c843ee237fd272015c7c355e10f74e4cc"
+      "sha256": "d997ca049ba063098d1050061ed0e4e38e7087397c01fa3a993cc0cf0c02f12a"
     },
     {
       "path": "package.json",
-      "sha256": "344cda006baba5ffb71dcac3916433514b539019f46f925039faa7fcc9d1ffa1"
+      "sha256": "c67e7707e841a6bdc71cdacbd77777764310576cf64e9910a23ffd8c05bdc03e"
     },
     {
       "path": "scripts/browser-smoke.mjs",
@@ -177,6 +249,10 @@
     {
       "path": "scripts/check-package.mjs",
       "sha256": "d168abfff431dbeb795942fd76495bd03a70e61569454c72eb7a4598da4e023a"
+    },
+    {
+      "path": "scripts/international-ui-smoke.mjs",
+      "sha256": "111ea6ae5a1437bf08e45c7ae72419ebd1cb949183f508dd5acbb364e61ffb57"
     },
     {
       "path": "scripts/test.mjs",
@@ -463,16 +539,24 @@
       "sha256": "b24f558d74069e37db90a036a009ab1dc2d19c3e0dfad6dd6af1755fedb6d422"
     },
     {
+      "path": "test/runtime/chat-language.test.mjs",
+      "sha256": "50a3691a92f6c5ba29ce0ac44ebca271b525e9d798f352ae607ec014b74d905d"
+    },
+    {
       "path": "test/runtime/cli.test.mjs",
       "sha256": "8c71bd119911e8cadebaef5f7454dd70181052c80f1813196738a95c999c6087"
     },
     {
+      "path": "test/runtime/international-ui.test.mjs",
+      "sha256": "38fb8105b64d2a5cf43d0c834a6f3b6c2a21481ba7c7ffc3d8d293e214e6fb74"
+    },
+    {
       "path": "test/runtime/portable-config.test.mjs",
-      "sha256": "884bafe42ed4429a09916b1cfff07e76db452f1d506f3f306a5c783a9c8e417d"
+      "sha256": "ec59fd9e4fa1104dc1791c214bb50f96845d8c1c5a88b65f5a778f8e8fc12391"
     },
     {
       "path": "test/runtime/recovery-binding.test.mjs",
-      "sha256": "3aed22fab955aee69303f3bf4ac6419fb7a398cb6694d086147473b324fa9f37"
+      "sha256": "cd354fde95fcb9570ae9a97b847ad3789d83c14f8338fb3d5b5cc2bbb1d39eb5"
     },
     {
       "path": "test/runtime/runtime-freeze.test.mjs",
@@ -496,7 +580,7 @@
     },
     {
       "path": "test/transport/keyteki-human-watchdog-observation.test.mjs",
-      "sha256": "9bb4ec5d75d9a4497cdf39746e77f5d75b3d6c246b845963377c40d4830a4daa"
+      "sha256": "290634d69c8d8cfcb604850e80b31a5cfc66e7e5e61edf1d259df8517c0a219f"
     },
     {
       "path": "test/transport/keyteki-human-watchdog-runtime.test.mjs",
@@ -504,7 +588,7 @@
     },
     {
       "path": "test/transport/keyteki-human-watchdog.test.mjs",
-      "sha256": "24f72f33f9de9d3853e6865a727f339d3ef43f016cfbf704ca1967e29c08774b"
+      "sha256": "1e849d46cac21b885b1b3602e631b26bc9c4ac4db8eff3dbfaf4bc3989fb23f5"
     },
     {
       "path": "test/transport/keyteki-managed-sessions.test.mjs",
@@ -528,7 +612,7 @@
     },
     {
       "path": "tools/cli.mjs",
-      "sha256": "6a51ba3ad718964a29564a6013b0265597931041f9af57e71d5b8f5385ef1c4f"
+      "sha256": "3e1def8621f2ff1154dafc00b15843372643dfe57bda9c49c5bc596147494e16"
     },
     {
       "path": "tools/freeze-keyteki-live.mjs",
@@ -544,7 +628,7 @@
     },
     {
       "path": "tools/keyteki-bridge-social.mjs",
-      "sha256": "70051e1b4c7a73a9f95113fc11d1cfccdc9fd8559882ac340775dd83dad4862a"
+      "sha256": "57494091ff52d70ad84ad225177798c78449185ad7f5abc6576ec2a1adff37d8"
     },
     {
       "path": "tools/keyteki-browser-bootstrap.mjs",
@@ -552,7 +636,7 @@
     },
     {
       "path": "tools/keyteki-browser-bridge.mjs",
-      "sha256": "6724307ea79b45e439a3a6cf401f6c0c88a468e41e55ed642890524f48797877"
+      "sha256": "0e68eb745d87e19abca5f82853396de5b3f187717b5adc0466049297eb3184fc"
     },
     {
       "path": "tools/keyteki-decision-evidence.mjs",
@@ -564,11 +648,11 @@
     },
     {
       "path": "tools/keyteki-finished-room-exit.mjs",
-      "sha256": "6ccf49934a0b86bddc4088621e812b02338a3452686a1c03dee18112d143154e"
+      "sha256": "9fa064893bcfa67200dd45e89e42db771d58c26d026f6fdb767642638ebd37d0"
     },
     {
       "path": "tools/keyteki-fuzhou-ui.mjs",
-      "sha256": "8edceb51c3278195bbe75c10b2d80bee8fecbd118948d7a2c1cdad96987aa229"
+      "sha256": "6ddb20c7de53203db7c9a0515863a06bb15606a9f5fcd52cc2d414e454856a22"
     },
     {
       "path": "tools/keyteki-host-operator-intent.mjs",
@@ -580,7 +664,7 @@
     },
     {
       "path": "tools/keyteki-human-config.mjs",
-      "sha256": "6d69c0292268264dcf33320e1135f306616c93de6c8a44c36d81ffdd106f8c68"
+      "sha256": "ef3db104e53bc2de3cbffd4c557de94e1242da5a51fc7c510bcbc549279c6153"
     },
     {
       "path": "tools/keyteki-human-create-public.mjs",
@@ -588,23 +672,27 @@
     },
     {
       "path": "tools/keyteki-human-launcher.mjs",
-      "sha256": "3d67c9e5b8da50c0d8362f27b951c74b7b80795e47f78bc54bdff03684e28a74"
+      "sha256": "b1cb27e39fca7735f811bc726aa37591ac32704d2b5143c1ab9e949eefb3fa67"
     },
     {
       "path": "tools/keyteki-human-public-room-ui.mjs",
-      "sha256": "0c9f7dd4a4f3d9f2bc9ffb5c94e7840a6024dcd181a5e3ef1620cfb2caccf9eb"
+      "sha256": "91ebded2254bcc62094e9acd1bacf3255813b1c729bc1f9ad53f465b45732e11"
     },
     {
       "path": "tools/keyteki-human-watchdog-browser.mjs",
-      "sha256": "ca7c0c606a251db7e323bced2f769f6a8179e17572550624df36ec98ba963691"
+      "sha256": "0880b7493a9ac5d657de580f15aa868bb0f6b091d9a1df1b63b88a6c8f5550f5"
     },
     {
       "path": "tools/keyteki-human-watchdog.mjs",
-      "sha256": "ff2cbe51dcf646eff61b517a259a7dbdbb7265233d6baef9f0e2334885c45f1f"
+      "sha256": "05b1c8444af88f5fa69b9992c1b8cb47e9ac85a74ef5e3af9794d79bd32a7ae1"
     },
     {
       "path": "tools/keyteki-joined-pending-exit.mjs",
-      "sha256": "5aed1d5c0773206757ea0821238ef5456ddde17325f81e60ba768d3078811825"
+      "sha256": "e4639cb5bcbb448c9a96fc62edc5a3dd488911fd1648e8c131c8d3d254d6a1fa"
+    },
+    {
+      "path": "tools/keyteki-language.mjs",
+      "sha256": "41209ce343fd1d0f8d616f453c80bf380f3f5c48b2efbc54dc75bc27c972d7b6"
     },
     {
       "path": "tools/keyteki-live-campaign-policy.mjs",
@@ -648,7 +736,7 @@
     },
     {
       "path": "tools/keyteki-reconcile-unjoined.mjs",
-      "sha256": "16c35c33d7d506ef43f4b60c53002c4f5940686f2f8c9e046908875906ff36d3"
+      "sha256": "7c7516e6d88fd6dbb0191abb90b3acc779974b475234ff0fdd4d9bdc5ef2cf0e"
     },
     {
       "path": "tools/keyteki-resume-storage.mjs",
@@ -660,7 +748,7 @@
     },
     {
       "path": "tools/keyteki-shared-strategy.user.js",
-      "sha256": "6c0cf23be3d5943b27c42502c8904977366d23c8af6c7c97009e978bd3a4527f"
+      "sha256": "4bb9da617cc24f7c893e44260303e4f6c19073e618b35f3c6d10e49e20e4d68e"
     },
     {
       "path": "tools/keyteki-social-projection.mjs",
@@ -668,11 +756,15 @@
     },
     {
       "path": "tools/keyteki-social-session.mjs",
-      "sha256": "5d5cb51114035b487d908132009d87ed502b177bc87ac5d0dca99c8b2442d3da"
+      "sha256": "c9d595cf6d5fffae4578129399984739224b7cb093cc4cbef0aea01d7b9f8ff6"
     },
     {
       "path": "tools/keyteki-transport-recovery.mjs",
       "sha256": "10f558b468fdd40e83201ebbaf24a4f4e4ff62e2f6c1d7f4775326c71ab3c260"
+    },
+    {
+      "path": "tools/keyteki-ui-contract.mjs",
+      "sha256": "e58a29eabe7e34a5a21d1924226855bce9d78d1e4087c4d317e285786a496d76"
     },
     {
       "path": "tools/keyteki-unjoined-host-stop.mjs",
@@ -714,5 +806,21 @@
       "path": "tsconfig.json",
       "sha256": "941d61fa59858195473dd4c0e67e02e24c5e9e67629109b8a9cb153372dae552"
     }
-  ]
+  ],
+  "internationalTco": {
+    "defaultChatLanguage": "en",
+    "otherDeploymentDefault": "zh-CN",
+    "explicitChatLanguageOption": "--chat-language",
+    "uiLanguages": [
+      "en",
+      "zh-CN"
+    ],
+    "pendingLeaveForms": [
+      "leavegame with no argument",
+      "leavegame with exactly the bound gameId"
+    ],
+    "authenticatedEndToEndStatus": "pending-account-validation",
+    "strategyAlgorithmSourceChanged": false,
+    "guide": "docs/international-tco.md"
+  }
 }

@@ -38,6 +38,7 @@ export function createBridgeSocial(options) {
       social = createKeytekiSocialSession({
         binding,
         generate: options.generate,
+        language: options.language,
         strategy: {
           mode: strategy.mode === 'code' ? 'code' : strategy.mode === 'model-all' ? 'llm' : 'mixed',
           name: strategy.codePolicy,

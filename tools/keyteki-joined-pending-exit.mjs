@@ -2,6 +2,7 @@
 import { fuzhouSocketEvent } from './keyteki-fuzhou-ui.mjs';
 import { exactSiteOrigin } from './site-origin.mjs';
 import { readLobbyFromBrowser } from './keyteki-live-lobby.mjs';
+import { keytekiUiButton, pendingLeaveFrameMatches } from './keyteki-ui-contract.mjs';
 
 const object = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 const same = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
@@ -262,7 +263,8 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
           }
           continue;
         }
-        const event = sent && part === '42["leavegame"]' ? ['leavegame'] : fuzhouSocketEvent(part);
+        const event =
+          sent && pendingLeaveFrameMatches(part, gameId) ? ['leavegame'] : fuzhouSocketEvent(part);
         if (
           !event ||
           ![
@@ -597,7 +599,7 @@ export function installJoinedPendingRoomExit({
       };
       if (wasOwn) {
         result.route = 'single-native-leave';
-        const leave = page.getByRole('button', { name: '离开', exact: true });
+        const leave = keytekiUiButton(page, 'leavePending');
         if (!(await leave.isVisible()) || !(await leave.isEnabled()))
           fail('JOINED_PENDING_LEAVE_UI_NOT_READY');
         result.hostBeforeLeave = await status();

@@ -7,6 +7,7 @@ import { fuzhouDeckSpec } from './keyteki-fuzhou-ui.mjs';
 import { exactSiteOrigin, normalizeGameSocketPaths } from './site-origin.mjs';
 import { normalizeWatchdogConfig } from './keyteki-human-watchdog.mjs';
 import { DEFAULT_CODE_POLICY, assertRegisteredCodePolicy } from './strategy-menu.mjs';
+import { normalizeChatLanguage } from './keyteki-language.mjs';
 
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const BROWSER_MODULE = new URL('./browser-provider.mjs', import.meta.url).href;
@@ -104,7 +105,7 @@ export function normalizeHumanConfig(value, { createPublic = false } = {}) {
   if (
     !object(social) ||
     typeof social.enabled !== 'boolean' ||
-    Object.keys(social).some((key) => !['enabled', 'model', 'timeoutMs', 'maxOutputTokens'].includes(key))
+    Object.keys(social).some((key) => !['enabled', 'language', 'model', 'timeoutMs', 'maxOutputTokens'].includes(key))
   )
     fail('SOCIAL_CONFIG_INVALID');
   if (
@@ -146,6 +147,7 @@ export function normalizeHumanConfig(value, { createPublic = false } = {}) {
     ownAccountNames,
     social: {
       enabled: social.enabled,
+      language: normalizeChatLanguage(social.language, origin),
       ...(social.enabled
         ? {
             model: social.model ?? 'MiniMax-M3.1-Flash',
@@ -192,6 +194,8 @@ export function makeOneSeatBridgeConfig(config) {
 
 const sources = [
   'tools/keyteki-human-config.mjs',
+  'tools/keyteki-language.mjs',
+  'tools/keyteki-ui-contract.mjs',
   'tools/browser-provider.mjs',
   'tools/browser-paths.mjs',
   'tools/site-origin.mjs',
@@ -220,6 +224,7 @@ const sources = [
   'tools/keyteki-public-managed-observation.mjs',
   'tools/keyteki-social-projection.mjs',
   'tools/keyteki-social-session.mjs',
+  'tools/keyteki-language.mjs',
   'tools/minimax-social-provider.mjs',
   'dist/src/ai/code-strategies.js',
 ];
@@ -262,10 +267,11 @@ export function humanPreflight(input, options) {
         ? {
             enabled: true,
             model: config.social.model,
+            language: config.social.language,
             tools: false,
             credentialSource: 'MINIMAX_API_KEY environment variable',
           }
-        : { enabled: false },
+        : { enabled: false, language: config.social.language },
       watchdog: config.watchdog,
       leaveAfterFinish: config.leaveAfterFinish,
       credentials: { exists: credentialExists, privateMode: credentialPrivate },

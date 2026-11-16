@@ -10,7 +10,7 @@ engine, game server, game UI and historical match data are not included.
 
 [中文说明](README.md) · [Architecture](docs/architecture.md) ·
 [Card knowledge](docs/card-knowledge.md) · [Operations](docs/operations.md) ·
-[Strategies and historical Elo](docs/strategy-guide.md) · [Validation](docs/validation.md)
+[Strategies and historical Elo](docs/strategy-guide.md) · [International TCO and chat language](docs/international-tco.md) · [Validation](docs/validation.md)
 
 ## What is included
 
@@ -35,11 +35,11 @@ The protocol adapter was developed against Keyteki revision
 Keyteki-derived deployment; the extracted package is a new build with its own
 knowledge boundary.
 
-The browser user script includes The Crucible Online matching, but that alone
-does not establish end-to-end compatibility with the current public site's
-login, lobby and deck-picker UI. Public TCO unattended operation has not been
-validated for this release. Set the origin explicitly and consult the
-[compatibility and validation notes](docs/validation.md).
+Version 0.4.0 adds English UI and table-chat support. Anonymous visits to the
+international site's home, login and play pages have been performed. **Authenticated
+end-to-end games on international TCO are still pending validation.** Public-page
+checks and local component tests are recorded separately from live game acceptance.
+See [international TCO configuration and status](docs/international-tco.md).
 
 The managed CLI currently targets **Linux or Linux inside WSL**, Node.js
 **22.12–24.x**, Python 3 and Chromium. Process identity and recovery use Linux
@@ -67,10 +67,8 @@ The repository includes the strategy, static knowledge, bridge and supervision
 components required to run independently. After installing dependencies,
 building and supplying your local configuration on supported Linux, you can
 start through the CLI without the private KF engine or OpenClaw. The target
-site must still match the supported UI: the current flow binds to
-`Select deck`, `Select row <serverDeckId>` and the Chinese room buttons
-“新游戏” and “开始”. Changing the origin alone does not validate the current
-public TCO frontend.
+site must still match the supported login, deck-selection and room protocols.
+See the [international TCO guide](docs/international-tco.md) before using that deployment.
 
 Create a new local configuration:
 

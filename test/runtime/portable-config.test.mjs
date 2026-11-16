@@ -25,7 +25,7 @@ test('portable public creation uses the explicitly supplied account, deck and ex
   assert.equal(config.self.name, 'ExampleBot');
   assert.equal(config.self.serverDeckId, 987);
   assert.deepEqual(config.ownAccountNames, ['ExampleBot']);
-  assert.deepEqual(config.social, { enabled: false });
+  assert.deepEqual(config.social, { enabled: false, language: 'zh-CN' });
   assert.deepEqual(config.gameSocketPaths, []);
 });
 test('configuration has no implicit server, credential, opponent or account fallback', () => {
