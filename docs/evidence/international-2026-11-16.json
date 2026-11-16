@@ -1,0 +1,420 @@
+{
+  "schema": "keyforge-tco-international-acceptance-v1",
+  "recordStatus": "final",
+  "date": "2026-11-16",
+  "origin": "https://thecrucible.online",
+  "codeCommit": "1379c0f03a44cdb3810da3afb860905599422655",
+  "packageVersion": "0.4.0",
+  "publicSourceInputs": {
+    "count": 145,
+    "digest": {
+      "algorithm": "sha256 of UTF-8 JSON.stringify(validatedFiles), sorted by path",
+      "sha256": "459643cee32fafe5d71dbbc9e2b2c8244c0fb01682ca4eac738a0886bae2c92d"
+    }
+  },
+  "executedProductionInputs": {
+    "countPerRun": 119,
+    "commonManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92",
+    "manifestHashEncoding": "UTF-8 JSON, sorted keys, compact separators",
+    "allThreeRunsUnchanged": true
+  },
+  "executionKind": "Controlled private rooms between two owned accounts, orchestrated by a private harness using production components.",
+  "codePolicy": "tactical-style-engine-v3",
+  "accountLabels": "account-a is the creator of private01; account-b is the other owned account; labels are stable across runs.",
+  "setup": {
+    "registeredOwnedAccounts": 2,
+    "loginIdentityConfirmedAccounts": 2,
+    "loginApiUserVerifiedTrueAccounts": 2,
+    "emailVerificationLinkFlowExercised": false,
+    "nativeDeckImports": 4,
+    "uniqueDecks": 2,
+    "series": [
+      {
+        "code": "PV",
+        "name": "Prophetic Visions",
+        "expansion": 886
+      },
+      {
+        "code": "CotA",
+        "name": "Call of the Archons",
+        "expansion": 341
+      }
+    ]
+  },
+  "evidenceBinding": {
+    "acceptanceSummarySha256": "b489a81f0016b1bee331bfc9b9a9c2a68e7bc59e64cbba7b514e3b64ad834fea",
+    "independentReviewSha256": "201b05e30c24aae6af712e37478b6c097cb5e589f6710a62ec51b2850a72f0fe",
+    "independentReviewDecision": "APPROVE_SCOPED_RESULTS_AND_PRIVATE03_AUTOMATIC_PASS",
+    "collectorSha256": "fea8ca81a1f2d81f552c98c56e077348662b09b06b15f58588821e0b7a2052c6",
+    "anonymousDeckProjectionSha256": "2f168a90b42ce6a0934efe03d2737ba06b0fb17229a216f1d6c50482ee4134bf",
+    "setupReceiptSha256": {
+      "account-registration.json": "d3bb4235d36b6bc5497c17b264ba19976af0d54b5812516f0f76c05a7db6837b",
+      "account-registration-test.json": "8437943f568b3929fc7a6ebf379f5bf0aa8dd96494e6b6827cc2dd510daeb3c3",
+      "login-ui-inspection.json": "a071f64f63ac6af90feab20d35481bd7451ed0b979882515ec1f5e371d19c22b",
+      "deck-import-results.json": "6fe3cf88c2b3232f32f077b7f3d04c0fecdfc595edb3ca206144800e0eec95d4"
+    },
+    "secondRunErrorInspectionSha256": "575073989d18299abb9f25154d45f53a2670263f5b83775a4008640d60cf84da",
+    "siteErrorSourceReceiptSha256": "043ea96c0898f95fb21d458755ec6808a601befcaec243a85bc6de1374b1f2d3"
+  },
+  "observedSameOriginGameSocketUrls": [
+    "https://thecrucible.online/node-0/socket.io",
+    "https://thecrucible.online/node-1/socket.io"
+  ],
+  "runs": [
+    {
+      "runId": "private01",
+      "classification": "partial-manual-cleanup",
+      "automaticAcceptancePassed": false,
+      "creator": "account-a",
+      "seats": [
+        {
+          "account": "account-a",
+          "series": "PV",
+          "publicDeckUuid": "cbc1c77f-4e96-4f2c-bc67-a88d018e80b9",
+          "serverDeckId": 1137982,
+          "nativeDeckSelectionConfirmed": true,
+          "finalKeys": 3,
+          "nativeFullVerified": true,
+          "bothEnglishOpeningAuthorsEchoed": true,
+          "normalLeaveCommands": 1,
+          "positiveMembershipThenAbsenceConfirmed": true,
+          "finalResourceDisposition": "operator-released"
+        },
+        {
+          "account": "account-b",
+          "series": "CotA",
+          "publicDeckUuid": "de7701f4-e842-4b7d-b400-dcccd7edbce4",
+          "serverDeckId": 1137985,
+          "nativeDeckSelectionConfirmed": true,
+          "finalKeys": 1,
+          "nativeFullVerified": true,
+          "bothEnglishOpeningAuthorsEchoed": true,
+          "normalLeaveCommands": 1,
+          "positiveMembershipThenAbsenceConfirmed": true,
+          "finalResourceDisposition": "operator-released"
+        }
+      ],
+      "runnerSha256": "3dbaf8e4d374995b334551de62dbd4fe494d537b2e63ed0e2bc9e98d8b8894ea",
+      "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+      "execution": {
+        "startedAt": "2026-11-16T05:29:13.520694+00:00",
+        "endedAt": "2026-11-16T05:34:26.301087+00:00",
+        "exitCode": 2,
+        "reportedElapsedSeconds": 305.7
+      },
+      "game": {
+        "startedAt": "2026-11-16T05:29:46.300Z",
+        "firstTerminalObservedAtByAccount": {
+          "account-a": "2026-11-16T05:32:35.148Z",
+          "account-b": "2026-11-16T05:32:35.514Z"
+        },
+        "bothTerminalViewsAgree": true,
+        "naturalThreeKeyFinish": true,
+        "winner": "account-a"
+      },
+      "gameSocketUrl": "https://thecrucible.online/node-0/socket.io",
+      "counters": {
+        "states": 452,
+        "decisions": 223,
+        "commands": 222,
+        "acknowledged": 222,
+        "strategyModelCalls": 0,
+        "strategyFallbacks": 0,
+        "stale": 0
+      },
+      "historyScan": {
+        "allEvidenceFilesScannedCompletely": true,
+        "evidenceRows": 3702,
+        "gameplayDiagnosticRows": 2346,
+        "ever": {
+          "unsupported": false,
+          "strategyFault": false,
+          "commandRejection": false,
+          "loopGuardEvent": false,
+          "loopGuardIntervention": false,
+          "loopGuardHalt": false,
+          "loopGuardDroppedEvents": false,
+          "gameplayError": false
+        }
+      },
+      "englishChat": {
+        "providerMode": "forced-unavailable-English-fallback",
+        "bothOwnedAuthorsEchoedInBothNativeViews": true,
+        "realModelServiceCalls": 0
+      },
+      "cleanup": {
+        "automaticResourceRelease": false,
+        "operatorCleanupRequired": true,
+        "allBoundProcessIdentitiesGone": true,
+        "boundProcessIdentityCount": 5,
+        "browserProfilesAbsent": 2,
+        "registryRecordsRemaining": 0,
+        "accountCheckpointReleased": true,
+        "allFinalResourcesReleased": true,
+        "operatorCleanupCompleted": true
+      },
+      "evidenceBinding": {
+        "executionReceiptSha256": "5f87653515aaa1746df98932f5357d7ad38fc72d4132190676fd0d3926edba5a",
+        "handoffSha256": "53262beb996c9ada8c1984027c568221a35b3f28a1bd502c7b2ce9a48134ab85"
+      },
+      "failure": {
+        "privateHarnessIssue": "keepAlive:true combined with pool.close() retained the browsers; operator cleanup was required.",
+        "recordedRunnerFailureCode": "OPERATOR_SIGNAL",
+        "productionSourceChanged": false
+      }
+    },
+    {
+      "runId": "private02",
+      "classification": "partial-manual-cleanup",
+      "automaticAcceptancePassed": false,
+      "creator": "account-b",
+      "seats": [
+        {
+          "account": "account-a",
+          "series": "CotA",
+          "publicDeckUuid": "de7701f4-e842-4b7d-b400-dcccd7edbce4",
+          "serverDeckId": 1137983,
+          "nativeDeckSelectionConfirmed": true,
+          "finalKeys": 1,
+          "nativeFullVerified": true,
+          "bothEnglishOpeningAuthorsEchoed": true,
+          "normalLeaveCommands": 1,
+          "positiveMembershipThenAbsenceConfirmed": true,
+          "finalResourceDisposition": "operator-released"
+        },
+        {
+          "account": "account-b",
+          "series": "PV",
+          "publicDeckUuid": "cbc1c77f-4e96-4f2c-bc67-a88d018e80b9",
+          "serverDeckId": 1137984,
+          "nativeDeckSelectionConfirmed": true,
+          "finalKeys": 3,
+          "nativeFullVerified": true,
+          "bothEnglishOpeningAuthorsEchoed": true,
+          "normalLeaveCommands": 1,
+          "positiveMembershipThenAbsenceConfirmed": true,
+          "finalResourceDisposition": "operator-released"
+        }
+      ],
+      "runnerSha256": "7dec17841bfc727a9efb698523485558965a0ead598174713687b87b11522f1c",
+      "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+      "execution": {
+        "startedAt": "2026-11-16T05:38:22.686709+00:00",
+        "endedAt": "2026-11-16T05:43:25.246658+00:00",
+        "exitCode": 2,
+        "reportedElapsedSeconds": 295.5
+      },
+      "game": {
+        "startedAt": "2026-11-16T05:39:35.614Z",
+        "firstTerminalObservedAtByAccount": {
+          "account-b": "2026-11-16T05:42:59.547Z",
+          "account-a": "2026-11-16T05:43:00.013Z"
+        },
+        "bothTerminalViewsAgree": true,
+        "naturalThreeKeyFinish": true,
+        "winner": "account-b"
+      },
+      "gameSocketUrl": "https://thecrucible.online/node-0/socket.io",
+      "counters": {
+        "states": 545,
+        "decisions": 270,
+        "commands": 270,
+        "acknowledged": 270,
+        "strategyModelCalls": 0,
+        "strategyFallbacks": 0,
+        "stale": 0
+      },
+      "historyScan": {
+        "allEvidenceFilesScannedCompletely": true,
+        "evidenceRows": 4466,
+        "gameplayDiagnosticRows": 2831,
+        "ever": {
+          "unsupported": false,
+          "strategyFault": false,
+          "commandRejection": false,
+          "loopGuardEvent": false,
+          "loopGuardIntervention": false,
+          "loopGuardHalt": false,
+          "loopGuardDroppedEvents": false,
+          "gameplayError": false
+        }
+      },
+      "englishChat": {
+        "providerMode": "forced-unavailable-English-fallback",
+        "bothOwnedAuthorsEchoedInBothNativeViews": true,
+        "realModelServiceCalls": 0
+      },
+      "cleanup": {
+        "automaticResourceRelease": false,
+        "operatorCleanupRequired": true,
+        "allBoundProcessIdentitiesGone": true,
+        "boundProcessIdentityCount": 5,
+        "browserProfilesAbsent": 2,
+        "registryRecordsRemaining": 0,
+        "accountCheckpointReleased": true,
+        "allFinalResourcesReleased": true,
+        "operatorCleanupCompleted": true
+      },
+      "evidenceBinding": {
+        "executionReceiptSha256": "8fd53ab33db24f7f8504faa5d866124e8afc17c6d324f2e472755c671685b060",
+        "handoffSha256": "8e52ac4271990374f9ab7e5473b87bb32efda1a4908f2c17a1356bb9ff816b6c"
+      },
+      "failure": {
+        "code": "PRIVATE_BROWSER_PAGE_ERROR",
+        "siteComponent": "lobby gamestate reducer",
+        "siteOperation": "spectators.some",
+        "kind": "TypeError",
+        "timing": "After terminal quiescence and one Leave, approximately 0.2 seconds before native absence confirmation.",
+        "originalErrorRecordedByHarnessCallback": false,
+        "originalErrorRecoveredReadOnlyViaRetainedCdp": true,
+        "privateHarnessOperatorSetting": true,
+        "productionHandlerOperatorSetting": false,
+        "productionEquivalentFailureReproduced": false,
+        "productionSourceChanged": false
+      }
+    },
+    {
+      "runId": "private03",
+      "classification": "pass",
+      "automaticAcceptancePassed": true,
+      "creator": "account-a",
+      "seats": [
+        {
+          "account": "account-a",
+          "series": "PV",
+          "publicDeckUuid": "cbc1c77f-4e96-4f2c-bc67-a88d018e80b9",
+          "serverDeckId": 1137982,
+          "nativeDeckSelectionConfirmed": true,
+          "finalKeys": 3,
+          "nativeFullVerified": true,
+          "bothEnglishOpeningAuthorsEchoed": true,
+          "normalLeaveCommands": 1,
+          "positiveMembershipThenAbsenceConfirmed": true,
+          "finalResourceDisposition": "automatically-released"
+        },
+        {
+          "account": "account-b",
+          "series": "CotA",
+          "publicDeckUuid": "de7701f4-e842-4b7d-b400-dcccd7edbce4",
+          "serverDeckId": 1137985,
+          "nativeDeckSelectionConfirmed": true,
+          "finalKeys": 2,
+          "nativeFullVerified": true,
+          "bothEnglishOpeningAuthorsEchoed": true,
+          "normalLeaveCommands": 1,
+          "positiveMembershipThenAbsenceConfirmed": true,
+          "finalResourceDisposition": "automatically-released"
+        }
+      ],
+      "runnerSha256": "dfdbcd851861ad2e34a1421322b869874e9736453ff169167f2b7a6ccdfe4c79",
+      "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+      "execution": {
+        "startedAt": "2026-11-16T06:00:19.595569+00:00",
+        "endedAt": "2026-11-16T06:04:19.881057+00:00",
+        "exitCode": 0,
+        "reportedElapsedSeconds": 234.1
+      },
+      "game": {
+        "startedAt": "2026-11-16T06:01:01.496Z",
+        "firstTerminalObservedAtByAccount": {
+          "account-a": "2026-11-16T06:03:51.520Z",
+          "account-b": "2026-11-16T06:03:51.826Z"
+        },
+        "bothTerminalViewsAgree": true,
+        "naturalThreeKeyFinish": true,
+        "winner": "account-a"
+      },
+      "gameSocketUrl": "https://thecrucible.online/node-1/socket.io",
+      "counters": {
+        "states": 414,
+        "decisions": 204,
+        "commands": 204,
+        "acknowledged": 204,
+        "strategyModelCalls": 0,
+        "strategyFallbacks": 0,
+        "stale": 0
+      },
+      "historyScan": {
+        "allEvidenceFilesScannedCompletely": true,
+        "evidenceRows": 3513,
+        "gameplayDiagnosticRows": 2271,
+        "ever": {
+          "unsupported": false,
+          "strategyFault": false,
+          "commandRejection": false,
+          "loopGuardEvent": false,
+          "loopGuardIntervention": false,
+          "loopGuardHalt": false,
+          "loopGuardDroppedEvents": false,
+          "gameplayError": false
+        }
+      },
+      "englishChat": {
+        "providerMode": "forced-unavailable-English-fallback",
+        "bothOwnedAuthorsEchoedInBothNativeViews": true,
+        "realModelServiceCalls": 0
+      },
+      "cleanup": {
+        "automaticResourceRelease": true,
+        "operatorCleanupRequired": false,
+        "allBoundProcessIdentitiesGone": true,
+        "boundProcessIdentityCount": 5,
+        "browserProfilesAbsent": 2,
+        "registryRecordsRemaining": 0,
+        "accountCheckpointReleased": true,
+        "allFinalResourcesReleased": true
+      },
+      "evidenceBinding": {
+        "executionReceiptSha256": "aed3a819b39cda509f107676082839089212d23512f977215700cfe9d7b986f8",
+        "handoffSha256": "f51f8b2f7c0d92b27cd180654bac6b78f43004878880143bfd66550bf61a4593"
+      },
+      "browserDiagnostics": {
+        "recordedPageErrorCount": 0,
+        "newTerminalLeavePendingErrorBranchObserved": false,
+        "newTerminalLeavePendingEventsResolved": 0,
+        "liveNegativeOperatorPauseInterleavingsTested": false
+      }
+    }
+  ],
+  "totals": {
+    "naturalTerminalGames": 3,
+    "automaticPassRuns": 1,
+    "manualCleanupPartialRuns": 2,
+    "states": 1411,
+    "decisions": 697,
+    "commands": 696,
+    "acknowledgedCommands": 696,
+    "evidenceRowsScanned": 11681,
+    "gameplayRowsScanned": 7448,
+    "gameplayFaultCategoriesEverObserved": false,
+    "nativeSeatsDeparted": 6,
+    "exactBoundProcessIdentitiesGone": 15,
+    "browserProfilesAbsent": 6,
+    "registryRecordsRemaining": 0,
+    "allAccountCheckpointsReleased": true,
+    "realModelServiceCalls": 0,
+    "humanOpponentGames": 0,
+    "ratingGames": 0
+  },
+  "validationScope": {
+    "authenticatedOwnedAccountPrivateGameLifecyclePassed": true,
+    "automaticPassRun": "private03",
+    "earlierPartialRunsRemainPartial": true,
+    "paidModelChatTested": false,
+    "publicOpponentCompatibilityTested": false,
+    "crossOriginGameNodeTested": false,
+    "watchdogAutomaticRecoveryTested": false,
+    "continuousPublicCampaignTested": false,
+    "fullCardCatalogTested": false,
+    "strategyEloOrWinRateEstimate": false,
+    "newTerminalLeavePendingDiagnosticBranchObservedLive": false,
+    "newTerminalLeavePendingDiagnosticEventsResolvedLive": 0,
+    "negativeOperatorPauseInterleavingsTestedLive": false
+  },
+  "privateHarnessChecks": {
+    "pureMemoryTimingChecksPassed": 35,
+    "independentSourceReviewCompleted": true,
+    "isLiveSiteFaultReproduction": false
+  },
+  "privacyProjection": "Account labels replace names; no emails, secrets, tokens, cookies, credential paths, personal absolute paths, room passwords, complete native states or chat text are included."
+}
