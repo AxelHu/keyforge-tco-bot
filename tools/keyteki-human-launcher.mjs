@@ -25,6 +25,8 @@ import { createOneSeatBridgeBinding, managedHumanBootstrap } from './keyteki-hum
 import { installHumanWatchdog, createHumanHoldController } from './keyteki-human-watchdog-browser.mjs';
 import { installFinishedRoomExit } from './keyteki-finished-room-exit.mjs';
 import { installJoinedPendingRoomExit } from './keyteki-joined-pending-exit.mjs';
+import { installDisconnectedOpponentExit } from './keyteki-disconnected-opponent-exit.mjs';
+import { stopDisconnectedHost } from './keyteki-disconnected-host-stop.mjs';
 import { releaseOwnedHumanBrowser } from './keyteki-owned-browser-release.mjs';
 import { hostStopWasRequested, bindRecoveredHostConnection } from './keyteki-host-operator-intent.mjs';
 import { retireFinishedHumanRuntime } from './keyteki-finished-runtime-retirement.mjs';
@@ -109,6 +111,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
     watchdogRuntime,
     finishedExit,
     joinedPendingExit,
+    disconnectedExit,
     hostIdentity,
     unjoinedHostBinding,
     instance = prepared?.instance,
@@ -187,6 +190,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
   const mirror = new wireTools.KeytekiStateStream();
   const signal = () => {
     joinedPendingExit?.close();
+    disconnectedExit?.close();
     void hold('OPERATOR_SIGNAL_PAUSED_AND_PRESERVED', { operator: true });
   };
   process.on('SIGINT', signal);
@@ -356,6 +360,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
             humanWatchdog: {
               enabled: observationEnabled,
               language: config.social.language,
+              allowDisconnectedOpponentExit: config.disconnectedOpponentExit.enabled,
               gameId: config.room.gameId,
               participants: config.participants,
             },
@@ -488,6 +493,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
             releaseBrowser: () => releaseOwnedHumanBrowser({ pool, instance, config }),
             afterRetired: () => {
               observer?.dispose();
+              disconnectedExit?.close();
               process.off('SIGINT', signal);
               process.off('SIGTERM', signal);
             },
@@ -499,6 +505,28 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
             : 'FINISHED_RUNTIME_RETIREMENT_UNCONFIRMED';
         }
         handoff();
+      },
+    });
+  }
+  if (config.disconnectedOpponentExit.enabled && watchdogRuntime && instance && connection) {
+    disconnectedExit = installDisconnectedOpponentExit({
+      config, state, page: instance.page, watchdog: watchdogRuntime, connection,
+      getHostIdentity: () => hostIdentity,
+      inspectHost: () => hostRequest('/status'),
+      save: () => {
+        if (state.disconnectedOpponentExit) write('disconnected-opponent-exit.json', state.disconnectedOpponentExit);
+        handoff();
+      },
+      stopHost: (departure, expectedHost) => stopDisconnectedHost(config, {
+        expectedHost, expectedConnection: { ...connection }, departure,
+      }),
+      releaseBrowser: () => releaseOwnedHumanBrowser({ pool, instance, config }),
+      closePeers: () => {
+        watchdogRuntime.close(); finishedExit?.close(); joinedPendingExit?.close();
+      },
+      afterRetired: () => {
+        observer?.dispose();
+        process.off('SIGINT', signal); process.off('SIGTERM', signal);
       },
     });
   }
@@ -541,6 +569,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
       release: () => releaseOwnedHumanBrowser({ pool, instance, config }),
       afterRetired: () => {
         observer.dispose();
+        disconnectedExit?.close();
         process.off('SIGINT', signal);
         process.off('SIGTERM', signal);
       },
@@ -559,6 +588,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
     watchdog: watchdogRuntime,
     finishedExit,
     joinedPendingExit,
+    disconnectedExit,
     unjoinedHostBinding,
     save: handoff,
   };

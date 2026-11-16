@@ -11,6 +11,7 @@ import { acquireBridgeRuntime, readRuntimeJson, writeRuntimeJson } from './keyte
 import { createBridgeSocial } from './keyteki-bridge-social.mjs';
 import { recordHostOperatorIntent } from './keyteki-host-operator-intent.mjs';
 import { acceptAutomaticUnjoinedStop } from './keyteki-unjoined-host-stop.mjs';
+import { acceptAutomaticDisconnectedStop } from './keyteki-disconnected-host-stop.mjs';
 import { createMinimaxSocialProvider } from './minimax-social-provider.mjs';
 import { configuredMinimaxKey } from './minimax-credentials.mjs';
 import { normalizeGameSocketPaths } from './site-origin.mjs';
@@ -220,6 +221,7 @@ const server = http.createServer(async (req, res) => {
     const data = await body(req);
     if (req.url === '/operator' && req.method === 'POST') {
       const automaticStop = data.action === 'stop' && data.intent === 'automatic-unjoined-retirement';
+      const disconnectedStop = data.action === 'stop' && data.intent === 'automatic-disconnected-retirement';
       const finishQuiescence = data.action === 'pause' && data.intent === 'automatic-finish-quiescence';
       if (automaticStop) {
         automaticRetirement = acceptAutomaticUnjoinedStop({
@@ -228,6 +230,11 @@ const server = http.createServer(async (req, res) => {
           configSha256,
           status: status(),
           request: data,
+        });
+      } else if (disconnectedStop) {
+        automaticRetirement = acceptAutomaticDisconnectedStop({
+          profile: runtime?.root, runId: runtime?.runId, pid: process.pid,
+          configSha256, config, status: status(), request: data,
         });
       } else if (finishQuiescence) {
         const current = status();
@@ -245,7 +252,7 @@ const server = http.createServer(async (req, res) => {
           pid: process.pid,
           ...(automaticRetirement ? { automaticRetirement } : {}),
         });
-        void stop({ automatic: automaticStop });
+        void stop({ automatic: automaticStop || disconnectedStop });
         return;
       } else throw Error('Unknown operator action');
       if (operatorPaused) social?.close();

@@ -87,6 +87,7 @@ export async function retireUnjoinedAttempt(
   if (stopped?.stopped !== true || !canRetireUnjoined(live)) return false;
   live.watchdog?.close();
   live.finishedExit?.close();
+  live.disconnectedExit?.close();
   await release({ pool: live.pool, instance: live.instance, config: live.config });
   if (operatorChanged() || !canRetireUnjoined(live)) {
     live.state.operatorPaused = true;

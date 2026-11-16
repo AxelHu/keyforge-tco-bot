@@ -161,7 +161,23 @@ export function createWatchdogNativeObserver({ identity, validateFull, onState }
     receipt = null,
     lastFrameSha256 = null;
   const retired = new Set();
+  const nativeListeners = new Set();
+  const notifyNative = (entry) => {
+    try { entry.listener(raw, { ...receipt }); }
+    catch {
+      // Optional lifecycle observers fail closed independently of the own-action watchdog.
+      nativeListeners.delete(entry);
+      try { entry.onError?.(); } catch {}
+    }
+  };
   return {
+    subscribeNative(listener, onError) {
+      if (typeof listener !== 'function') throw Error('watchdog-native-listener-required');
+      const entry = { listener, onError };
+      nativeListeners.add(entry);
+      if (raw && receipt) notifyNative(entry);
+      return () => nativeListeners.delete(entry);
+    },
     receive(frame) {
       if (
         !object(frame) ||
@@ -209,6 +225,7 @@ export function createWatchdogNativeObserver({ identity, validateFull, onState }
       };
       lastFrameSha256 = frameSha256;
       onState(raw, receipt);
+      for (const entry of [...nativeListeners]) notifyNative(entry);
       return { accepted: true, receipt: { ...receipt } };
     },
     snapshot: () => raw,

@@ -9,6 +9,7 @@ import { normalizeWatchdogConfig } from './keyteki-human-watchdog.mjs';
 import { DEFAULT_CODE_POLICY, assertRegisteredCodePolicy } from './strategy-menu.mjs';
 import { normalizeChatLanguage } from './keyteki-language.mjs';
 import { normalizeBrowserNetwork } from './browser-network.mjs';
+import { normalizeDisconnectedOpponentExit } from './keyteki-disconnected-exit-contract.mjs';
 
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const BROWSER_MODULE = new URL('./browser-provider.mjs', import.meta.url).href;
@@ -122,6 +123,10 @@ export function normalizeHumanConfig(value, { createPublic = false } = {}) {
         social[key] > (key === 'timeoutMs' ? 180000 : 8192))
     )
       fail('SOCIAL_LIMIT_INVALID');
+  const disconnectedOpponentExit = normalizeDisconnectedOpponentExit(value.disconnectedOpponentExit);
+  if (disconnectedOpponentExit.enabled && (origin !== 'https://thecrucible.online' ||
+      value.watchdog?.enabled === false || value.leaveAfterFinish === false))
+    fail('DISCONNECTED_EXIT_LIFECYCLE_REQUIRED');
   return Object.freeze({
     schema: HUMAN_SCHEMA,
     origin,
@@ -146,6 +151,7 @@ export function normalizeHumanConfig(value, { createPublic = false } = {}) {
     leaveAfterFinish: value.leaveAfterFinish !== false,
     decisionEvidence: value.decisionEvidence === true,
     watchdog: normalizeWatchdogConfig(value.watchdog),
+    disconnectedOpponentExit,
     ownAccountNames,
     social: {
       enabled: social.enabled,
@@ -207,6 +213,9 @@ const sources = [
   'tools/keyteki-human-watchdog-browser.mjs',
   'tools/keyteki-finished-room-exit.mjs',
   'tools/keyteki-finished-runtime-retirement.mjs',
+  'tools/keyteki-disconnected-exit-contract.mjs',
+  'tools/keyteki-disconnected-opponent-exit.mjs',
+  'tools/keyteki-disconnected-host-stop.mjs',
   'tools/keyteki-joined-pending-exit.mjs',
   'tools/keyteki-live-lobby.mjs',
   'tools/keyteki-finished-chat-drain.mjs',
@@ -280,6 +289,7 @@ export function humanPreflight(input, options) {
           }
         : { enabled: false, language: config.social.language },
       watchdog: config.watchdog,
+      disconnectedOpponentExit: config.disconnectedOpponentExit,
       leaveAfterFinish: config.leaveAfterFinish,
       credentials: { exists: credentialExists, privateMode: credentialPrivate },
       outputFresh: !fs.existsSync(config.output),

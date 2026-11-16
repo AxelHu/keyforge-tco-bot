@@ -1,3 +1,4 @@
+import { verifiedDisconnectedDeparture } from './keyteki-disconnected-exit-contract.mjs';
 import { joinedPendingSeatReleased } from './keyteki-joined-pending-exit.mjs';
 import { verifiedUnjoinedReconciliation } from './keyteki-unjoined-reconciliation-contract.mjs';
 /** Pure planning/accounting for continuous one-seat play. No I/O, browser writes or socket sends. */
@@ -378,18 +379,25 @@ export function classifyCampaignAttempt({
     ].every((n) => n === undefined || n === null || n === 0) &&
     observedCommands.every((n) => n === 0) &&
     joinedPendingSeatReleased(handoff.joinedPendingExit, { origin, gameId, selfName, participants });
+  const disconnectedDeparture = Boolean(
+    identityValid && started && !terminal && !operatorPaused && !handoff.held &&
+    !handoff.lastGameplayFault && !handoff.evidenceWriteFailures && handoff.runtimeRetired === true &&
+    verifiedDisconnectedDeparture(handoff.disconnectedOpponentExit, {
+      origin, gameId, playerName: selfName, participants, requireRetired: true,
+    }),
+  );
   const seatReleased = terminal
     ? finishedSeatReleased(handoff.roomExit, gameId, selfName)
-    : empty || missValid || joinedPending || reconciledUnjoined;
+    : empty || missValid || joinedPending || disconnectedDeparture || reconciledUnjoined;
   const retired = handoff.runtimeRetired === true || reconciledUnjoined;
   const awaitingDriverExit =
-    !reconciledUnjoined && (missValid || joinedPending) && retired && exitCode === null;
+    !reconciledUnjoined && (missValid || joinedPending || disconnectedDeparture) && retired && exitCode === null;
   const canContinue =
     identityValid &&
     !operatorPaused &&
     retired &&
     seatReleased &&
-    (terminal || empty || reconciledUnjoined || ((missValid || joinedPending) && exitCode === 0)) &&
+    (terminal || empty || reconciledUnjoined || ((missValid || joinedPending || disconnectedDeparture) && exitCode === 0)) &&
     (reconciledUnjoined || exitCode === null || exitCode === 0);
   let outcome;
   if (!identityValid) outcome = 'identity-unverified';
@@ -400,6 +408,7 @@ export function classifyCampaignAttempt({
   else if (terminal) outcome = 'terminal-non-natural';
   else if (empty) outcome = 'no-opponent';
   else if (joinedPending) outcome = 'joined-pending-departure';
+  else if (disconnectedDeparture) outcome = 'opponent-disconnected-departure';
   else if (missValid || reconciledUnjoined) outcome = 'matchmaking-miss';
   else if (started) outcome = 'active-or-unresolved';
   else outcome = handoff.held === true || exitCode !== null ? 'setup-unresolved' : 'preparing';
@@ -445,6 +454,7 @@ export function classifyCampaignAttempt({
       : {}),
     identityValid: Boolean(identityValid),
     ...(joinedPending ? { joinedPendingExit: handoff.joinedPendingExit } : {}),
+    ...(disconnectedDeparture ? { disconnectedOpponentExit: handoff.disconnectedOpponentExit } : {}),
     seatReleased: Boolean(seatReleased),
     runtimeRetired: retired,
     canContinue: Boolean(canContinue),
@@ -471,7 +481,7 @@ export function campaignHealth(records, overrides = {}) {
   const latestByGame = new Map();
   for (const row of settled)
     if (row.started === true && text(row.gameId, 150)) latestByGame.set(row.gameId, row);
-  const games = [...latestByGame.values()];
+  const games = [...latestByGame.values()].filter((row) => row.outcome !== 'opponent-disconnected-departure');
   const failures = (list) => list.filter((row) => row.technicalFailure === true).length;
   const early = games.slice(0, settings.earlyGames),
     rolling = games.slice(-settings.rollingGames);
@@ -508,6 +518,7 @@ export function campaignHealth(records, overrides = {}) {
     waitingAttempts: settled.filter((row) =>
       ['no-opponent', 'joined-pending-departure'].includes(row.outcome),
     ).length,
+    disconnectedOpponentDepartures: settled.filter((row) => row.outcome === 'opponent-disconnected-departure').length,
     joinedPendingDepartures: settled.filter((row) => row.outcome === 'joined-pending-departure').length,
     matchmakingMisses: settled.filter((row) => row.outcome === 'matchmaking-miss').length,
     thresholds: {
