@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { fuzhouDeckSpec } from './keyteki-fuzhou-ui.mjs';
 import { exactSiteOrigin, normalizeGameSocketPaths } from './site-origin.mjs';
 import { normalizeWatchdogConfig } from './keyteki-human-watchdog.mjs';
+import { DEFAULT_CODE_POLICY, assertRegisteredCodePolicy } from './strategy-menu.mjs';
 
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const BROWSER_MODULE = new URL('./browser-provider.mjs', import.meta.url).href;
@@ -60,8 +61,9 @@ export function normalizeHumanConfig(value, { createPublic = false } = {}) {
   if (!absolute(value.credentialsPath) || !absolute(value.output)) fail('ABSOLUTE_LOCAL_PATHS_REQUIRED');
   if (path.parse(path.resolve(value.output)).root === path.resolve(value.output))
     fail('OUTPUT_DIRECTORY_REQUIRED');
-  const codePolicy = self.codePolicy ?? 'tactical-style-engine-v3';
+  const codePolicy = self.codePolicy ?? DEFAULT_CODE_POLICY;
   if (!/^[a-z][a-z0-9-]{1,100}$/.test(codePolicy)) fail('CODE_POLICY_ID_INVALID');
+  assertRegisteredCodePolicy(codePolicy);
   const ownPublicDeckList = value.ownPublicDeckList;
   if (
     ownPublicDeckList !== undefined &&

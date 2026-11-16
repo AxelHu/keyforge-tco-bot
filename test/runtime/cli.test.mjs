@@ -15,7 +15,7 @@ const temporary = (t) => {
 };
 test('CLI routing preserves offline preflight, explicit execution, and lifecycle action identity', () => {
   assert.deepEqual(commandFor(['preflight', '--config', 'seat.json', '--create-public']), {
-    script: 'keyteki-human-launcher.mjs',
+    operation: 'offline-preflight',
     args: ['--config', 'seat.json', '--create-public'],
   });
   assert.throws(() => commandFor(['preflight', '--run']), /PREFLIGHT_CANNOT_RUN/);

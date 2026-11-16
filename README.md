@@ -6,7 +6,7 @@
 
 [English](README.en.md) · [架构](docs/architecture.md) ·
 [卡牌知识](docs/card-knowledge.md) · [使用与恢复](docs/operations.md) ·
-[验证记录](docs/validation.md)
+[策略选单与历史 Elo](docs/strategy-guide.md) · [验证记录](docs/validation.md)
 
 ## 包含哪些能力
 
@@ -39,9 +39,46 @@ node bin/kf-auto.mjs --help
 
 也可以显式配置系统中已有的 Chromium 可执行文件。安装依赖、构建和运行离线测试不会登录服务器或开始对局。
 
-根据示例和[操作指南](docs/operations.md)，填写自己的服务器 origin、账号、牌组标识和私有凭据文件路径。将真实配置、浏览器 profile 和决策日志放在 Git 忽略的 `.local/` 目录下；凭据文件必须只允许其所有者访问。
+## 快速启动
 
-CLI 提供预检查、单席加入/建房、宿主管理、连续对局管理、运行时冻结和显式恢复。实际开局前先执行 preflight。操作指南会区分进程暂停、已确认原生席位退出和运行资源完全退役。
+本仓已经包含独立运行所需的策略、静态知识、桥接和后台工具。在支持的 Linux 环境完成依赖、构建及本地配置后，可以直接通过 CLI 启动，不需要原私有 KF 引擎或 OpenClaw。目标站点仍需兼容当前支持的 UI；现有流程绑定了 `Select deck`、`Select row <serverDeckId>` 以及“新游戏”“开始”等中英混合控件，不能只凭改好 origin 就认定当前公开 TCO 已兼容。
+
+创建自己的新配置：
+
+```sh
+node bin/kf-auto.mjs init \
+  --directory "$PWD/.local/my-bot" \
+  --origin 'https://your-keyteki.example' \
+  --account 'YourAccount' \
+  --server-deck-id 12345 \
+  --deck-name 'Your deck name' \
+  --policy tactical-style-engine-v3
+```
+
+在本地生成的 `credentials.json` 中填入实际密码，再执行：
+
+```sh
+node bin/kf-auto.mjs preflight \
+  --config "$PWD/.local/my-bot/seat.json" \
+  --create-public
+
+node bin/kf-auto.mjs seat create \
+  --config "$PWD/.local/my-bot/seat.json"
+```
+
+预检查不读密码、不登录，也不认证站点界面；`seat create` 才会打开浏览器并尝试建房。加入已有房间、冻结运行时和连续对局见[操作指南](docs/operations.md)。将真实配置、浏览器 profile 和决策日志放在 Git 忽略的 `.local/` 下，凭据文件只允许其所有者访问。
+
+## 策略选单
+
+```sh
+node bin/kf-auto.mjs strategies list
+node bin/kf-auto.mjs strategies list --all
+node bin/kf-auto.mjs strategies show tactical-style-engine-v3
+```
+
+默认常用菜单包含 **Engine V3（默认）、ToC V2、Cycle V2、Effects V4、Control V2**。原项目注册的 **89 个代码策略全部保留**，专项、实验和历史版本可在完整列表中查看。
+
+选单不连接服务器、不打开浏览器、不改已有配置。初始化时可用 `--policy ID`，或在交互终端用 `--choose-policy` 按编号选择；两者互斥。尚未启动的席位配置也可以修改 `self.codePolicy`。各策略用途、局限与 **2026-11-13 历史 Elo 表**见[策略指南](docs/strategy-guide.md)；历史分数绑定当时的冻结实现，不代表当前代码的新评级。
 
 ## 策略与卡牌知识
 

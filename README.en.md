@@ -10,7 +10,7 @@ engine, game server, game UI and historical match data are not included.
 
 [中文说明](README.md) · [Architecture](docs/architecture.md) ·
 [Card knowledge](docs/card-knowledge.md) · [Operations](docs/operations.md) ·
-[Validation](docs/validation.md)
+[Strategies and historical Elo](docs/strategy-guide.md) · [Validation](docs/validation.md)
 
 ## What is included
 
@@ -61,15 +61,67 @@ A system Chromium executable can be configured instead of downloading one.
 Installing dependencies, building and running the offline tests do not log
 into a server or start a game.
 
-Configure your own server origin, username, deck identifier and private
-credential file using the examples and the [operation guide](docs/operations.md).
-Keep local configuration, profiles and decision logs under the ignored
-`.local/` directory. The credential file must be private to its owner.
+## Quick start
 
-The CLI exposes preflight, single-seat run/create, host management, campaign
-management, runtime freezing and explicit recovery. Run preflight before an
-actual seat run. The operation guide distinguishes a paused process from a
-confirmed native seat exit and completed resource retirement.
+The repository includes the strategy, static knowledge, bridge and supervision
+components required to run independently. After installing dependencies,
+building and supplying your local configuration on supported Linux, you can
+start through the CLI without the private KF engine or OpenClaw. The target
+site must still match the supported UI: the current flow binds to
+`Select deck`, `Select row <serverDeckId>` and the Chinese room buttons
+“新游戏” and “开始”. Changing the origin alone does not validate the current
+public TCO frontend.
+
+Create a new local configuration:
+
+```sh
+node bin/kf-auto.mjs init \
+  --directory "$PWD/.local/my-bot" \
+  --origin 'https://your-keyteki.example' \
+  --account 'YourAccount' \
+  --server-deck-id 12345 \
+  --deck-name 'Your deck name' \
+  --policy tactical-style-engine-v3
+```
+
+Fill the actual password in the generated local `credentials.json`, then run:
+
+```sh
+node bin/kf-auto.mjs preflight \
+  --config "$PWD/.local/my-bot/seat.json" \
+  --create-public
+
+node bin/kf-auto.mjs seat create \
+  --config "$PWD/.local/my-bot/seat.json"
+```
+
+Preflight does not read the password, log in or certify the site's UI.
+`seat create` opens the browser and attempts room creation. See the
+[operation guide](docs/operations.md) for joining an observed room, freezing a
+runtime and running campaigns. Keep real configuration, browser profiles and
+decision logs under the ignored `.local/` directory. The credential file must
+be private to its owner.
+
+## Strategy menu
+
+```sh
+node bin/kf-auto.mjs strategies list
+node bin/kf-auto.mjs strategies list --all
+node bin/kf-auto.mjs strategies show tactical-style-engine-v3
+```
+
+The common menu lists **Engine V3 (default), ToC V2, Cycle V2, Effects V4 and
+Control V2**. All **89 registered code-policy IDs** from the predecessor remain
+available, including specialist, experimental and historical entries.
+
+Menu commands do not contact a server, open a browser or modify existing
+configuration. Use `init --policy ID`, or the optional `--choose-policy`
+numbered menu in an interactive TTY; these options are mutually exclusive.
+An unstarted seat configuration can also set `self.codePolicy` directly.
+The [strategy guide](docs/strategy-guide.md), maintained in Chinese, explains
+the policies and the **2026-11-13 historical Elo table**. Those ratings bind
+the recorded frozen implementation and are not new measurements of the
+current public code.
 
 ## Strategy and knowledge boundary
 
