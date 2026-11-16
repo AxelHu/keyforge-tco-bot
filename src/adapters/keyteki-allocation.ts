@@ -369,6 +369,14 @@ export interface KeytekiAllocationDescriptor {
         opponentName: string;
         opponentAmber: number;
       }
+    | {
+        kind: 'new-public-hypnotic-effect-and-single-opponent-amber';
+        messageId: string;
+        messageSha256: string;
+        opponentName: string;
+        opponentAmber: 1;
+        rule: 'positive-quota-bounded-by-single-opponent-amber';
+      }
     | { kind: 'new-public-effect-message'; messageId: string; amount: number }
     | {
         kind: 'new-public-effect-message-and-opponent-amber';
@@ -571,13 +579,20 @@ export class KeytekiAllocationTracker {
         };
       if (
         this.result.status === 'ready' &&
-        this.result.descriptor.amountEvidence.kind === 'new-public-effect-message-and-opponent-amber'
+        (this.result.descriptor.amountEvidence.kind === 'new-public-effect-message-and-opponent-amber' ||
+          this.result.descriptor.amountEvidence.kind === 'new-public-hypnotic-effect-and-single-opponent-amber')
       ) {
         const evidence = this.result.descriptor.amountEvidence,
           messages = this.messageWindow.filter((m) => m.id === evidence.messageId);
         if (messages.length !== 1 || quotaMessageHash(messages[0]) !== evidence.messageSha256)
           this.result = { status: 'unsupported', reason: 'allocation-public-quota-event-changed-or-missing' };
       }
+      if (
+        this.result.status === 'ready' &&
+        this.result.descriptor.amountEvidence.kind === 'new-public-hypnotic-effect-and-single-opponent-amber' &&
+        obj(obj(obj(obj(raw).players)[this.result.descriptor.amountEvidence.opponentName]).stats).amber !== 1
+      )
+        this.result = { status: 'unsupported', reason: 'allocation-hypnotic-single-pool-changed-or-unreported' };
       if (
         this.result.status === 'ready' &&
         this.result.descriptor.amountEvidence.kind === 'public-capture-contract-and-visible-state'
@@ -820,6 +835,75 @@ export class KeytekiAllocationTracker {
             : current.source === 'fathomshare'
               ? 'floor-half-opponent-amber'
               : 'published-shard-capture-count',
+      };
+    } else if (current.source === 'hypnotic-command' && !this.publicCaptureRuleContract) {
+      const state = obj(raw),
+        players = obj(state.players),
+        names = Object.keys(players),
+        opponentName = names.find((name) => name !== p.playerName),
+        opponentAmber = obj(obj(players[opponentName ?? '']).stats).amber;
+      // Hypnotic's native allocation is nonempty and capped by its funding pool.
+      // A fresh prompt with exactly one opposing amber therefore has exactly one
+      // click. No effective house count, printed-house assumption or prior capture
+      // is needed. Larger pools still require the existing audited contract.
+      if (opponentAmber !== 1) return fail('allocation-hypnotic-command-public-quota-unreported');
+      if (
+        state.id !== p.gameId ||
+        beforeRaw?.id !== p.gameId ||
+        state.started !== true ||
+        beforeRaw.started !== true ||
+        state.manualMode !== false ||
+        beforeRaw.manualMode !== false ||
+        names.length !== 2 ||
+        !names.includes(p.playerName) ||
+        !opponentName ||
+        canonical(Object.keys(obj(beforeRaw.players)).sort()) !== canonical([...names].sort()) ||
+        obj(players[p.playerName]).activePlayer !== true ||
+        obj(players[opponentName]).activePlayer !== false ||
+        recognizedPrompt(beforeRaw, p.playerName)
+      )
+        return fail('allocation-hypnotic-single-pool-start-unverified');
+      const controlSource = obj(arr(obj(players[p.playerName]).controls).map(obj)[0]?.source);
+      if (
+        controlSource.type !== 'action' ||
+        controlSource.facedown === true ||
+        controlSource.copying === true ||
+        (str(controlSource.uuid) && controlSource.uuid !== source)
+      )
+        return fail('allocation-hypnotic-source-unverified');
+      const opponentSeat = p.observation.you === 0 ? 1 : 0,
+        enemy = new Set(p.observation.players[opponentSeat].battleline.map((card) => card.id));
+      if (new Set(allowedTargets).size !== allowedTargets.length || allowedTargets.some((id) => !enemy.has(id)))
+        return fail('allocation-hypnotic-target-is-not-a-visible-enemy-creature');
+      const fresh = newMessagesAfterWindow(previousWindow, this.messageWindow);
+      if (!fresh) return fail('allocation-public-quota-message-window-incomplete');
+      const matches = fresh.filter((entry) => {
+        const m = arr(entry.message), effect = obj(m[4]), parts = arr(effect.message);
+        return (
+          entry.activePlayer === p.playerName &&
+          m.length === 5 &&
+          obj(m[0]).argType === 'nonAvatarPlayer' &&
+          obj(m[0]).name === p.playerName &&
+          m[1] === ' uses ' &&
+          obj(m[2]).argType === 'card' &&
+          obj(m[2]).id === 'hypnotic-command' &&
+          obj(m[2]).type === 'action' &&
+          obj(m[2]).facedown !== true &&
+          m[3] === ' to ' &&
+          Object.keys(effect).length === 1 &&
+          parts.length === 1 &&
+          parts[0] === 'force an enemy creature to capture 1 amber for each mars creature they control'
+        );
+      });
+      if (matches.length !== 1) return fail('allocation-hypnotic-new-public-effect-missing-or-ambiguous');
+      amount = 1;
+      evidence = {
+        kind: 'new-public-hypnotic-effect-and-single-opponent-amber',
+        messageId: str(matches[0].id),
+        messageSha256: quotaMessageHash(matches[0]),
+        opponentName,
+        opponentAmber: 1,
+        rule: 'positive-quota-bounded-by-single-opponent-amber',
       };
     } else if (
       this.publicCaptureRuleContract &&
