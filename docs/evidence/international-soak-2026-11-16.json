@@ -1,0 +1,646 @@
+{
+  "schema": "keyforge-international-network-soak-evidence-v1",
+  "recordStatus": "private-validation-complete-public-phase-started-awaiting-results",
+  "snapshotAt": "2026-11-16T07:37:19.230818+00:00",
+  "origin": "https://thecrucible.online",
+  "phaseSeparation": "Anonymous network measurements, prelogin browser attempts, controlled private games, synthetic model/API preflight and public human games are separate evidence phases. Each live phase retains its actual runner and production input binding.",
+  "anonymousNetwork": {
+    "status": "completed",
+    "reportGeneratedAt": "2026-11-16T06:38:42.268150+00:00",
+    "reportSha256": "23019f774ae1352f4e9767160a179a9c9e947969bce7de2eec4c28255670df6b",
+    "httpRequestCount": 48,
+    "roundsPerEndpointAndRoute": 8,
+    "endpoints": [
+      "homepage",
+      "deployed-javascript-bundle",
+      "anonymous-engineio-polling"
+    ],
+    "bundleBytes": 3008504,
+    "connectTimeoutSeconds": 10,
+    "transferDeadlineSeconds": 25,
+    "compressedRequested": true,
+    "responseContentEncodingPresentByRoute": {
+      "direct": false,
+      "proxy": false
+    },
+    "headerChecksAreAdditionalTo48MainRequests": true,
+    "http": {
+      "direct": {
+        "homepage": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 8,
+          "timeoutsOrFailures": 0,
+          "successfulTransferSeconds": {
+            "n": 8,
+            "median": 1.3700860000000001,
+            "p90": 1.949187,
+            "min": 0.654946,
+            "max": 1.949187
+          }
+        },
+        "bundle": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 0,
+          "timeoutsOrFailures": 8,
+          "successfulTransferSeconds": {
+            "n": 0,
+            "median": null,
+            "p90": null,
+            "min": null,
+            "max": null
+          }
+        },
+        "engineio": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 8,
+          "timeoutsOrFailures": 0,
+          "successfulTransferSeconds": {
+            "n": 8,
+            "median": 0.8438190000000001,
+            "p90": 1.563567,
+            "min": 0.655116,
+            "max": 1.563567
+          }
+        }
+      },
+      "proxy": {
+        "homepage": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 8,
+          "timeoutsOrFailures": 0,
+          "successfulTransferSeconds": {
+            "n": 8,
+            "median": 1.8376415000000001,
+            "p90": 2.776036,
+            "min": 1.092939,
+            "max": 2.776036
+          }
+        },
+        "bundle": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 7,
+          "timeoutsOrFailures": 1,
+          "successfulTransferSeconds": {
+            "n": 7,
+            "median": 12.103554,
+            "p90": 14.554998,
+            "min": 5.283848,
+            "max": 14.554998
+          }
+        },
+        "engineio": {
+          "requests": 8,
+          "completedHttp200Within25Seconds": 8,
+          "timeoutsOrFailures": 0,
+          "successfulTransferSeconds": {
+            "n": 8,
+            "median": 1.460124,
+            "p90": 2.628379,
+            "min": 1.08604,
+            "max": 2.628379
+          }
+        }
+      }
+    },
+    "websocket": {
+      "direct": {
+        "connections": 3,
+        "completed180SecondsAndClosedNormally": 3,
+        "errors": 0,
+        "unexpectedClosures": 0,
+        "controlPongs": 105,
+        "unresolvedScheduledPingsAtPlannedClose": 0,
+        "packetLossMeasured": false,
+        "controlPingRttMs": {
+          "n": 105,
+          "median": 195.249,
+          "p90": 221.622,
+          "min": 192.416,
+          "max": 1002.527
+        },
+        "socketioNamespaceDisconnectPackets": 2
+      },
+      "proxy": {
+        "connections": 3,
+        "completed180SecondsAndClosedNormally": 3,
+        "errors": 0,
+        "unexpectedClosures": 0,
+        "controlPongs": 105,
+        "unresolvedScheduledPingsAtPlannedClose": 3,
+        "packetLossMeasured": false,
+        "controlPingRttMs": {
+          "n": 105,
+          "median": 298.99,
+          "p90": 398.356,
+          "min": 288.162,
+          "max": 711.478
+        },
+        "socketioNamespaceDisconnectPackets": 2
+      }
+    },
+    "wsEndpoints": [
+      "/socket.io/",
+      "/node-0/socket.io/",
+      "/node-1/socket.io/"
+    ],
+    "plannedTransportDurationSeconds": 180,
+    "wsGameNodeNamespacesAuthenticated": false,
+    "anonymousGameNodeNamespacesDisconnectedAfterInitialAcknowledgement": true,
+    "websocketControlRttIsGameCommandLatency": false,
+    "packetLossEstimated": false,
+    "accountOperations": {
+      "logins": 0,
+      "roomCreates": 0,
+      "joins": 0,
+      "chatMessages": 0,
+      "gameCommands": 0,
+      "browserProfilesCreated": 0,
+      "globalProxyChanges": 0
+    },
+    "sharedWorkstationLoadNotIsolated": true,
+    "initialIncompleteNamespaceProbeExcluded": true,
+    "probeSourceBindings": {
+      "network-http-probe.py": "cff9c915e68ad03c9d735aacb7453884217d56ec478bbc3f138952df1aabddf3",
+      "network-ws-connected-probe.cjs": "71cc4d252a29bc3f63ef2d1dc52f847c4301facba228a47224dcc44790609b9a",
+      "network-header-probe.py": "a853e02249bb0ac56b14d0726a91aaa73a5980a4d223252976a8752af6ce19ac",
+      "network-build-report.py": "fa59e293d6f251ddd5d68329ea86818f27a826424a271602bf09f995021532de"
+    }
+  },
+  "preloginBrowserAttempts": [
+    {
+      "runId": "route01-direct",
+      "route": "direct",
+      "classification": "harness-validation-failure-before-login",
+      "failureCode": "BROWSER_NETWORK_ARGUMENTS_UNCONFIRMED",
+      "loginOrRoomSetupReached": false,
+      "hostStarted": false,
+      "isObservedNetworkConnectionFailure": false,
+      "naturalGameCompleted": false,
+      "allOwnedResourcesReleased": true,
+      "cleanupReceiptSha256": "641f0aa8598b52410f647b01bbf15b8039ff3967e33b49d9964d4cbedcdc0d9f",
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "d3f418a0e2ec446a065f06378f8891ad1c783afe02886fab04c04959d9ab2f27",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92"
+      }
+    },
+    {
+      "runId": "route01-direct-r2",
+      "route": "direct",
+      "classification": "login-page-navigation-timeout",
+      "routeArgumentsConfirmedViaCdp": true,
+      "stage": "navigate-login",
+      "deadlineSeconds": 45,
+      "roomSetupReached": false,
+      "hostStarted": false,
+      "naturalGameCompleted": false,
+      "retainedReadOnlyObservation": {
+        "approximatelyThreeMinutesAfterStart": true,
+        "cssLoadDurationSeconds": 78.8,
+        "mainModuleCompleted": false,
+        "domContentLoadedCompleted": false,
+        "inputCount": 0,
+        "passwordValuePresent": false
+      },
+      "allOwnedResourcesReleased": true,
+      "performanceReceiptSha256": "ee02c98072ef57b322c5989135681203b5f1658160391a8a1cb0df30ed3ced7c",
+      "cleanupReceiptSha256": "a8563c4a4b28a6e3697b1dca86b3cd995088cd3fd21ff738669f302673ab7a9f",
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "01655501aad489e9ebb93ee5ca803e45d5fb4d4c7299ee74319d80899da62e00",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92"
+      }
+    }
+  ],
+  "routeChoice": {
+    "mode": "proxy",
+    "privateNaturalGamesTarget": 3,
+    "reason": "Current sample showed better complete large-resource loading through proxy; a confirmed direct browser attempt timed out before login readiness. This does not predeclare proxy game success.",
+    "privateNaturalGamesTargetMet": true
+  },
+  "controlledPrivateRuns": [
+    {
+      "runId": "route02-proxy",
+      "route": "proxy",
+      "series": [
+        "PV",
+        "CotA"
+      ],
+      "status": "automatic-pass",
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "01655501aad489e9ebb93ee5ca803e45d5fb4d4c7299ee74319d80899da62e00",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92",
+        "isExactLiveAcceptanceOfNew050Runtime": false
+      },
+      "result": {
+        "naturalTerminal": true,
+        "winnerSeries": "CotA",
+        "score": "3:2",
+        "gameSecondsFromStartToBothTerminalViews": 303.712,
+        "wrapperReportedSeconds": 367.835,
+        "commands": 336,
+        "acknowledged": 336,
+        "states": 680,
+        "decisions": 336,
+        "evidenceRowsScanned": 5693,
+        "gameplayRowsScanned": 3653,
+        "gameplayFaultFlagsObserved": false,
+        "recordedPageErrorCount": 0,
+        "bothNativeFullVerified": true,
+        "bothOwnedEnglishFallbackAuthorsEchoed": true,
+        "realModelServiceCalls": 0,
+        "humanOpponents": 0,
+        "automaticNativeDepartureAndResourceRelease": true,
+        "operatorCleanupRequired": false,
+        "exitCode": 0,
+        "gameSocketUrl": "https://thecrucible.online/node-1/socket.io"
+      }
+    },
+    {
+      "runId": "route03-proxy-gr-woe",
+      "route": "proxy",
+      "series": [
+        "GR",
+        "WoE"
+      ],
+      "status": "automatic-pass",
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "01655501aad489e9ebb93ee5ca803e45d5fb4d4c7299ee74319d80899da62e00",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92",
+        "isExactLiveAcceptanceOfNew050Runtime": false
+      },
+      "result": {
+        "naturalTerminal": true,
+        "winnerSeries": "GR",
+        "score": "3:2",
+        "gameSecondsFromStartToBothTerminalViews": 326.376,
+        "wrapperReportedSeconds": 387.656,
+        "commands": 316,
+        "acknowledged": 316,
+        "states": 638,
+        "decisions": 316,
+        "evidenceRowsScanned": 5526,
+        "gameplayRowsScanned": 3612,
+        "gameplayFaultFlagsObserved": false,
+        "recordedPageErrorCount": 0,
+        "bothNativeFullVerified": true,
+        "bothOwnedEnglishFallbackAuthorsEchoed": true,
+        "realModelServiceCalls": 0,
+        "humanOpponents": 0,
+        "automaticNativeDepartureAndResourceRelease": true,
+        "operatorCleanupRequired": false,
+        "exitCode": 0,
+        "gameSocketUrl": "https://thecrucible.online/node-1/socket.io"
+      }
+    },
+    {
+      "runId": "route06-proxy-dt-dm",
+      "route": "proxy",
+      "series": [
+        "DT",
+        "DM"
+      ],
+      "status": "failed-unsupported",
+      "automaticPassClaimed": false,
+      "sourceBinding": {
+        "productionVersion": "0.4.0",
+        "productionCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+        "runnerSha256": "01655501aad489e9ebb93ee5ca803e45d5fb4d4c7299ee74319d80899da62e00",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 119,
+        "productionInputManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92",
+        "runtimeManifestSha256": "af04ee1bdb40831127c2ac7a4175ea550db9b41c80cb47cadb6bf5521725c9d0",
+        "isExactLiveAcceptanceOfNew050Runtime": false
+      },
+      "result": {
+        "naturalTerminal": false,
+        "automaticAcceptancePassed": false,
+        "commands": 35,
+        "acknowledged": 35,
+        "states": 81,
+        "decisions": 37,
+        "evidenceRowsScanned": 1867,
+        "gameplayRowsScanned": 1624,
+        "unsupportedObserved": true,
+        "unsupportedReason": "allocation-hypnotic-command-public-quota-unreported",
+        "strategyFaultObserved": false,
+        "commandRejectionObserved": false,
+        "loopGuardEventObserved": false,
+        "recordedPageErrorCount": 0,
+        "bothNativeFullVerified": true,
+        "bothOwnedEnglishFallbackAuthorsEchoed": true,
+        "realModelServiceCalls": 0,
+        "humanOpponents": 0,
+        "exitCode": 2,
+        "gameSocketUrl": "https://thecrucible.online/node-1/socket.io"
+      },
+      "recovery": {
+        "initialCondition": "brief native disconnect or bridge wait; transport-or-activity-stop pause",
+        "privateHarnessWatchdogEnabled": false,
+        "guardFailureWithoutReloadCount": 1,
+        "manualReloadAttempts": 1,
+        "manualReloadReturnedCount": 1,
+        "gameplayResumedAfterManualReload": true,
+        "subsequentStop": "STRATEGY_UNSUPPORTED",
+        "automaticRecoveryStartedEvents": 0,
+        "automaticRecoveryProved": false,
+        "manualReceiptSha256": [
+          "69265a4fb78107c53fd7326f88e93981e6bac5026d61282c99ffc874146313b9",
+          "965e777cec590c08ea78dfcab24981361b545cf6e851e2b512781760adac2475",
+          "6ca2f348f47fe1e5effce0a2ab3e1aee0b7937237ab8615da3c0fc18df790bfc"
+        ]
+      },
+      "technicalTermination": {
+        "kind": "native-ui-private-concession",
+        "nativeUiConcessionAttemptCount": 1,
+        "bothNativeTerminalViewsAgree": true,
+        "bothPlayerKeyCounts": [
+          0,
+          0
+        ],
+        "naturalGameResult": false,
+        "countedAsStrategyWin": false,
+        "receiptSha256": [
+          "da785faf7ab3563919b3de6a81b843e02cefc30b22d8bac2b90c65001429f22f",
+          "cfd688d09632eb01d13ec584fb0b7ec83fd3c967c9f31d8de19b24922ee77ced"
+        ]
+      },
+      "operatorCleanup": {
+        "required": true,
+        "completedAt": "2026-11-16T07:14:41.170Z",
+        "normalLeaveCallsPerSeat": [
+          1,
+          1
+        ],
+        "bothServerMembershipsPositiveThenAbsent": true,
+        "allBoundHostsBrowsersRegistriesAndProfilesReleased": true,
+        "accountCheckpointReleased": true,
+        "receiptSha256": "c0ba0d3ed1187d84b1e4702ed77219efb81acad823091fc9a8c0130896bb4a53",
+        "originalFailedHandoffAndExecutionPreserved": true
+      }
+    },
+    {
+      "runId": "route07-proxy-dt-dm-watchdog",
+      "route": "proxy",
+      "series": [
+        "DT",
+        "DM"
+      ],
+      "status": "automatic-pass",
+      "sourceBinding": {
+        "productionVersion": "0.5.0",
+        "productionCommit": "9706d6b90d2f88a93f9d8d8c8e8c11a2021dc3b9",
+        "runnerSha256": "bc99b349c3186c22e84484b368053b2377420de547c7542973110f6ba9c35c77",
+        "providerSha256": "959d2847e881235a3a0982287894167b51d24003d3c31f57ad509b526e44d07c",
+        "productionInputCount": 121,
+        "productionInputManifestSha256": "7376f893ed1baee4e100ccbba9f8fb85866a8367d3f5547f28cb27dc9e6cbb93",
+        "runtimeManifestSha256": "70e1c82709a17def726d93fcb8731c31bcde307d778be6ffbaf2168ff7392638",
+        "isExactLiveAcceptanceOfNew050Runtime": true,
+        "sourceInputsReportedAndCheckedUnchanged": true,
+        "providerExecutionBindingMatched": true
+      },
+      "result": {
+        "naturalTerminal": true,
+        "winnerSeries": "DT",
+        "score": "3:2",
+        "executionStartedAt": "2026-11-16T07:26:43.409201+00:00",
+        "executionEndedAt": "2026-11-16T07:35:00.117185+00:00",
+        "gameSecondsFromStartToBothTerminalViews": 409.233,
+        "wrapperReportedSeconds": 478.483,
+        "commands": 339,
+        "acknowledged": 339,
+        "commandsBySeries": {
+          "DT": 189,
+          "DM": 150
+        },
+        "states": 686,
+        "decisions": 342,
+        "evidenceRowsScanned": 6416,
+        "gameplayRowsScanned": 4358,
+        "gameplayFaultFlagsObserved": false,
+        "recordedPageErrorCount": 0,
+        "bothNativeFullVerified": true,
+        "bothOwnedEnglishFallbackAuthorsEchoed": true,
+        "realModelServiceCalls": 0,
+        "humanOpponents": 0,
+        "automaticNativeDepartureAndResourceRelease": true,
+        "normalLeaveCallsPerSeat": [
+          1,
+          1
+        ],
+        "operatorCleanupRequired": false,
+        "manualRecoveryAttempts": 0,
+        "exitCode": 0,
+        "gameSocketUrl": "https://thecrucible.online/node-0/socket.io"
+      },
+      "recoveryCoverage": {
+        "productionWatchdogEnabled": true,
+        "recoveryStartedEvents": 0,
+        "recoveryCallsReturnedOk": 0,
+        "automaticRecoveryProved": false
+      },
+      "allocationCoverage": {
+        "receiptSha256": "05c7446e2fdc35cc16738609a2a1d10309cdff4e08e9d1825c4157e052f53c4c",
+        "observedAt": "2026-11-16T07:34:42.593543+00:00",
+        "bothBoundHostSessionsFinished": true,
+        "dmAllocationPlans": 0,
+        "dmAllocationPlansDispatched": 0,
+        "dmAllocationPlansObserved": 0,
+        "dmAllocationPlansUnknown": 0,
+        "hypnoticNewBranchExecutedInThisRun": false,
+        "otherSeatAllocationPlans": 1,
+        "otherSeatAllocationCardIdentifiedByThisReceipt": false,
+        "newBranchProofScope": "The new Hypnotic branch was not exercised in this natural run; its evidence remains the earlier real fault projection, implementation reasoning and seven offline regression cases."
+      }
+    }
+  ],
+  "skippedUnstartedRuns": [
+    {
+      "runId": "route04-direct-gr-woe",
+      "started": false,
+      "countedAsGame": false,
+      "reason": "Equivalent direct cold-start failure was already observed."
+    },
+    {
+      "runId": "route05-direct-dt-dm",
+      "started": false,
+      "countedAsGame": false,
+      "reason": "Equivalent direct cold-start failure was already observed."
+    }
+  ],
+  "publicHumanPhase": {
+    "status": "workflow-started-no-game-yet",
+    "observedHumanGames": 0,
+    "observedNaturalResults": 0,
+    "boundedAutomaticBatchResult": "not-started",
+    "workflowStartedAt": "2026-11-16T07:36:06Z"
+  },
+  "historicalBaseline": {
+    "version": "0.4.0",
+    "codeCommit": "1379c0f03a44cdb3810da3afb860905599422655",
+    "publicationCommit": "20a515808e5afc9146b0214a61a793547f4bcc6b",
+    "evidencePath": "docs/evidence/international-2026-11-16.json",
+    "evidenceSha256": "80f803d0c01373638716b80d29ce6427691362dc2ba7a363bd5e21907b580275",
+    "naturalGames": 3,
+    "automaticPasses": 1,
+    "manualCleanupPartialGames": 2,
+    "unchanged": true
+  },
+  "privacyProjection": "No real account names, email addresses, proxy endpoint or operator details, private paths, secrets, tokens, room passwords or raw chat are included.",
+  "privateSummarySnapshot": {
+    "sha256": "9a2c415963e80afa425fe3b64eb5c138149200ae715ea054424bf965e0682d33",
+    "collectorSha256": "a6422583978f95f93ca37537a29431a7662c1f0334fbe867140cb33baa7e6093",
+    "schema": "kf-international-network-games-summary-v2",
+    "generatedAt": "2026-11-16T07:35:03.567574+00:00",
+    "final": true,
+    "recordedAttempts": 6,
+    "startedGames": 4,
+    "naturalGames": 3,
+    "automaticPasses": 3,
+    "preloginFailures": 2,
+    "failedUnsupportedRuns": 1,
+    "manualRecoveryAttemptRuns": 1,
+    "technicalConcessionRuns": 1,
+    "pendingDeclaredRunIds": [],
+    "declaredPlanExecutionsEnded": true,
+    "productionInputManifestsAgreeAcrossRuns": false,
+    "phaseSourceBindingsMustRemainSeparate": true,
+    "confirmedNaturalGameCounters": {
+      "states": 2004,
+      "decisions": 994,
+      "commands": 991,
+      "acknowledged": 991
+    },
+    "allStartedGameCounters": {
+      "states": 2085,
+      "decisions": 1031,
+      "commands": 1026,
+      "acknowledged": 1026
+    },
+    "evidenceRowsScanned": 19502,
+    "gameplayRowsScanned": 13247,
+    "countBasis": "Two prelogin failures count only as attempts. The unsupported run retains 35 completed commands but its technical concession is neither a natural game nor a strategy win. Two natural passes used the 0.4.0 baseline; the third used the fixed 0.5.0 runtime.",
+    "independentReviewSha256": "70fc9b6130e7c9961a39a94c04b8c7a80a2ddbcbcf6771f8e825e532bd8b1b92",
+    "independentReviewDecision": "PASS_PRIVATE_ACCEPTANCE_FOR_OBSERVED_PUBLIC_R2",
+    "independentlyVerifiedInputFiles": 47
+  },
+  "previousCandidateValidation": {
+    "version": "0.5.0",
+    "sourceCommit": "459f03db3006d3c2e8d34c6dcee6949b3896c78e",
+    "implementationReviewStatus": "approved-to-proceed-with-authorized-live-validation",
+    "implementationReviewSha256": "9c8dbe205461b525cd7f9e56faa843a1104db06704d8aecd6349c983fb9935f7",
+    "priorFullRegression": {
+      "tests": 245,
+      "passed": 245,
+      "failed": 0,
+      "receiptSha256": "4432ad2dc5a152fb9bb5588cbd20132added6ffc28fcfc10037e51eb1f484d80",
+      "scope": "v2 snapshot before the final two-path race fix"
+    },
+    "finalTargetedRegression": {
+      "tests": 78,
+      "passed": 78,
+      "failed": 0,
+      "receiptSha256": "36af5eb5479d4c1c17a6417f09fdc017463073ee551353a41dfeb1fe3a269d6c",
+      "scope": "final implementation changes; overlaps prior full suite"
+    },
+    "combinedTestCountClaimed": false,
+    "finalFull247RunClaimed": false,
+    "newTestRerunRequestedByDocumentationTask": false,
+    "packageBoundary": {
+      "files": 305,
+      "moduleEdges": 874,
+      "findings": 0,
+      "afterVersionBump": true
+    },
+    "runtimeFreeze": {
+      "sourceFingerprint": "e76577e0511bdfbef7096fcceca8cf431b43c387fa2fe99f14c3d30cda514ea7",
+      "runtimeManifestSha256": "51420abb48bcd81b1c024641438d438b72f6208208a44c6b1f9e209b8752648f",
+      "runtimeFiles": 781,
+      "externalFiles": 307
+    },
+    "actualNewRuntimeLiveStatus": "not-run-as-route07-fixed-candidate",
+    "testsExecutedByDocumentationTask": 0,
+    "status": "previous-reviewed-candidate-before-hypnotic-adapter-fix"
+  },
+  "currentCandidateValidation": {
+    "status": "full-regression-and-independent-review-passed-runtime-frozen",
+    "version": "0.5.0",
+    "baseCommit": "459f03db3006d3c2e8d34c6dcee6949b3896c78e",
+    "changedInputSha256": {
+      "src/adapters/keyteki-allocation.ts": "f2d7568319414247ce468856f2d18c7ff794bbe8921f3a700773a20f88f83886",
+      "test/strategy/hypnotic-single-pool.test.mjs": "7fc0c7840d766d6a5bd7f46024e00abce664a42262e8aefd6081fcf1ccb5d204"
+    },
+    "receiptSha256": "8b5b40aec15365f8a2cf6526e37981a0915d49e55f0479c4138a7958afdb71d0",
+    "startedAt": "2026-11-16T07:18:59.400611+00:00",
+    "endedAt": "2026-11-16T07:19:34.076970+00:00",
+    "fullRegression": {
+      "tests": 254,
+      "pass": 254,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "packageBoundary": {
+      "files": 306,
+      "moduleEdges": 885,
+      "findings": 0
+    },
+    "diffCheckPassed": true,
+    "targetedSevenTestsIncludedInFullCount": true,
+    "countsAddedToEarlier245Or78": false,
+    "testsExecutedByDocumentationTask": 0,
+    "actualNewRuntimeLiveStatus": "controlled-private-automatic-pass-public-game-unproven",
+    "sourceCommit": "9706d6b90d2f88a93f9d8d8c8e8c11a2021dc3b9",
+    "implementationReviewSha256": "9d082e95ad91926ea6cab2ee062dfa0d2a57c34a213094e544c052a3665aa6ee",
+    "runtimeFreeze": {
+      "sourceCommit": "9706d6b90d2f88a93f9d8d8c8e8c11a2021dc3b9",
+      "sourceFingerprint": "e97acc99c92cd26e0d3e74187c0a5487bf1ddbc7c076213358c291be25f0ca7f",
+      "runtimeManifestSha256": "70e1c82709a17def726d93fcb8731c31bcde307d778be6ffbaf2168ff7392638",
+      "runtimeFiles": 781,
+      "externalExecutionFiles": 307,
+      "freezeReceiptSha256": "6f92135f2df16dc693c42b750d927d5eda42a70f4dc0125a2850c384ef97d677",
+      "provenance": {
+        "gitCommitSource": "freeze-receipt.sourceGitHead",
+        "freezeReceiptSha256": "6f92135f2df16dc693c42b750d927d5eda42a70f4dc0125a2850c384ef97d677",
+        "runtimeManifestEmbeddedSourceCommit": null,
+        "runtimeFilesBoundByManifestSha256": true,
+        "gitCommitInferredFromNullManifestField": false
+      }
+    }
+  },
+  "modelApiPreflight": {
+    "status": "passed-synthetic-api-preflight",
+    "receiptSha256": "915240160ab8dec96f4f83d5a65f577443a2747f19d37999767069587d6839fd",
+    "provider": "minimax",
+    "providerSourceSha256": "47c64f338d5f130fc8a3f1ae2e35dc1943fb6dca9a77372041e7e23b9f23802a",
+    "model": "MiniMax-M3.1-Flash",
+    "modelCalls": 1,
+    "accepted": true,
+    "englishOnly": true,
+    "elapsedMs": 1706,
+    "syntheticContext": true,
+    "gameMessageSent": false,
+    "nativeChatEchoTested": false,
+    "humanGameTested": false,
+    "usage": {
+      "inputTokens": 508,
+      "outputTokens": 9,
+      "totalTokens": 517
+    }
+  }
+}

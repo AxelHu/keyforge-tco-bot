@@ -10,7 +10,7 @@ engine, game server, game UI and historical match data are not included.
 
 [中文说明](README.md) · [Architecture](docs/architecture.md) ·
 [Card knowledge](docs/card-knowledge.md) · [Operations](docs/operations.md) ·
-[Strategies and historical Elo](docs/strategy-guide.md) · [International TCO and chat language](docs/international-tco.md) · [Validation](docs/validation.md)
+[Strategies and historical Elo](docs/strategy-guide.md) · [International TCO and chat language](docs/international-tco.md) · [Network measurements and subsequent games](docs/international-network.md) · [Validation](docs/validation.md)
 
 ## What is included
 
@@ -37,14 +37,11 @@ The protocol adapter was developed against Keyteki revision
 Keyteki-derived deployment; the extracted package is a new build with its own
 knowledge boundary.
 
-Version 0.4.0 has completed controlled private-game acceptance on the real
-international site. On 2026-11-16, three games ended naturally: **one passed the
-complete automatic lifecycle, while two retain their manual-cleanup outcomes**.
-All 696 game commands were acknowledged, and English fallback openings received
-native echoes. Two owned accounts exercised login, deck selection, dynamic game-node
-handshakes, full games and terminal departure/resource release. Human opponents,
-paid model chat and fault recovery were not tested; these are not new Elo results.
-See [international TCO configuration, results and limitations](docs/international-tco.md).
+Version 0.5.0 has passed one complete automatic private-game acceptance run on the real international site. The fixed DT/DM run ended naturally at 3:2, acknowledged all 339 commands, received native echoes of both English fallback openings, and released both seats and all runtime resources without manual intervention. Two other natural passes in the same campaign used the 0.4.0 baseline; a separate technical failure and its manual cleanup remain in the record. See [network measurements and subsequent games](docs/international-network.md) for the source binding of each phase.
+
+A separate real MiniMax API preflight accepted English output from synthetic context; it sent no game message. The public-opponent workflow has started, with no completed human game recorded yet. Automatic fault recovery and the new Hypnotic Command branch were not exercised in the fixed private game. These results do not provide a new Elo rating or a human-opponent win-rate estimate.
+
+The earlier 0.4.0 acceptance remains historical: three natural finishes, one complete automatic pass, two manual-cleanup outcomes, and 696/696 acknowledged commands. Its [original evidence](docs/evidence/international-2026-11-16.json) is preserved. See the [international TCO guide](docs/international-tco.md) for configuration and scope.
 
 The managed CLI currently targets **Linux or Linux inside WSL**, Node.js
 **22.12–24.x**, Python 3 and Chromium. Process identity and recovery use Linux

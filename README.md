@@ -6,7 +6,7 @@
 
 [English](README.en.md) · [架构](docs/architecture.md) ·
 [卡牌知识](docs/card-knowledge.md) · [使用与恢复](docs/operations.md) ·
-[策略选单与历史 Elo](docs/strategy-guide.md) · [国际服与英文聊天](docs/international-tco.md) · [验证记录](docs/validation.md)
+[策略选单与历史 Elo](docs/strategy-guide.md) · [国际服与英文聊天](docs/international-tco.md) · [线路实测与后续对局](docs/international-network.md) · [验证记录](docs/validation.md)
 
 ## 包含哪些能力
 
@@ -23,7 +23,11 @@
 协议适配器以 Keyteki 修订版
 `361c085bcd401c20976ee9bcc4e4e5b8c061d56c` 为参考开发。项目前身曾在一个 Keyteki 衍生部署上使用；本独立包有自己的构建、知识内容和验证范围。
 
-0.4.0 已在真实国际服完成受控私房验收：2026-11-16 共 3 场自然终局，其中 **1 场完整自动通过，2 场保留人工收尾记录**；696 条游戏命令全部收到确认，英文备用开场取得原生回显。验证使用两个自有账号，覆盖登录、选牌、动态游戏节点握手、完整对局及终局退出释放。真人公房、付费模型聊天和故障恢复不在本次验证范围内，也没有新增 Elo 评测。配置、完整结果和局限见[国际服适配说明](docs/international-tco.md)。
+0.5.0 已在真实国际服完成一次受控私房完整自动验收：修复版 DT/DM 自然 3:2，339／339 条命令确认，双席英文备用开场取得原生回显，终局离桌及全部运行资源自动释放，无人工介入。同轮另外两场自然通过使用 0.4.0 基线，另有一场技术失败及人工清理；逐阶段结果见[线路实测与后续对局](docs/international-network.md)。
+
+本轮另完成一次真实 MiniMax 英文 API 预检，使用合成上下文且没有发送游戏消息。真人阶段流程已启动，尚无真人终局；自动故障恢复和新增 Hypnotic Command 分支未在上述修复版对局触发。当前不提供新的 Elo 或真人胜率估计。
+
+早先的 0.4.0 历史验收为 3 场自然终局，其中 1 场完整自动通过、2 场人工收尾，696／696 条命令确认；该批结果保持原来源，见[历史证据](docs/evidence/international-2026-11-16.json)。配置与完整限制见[国际服适配说明](docs/international-tco.md)。
 
 后台 CLI 当前面向 **Linux 或 WSL 内的 Linux**，需要 Node.js **22.12–24.x**、Python 3 和 Chromium。进程身份核验与恢复使用 Linux `/proc` 和内核文件锁；当前不承诺原生 Windows、macOS 的后台监督支持。
 
