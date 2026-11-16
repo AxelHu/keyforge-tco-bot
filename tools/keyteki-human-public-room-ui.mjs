@@ -2,6 +2,7 @@
 import { fuzhouSocketEvent, fuzhouDeckSpec, fuzhouSelectGameType } from './keyteki-fuzhou-ui.mjs';
 import { fail } from './keyteki-human-config.mjs';
 import { createJoinedPendingRoomTracker } from './keyteki-joined-pending-exit.mjs';
+import { keytekiUiButton, pendingLeaveFrameMatches } from './keyteki-ui-contract.mjs';
 const object = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 const same = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
 const lobbyUrl = (value, origin) => {
@@ -200,8 +201,11 @@ export class PublicRoomObserver {
         } catch {}
         continue;
       }
-      // The ordinary pending-room Leave emits exactly this no-argument lobby event.
-      const event = sent && part === '42["leavegame"]' ? ['leavegame'] : fuzhouSocketEvent(part);
+      // Both observed pending-room Leave shapes remain bound to the exact pending room.
+      const event =
+        sent && pendingLeaveFrameMatches(part, this.pendingLeave?.gameId)
+          ? ['leavegame']
+          : fuzhouSocketEvent(part);
       if (!event) continue; // Never decode authentication or handoff packets.
       if (sent) {
         if (
@@ -437,7 +441,7 @@ export async function createPublicRoomUi(page, observer, config) {
   )
     fail('PUBLIC_CREATION_PRECONDITION');
   await page.locator('a[href="/play"]:visible').click();
-  await page.getByRole('button', { name: '新游戏', exact: true }).click();
+  await keytekiUiButton(page, 'newGame').click();
   await page.locator('#name').fill(config.room.name);
   const gameType = await fuzhouSelectGameType(page, 'beginner');
   await waitForObserved(() => gameType.isChecked(), config.setupTimeoutMs, 'BEGINNER_NOT_SELECTED');
@@ -459,7 +463,7 @@ export async function createPublicRoomUi(page, observer, config) {
   }
   observer.assertHealthy();
   observer.creationRequested = true;
-  await page.getByRole('button', { name: '开始', exact: true }).click();
+  await keytekiUiButton(page, 'start').click();
   await waitForObserved(
     () => observer.pending,
     config.setupTimeoutMs,
@@ -474,7 +478,7 @@ export async function leaveUnjoinedOwnRoomUi(page, observer, config) {
   const remaining = () => Math.max(1, deadline - Date.now());
   observer.assertEmptyOwned();
   if (new URL(page.url()).origin !== config.origin) fail('UI_ORIGIN_CHANGED');
-  const leave = page.getByRole('button', { name: '离开', exact: true });
+  const leave = keytekiUiButton(page, 'leavePending');
   await leave.waitFor({ state: 'visible', timeout: remaining() });
   observer.assertEmptyOwned();
   if (observer.leaveRequested) fail('EMPTY_ROOM_LEAVE_ALREADY_ATTEMPTED');
@@ -523,7 +527,7 @@ export async function startOwnBoundRoomUi(page, observer, config) {
     );
   };
   await waitForObserved(ready, config.setupTimeoutMs, 'HUMAN_DECK_NOT_READY');
-  const start = page.getByRole('button', { name: '开始', exact: true });
+  const start = keytekiUiButton(page, 'start');
   if (!(await start.isVisible()) || !(await start.isEnabled()) || !ready())
     fail('BOUND_HOST_START_NOT_READY');
   await start.click();

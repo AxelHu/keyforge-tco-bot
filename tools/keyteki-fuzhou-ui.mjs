@@ -5,6 +5,7 @@
 import { randomBytes } from 'node:crypto';
 
 import { exactSiteOrigin } from './site-origin.mjs';
+import { keytekiUiButton, keytekiUiName } from './keyteki-ui-contract.mjs';
 const GAME_TYPES = new Set(['beginner', 'casual', 'competitive']);
 const object = (value) => value && typeof value === 'object' && !Array.isArray(value);
 const equalNames = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
@@ -672,15 +673,15 @@ export function createFuzhouUiSetup({
       guestObserver = observers.get(guest.name);
     phase = 'create-private-room';
     await hostPage.locator('a[href="/play"]:visible').click();
-    await hostPage.getByRole('button', { name: '新游戏', exact: true }).click();
+    await keytekiUiButton(hostPage, 'newGame').click();
     await hostPage.locator('#name').fill(name);
     const gameTypeInput = await fuzhouSelectGameType(hostPage, gameType);
     await waitUntil(() => gameTypeInput.isChecked(), 'GAME_TYPE_NOT_SELECTED');
     await setSwitch(hostPage, 'gamePrivate', 'Unlisted (link only)', true);
-    await setSwitch(hostPage, 'allowSpectators', '允许观战', allowSpectators);
+    await setSwitch(hostPage, 'allowSpectators', keytekiUiName('allowSpectators'), allowSpectators);
     await setSwitch(hostPage, 'requirePassword', 'Require password', true);
     await hostPage.locator('#password').fill(password);
-    await hostPage.getByRole('button', { name: '开始', exact: true }).click();
+    await keytekiUiButton(hostPage, 'start').click();
     await waitUntil(
       () => hostObserver.pending && equalNames(Object.keys(hostObserver.pending.players), [host.name]),
       'HOST_PRIVATE_ROOM_NOT_CONFIRMED',
@@ -719,7 +720,7 @@ export function createFuzhouUiSetup({
     const passwordInput = guestPage.locator('input[type="password"]');
     await passwordInput.waitFor({ state: 'visible', timeout: timeoutMs });
     await passwordInput.fill(password);
-    await guestPage.getByRole('button', { name: '加入', exact: true }).click();
+    await keytekiUiButton(guestPage, 'join').click();
     await waitUntil(
       () =>
         [hostObserver, guestObserver].every(
@@ -732,7 +733,7 @@ export function createFuzhouUiSetup({
     await selectDeck(guestPage, guest);
     phase = 'confirm-both-decks';
     await waitUntil(() => ready().ready, 'BOTH_DECKS_NOT_READY');
-    const start = hostPage.getByRole('button', { name: '开始', exact: true });
+    const start = keytekiUiButton(hostPage, 'start');
     await waitUntil(
       async () => (await start.isVisible()) && (await start.isEnabled()),
       'HOST_START_NOT_ENABLED',
@@ -760,7 +761,7 @@ export function createFuzhouUiSetup({
     if (!ready().ready) fail('PENDING_CHANGED_BEFORE_START');
     const hostPage = pages.get(playersInMatch[0].name);
     assertOrigin(hostPage, origin);
-    const start = hostPage.getByRole('button', { name: '开始', exact: true });
+    const start = keytekiUiButton(hostPage, 'start');
     if (!(await start.isEnabled())) fail('HOST_START_NOT_ENABLED');
     if (!ready().ready) fail('PENDING_CHANGED_BEFORE_START');
     updateViews();
@@ -793,10 +794,7 @@ export function createFuzhouUiSetup({
         try {
           assertOrigin(page, approvedOrigin);
           // The pending room and the finished board expose different normal leave controls.
-          const leave = page.getByRole('button', {
-            name: disposition === 'completed' ? '离开游戏' : '离开',
-            exact: true,
-          });
+          const leave = keytekiUiButton(page, disposition === 'completed' ? 'leaveFinished' : 'leavePending');
           if (!(await leave.isVisible())) {
             entry.controlUnavailable = true;
             continue;

@@ -10,6 +10,7 @@ import {
   watchdogProgressHashes,
   WATCHDOG_APOLOGY,
 } from "../../tools/keyteki-human-watchdog.mjs";
+import { watchdogApology } from '../../tools/keyteki-language.mjs';
 import { userscriptBootstrap } from "../../tools/keyteki-browser-bootstrap.mjs";
 import { createOneSeatBridgeBinding } from "../../tools/keyteki-human-bridge-callback.mjs";
 
@@ -420,6 +421,7 @@ function guardianHarness({
   hostDown = true,
   pageOrigin = 'http://fixture.test',
   socketOrigin = pageOrigin.replace(/^http/, 'ws'),
+  language,
 } = {}) {
   const sends = [],
     frames = [],
@@ -495,7 +497,7 @@ function guardianHarness({
         token: 'a'.repeat(64),
         playerName: 'Self',
         managedSessions: true,
-        humanWatchdog: { enabled: true, gameId: identity.gameId, participants: identity.participants },
+        humanWatchdog: { enabled: true, gameId: identity.gameId, participants: identity.participants, ...(language !== undefined ? { language } : {}) },
       },
       fs.readFileSync(new URL("../../tools/keyteki-shared-strategy.user.js", import.meta.url), 'utf8'),
     ),
@@ -686,4 +688,39 @@ test('explicit no-write concession refusal after real progress cancels the old e
   await h.w.tick();
   assert.equal(h.w.status().episode, null);
   assert.ok(h.events.some((e) => e.type === 'concede-not-sent'));
+});
+
+
+test('English watchdog accepts only the matching own apology echo before conceding', async () => {
+  const h = harness({ origin: 'https://thecrucible.online', config: { maxRecoveries: 0, stallMs: 100, apologyEchoMs: 1000 } });
+  h.observe();
+  h.advance(100);
+  await h.w.tick();
+  const x = raw();
+  x.messages = [{ id: 'wrong-language', message: [{ name: 'Self', argType: 'player' }, ' ', WATCHDOG_APOLOGY] }];
+  h.observe(x);
+  await h.w.tick();
+  assert.deepEqual(h.actions.map(x => x.kind), ['apology']);
+  x.messages = [{ id: 'english-echo', message: [{ name: 'Self', argType: 'player' }, ' ', watchdogApology('en')] }];
+  h.observe(x);
+  await h.w.tick();
+  assert.deepEqual(h.actions.map(x => x.kind), ['apology', 'concede']);
+  await h.w.tick();
+  assert.equal(h.actions.length, 2);
+});
+
+test('actual international userscript sends the English fault notice once and keeps its ledger across reload', async () => {
+  const h = guardianHarness({ pageOrigin: 'https://thecrucible.online' });
+  await h.flush();
+  assert.equal(h.api.act('apology', h.ticket()).queued, true);
+  assert.deepEqual(h.sends.map(x => JSON.parse(x.slice(2))), [['game', 'chat', watchdogApology('en')]]);
+  assert.equal(h.api.act('apology', h.ticket()).reason, 'already-attempted');
+  const reloaded = guardianHarness({ pageOrigin: 'https://thecrucible.online', storage: h.storage });
+  await reloaded.flush();
+  assert.equal(reloaded.api.act('apology', reloaded.ticket()).reason, 'already-attempted');
+  assert.equal(reloaded.sends.length, 0);
+  const explicit = guardianHarness({ language: 'en' });
+  await explicit.flush();
+  assert.equal(explicit.api.act('apology', explicit.ticket()).queued, true);
+  assert.deepEqual(explicit.sends.map(x => JSON.parse(x.slice(2))), [['game', 'chat', watchdogApology('en')]]);
 });

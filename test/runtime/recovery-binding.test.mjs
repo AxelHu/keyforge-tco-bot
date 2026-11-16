@@ -8,7 +8,7 @@ import { LEGACY_PREJOIN_GUARD_HASHES } from '../../tools/keyteki-reconcile-unjoi
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 test('bounded unjoined recovery pins match this published package guard version', () => {
-  assert.equal(Object.keys(LEGACY_PREJOIN_GUARD_HASHES).length, 3);
+  assert.equal(Object.keys(LEGACY_PREJOIN_GUARD_HASHES).length, 4);
   for (const [name, expected] of Object.entries(LEGACY_PREJOIN_GUARD_HASHES)) {
     assert.equal(
       createHash('sha256')

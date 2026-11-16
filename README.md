@@ -6,7 +6,7 @@
 
 [English](README.en.md) · [架构](docs/architecture.md) ·
 [卡牌知识](docs/card-knowledge.md) · [使用与恢复](docs/operations.md) ·
-[策略选单与历史 Elo](docs/strategy-guide.md) · [验证记录](docs/validation.md)
+[策略选单与历史 Elo](docs/strategy-guide.md) · [国际服与英文聊天](docs/international-tco.md) · [验证记录](docs/validation.md)
 
 ## 包含哪些能力
 
@@ -22,7 +22,7 @@
 协议适配器以 Keyteki 修订版
 `361c085bcd401c20976ee9bcc4e4e5b8c061d56c` 为参考开发。项目前身曾在一个 Keyteki 衍生部署上使用；本独立包有自己的构建、知识内容和验证范围。
 
-浏览器用户脚本包含 The Crucible Online 的网址匹配规则，但这不能证明它已兼容当前公开站点的完整登录、大厅和选牌界面。**本次独立包尚未完成公开 TCO 无人值守实战验收。** 请显式填写服务器 origin，并阅读[兼容与验证说明](docs/validation.md)。
+0.4.0 开始增加国际服英文界面与聊天支持，已实际检查国际站匿名主页、登录页和大厅。**国际服账号登录后的完整无人值守对局仍待验收。** 公开页面通过、组件回归通过和实战通过属于不同结果，当前状态及配置见[国际服适配说明](docs/international-tco.md)。
 
 后台 CLI 当前面向 **Linux 或 WSL 内的 Linux**，需要 Node.js **22.12–24.x**、Python 3 和 Chromium。进程身份核验与恢复使用 Linux `/proc` 和内核文件锁；当前不承诺原生 Windows、macOS 的后台监督支持。
 
@@ -41,7 +41,7 @@ node bin/kf-auto.mjs --help
 
 ## 快速启动
 
-本仓已经包含独立运行所需的策略、静态知识、桥接和后台工具。在支持的 Linux 环境完成依赖、构建及本地配置后，可以直接通过 CLI 启动，不需要原私有 KF 引擎或 OpenClaw。目标站点仍需兼容当前支持的 UI；现有流程绑定了 `Select deck`、`Select row <serverDeckId>` 以及“新游戏”“开始”等中英混合控件，不能只凭改好 origin 就认定当前公开 TCO 已兼容。
+本仓已经包含独立运行所需的策略、静态知识、桥接和后台工具。在支持的 Linux 环境完成依赖、构建及本地配置后，可以直接通过 CLI 启动，不需要原私有 KF 引擎或 OpenClaw。目标站点仍需兼容当前支持的登录、选牌及房间协议；使用国际服前请阅读[适配与验收状态](docs/international-tco.md)。
 
 创建自己的新配置：
 

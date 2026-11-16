@@ -53,7 +53,11 @@
     faultSettings.participants.length === 2 &&
     new Set(faultSettings.participants).size === 2 &&
     faultSettings.participants.includes(settings.playerName);
-  const FAULT_APOLOGY = '抱歉，我这边的自动对战程序卡住了，恢复没有成功。这局我认输，不耽误你时间。';
+  const faultLanguage = faultSettings?.language ?? (new URL(location.origin).hostname === 'thecrucible.online' ? 'en' : 'zh-CN');
+  if (faultEnabled && !['zh-CN', 'en'].includes(faultLanguage)) throw Error('CHAT_LANGUAGE_INVALID');
+  const FAULT_APOLOGY = faultLanguage === 'en'
+    ? "Sorry, my automated player got stuck and recovery failed. I'm conceding this game so I don't keep you waiting."
+    : '抱歉，我这边的自动对战程序卡住了，恢复没有成功。这局我认输，不耽误你时间。';
   const FAULT_OBSERVATION_PACKETS = 128,
     FAULT_OBSERVATION_CHARS = 4 * 1024 * 1024,
     FAULT_OBSERVATION_ATTEMPTS = 6,

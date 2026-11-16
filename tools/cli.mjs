@@ -16,7 +16,7 @@ export const HELP = `kf-auto：本机策略宿主与单账号浏览器运行器
   strategies list [--all] [--json]
   strategies show ID [--json]
   init --directory DIR --origin ORIGIN --account NAME --server-deck-id ID --deck-name NAME
-       [--deck-uuid UUID] [--policy ID | --choose-policy] [--game-socket-path EXACT_HTTP_PATH] [--headful]
+       [--deck-uuid UUID] [--policy ID | --choose-policy] [--game-socket-path EXACT_HTTP_PATH] [--chat-language zh-CN|en] [--headful]
   preflight --config FILE [--create-public]
   seat run|create --config FILE
   host start --profile DIR --config FILE
@@ -105,6 +105,7 @@ export function initializeConfig(args) {
   const directory = path.resolve(required(args, 'directory'));
   if (fs.existsSync(directory)) fail('CONFIG_DIRECTORY_ALREADY_EXISTS');
   const account = required(args, 'account');
+  if (args.filter(arg => arg === '--chat-language').length > 1) fail('CHAT_LANGUAGE_OPTION_DUPLICATED');
   const seat = {
     schema: HUMAN_SCHEMA,
     origin: required(args, 'origin'),
@@ -122,11 +123,12 @@ export function initializeConfig(args) {
     headless: !args.includes('--headful'),
     leaveAfterFinish: true,
     watchdog: { enabled: true },
-    social: { enabled: false },
+    social: { enabled: false, ...(args.includes('--chat-language') ? { language: required(args, 'chat-language') } : {}) },
     ownAccountNames: [account],
     gameSocketPaths: repeated(args, 'game-socket-path'),
   };
-  normalizeHumanConfig(seat, { createPublic: true });
+  const normalized = normalizeHumanConfig(seat, { createPublic: true });
+  seat.social.language = normalized.social.language;
   // An empty password is deliberate: this generates a private local template, never a credential.
   fs.mkdirSync(path.dirname(directory), { recursive: true, mode: 0o700 });
   fs.mkdirSync(directory, { mode: 0o700 });
@@ -140,6 +142,7 @@ export function initializeConfig(args) {
     config: path.join(directory, 'seat.json'),
     credentials: seat.credentialsPath,
     codePolicy: seat.self.codePolicy,
+    chatLanguage: seat.social.language,
     passwordMustBeFilledLocally: true,
     browserStarted: false,
   };

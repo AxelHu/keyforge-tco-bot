@@ -345,6 +345,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
             socialEnabled: true,
             humanWatchdog: {
               enabled: observationEnabled,
+              language: config.social.language,
               gameId: config.room.gameId,
               participants: config.participants,
             },

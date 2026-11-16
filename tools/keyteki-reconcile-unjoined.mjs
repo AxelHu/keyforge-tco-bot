@@ -31,10 +31,10 @@ const preJoinGuard = 'CURRENT_PUBLIC_LISTING_NOT_OBSERVED';
 // This does not authorize migration of an unrelated private or older installation.
 // A generic PUBLIC_ROOM_PAIR_CHANGED is deliberately insufficient: it can occur after join.
 export const LEGACY_PREJOIN_GUARD_HASHES = Object.freeze({
-  'tools/keyteki-human-launcher.mjs': '3d67c9e5b8da50c0d8362f27b951c74b7b80795e47f78bc54bdff03684e28a74',
-  'tools/keyteki-human-public-room-ui.mjs':
-    '0c9f7dd4a4f3d9f2bc9ffb5c94e7840a6024dcd181a5e3ef1620cfb2caccf9eb',
-  'tools/keyteki-fuzhou-ui.mjs': '8edceb51c3278195bbe75c10b2d80bee8fecbd118948d7a2c1cdad96987aa229',
+  "tools/keyteki-human-launcher.mjs": "b1cb27e39fca7735f811bc726aa37591ac32704d2b5143c1ab9e949eefb3fa67",
+  "tools/keyteki-human-public-room-ui.mjs": "91ebded2254bcc62094e9acd1bacf3255813b1c729bc1f9ad53f465b45732e11",
+  "tools/keyteki-fuzhou-ui.mjs": "6ddb20c7de53203db7c9a0515863a06bb15606a9f5fcd52cc2d414e454856a22",
+  "tools/keyteki-ui-contract.mjs": "e58a29eabe7e34a5a21d1924226855bce9d78d1e4087c4d317e285786a496d76",
 });
 
 function bytes(file, optional = false) {
