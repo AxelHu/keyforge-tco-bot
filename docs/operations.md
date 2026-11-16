@@ -66,7 +66,19 @@ node bin/kf-auto.mjs preflight \
 
 ## 3. 启动单局
 
-创建一个明确标注 AI 的公开新手房间，并等待非己方账号的对手：
+公开建房支持新手房 `beginner` 和休闲房 `casual`。`init` 默认生成 `beginner`；需要休闲房时，在尚未启动的 `seat.json` 中调整现有 `room` 对象的这些字段：
+
+```json
+{
+  "name": "AI game",
+  "gameType": "casual",
+  "gameFormat": "normal"
+}
+```
+
+`room.gameFormat` 保持 `normal`，房间名保留 `AI` 或 `人工智能` 标识。房型通过配置字段选择。修改后重新执行上一节的 `preflight --create-public`；其他账号、牌组和本地路径设置继续使用自己的配置。
+
+按配置创建明确标注 AI 的公开房间，并等待非己方账号的对手：
 
 ```sh
 node bin/kf-auto.mjs seat create \
@@ -77,7 +89,13 @@ node bin/kf-auto.mjs seat create \
 
 加入已经观察到的房间时，使用新的席位配置，填写准确的 `room.gameId`、`room.opponentName`、房间名和类型。先执行不带 `--create-public` 的 preflight，再执行 `seat run`。旧输出目录不会被静默复用于另一局。
 
-登录流程使用 `/login` 和 `/api/account/login`，选牌使用 `Select deck`、`Select row <serverDeckId>` 及精确牌组名。0.4.0 补充英文房间按钮适配，保留既有中文部署的控件支持。当前国际站已完成两个自有账号的受控私房完整自动验收；真人公房与公开连续匹配需要单独积累实测证据。详见[国际服配置与验收](international-tco.md)。
+登录流程使用 `/login` 和 `/api/account/login`，选牌使用 `Select deck`、`Select row <serverDeckId>` 及精确牌组名。0.4.0 补充英文房间按钮适配，保留既有中文部署的控件支持。较早源码已完成两个自有账号的受控私房完整自动验收。截至 2026-11-16 08:07:29 UTC，当前 casual 增量已完成真实公开无密码房间的创建和一次无对手等待后的自动退场，匹配流程仍在继续；连同早前两次等待，共 3 次尝试、0 开局。真人游戏结果另行记录。详见[国际服配置与验收](international-tco.md)。
+
+### 准备阶段停留或失败
+
+公开建房尚未启动宿主时也可能遇到准备失败。新版本在 `preparePlayer` 出错且已有可用诊断时，将阶段失败信息保存在 `handoff.json` 的 `setupFailure`；检查该回执与原 hold 原因，可以区分已记录的准备阶段。原始泛化错误没有保存的阶段不能从后来的页面状态补造，也不能把空房等待或未开局的准备失败计作策略胜负。诊断信息不会自动消除 hold；后续恢复与资源处理继续遵循已绑定的状态和实际回执。
+
+本次较早 casual 运行的后续准备失败已完成人工退役，原失败分类及不可继续标志保留，未归为自动恢复成功；操作细节见[实测处置记录](international-network.md)。该较早公开阶段累计 4 次正常无对手等待、1 次准备失败。新 r4 已完成首场真人自然负局及自动收尾，观察仍在继续；当前结果与开始新尝试的截止见[线路与对局实测](international-network.md)。
 
 ## 4. 为连续对局冻结运行时
 

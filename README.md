@@ -20,16 +20,11 @@
 
 ## 兼容范围
 
-协议适配器以 Keyteki 修订版
-`361c085bcd401c20976ee9bcc4e4e5b8c061d56c` 为参考开发。项目前身曾在一个 Keyteki 衍生部署上使用；本独立包有自己的构建、知识内容和验证范围。
+已适配福州服与国际服 TCO。本机本轮国际服实测建议优先使用代理线路：较大前端资源加载更稳定，但直连的 WebSocket 往返延迟更低，结论不代表所有网络。配置方法见[国际服指南](docs/international-tco.md)。
 
-0.5.0 已在真实国际服完成一次受控私房完整自动验收：修复版 DT/DM 自然 3:2，339／339 条命令确认，双席英文备用开场取得原生回显，终局离桌及全部运行资源自动释放，无人工介入。同轮另外两场自然通过使用 0.4.0 基线，另有一场技术失败及人工清理；逐阶段结果见[线路实测与后续对局](docs/international-network.md)。
+本轮受控私房完成 **3 场自然终局并自动收尾**，另有 1 场技术失败及人工清理。首场真人对局于 **2026-11-16 08:56:29 UTC** 以 **1:3 自然落败**，147／147 条动作确认并自动退出；5 次真实 MiniMax 调用与 5 条原生英文自动桌聊回显均有证据，专名保留原名。观察阶段目前在这份快照中完成 1／3 场，仍在继续；开始新尝试的截止为 **11:15:39 UTC（北京时间 19:15）**。这是早期适配样本，不据此估计 Elo 或真人胜率；版本归属与完整结果见[线路与对局实测](docs/international-network.md)。
 
-本轮另完成一次真实 MiniMax 英文 API 预检，使用合成上下文且没有发送游戏消息。真人阶段流程已启动，尚无真人终局；自动故障恢复和新增 Hypnotic Command 分支未在上述修复版对局触发。当前不提供新的 Elo 或真人胜率估计。
-
-早先的 0.4.0 历史验收为 3 场自然终局，其中 1 场完整自动通过、2 场人工收尾，696／696 条命令确认；该批结果保持原来源，见[历史证据](docs/evidence/international-2026-11-16.json)。配置与完整限制见[国际服适配说明](docs/international-tco.md)。
-
-后台 CLI 当前面向 **Linux 或 WSL 内的 Linux**，需要 Node.js **22.12–24.x**、Python 3 和 Chromium。进程身份核验与恢复使用 Linux `/proc` 和内核文件锁；当前不承诺原生 Windows、macOS 的后台监督支持。
+最新完整测试 **262／262** 通过。后台 CLI 面向 **Linux 或 WSL 内的 Linux**，需要 Node.js **22.12–24.x**、Python 3 和 Chromium；原生 Windows、macOS 的后台监督尚未验证。完整能力边界见[验证说明](docs/validation.md)。
 
 ## 安装
 
@@ -59,6 +54,8 @@ node bin/kf-auto.mjs init \
   --deck-name 'Your deck name' \
   --policy tactical-style-engine-v3
 ```
+
+`init` 默认生成 `room.gameType: "beginner"`。需要公开休闲房时，在尚未启动的 `seat.json` 中将其改为 `"casual"`，保持 `room.gameFormat: "normal"`，房间名保留 `AI` 标识。房型通过配置字段选择，具体示例见[操作指南](docs/operations.md)。
 
 在本地生成的 `credentials.json` 中填入实际密码，再执行：
 

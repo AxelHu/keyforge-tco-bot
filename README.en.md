@@ -32,21 +32,11 @@ engine, game server, game UI and historical match data are not included.
 
 ## Compatibility
 
-The protocol adapter was developed against Keyteki revision
-`361c085bcd401c20976ee9bcc4e4e5b8c061d56c`. The predecessor was used on a
-Keyteki-derived deployment; the extracted package is a new build with its own
-knowledge boundary.
+The bot supports the Fuzhou deployment and international TCO. In this machine's measurements, proxy routing loaded the larger frontend assets more reliably, while direct routing had lower WebSocket round-trip latency. Prefer the proxy for this measured setup; this is not a claim about every network. See the [international guide](docs/international-tco.md) for configuration.
 
-Version 0.5.0 has passed one complete automatic private-game acceptance run on the real international site. The fixed DT/DM run ended naturally at 3:2, acknowledged all 339 commands, received native echoes of both English fallback openings, and released both seats and all runtime resources without manual intervention. Two other natural passes in the same campaign used the 0.4.0 baseline; a separate technical failure and its manual cleanup remain in the record. See [network measurements and subsequent games](docs/international-network.md) for the source binding of each phase.
+This round of controlled private testing produced **three natural finishes with automatic cleanup**, plus one technical failure requiring manual cleanup. The first human-opponent game ended in a **natural 1:3 loss at 08:56:29 UTC on 2026-11-16**, with all 147 commands acknowledged and automatic departure and runtime retirement. Five real MiniMax calls and five native echoes of English automated table-chat messages were verified, with proper names preserved. This snapshot covers one of the three planned observed natural games; observation continues, with a new-attempt deadline of **11:15:39 UTC (19:15 Beijing)**. These are early compatibility samples, not an Elo or human-opponent win-rate estimate. See the [network and game results](docs/international-network.md) for each phase's source binding.
 
-A separate real MiniMax API preflight accepted English output from synthetic context; it sent no game message. The public-opponent workflow has started, with no completed human game recorded yet. Automatic fault recovery and the new Hypnotic Command branch were not exercised in the fixed private game. These results do not provide a new Elo rating or a human-opponent win-rate estimate.
-
-The earlier 0.4.0 acceptance remains historical: three natural finishes, one complete automatic pass, two manual-cleanup outcomes, and 696/696 acknowledged commands. Its [original evidence](docs/evidence/international-2026-11-16.json) is preserved. See the [international TCO guide](docs/international-tco.md) for configuration and scope.
-
-The managed CLI currently targets **Linux or Linux inside WSL**, Node.js
-**22.12–24.x**, Python 3 and Chromium. Process identity and recovery use Linux
-`/proc` and kernel file locks. Native Windows and macOS supervision are not
-claimed to be supported.
+The latest full suite passed **262/262 tests**. Managed operation targets **Linux or Linux inside WSL**, with Node.js **22.12–24.x**, Python 3 and Chromium. Native Windows and macOS supervision has not been validated. See the [validation scope](docs/validation.md).
 
 ## Install
 
@@ -83,6 +73,8 @@ node bin/kf-auto.mjs init \
   --deck-name 'Your deck name' \
   --policy tactical-style-engine-v3
 ```
+
+`init` generates `room.gameType: "beginner"` by default. To create a casual public room, set it to `"casual"` in the unused `seat.json`, keep `room.gameFormat: "normal"`, and retain the `AI` marker in the room name. Room type is selected in configuration; see the [operation guide](docs/operations.md).
 
 Fill the actual password in the generated local `credentials.json`, then run:
 
