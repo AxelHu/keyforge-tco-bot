@@ -283,6 +283,7 @@ export function campaignSummary(config, state) {
     focus: state.focus,
     focusWaiting: state.focusWaiting ?? null,
     completion: state.completion ?? null,
+    disconnectedOpponentDepartures: state.records.filter((row) => row.outcome === 'opponent-disconnected-departure').length,
     natural: {
       games: natural.length,
       wins: natural.filter((row) => row.won).length,
@@ -552,6 +553,11 @@ export async function runLiveCampaign(input, dependencies = {}) {
             holdReason: handoff.holdReason ?? null,
             hostRestarts: handoff.hostRestarts ?? 0,
             watchdogPhase: handoff.watchdog?.phase ?? null,
+            disconnectedOpponentExit: handoff.disconnectedOpponentExit ? {
+              phase: handoff.disconnectedOpponentExit.phase,
+              reasonCode: handoff.disconnectedOpponentExit.reasonCode ?? null,
+              leaveUiAttempts: handoff.disconnectedOpponentExit.leaveUiAttempts,
+            } : null,
             joinedPendingExit: handoff.joinedPendingExit
               ? {
                   phase: handoff.joinedPendingExit.phase,
@@ -561,6 +567,8 @@ export async function runLiveCampaign(input, dependencies = {}) {
                 }
               : null,
           });
+          if (handoff.disconnectedOpponentExit?.phase === 'blocked-preserved')
+            setPause('opponent-disconnect-retirement-unconfirmed');
           if (handoff.joinedPendingExit?.phase === 'blocked-preserved')
             setPause('joined-pending-retirement-unconfirmed');
           if (handoff.evidenceWriteFailures > 0) setPause('evidence-write-failure');

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         KF Shared Strategy Bridge
 // @namespace    keyforge-lab
-// @version      0.4.1
+// @version      0.5.1
 // @description  Use your received player view with a configured local strategy host and optional AI table chat.
 // @match        https://thecrucible.online/*
 // @match        http://127.0.0.1/*
@@ -85,6 +85,7 @@
         ownerEpoch: ctx.ownerEpoch,
         deliveryLedger: deliveryLedger ?? null,
         faultLedger: ctx.faultLedger ?? null,
+        departureLedger: ctx.departureLedger ?? null,
         operatorPaused: ctx.operatorPaused === true,
       }),
     );
@@ -122,6 +123,7 @@
     previousGameId: stored.gameId,
     deliveryLedger: stored.deliveryLedger ?? null,
     faultLedger: stored.gameId === faultSettings?.gameId ? (stored.faultLedger ?? null) : null,
+    departureLedger: stored.gameId === faultSettings?.gameId ? (stored.departureLedger ?? null) : null,
     operatorPaused: stored.gameId === faultSettings?.gameId && stored.operatorPaused === true,
     watchdog: {
       sequence: 0,
@@ -196,6 +198,7 @@
       observationAck: w.observationAck,
       observationOverflow: w.observationOverflow,
       ledger: ctx.faultLedger ?? null,
+      departureLedger: ctx.departureLedger ? { ...ctx.departureLedger } : null,
     };
   }
   function faultMatches(ticket, requireConnected = true) {
@@ -381,6 +384,22 @@
           return true;
         },
         reconcileDelivery: reconcileObservedDelivery,
+        prepareDisconnectedLeave(ticket) {
+          const ctx = current, snap = faultSnapshot();
+          if (faultSettings?.allowDisconnectedOpponentExit !== true || !faultMatches(ticket) ||
+              ctx.paused || ctx.departureLedger || snap.unknownSend !== false ||
+              snap.deliveryPresent !== false || snap.deliveryLedgerPresent !== false) return false;
+          ctx.departureLedger = {
+            gameId: snap.gameId, playerName: snap.playerName, documentId: snap.documentId,
+            ownerEpoch: snap.ownerEpoch, nativeSequence: snap.nativeSequence, frameToken: snap.frameToken,
+            transportPath: snap.transportPath, phase: 'armed', source: 'normal-ui',
+            createdAt: Date.now(), expiresAt: Date.now() + 5000, nativeLeaveObserved: false,
+          };
+          ctx.paused = true;
+          ctx.pauseReason = 'opponent-disconnected-exit';
+          saveSession(ctx);
+          return true;
+        },
         act(kind, ticket) {
           if (
             !['apology', 'concede'].includes(kind) ||
@@ -826,6 +845,20 @@
     if (faultEnabled && key === ctx.watchdog.key && typeof raw === 'string') {
       for (const part of raw.split('\x1e')) {
         const event = parsePacket(part)?.event;
+        const departure = ctx.departureLedger;
+        // Only a previously armed normal UI Leave on this exact native receipt is exempt.
+        // No other command, replay, other game/document, or late polling send shares this permit.
+        if (faultSettings?.allowDisconnectedOpponentExit === true && departure?.phase === 'armed' &&
+            Date.now() <= departure.expiresAt && faultMatches(departure) &&
+            ctx.delivery == null && ctx.deliveryLedger == null &&
+            Array.isArray(event) && event.length === 2 && event[0] === 'game' && event[1] === 'leavegame') {
+          departure.phase = 'native-leave-observed';
+          departure.nativeLeaveObserved = true;
+          departure.opcode = 'game/leavegame';
+          departure.observedAt = Date.now();
+          saveSession(ctx);
+          continue;
+        }
         if (
           event?.[0] === 'game' &&
           !(event.length === 3 && event[1] === 'showDrawDeck' && event[2] === false) &&

@@ -1,0 +1,972 @@
+{
+  "schema": "kf-international-disconnect-evidence-v1",
+  "asOf": "2026-11-16T15:43:16.274430+00:00",
+  "site": "https://thecrucible.online",
+  "publicationVersion": "0.5.1",
+  "previousPublicBatch": {
+    "sourceCommit": "80c3cd36157bca3873caf37563c152dc13fad6cd",
+    "runtimeManifestSha256": "5f69af229072bd7964d1b413ba25bc2f58bb421c4d53a2788afcbcdd32c774f1",
+    "strategyId": "tactical-style-engine-v3",
+    "deckSet": "PV",
+    "networkMode": "proxy",
+    "humanGamesStarted": 4,
+    "naturalGames": 3,
+    "wins": 0,
+    "losses": 3,
+    "commands": 483,
+    "acknowledged": 483,
+    "games": [
+      {
+        "ordinal": 1,
+        "outcome": "natural-loss",
+        "scoreKeys": [
+          1,
+          3
+        ],
+        "commands": 147,
+        "acknowledged": 147,
+        "automaticSeatAndRuntimeRetirement": true,
+        "summarySha256": "3da2defbee9af6ce9469a1aff91dbfdeaf65dda609c339041983b1a8acb64351",
+        "reviewSha256": "1fc1c9e3bd394f49df7b1afe2c791d351845fbd3add88b9b3c5f1a2e89f09402",
+        "recordedEndedAt": "2026-11-16T08:56:29.847Z",
+        "recordedEndedAtSource": "safe summary result.endedAt, including automatic retirement; not the earlier native winner observation timestamp."
+      },
+      {
+        "ordinal": 2,
+        "outcome": "natural-loss",
+        "scoreKeys": [
+          1,
+          3
+        ],
+        "commands": 193,
+        "acknowledged": 193,
+        "automaticSeatAndRuntimeRetirement": true,
+        "summarySha256": "f97767b245a6fe4712bf115992c7350cf28f915272e79b120cab4786fab67716",
+        "reviewSha256": "0785098d70ca5a4296077b5d5f00aabca7cf514b62ecca2b75801f16515b41a0",
+        "recordedEndedAt": "2026-11-16T09:18:45.663Z",
+        "recordedEndedAtSource": "safe summary result.endedAt, including automatic retirement; not the earlier native winner observation timestamp."
+      },
+      {
+        "ordinal": 3,
+        "outcome": "natural-loss",
+        "scoreKeys": [
+          2,
+          3
+        ],
+        "commands": 143,
+        "acknowledged": 143,
+        "automaticSeatAndRuntimeRetirement": true,
+        "summarySha256": "5571ad2d23ebbeb56d30700ee12042337eda1aa16b81388ab5507002609344df",
+        "reviewSha256": "026bfef2dd6a45e80e13bee747dfd3df20909a00be9c263e8899e19f844f325e",
+        "recordedEndedAt": "2026-11-16T09:35:04.265Z",
+        "recordedEndedAtSource": "safe summary result.endedAt, including automatic retirement; not the earlier native winner observation timestamp."
+      }
+    ],
+    "naturalGameEvidence": {
+      "stateSnapshots": 933,
+      "decisions": 483,
+      "evidenceRows": 13777,
+      "realProviderCalls": 17,
+      "nativeQueuedMessages": 17,
+      "independentlyObservedOwnNativeEchoes": 17,
+      "englishContentMessages": 16,
+      "punctuationOnlyMessages": 1,
+      "punctuationOnlyCodepoints": [
+        "U+0022",
+        "U+0022"
+      ],
+      "tokens": 12863,
+      "hostRestarts": 0,
+      "watchdogRecoveries": 0,
+      "gameplayTechnicalFailures": 0,
+      "startupObservationUnavailableEvents": 1
+    },
+    "r4Attempts": 6,
+    "cumulativePublicAttempts": 11,
+    "cumulativeNoOpponentAttempts": 6,
+    "cumulativeEarlyPreparationFailures": 1,
+    "disconnectedNonterminalAttempts": 1,
+    "oldBudgetReset": false,
+    "closedAndPaused": true,
+    "activeAttempt": null,
+    "cumulativePublicAttemptsScope": "Earlier 5 attempts on earlier runtimes plus 6 r4 attempts; the three human natural games and fourth setup disconnect belong to r4."
+  },
+  "previousNonterminalDisconnect": {
+    "status": "manual-normal-departure-resources-retired-explicitly-reconciled",
+    "phaseAtDisconnect": "setup-awaiting-opponent",
+    "bothKeysAndAmberAtDisconnect": 0,
+    "commands": 2,
+    "acknowledged": 2,
+    "opponentDisconnectedAt": "2026-11-16T09:45:38.129Z",
+    "leaveClickedAt": "2026-11-16T13:25:15.187Z",
+    "serverAbsenceConfirmedAt": "2026-11-16T13:25:24.351Z",
+    "nativeNoLossOfferObserved": true,
+    "normalLeaveUiClicks": 1,
+    "concessionUsed": false,
+    "accountHistoryIndependentlyQueried": false,
+    "liveOutgoingOpcodeCaptured": false,
+    "liveEvidenceBasis": "Exact no-loss native UI plus fresh independent anonymous roster present-to-absent proof; deployed source separately identifies the normal Leave opcode.",
+    "originalExternalCommandUnknownAndPausePreserved": true,
+    "originalAttemptClassification": "operator-paused",
+    "originalAttemptFlagsPreserved": true,
+    "resourceRetirementManual": true,
+    "resourceRetirementCompletedAt": "2026-11-16T13:32:03.467692Z",
+    "all18BoundProcessIdentitiesAbsent": true,
+    "profilesRetained": true,
+    "accountKernelLockFree": true,
+    "activeAttemptClearedByExplicitManualReconciliation": true,
+    "original6RecordBytesPreserved": true,
+    "automaticRecoveryClaimed": false,
+    "naturalGameAdded": false,
+    "strategyWinOrLossAdded": false,
+    "social": {
+      "realProviderCalls": 1,
+      "nativeEnglishEchoes": 1,
+      "tokens": 632
+    }
+  },
+  "implementation": {
+    "version": "0.5.1",
+    "sourceCommit": "365f06abdb81b13c47a9c1f1c48acd8e1f991eba",
+    "baseCommit": "93f87c3c502fc21040f89c3edaa0cdf9f6b7cad1",
+    "sourceSetSha256": "4a766678e22dd50cb34a3fc969c37370528a07d96be79ae80b13f44df2258017",
+    "fullOffline": {
+      "sha256": "cf6e9a9955c7e3893800d6c3b3ec257b59fbd279ddfdb1c4e69659ba57f38cbb",
+      "tests": 298,
+      "passed": 298,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "durationMs": 25857.033152,
+      "exitCode": 0
+    },
+    "uniqueTestAccounting": {
+      "baselineExisting": 262,
+      "newFeatureTests": 36,
+      "finalUniqueTotal": 298,
+      "earlier287": {
+        "existing": 262,
+        "new": 25
+      },
+      "additionalSince287": 11,
+      "note": "Targeted and independent repeat runs overlap the full suite and are not added to its unique count."
+    },
+    "independentFeatureTests": {
+      "passed": 36,
+      "overlapsFullSuite": true
+    },
+    "sourceReview": "APPROVE",
+    "packageBoundary": {
+      "files": 313,
+      "moduleEdges": 923,
+      "findings": 0
+    },
+    "defaultEnabled": false,
+    "supportedOrigin": "https://thecrucible.online",
+    "defaultWaitMs": 120000,
+    "minimumWaitMs": 120000,
+    "maximumWaitMs": 900000,
+    "nativeContinuityResetsOnReconnect": true,
+    "ordinaryConnectedAfkUnchanged": true,
+    "strategyAndCardAlgorithmsChanged": false,
+    "socialAlgorithmsChanged": false,
+    "actualDriverExitRequired": true,
+    "naturalResultManufactured": false
+  },
+  "frozenRuntime": {
+    "sourceCommit": "365f06abdb81b13c47a9c1f1c48acd8e1f991eba",
+    "sourceCommitBinding": "Separate Git commit and freeze receipt; manifest sourceCommit is null by design for this copied installation.",
+    "runtimeManifestSha256": "7ee244cf2a9b83a09f7bdaf6d3406a0e4290dbe3d3bc979c851631b21539d78f",
+    "sourceFingerprint": "0705456b10d26abd6648168a54da3461d371525bec1e07f9c3640f185dce79e6",
+    "runtimeFiles": 784,
+    "externalExecutionFiles": 307,
+    "freezeReceiptSha256": "a06bf9a84413f39c8909a61bf4c016c287331d3f884289248416326d7364326e"
+  },
+  "privateDisconnectAcceptance": {
+    "status": "passed-real-owned-private-disconnect",
+    "sourceCommit": "365f06abdb81b13c47a9c1f1c48acd8e1f991eba",
+    "runtimeManifestSha256": "7ee244cf2a9b83a09f7bdaf6d3406a0e4290dbe3d3bc979c851631b21539d78f",
+    "harnessSha256": "303955a276092f50f833e23898576199687c8baabedf1070191952f44d6dcf1d",
+    "wrapperSha256": "8361207cc4d096f013e7096f520642cdc637da17356ce21a6d08e050b01c0f6f",
+    "finalizerSha256": "3842e40dc3919b79222704b6a052d0e8e6cf5a37a19d62228920876296d4a0dd",
+    "configSha256": "0566dd95b76b057454f076580d8974ccbd3b92704e11776bb007263aac89c128",
+    "launchReviewSha256": "daff111b8918af79987d56accc336305216522ad868a898258b3fc93f9ba5700",
+    "scope": "Owned private fixture using the production bridge/watchdog/exit/retirement components; separate private room setup, not the public matching entrance.",
+    "naturalGamesAdded": 0,
+    "attempts": [
+      {
+        "ordinal": 1,
+        "sourceCommit": "365f06abdb81b13c47a9c1f1c48acd8e1f991eba",
+        "runtimeManifestSha256": "7ee244cf2a9b83a09f7bdaf6d3406a0e4290dbe3d3bc979c851631b21539d78f",
+        "status": "private-fixture-observer-failed-before-disconnect",
+        "driverExitCode": 2,
+        "failureCode": "PRIVATE_NATIVE_WAITING_SETUP_NOT_CONFIRMED",
+        "failureCause": "The private harness listened only to WebSocket and missed the initial full native state sent over HTTP polling. The production bridge and watchdog had already accepted the full state.",
+        "productionFullVerified": true,
+        "commands": 1,
+        "acknowledged": 1,
+        "nativeDisconnectInjectedBeforeFailure": false,
+        "newExitFeatureExercised": false,
+        "naturalGamesAdded": 0,
+        "manualCleanupStatus": "completed-manual-neutral",
+        "failedOutcomeReviewSha256": "7898be78bcc31b8f277cc16ad4d4245146a669dab60b5028fdef5058f336b023",
+        "executionReceiptSha256": "e483b38432e6ccb5a35086554528a55dfe7be544df08ce36fc449f5ce797b80b",
+        "resourcesPreservedAtFailure": true,
+        "manualCleanupCompletedAt": "2026-11-16T14:39:07.994Z",
+        "manualCleanup": {
+          "testPageClosedAt": "2026-11-16T14:38:35.162Z",
+          "normalLeaveClickedAt": "2026-11-16T14:39:06.058Z",
+          "normalLeaveUiClicks": 1,
+          "continuousNativeDisconnectAndNoLossNoticeMs": 30264,
+          "nativeRosterPresentOrdinal": 1,
+          "nativeRosterLastPositiveOrdinal": 4,
+          "nativeRosterRoomAbsentOrdinal": 6,
+          "bothNativeSeatsAbsent": true,
+          "hostAndBothBrowsersRetired": true,
+          "accountKernelLocksFree": true,
+          "actualHelperExitCode": 0,
+          "nativeOutgoingOpcodeCaptured": false,
+          "originalFailureArtifactsPreserved": true,
+          "automaticAcceptancePassed": false,
+          "naturalGamesAdded": 0,
+          "journalSha256": "68aac7cc1f395069b7ea09ffb402483856f13ec354e0b1e2117db12e45ad0c8d",
+          "independentOutcomeReviewSha256": "1492aafa02f31f1b8b4024c2eb6531dfe91f1b35bd98bda796245b1883db3a30",
+          "earlierCleanupPrecheckFailures": [
+            {
+              "ordinal": 1,
+              "code": "OWNED_SEATS_NOT_CURRENTLY_PRESENT",
+              "playerUiActions": 0,
+              "qualification": "Initial full roster proved both seats; subsequent independent probes did not both produce a positive confirmation. Missing diagnostics prevent a narrower cause attribution.",
+              "reviewSha256": "c5f62dd30f83e1f6a2f43fca21d57363d9fc9285857beafc6b74aa1fdf42f0bb"
+            },
+            {
+              "ordinal": 2,
+              "code": "SHARED_LOBBY_DOCUMENT_CHANGED",
+              "playerUiActions": 0,
+              "qualification": "An overly strict navigation-event counter stopped before initial native full. A later independent read-only reproduction observed a same-document historyApi event; the original event detail was not captured.",
+              "reviewSha256": "78d1b03ce8aee28b8694aac839203792de96d8112371231b785e61cdfba0942b"
+            }
+          ]
+        },
+        "inputHashes": {
+          "harnessSha256": "c89cde63ff11e4f177965a0659b8494904b39b51d672235093314406a412f36c",
+          "wrapperSha256": "70e959821bbf2ab67844da0a3b632a239a0c69fc8e532f14b547b1f64e06bde2",
+          "finalizerSha256": "913f2dc6886249ddba89b85ef9c0e9e58bc8aa5bcc47ad9b65602a003508e3cd",
+          "configSha256": "cb6ce6d160f482d3132476000d1be7fb06b9d4ccf72e792889d97a9456e9b39b",
+          "launchReviewSha256": "262968809c3f8086ca97859593a139cd585aee6d383fc27576c666e8eebbf451"
+        }
+      },
+      {
+        "ordinal": 2,
+        "status": "initial-lobby-disconnected-before-room-creation",
+        "driverExitCode": 2,
+        "wrapperExitCode": 2,
+        "failureCode": "LOBBY_DISCONNECTED_DURING_SETUP",
+        "failurePhase": "test-account-initial-lobby",
+        "gameCreated": false,
+        "hostStarted": false,
+        "newExitFeatureExercised": false,
+        "noRoomResourcesAutomaticallyReleased": true,
+        "accountKernelLocksFree": true,
+        "activeAttempt": null,
+        "manualCleanupRequired": false,
+        "naturalGamesAdded": 0,
+        "networkRootCauseDetermined": false,
+        "failedOutcomeReviewSha256": "4e0777cbab026673009c9a09bba612cf021f1ba10301f96d6331d58c2bcbc34e",
+        "executionReceiptSha256": "b0449965549d20bc43ad64d3adab9cc8112519dfe1a0a9c23b2ef38f105578e2",
+        "handoffSha256": "639b4ceaf0e18337b502363045e9e07ae07371a6aaa1b1d6257601c67abbc04f",
+        "inputHashes": {
+          "harnessSha256": "3bbabe97700dcb70f1d1968e77c1f044c6d2b8996a56108753e6b22e12acad2c",
+          "wrapperSha256": "bf19c13670fa1d03b20c1814cece97306c887e5e09596e1a2681fae9dffdbabe",
+          "finalizerSha256": "1617ea38c2457c146bce0f051c4893a8a305d5a84cb878911212cf41555e2f07",
+          "observerSha256": "b05a5e28dc8628c3696b04cb32939db530d2768f046083a15ccf193e1ed2f710",
+          "configSha256": "29ecc4ae0eb9f6f89a0cc6eb2da1899cde2764d0e43cb6bf30b11ed69ebedc8f",
+          "launchReviewSha256": "3c2afe5b3cb5626e09048414b352eb998062e016be2ec2678e070e0695401a4f"
+        },
+        "failureAttributionQualification": "The receipt records the current Test preparePlayer phase. Its shared health check covers both already-created account observers, so it cannot identify which WebSocket closed. The main account had already completed login. A false readiness-confirmed flag does not prove that polling never connected."
+      },
+      {
+        "ordinal": 3,
+        "status": "initial-lobby-disconnected-before-room-creation",
+        "startedAt": "2026-11-16T14:47:33.976Z",
+        "sameExecutableInputsAsAttempt2": true,
+        "onlyConfigDifferenceFromAttempt2": "fresh output directory",
+        "newExitFeatureAcceptancePassed": false,
+        "driverExitCode": 2,
+        "wrapperExitCode": 2,
+        "failureCode": "LOBBY_DISCONNECTED_DURING_SETUP",
+        "failurePhase": "main-account-initial-lobby",
+        "gameCreated": false,
+        "hostStarted": false,
+        "newExitFeatureExercised": false,
+        "noRoomResourcesAutomaticallyReleased": true,
+        "accountKernelLocksFree": true,
+        "activeAttempt": null,
+        "manualCleanupRequired": false,
+        "naturalGamesAdded": 0,
+        "networkRootCauseDetermined": false,
+        "failedOutcomeReviewSha256": "aec013cab8d00f3d0ceb89979df9911ddc68f47af783e7809c3d55caa37cecab",
+        "executionReceiptSha256": "4e0783c3207852ee679959fa1d20d9305c341c577408373a35eef62567094a67",
+        "handoffSha256": "91ec9cc1dc3a9500b4eb0657b6d204de7cfe489c43e92bfb9fbd786cefaef213",
+        "inputHashes": {
+          "harnessSha256": "3bbabe97700dcb70f1d1968e77c1f044c6d2b8996a56108753e6b22e12acad2c",
+          "wrapperSha256": "bf19c13670fa1d03b20c1814cece97306c887e5e09596e1a2681fae9dffdbabe",
+          "finalizerSha256": "1617ea38c2457c146bce0f051c4893a8a305d5a84cb878911212cf41555e2f07",
+          "observerSha256": "b05a5e28dc8628c3696b04cb32939db530d2768f046083a15ccf193e1ed2f710",
+          "configSha256": "4f8785b6ddff0daf7e6fb94ae6640009b9963f4906ae643e1da6186a89df9b57",
+          "launchReviewSha256": "fb130ad3e6f1e3cdf819f6d3e673514b6ec59df78d2386634cc4f2a42495cc96"
+        },
+        "failureAttributionQualification": "Only the first main-account observer existed. The error proves its sticky WebSocket-close flag was set, but does not prove that every underlying transport was disconnected or that polling never connected."
+      },
+      {
+        "ordinal": 4,
+        "status": "initial-lobby-disconnected-before-room-creation",
+        "driverExitCode": 2,
+        "wrapperExitCode": 2,
+        "failureCode": "LOBBY_DISCONNECTED_DURING_SETUP",
+        "failurePhase": "test-account-initial-lobby-check",
+        "gameCreated": false,
+        "hostStarted": false,
+        "newExitFeatureExercised": false,
+        "noRoomResourcesAutomaticallyReleased": true,
+        "accountKernelLocksFree": true,
+        "activeAttempt": null,
+        "manualCleanupRequired": false,
+        "naturalGamesAdded": 0,
+        "networkRootCauseDetermined": false,
+        "failedOutcomeReviewSha256": "06e4041d2f7b9331536752b20f9888cfbdc2d1873034124f7a324f6aa257bab2",
+        "executionReceiptSha256": "92e10288af286484b3ef5c9c9d5977889b7aa4fc2005007a4ea6d68b5d2b124f",
+        "handoffSha256": "9728565e7a40b5eb3f1d45108bc1144a39b0396a6bbf3396531fee03e39abec9",
+        "inputHashes": {
+          "harnessSha256": "3bbabe97700dcb70f1d1968e77c1f044c6d2b8996a56108753e6b22e12acad2c",
+          "wrapperSha256": "bf19c13670fa1d03b20c1814cece97306c887e5e09596e1a2681fae9dffdbabe",
+          "finalizerSha256": "1617ea38c2457c146bce0f051c4893a8a305d5a84cb878911212cf41555e2f07",
+          "observerSha256": "b05a5e28dc8628c3696b04cb32939db530d2768f046083a15ccf193e1ed2f710",
+          "configSha256": "c53843d28e6286fa14ed291e335d3aaae4547e9693293b381fda0ecf365b7b1a",
+          "launchReviewSha256": "1ce0c410e6bbd3d3c9113b87a9ff2f1e6f33788b320c9c3438a915c33079e8dd"
+        },
+        "failureAttributionQualification": "The receipt records the current Test preparePlayer phase. Its shared health check covers both already-created account observers, so it cannot identify which WebSocket closed. The main account had already completed login. A false readiness-confirmed flag does not prove that polling never connected.",
+        "startedAt": "2026-11-16T14:58:10.496883+00:00",
+        "sameExecutableInputsAsAttempt2": true
+      },
+      {
+        "ordinal": 5,
+        "status": "passed-real-automatic-disconnected-departure",
+        "sourceCommit": "365f06abdb81b13c47a9c1f1c48acd8e1f991eba",
+        "runtimeManifestSha256": "7ee244cf2a9b83a09f7bdaf6d3406a0e4290dbe3d3bc979c851631b21539d78f",
+        "startedAt": "2026-11-16T15:13:25.849928+00:00",
+        "driverExitedAt": "2026-11-16T15:17:18.369258+00:00",
+        "wrapperEndedAt": "2026-11-16T15:17:20.019035+00:00",
+        "driverExitCode": 0,
+        "finalizerExitCode": 0,
+        "wrapperExitCode": 0,
+        "inputsUnchangedAfterDriverExit": true,
+        "testInitialFullViewCapturedViaPolling": true,
+        "fixture": {
+          "startedAt": "2026-11-16T15:13:28.478Z",
+          "testPageClosedAt": "2026-11-16T15:14:48.740Z",
+          "nativeOpponentDisconnectedObservedAt": "2026-11-16T15:14:49.243Z",
+          "continuousDisconnectObservedSince": "2026-11-16T15:14:49.963Z",
+          "observedForMs": 145318,
+          "minimumWaitMs": 120000,
+          "leaveIntentAt": "2026-11-16T15:17:15.281Z",
+          "normalUiLeaveAttempts": 1,
+          "nativeLeaveOpcode": "game/leavegame",
+          "actualOutgoingLeaveObservedAt": 1794842235286,
+          "ownSeatBeforeOrdinal": 1,
+          "ownSeatAfterOrdinal": 3,
+          "ownSeatAbsentAt": "2026-11-16T15:17:15.718Z",
+          "testSeatBeforeOrdinal": 1,
+          "testSeatAfterOrdinal": 4,
+          "testSeatAbsentAt": "2026-11-16T15:17:16.672Z",
+          "optionalTestReconnectOrLeaveNeeded": false,
+          "productionRetiredAt": "2026-11-16T15:17:16.137Z",
+          "hostAutomaticallyStopped": true,
+          "chairBrowserAutomaticallyReleased": true,
+          "hostRestarts": 0,
+          "operatorPause": false,
+          "manualChairControls": 0,
+          "commands": 1,
+          "queuedCommands": 1,
+          "acknowledged": 1,
+          "modelCalls": 0,
+          "socialEnabled": false
+        },
+        "classification": {
+          "pendingAwaitingDriverExit": true,
+          "pendingFinalized": false,
+          "pendingCanContinue": false,
+          "actualOutcome": "opponent-disconnected-departure",
+          "actualFinalized": true,
+          "actualCanContinue": true,
+          "actualNatural": false,
+          "actualTerminal": false,
+          "actualTechnicalFailure": false,
+          "actualWinner": null,
+          "actualSeatReleased": true,
+          "actualRuntimeRetired": true,
+          "exactClassificationMatchesFinalResult": true
+        },
+        "independentOutcomeReviewSha256": "22806f05206249957d4152811875e5317985634e10daca443f4c3a16ab36becc",
+        "inputAndResultHashes": {
+          "config": "0566dd95b76b057454f076580d8974ccbd3b92704e11776bb007263aac89c128",
+          "execution": "1503643ca07565a36e8c3f64a992e4da0c3ab3fcf6367b24d4b6c6c67a06b134",
+          "result": "dddb8f173656cce32499fa86df187b1a8b33a00b17cca0f28182d930c3211896",
+          "review": "daff111b8918af79987d56accc336305216522ad868a898258b3fc93f9ba5700",
+          "handoff": "020bc3b53f8a82c2a1d0b8c90e45b97d14be903da86042e969bb5e3225f843ba",
+          "checkpoint": "e8f916551c5087d374e24833726e5837c6d530d73a412ef6ba75edd30801e996",
+          "chairHandoff": "84d0d8cc4162b0879fa64d51535b49f6b842dba0eaf7e8558cb508abb0a3b644",
+          "harness": "303955a276092f50f833e23898576199687c8baabedf1070191952f44d6dcf1d",
+          "wrapper": "8361207cc4d096f013e7096f520642cdc637da17356ce21a6d08e050b01c0f6f",
+          "finalizer": "3842e40dc3919b79222704b6a052d0e8e6cf5a37a19d62228920876296d4a0dd",
+          "observer": "b05a5e28dc8628c3696b04cb32939db530d2768f046083a15ccf193e1ed2f710",
+          "diagnostic": "c2d8024b52a968e1e57cc4863ccc6dfed15693b7067b39c55533f01f02a9f3d6"
+        },
+        "originalHandoffPreservedAwaitingDriverExit": true,
+        "completionEstablishedByIndependentParentAndFinalizer": true,
+        "allBoundHostBrowserDriverAndParentProcessesGone": true,
+        "bothAccountKernelLocksFree": true,
+        "activeAttempt": null,
+        "naturalGamesAdded": 0,
+        "winsAdded": 0,
+        "lossesAdded": 0,
+        "technicalFailuresAdded": 0
+      }
+    ],
+    "observerSha256": "b05a5e28dc8628c3696b04cb32939db530d2768f046083a15ccf193e1ed2f710",
+    "inputBindingScope": "Top-level harness/config/review hashes identify the latest attempt; each historical attempt retains its own exact inputs.",
+    "successfulAutomaticExits": 1,
+    "attemptsRecorded": 5,
+    "preDisconnectFailuresRetained": 4,
+    "independentOutcomeReviewSha256": "22806f05206249957d4152811875e5317985634e10daca443f4c3a16ab36becc",
+    "diagnosticSha256": "c2d8024b52a968e1e57cc4863ccc6dfed15693b7067b39c55533f01f02a9f3d6",
+    "helperValidation": {
+      "newSidecarCases": 6,
+      "newWrapperCases": 3,
+      "independentPassed": 9,
+      "productionSuiteReexecuted": false,
+      "notAddedToProduction298": true
+    },
+    "previousFailuresReclassifiedAsSuccess": false
+  },
+  "newPublicRegression": {
+    "status": "completed-observed-budget",
+    "maximumNaturalGames": 1,
+    "maximumAttempts": 2,
+    "maximumElapsedMs": 1800000,
+    "observed": true,
+    "unattended": false,
+    "sourceCommit": "365f06abdb81b13c47a9c1f1c48acd8e1f991eba",
+    "runtimeManifestSha256": "7ee244cf2a9b83a09f7bdaf6d3406a0e4290dbe3d3bc979c851631b21539d78f",
+    "runnerStartedAt": "2026-11-16T15:22:15.354Z",
+    "budgetCreatedAt": "2026-11-16T15:22:38.592Z",
+    "maximumElapsedScope": "Stops new dispatch, not an ongoing normal game.",
+    "privatePrerequisitePassed": true,
+    "privateAcceptedArtifactCount": 12,
+    "formalLaunchReviewSha256": "3457ef4cb8e4e21643c4e8a332067b4f9861239dd127f50678c4b6586974ab6b",
+    "runnerSha256": "94047ad764e7d51974453c0113ba35be2ffb0198041b04fe37f3b31237b1a59d",
+    "preflightSha256": "61ffb5c6517f9e3ad4be1ba8f8bed8fb6dc57e61e82b8478d986faa264bd3f33",
+    "firstCompletedAttempt": {
+      "outcome": "terminal-non-natural",
+      "natural": false,
+      "terminal": true,
+      "won": true,
+      "technicalFailure": false,
+      "finalized": true,
+      "seatReleased": true,
+      "runtimeRetired": true,
+      "recordedEndedAt": "2026-11-16T15:24:50.571Z",
+      "scoreKeys": [
+        0,
+        0
+      ],
+      "description": "Opponent left during setup; native site winner was self. Preserve non-natural terminal classification; no strategy or Elo win claimed.",
+      "resultSha256": "c4aa3dabe375b744e66b2c97e856c7a2db61a1642718bb95046545a7ff1e99ef"
+    },
+    "finalBatchResultNotYetClaimed": false,
+    "driverExitObserved": true,
+    "driverExitCode": 0,
+    "wrapperExitCode": 0,
+    "driverExitedAt": "2026-11-16T15:34:30.770798+00:00",
+    "waitSource": "own-subprocess.Popen.wait",
+    "activeAttempt": null,
+    "checkpointPhase": "completed-budget",
+    "originalBudgetPreserved": true,
+    "budgetReachedReasons": [
+      "natural-game-limit",
+      "attempt-limit"
+    ],
+    "finalSummarySha256": "cb26861c409919e923583dcc0b8ae5272ed90996e49db281d8e6f85f5704061a",
+    "independentOutcomeReviewSha256": "39e7cb577964279be3abd29550064d039ff8782c7a76e8050bac519968623f41",
+    "independentOutcomeDecision": "APPROVE",
+    "executionReceiptSha256": "5ee0ffea32812f0732dff90bc45d1c985bccb2be9cf096bcb5aac44f47a20c99",
+    "checkpointSha256": "7f016135d154ffd0c46a018fd6370ecca6dcc991229dc785be0c4241f16581f4",
+    "collectorSha256": "18afe3525fd3504a17339c957f8217e0f58dccff879ebd4736e41a6905ce209e",
+    "collectorIndependentReviewSha256": "e44237c0156c8a76156ae3336846f8f843ea11271dc5edae5542ce4a5d70aa67",
+    "totals": {
+      "recordedAttempts": 2,
+      "verifiedNaturalGames": 1,
+      "verifiedNaturalWins": 1,
+      "verifiedNaturalLosses": 0,
+      "neutralDisconnectedDepartures": 0,
+      "noOpponentAttempts": 0,
+      "classifiedTechnicalFailures": 0,
+      "attemptsMissingFinalStats": 0,
+      "availableFinalStatsTotals": {
+        "states": 246,
+        "decisions": 135,
+        "commands": 134,
+        "queuedCommands": 134,
+        "acknowledged": 134,
+        "model": 0,
+        "fallbacks": 0,
+        "stale": 0
+      },
+      "evidenceRows": 3546,
+      "providerAttemptsWithAvailableLogs": 6,
+      "paidAttemptReceipts": 6,
+      "availableUsageTotals": {
+        "freshInputTokens": 2679,
+        "cacheReadInputTokens": 640,
+        "cacheWriteInputTokens": 0,
+        "inputTokens": 3319,
+        "outputTokens": 693,
+        "totalTokens": 4012
+      },
+      "independentlyObservedOwnNativeEchoes": 6,
+      "englishProseHeuristicEchoes": 6,
+      "punctuationOnlyEchoes": 0,
+      "undeterminedLanguageEchoes": 0
+    },
+    "counting": {
+      "attempts": 2,
+      "naturalGames": 1,
+      "naturalWins": 1,
+      "naturalLosses": 0,
+      "terminalNonNatural": 1,
+      "terminalNonNaturalWonFlag": true,
+      "neutralDisconnectedDepartures": 0,
+      "noOpponentAttempts": 0,
+      "technicalFailures": 0,
+      "naturalWinnerScore": {
+        "self": 3,
+        "external": 1
+      },
+      "nonNaturalTerminalScore": {
+        "self": 0,
+        "external": 0
+      },
+      "terminalNonNaturalExcludedFromNaturalWinRate": true,
+      "producerCanonicalOutcomesPreserved": true
+    },
+    "social": {
+      "providerCalls": 6,
+      "acceptedProviderCalls": 6,
+      "paidAttemptReceipts": 6,
+      "independentNativeSelfEchoes": 6,
+      "englishProseHeuristicEchoes": 6,
+      "punctuationOnlyEchoes": 0,
+      "otherOrUndeterminedLanguageEchoes": 0,
+      "englishAiDisclosureObservedForBothGames": true,
+      "queueConfirmedNativeQueued": 6,
+      "queueReceiptsServerEchoConfirmed": 0,
+      "queueConfirmationNotSubstitutedForNativeEcho": true,
+      "usageTotals": {
+        "freshInputTokens": 2679,
+        "cacheReadInputTokens": 640,
+        "cacheWriteInputTokens": 0,
+        "inputTokens": 3319,
+        "outputTokens": 693,
+        "totalTokens": 4012
+      }
+    },
+    "technical": {
+      "commandsQueuedAndAcknowledgedAllEqual": 134,
+      "decisionEvidenceRows": 134,
+      "structuredEvidenceRows": 3546,
+      "unsupportedOrUnknownSendFaults": 0,
+      "heldOrOperatorPaused": 0,
+      "strategyModelCalls": 0,
+      "fallbacks": 0,
+      "stale": 0,
+      "watchdogRecoveryActions": 0,
+      "watchdogConcedeActions": 0,
+      "normalUiLeaves": 2,
+      "eachGameAnonymousSeatPresentThenAbsent": true,
+      "ownFirstAttemptOnlyStrategyAction": "Start the Game",
+      "opponentClientOpcodeNotObserved": true
+    },
+    "resourceRetirement": {
+      "allSevenRecordedProcessesAbsent": true,
+      "campaignRegistryEntries": 0,
+      "exactProfileChromeReferences": 0,
+      "nativeSeatsReleased": true,
+      "bothHostsStoppedAndBrowserLeasesReleased": true,
+      "activeAttemptNull": true,
+      "noThirdAttemptDispatched": true
+    },
+    "historicalR4KeptSeparate": true,
+    "newEloClaimed": false,
+    "strategyImprovementClaimed": false,
+    "completedAttempts": [
+      {
+        "ordinal": 1,
+        "classification": {
+          "outcome": "terminal-non-natural",
+          "started": true,
+          "terminal": true,
+          "natural": false,
+          "technicalFailure": false,
+          "operatorPaused": false,
+          "identityValid": true,
+          "seatReleased": true,
+          "runtimeRetired": true,
+          "canContinue": true,
+          "finalized": true,
+          "awaitingDriverExit": false,
+          "won": true,
+          "startedAt": "2026-11-16T15:22:56.551Z",
+          "endedAt": "2026-11-16T15:24:50.571Z"
+        },
+        "scoreKeys": {
+          "self": 0,
+          "external": 0
+        },
+        "nativeTerminalRecordedAt": "2026-11-16T15:24:24.255Z",
+        "recordedEndedAtIncludesRetirement": true,
+        "stats": {
+          "states": 7,
+          "decisions": 1,
+          "commands": 1,
+          "queuedCommands": 1,
+          "acknowledged": 1,
+          "model": 0,
+          "fallbacks": 0,
+          "stale": 0
+        },
+        "evidenceRows": 231,
+        "providerCalls": 2,
+        "independentNativeEnglishEchoes": 2,
+        "tokens": 1316,
+        "normalLeaveUiClicks": 1,
+        "watchdogStartupObservationEvents": 1,
+        "watchdogRecoveryActions": 0,
+        "watchdogConcedeActions": 0,
+        "structuredFaults": 0,
+        "resultSha256": "c4aa3dabe375b744e66b2c97e856c7a2db61a1642718bb95046545a7ff1e99ef",
+        "terminalViewSha256": "fb9f03ac076059b3f14a1347b1057b5177f4529a8704476ae47ce9b0efb45d60"
+      },
+      {
+        "ordinal": 2,
+        "classification": {
+          "outcome": "natural",
+          "started": true,
+          "terminal": true,
+          "natural": true,
+          "technicalFailure": false,
+          "operatorPaused": false,
+          "identityValid": true,
+          "seatReleased": true,
+          "runtimeRetired": true,
+          "canContinue": true,
+          "finalized": true,
+          "awaitingDriverExit": false,
+          "won": true,
+          "startedAt": "2026-11-16T15:25:43.726Z",
+          "endedAt": "2026-11-16T15:34:30.702Z"
+        },
+        "scoreKeys": {
+          "self": 3,
+          "external": 1
+        },
+        "nativeTerminalRecordedAt": "2026-11-16T15:34:11.306Z",
+        "recordedEndedAtIncludesRetirement": true,
+        "stats": {
+          "states": 239,
+          "decisions": 134,
+          "commands": 133,
+          "queuedCommands": 133,
+          "acknowledged": 133,
+          "model": 0,
+          "fallbacks": 0,
+          "stale": 0
+        },
+        "evidenceRows": 3315,
+        "providerCalls": 4,
+        "independentNativeEnglishEchoes": 4,
+        "tokens": 2696,
+        "normalLeaveUiClicks": 1,
+        "watchdogStartupObservationEvents": 1,
+        "watchdogRecoveryActions": 0,
+        "watchdogConcedeActions": 0,
+        "structuredFaults": 0,
+        "resultSha256": "62d0a595d86096fd45bd2ae13a301ba5f846c21b750290960c3bc24c22ea561c",
+        "terminalViewSha256": "538cb923fde4f4d24fc0d24d66f91e9c62bb36af55edad867e502b883998754a"
+      }
+    ],
+    "observationQualification": "Each public attempt had one startup watchdog observation before the full view was ready. These were not recovery actions; no structured gameplay fault, hold or operator pause was observed."
+  },
+  "evidenceBindings": [
+    {
+      "role": "public-first-game-r4-safe-summary.json",
+      "sha256": "3da2defbee9af6ce9469a1aff91dbfdeaf65dda609c339041983b1a8acb64351",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-first-game-r4-independent-review.json",
+      "sha256": "1fc1c9e3bd394f49df7b1afe2c791d351845fbd3add88b9b3c5f1a2e89f09402",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-second-game-r4-safe-summary.json",
+      "sha256": "f97767b245a6fe4712bf115992c7350cf28f915272e79b120cab4786fab67716",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-second-game-r4-independent-review.json",
+      "sha256": "0785098d70ca5a4296077b5d5f00aabca7cf514b62ecca2b75801f16515b41a0",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-third-game-r4-v3-safe-summary.json",
+      "sha256": "5571ad2d23ebbeb56d30700ee12042337eda1aa16b81388ab5507002609344df",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-third-game-r4-independent-review.json",
+      "sha256": "026bfef2dd6a45e80e13bee747dfd3df20909a00be9c263e8899e19f844f325e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-fourth-game-r4-disconnected-readonly-audit.json",
+      "sha256": "12d6a895cce156b3b32363b91491568f310ddea0585ac991285d0278c78b9abb",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-fourth-disconnected-operator-retirement/leave-receipt.json",
+      "sha256": "8ae41bd6f2a43822e7afe3e0057c7575b888f8057ba317bf689210aeabae2333",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-fourth-disconnected-leave-review.json",
+      "sha256": "f1bb3b4bfa2799de6e36d7278b713a578aba0d711b8e47510692bbff10561749",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-fourth-disconnected-operator-retirement/resource-retirement.json",
+      "sha256": "606358a6ab3fc8b3a8ecc591012bb6edd40e9a8bcdedc39de2e4bef174a314cb",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-fourth-disconnected-retirement-outcome-review.json",
+      "sha256": "6bdc6e91fa510ff5481c491245a40bacdce4759c345f07a94a79aab46d23c6b4",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-fourth-disconnected-operator-retirement/reconciliation-journal.json",
+      "sha256": "b311100a0d7d0d3f3269f4ac0620b21b59bd97bef680cd6c62f20abfb64afdc3",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-fourth-disconnected-reconciliation-outcome-review.json",
+      "sha256": "610fc34f6bc855665b7dddb4e9ec819d5711ac83ddf197c56243f5ba2d375fbd",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "disconnected-exit-implementation-r2.json",
+      "sha256": "3109aee625af9e0efae054f85002d3df204e1d0a831072f5b930582bf7bf3a3e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "disconnected-exit-source-review.json",
+      "sha256": "90d268de2038b8178c609191a5d76a0168f7f214a4a21e42dc5cc5087846485d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "disconnected-exit-version-review.json",
+      "sha256": "2d79b85a6c1f39dc799fd4a26aae34b3445a430e5ad1d9935420d1b1363aebc6",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "candidate-freeze-r5.json",
+      "sha256": "a06bf9a84413f39c8909a61bf4c016c287331d3f884289248416326d7364326e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-acceptance-review.json",
+      "sha256": "262968809c3f8086ca97859593a139cd585aee6d383fc27576c666e8eebbf451",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-run001-retire-r3-outcome-review.json",
+      "sha256": "1492aafa02f31f1b8b4024c2eb6531dfe91f1b35bd98bda796245b1883db3a30",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-run002-failed-outcome-review.json",
+      "sha256": "4e0777cbab026673009c9a09bba612cf021f1ba10301f96d6331d58c2bcbc34e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-acceptance-r2-run003-review.json",
+      "sha256": "fb130ad3e6f1e3cdf819f6d3e673514b6ec59df78d2386634cc4f2a42495cc96",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "social-punctuation-reproduction.json",
+      "sha256": "b6dc7c86d4165d3bb9e13b52c126c8a0269da2ab0a19ba725b3390c3bc84670a",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-run003-failed-outcome-review.json",
+      "sha256": "aec013cab8d00f3d0ceb89979df9911ddc68f47af783e7809c3d55caa37cecab",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-run002-003-failure-attribution-correction.json",
+      "sha256": "529ecbb906cb57b5d514c59331ebc05d9289bb8ba40bef6a473635e5287e4970",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "anonymous-lobby-network-diagnostic-20261116-r3/comparison.json",
+      "sha256": "51b691c987ec1a9275952bcde800aded6639c86c2b5b3ec9a6e20f16dcad9ce7",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "anonymous-lobby-network-diagnostic-20261116-r3.mjs",
+      "sha256": "8462ea16aca1909fdbd86fb7e22c30f543812bee0e99a1aae46373d5e96c7391",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-run004-failed-outcome-review.json",
+      "sha256": "06e4041d2f7b9331536752b20f9888cfbdc2d1873034124f7a324f6aa257bab2",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-run005-success-outcome-review.json",
+      "sha256": "22806f05206249957d4152811875e5317985634e10daca443f4c3a16ab36becc",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-acceptance-r3-review.json",
+      "sha256": "daff111b8918af79987d56accc336305216522ad868a898258b3fc93f9ba5700",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "private-disconnect-acceptance-r3.plan.json",
+      "sha256": "a1e0ac0465a5a698b4bbc3740d0137b230496ae6de09342333092dfa49d004e8",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-regression-r5-launch-review.json",
+      "sha256": "3457ef4cb8e4e21643c4e8a332067b4f9861239dd127f50678c4b6586974ab6b",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-regression-r5-preparation-r3-review.json",
+      "sha256": "75936736870f37b5b5d7b89cf36bcdb79d6d727ec609180b39a504accf516a91",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-regression-r5-collector-review.json",
+      "sha256": "e44237c0156c8a76156ae3336846f8f843ea11271dc5edae5542ce4a5d70aa67",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "anonymous-lobby-network-diagnostic-20261116-r3/analysis.json",
+      "sha256": "bc14d78f66afa7f68b4c0fb029faf33ee8521a5d00ba19fea19ecaefeeacd2eb",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-regression-r5-final-safe-summary.json",
+      "sha256": "cb26861c409919e923583dcc0b8ae5272ed90996e49db281d8e6f85f5704061a",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-regression-r5-outcome-review.json",
+      "sha256": "39e7cb577964279be3abd29550064d039ff8782c7a76e8050bac519968623f41",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-regression-r5.execution.json",
+      "sha256": "5ee0ffea32812f0732dff90bc45d1c985bccb2be9cf096bcb5aac44f47a20c99",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-regression-r5-independent-postrun-readback.json",
+      "sha256": "fa503ac4104da6ce1f8f9697d0e47f0b8851258f3157f175b34dc9fc6a96e18d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-regression-r5-independent-runtime-readback.json",
+      "sha256": "ac81ec84c6acd0020cb20a2ad4ae7d5970835d1a4eb05be487efc0351649805c",
+      "publicRawEvidence": false
+    }
+  ],
+  "limits": {
+    "newEloClaimed": false,
+    "estimatedHumanWinRateClaimed": false,
+    "ownFaultRecoveryFieldAcceptanceClaimed": false,
+    "allCardEffectsCovered": false,
+    "historicalRawFilesRetained": true,
+    "newRunDoesNotRewriteOldHistory": true,
+    "socialOutputQualityIssue": "https://github.com/AxelHu/keyforge-tco-bot/issues/13"
+  },
+  "releasePackageBoundary": {
+    "at": "2026-11-16T13:58:14.903286+00:00",
+    "files": 315,
+    "moduleEdges": 923,
+    "findings": 0,
+    "stdoutSha256": "139934a18a2217004cb3fe58addaa79a52814fa452fcbbddc9bdb4754b36b8c6",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scope": "Candidate plus new publication guide and redacted evidence JSON; implementation-stage package check had 313 files."
+  },
+  "initialLobbyConnectionRecheck": {
+    "sourceCommit": "365f06abdb81b13c47a9c1f1c48acd8e1f991eba",
+    "startedAt": "2026-11-16T14:54:24.735Z",
+    "routesInParallel": true,
+    "anonymousBrowserSamplesPerRoute": 1,
+    "nominalObservationBudgetMs": 60000,
+    "proxy": {
+      "actualObservationMs": 60001,
+      "mainScriptCompleted": true,
+      "domContentLoadedMs": 13697,
+      "engineOpenMs": 14307,
+      "websocket101Ms": 15782,
+      "probePingMs": 15784,
+      "probePongMs": 16067,
+      "upgradeSentMs": 19804,
+      "namespaceAckMs": 19844,
+      "fullNativeLobbyMs": 19846,
+      "fullNativeLobbyRooms": 8,
+      "subsequentWebsocketPingPongObserved": true,
+      "productionObserverConnected": true,
+      "productionObserverDisconnected": false,
+      "productionObserverHealthy": true,
+      "nonCleanupWebsocketCloseObserved": false,
+      "processAndRegistryRetired": true,
+      "resultSha256": "20c61c4bcdcf85981ee097b39a61f182a43a8f90940dfc5758d5e434b209e12d",
+      "eventsSha256": "c49f889d570d1bc855acecadf3e7a521a7379a564f09d8755003e6d57d6c41c6"
+    },
+    "direct": {
+      "actualObservationMs": 62558,
+      "timerCallbackOvershootMs": 2558,
+      "intentionalBudgetExtension": false,
+      "mainScriptCompleted": false,
+      "mainScriptResponseReceived": false,
+      "domContentLoaded": false,
+      "socketRequestsObserved": 0,
+      "productionObserverConnected": false,
+      "processAndRegistryRetired": true,
+      "resultSha256": "87460568f6cbeb12886447b08486bcf7638e25b31abd4c633a15c39ac7b92460",
+      "eventsSha256": "ba76896c9bdb4471547e694286fe1d3a3191f47938fc6f7fc5dfa62fba9a9518"
+    },
+    "actualToolExitCode": 0,
+    "loginSubmissions": 0,
+    "gameCommands": 0,
+    "localDiagnosticPreflightFailuresExcluded": 2,
+    "previousFailureMechanismReproduced": false,
+    "productionGateChanged": false,
+    "qualification": "One new anonymous browser sample on each route; supports the current proxy choice, does not identify the historical run002/run003 transport cause or prove long-term stability."
+  }
+}
