@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { browserNetworkArgs } from './browser-network.mjs';
 /** Review draft. Default CLI is offline plan; --run is the only entry that can login/join. */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -25,7 +26,8 @@ import { installHumanWatchdog, createHumanHoldController } from './keyteki-human
 import { installFinishedRoomExit } from './keyteki-finished-room-exit.mjs';
 import { installJoinedPendingRoomExit } from './keyteki-joined-pending-exit.mjs';
 import { releaseOwnedHumanBrowser } from './keyteki-owned-browser-release.mjs';
-import { hostStopWasRequested } from './keyteki-host-operator-intent.mjs';
+import { hostStopWasRequested, bindRecoveredHostConnection } from './keyteki-host-operator-intent.mjs';
+import { retireFinishedHumanRuntime } from './keyteki-finished-runtime-retirement.mjs';
 export { checkBoundBridgeRequest, checkOwnFullIdentity } from './keyteki-human-bridge-callback.mjs';
 
 const execute = promisify(execFile);
@@ -134,6 +136,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
       driverPid: process.pid,
       hostProfile: config.profile,
       browserProfile: config.browserProfile,
+      network: config.network,
       ...(instance
         ? { cdpEndpoint: instance.cdpEndpoint, agentId: instance.agentId, pageUrl: instance.page.url() }
         : {}),
@@ -204,7 +207,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
     const host = JSON.parse(started.stdout);
     if (host.running !== true || host.reused === true) fail('FRESH_OWN_HOST_NOT_CONFIRMED');
     connection = JSON.parse(fs.readFileSync(path.join(config.profile, 'connection.json'), 'utf8'));
-    hostIdentity = { pid: host.pid, runId: connection.runId };
+    hostIdentity = { pid: host.pid, runId: connection.runId, configSha256: host.configSha256 };
     const url = new URL(connection.url);
     if (
       url.protocol !== 'http:' ||
@@ -224,8 +227,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
       pool = new AgentBrowser({
         keepAlive: true,
         cleanupOnExit: false,
-        // No workstation-specific proxy override; the configured browser uses normal network settings.
-        extraArgs: [],
+        extraArgs: browserNetworkArgs(config.network),
       });
       instance = await pool.getBrowser(humanBrowserAgentId(config.output), {
         mode: 'per-agent',
@@ -285,7 +287,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
             { cwd: REPO_ROOT, timeout: 25000, maxBuffer: 1024 * 1024, signal },
           );
         } catch (error) {
-          if (hostStopWasRequested(config.profile, before)) {
+          if (hostStopWasRequested(config.profile, connection)) {
             state.operatorPaused = true;
             watchdogRuntime.operatorPause();
           }
@@ -293,7 +295,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
         }
         const host = JSON.parse(result.stdout),
           next = JSON.parse(fs.readFileSync(path.join(config.profile, 'connection.json'), 'utf8'));
-        if (hostStopWasRequested(config.profile, before) || hostStopWasRequested(config.profile, next)) {
+        if (hostStopWasRequested(config.profile, connection) || hostStopWasRequested(config.profile, next)) {
           state.operatorPaused = true;
           watchdogRuntime.operatorPause();
           fail('OPERATOR_STOP_MUST_BE_PRESERVED');
@@ -307,7 +309,15 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
         )
           fail('HOST_CONTROL_IDENTITY_CHANGED');
         // The exposed bridge callback holds this same object. Preserve URL/token and update run identity in place.
-        Object.assign(connection, next);
+        try {
+          hostIdentity = bindRecoveredHostConnection(config.profile, connection, hostIdentity, next, host);
+        } catch (error) {
+          if (error.code === 'OPERATOR_STOP_MUST_BE_PRESERVED') {
+            state.operatorPaused = true;
+            watchdogRuntime.operatorPause();
+          }
+          throw error;
+        }
         state.hostRestarts = (state.hostRestarts ?? 0) + 1;
         handoff();
       },
@@ -469,24 +479,20 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
             state.operatorPaused = true;
             fail('OPERATOR_PAUSE_MUST_BE_PRESERVED');
           }
-          const stopped = JSON.parse(
-            (
-              await execute(
-                process.execPath,
-                [path.join(REPO_ROOT, 'tools/keyteki-session-host.mjs'), 'stop', '--profile', config.profile],
-                { cwd: REPO_ROOT, timeout: 20000, maxBuffer: 1024 * 1024 },
-              )
-            ).stdout,
-          );
-          if (stopped.stopped !== true) fail('FINISHED_HOST_STOP_UNCONFIRMED');
-          state.hostStoppedAfterFinish = true;
-          if (state.operatorPaused) fail('OPERATOR_PAUSE_MUST_BE_PRESERVED');
-          await releaseOwnedHumanBrowser({ pool, instance, config });
-          observer?.dispose();
-          process.off('SIGINT', signal);
-          process.off('SIGTERM', signal);
-          state.runtimeRetired = true;
-          state.phase = 'finished-left';
+          await retireFinishedHumanRuntime({
+            config, state, connection, hostIdentity,
+            operatorPaused: () => watchdogRuntime.watchdog.status().phase === 'operator-paused',
+            stopHost: async () => JSON.parse((await execute(process.execPath,
+              [path.join(REPO_ROOT, 'tools/keyteki-session-host.mjs'), 'stop', '--profile', config.profile],
+              { cwd: REPO_ROOT, timeout: 20000, maxBuffer: 1024 * 1024 })).stdout),
+            releaseBrowser: () => releaseOwnedHumanBrowser({ pool, instance, config }),
+            afterRetired: () => {
+              observer?.dispose();
+              process.off('SIGINT', signal);
+              process.off('SIGTERM', signal);
+            },
+            save: handoff,
+          });
         } catch (error) {
           state.finishRetirementError = /^[A-Z0-9_-]+$/.test(error?.code ?? '')
             ? error.code

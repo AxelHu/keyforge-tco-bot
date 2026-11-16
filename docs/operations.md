@@ -48,6 +48,22 @@ node bin/kf-auto.mjs preflight \
 
 后台运行需要 Linux（包括 WSL 内的 Linux）、Node 22.12–24.x、带 `fcntl` 和 pidfd 支持的 Python 3，以及直接可执行的 Chromium 二进制。默认使用 Playwright 对应版本的 Chromium。`KF_BOT_CHROME` 可以选择直接 ELF 二进制；shell 启动包装脚本会被拒绝。
 
+### 明确选择浏览器线路
+
+席位配置支持三种 `network` 设置，省略时为 `system`，保持 Chromium 现有网络行为：
+
+```json
+{ "network": { "mode": "direct" } }
+```
+
+```json
+{ "network": { "mode": "proxy", "server": "http://127.0.0.1:7890" } }
+```
+
+也可以在 `init` 使用 `--network direct`，或 `--network proxy --proxy-server http://127.0.0.1:7890`。地址仅为示例，需要填本机实际可用的代理。支持 HTTP、HTTPS 和 SOCKS5 代理；地址不能包含用户名、密码、路径、查询参数或其他浏览器开关。
+
+此设置同时用于登录、建房、入座、大厅发现和终局席位核验所在的浏览器；本机回环地址保持直连。它不更改系统代理、VPN 或其他进程的配置，也不决定独立模型 API 请求的线路。`direct` 表示 Chromium 不使用显式代理，系统级 TUN／VPN 仍可能转发流量；比较真实线路时应另核实实际出口。
+
 ## 3. 启动单局
 
 创建一个明确标注 AI 的公开新手房间，并等待非己方账号的对手：
@@ -61,7 +77,7 @@ node bin/kf-auto.mjs seat create \
 
 加入已经观察到的房间时，使用新的席位配置，填写准确的 `room.gameId`、`room.opponentName`、房间名和类型。先执行不带 `--create-public` 的 preflight，再执行 `seat run`。旧输出目录不会被静默复用于另一局。
 
-登录流程使用 `/login` 和 `/api/account/login`，选牌使用 `Select deck`、`Select row <serverDeckId>` 及精确牌组名。0.4.0 补充英文房间按钮适配，保留既有中文部署的控件支持。当前国际站已有匿名页面实测，**登录后的完整无人值守对局仍未完成端到端验收**；详见[国际服配置与验收](international-tco.md)。
+登录流程使用 `/login` 和 `/api/account/login`，选牌使用 `Select deck`、`Select row <serverDeckId>` 及精确牌组名。0.4.0 补充英文房间按钮适配，保留既有中文部署的控件支持。当前国际站已完成两个自有账号的受控私房完整自动验收；真人公房与公开连续匹配需要单独积累实测证据。详见[国际服配置与验收](international-tco.md)。
 
 ## 4. 为连续对局冻结运行时
 
@@ -76,12 +92,19 @@ node bin/kf-auto.mjs campaign prepare \
   --manifest "$PWD/.local/runtime-v1/runtime-manifest.json" \
   --config "$PWD/.local/my-bot/campaign.json" \
   --output "$PWD/.local/my-bot/campaign-data" \
-  --id my-campaign
+  --id my-campaign \
+  --max-natural-games 10 \
+  --max-attempts 12 \
+  --max-elapsed-ms 14400000
 ```
 
 这两个命令都只准备本地文件，不会开始对局。冻结包含公开运行时和生产 npm 依赖，并对选定的 Node、Python 和 Chromium 安装内容计算哈希；不会复制凭据、浏览器 profile 或连续对局数据。这是内容快照，不是容器或完整操作系统镜像。
 
 `campaign prepare` 把当时的席位配置（包括 `self.codePolicy`）复制进新 campaign 配置。之后修改原 `seat.json` 不会自动改变已准备的 campaign；请在准备前确定策略，运行后不要直接改其配置摘要所绑定的内容。
+
+上述示例最多允许 10 场自然终局、12 次已发起的入座／建房尝试，或从首次启动起累计 4 小时后停止发起新尝试，任一限制先到即生效。`maxNaturalGames`、`maxAttempts` 和 `maxElapsedMs` 也可以直接写入尚未运行的 campaign JSON。空房、失败尝试和对手认输仍占用尝试次数；自然对局数仅计算已正常退场且结果明确的自然终局。
+
+这些限额与 checkpoint 一起保留。暂停时间和进程退出期间仍计入累计时间，重启不会刷新预算。截止时已经开始的对局继续完成正常收尾；到限不会直接关闭正在打牌的浏览器。未设置限额的旧配置保持原行为，建议新批次明确设置三项上限。已有 3 场稳定自然对局后的观察暂停仍生效；总局数包含这 3 场。
 
 从冻结的入口启动：
 

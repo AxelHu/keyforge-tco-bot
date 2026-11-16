@@ -24,6 +24,8 @@ engine, game server, game UI and historical match data are not included.
   Exact observed-delivery reconciliation does not replay an uncertain command.
 - Single-seat join/create flows, normal terminal retirement, account locks,
   campaign health gates, explicit pause and bounded recovery procedures.
+- Explicit browser direct/proxy routing and persistent campaign limits for natural
+  games, attempts and elapsed time; existing games finish before new matchmaking stops.
 - A portable Chromium backend and explicit local configuration. OpenClaw,
   subscription credentials and the original research repository are not runtime
   dependencies. Optional social chat is disabled by default.

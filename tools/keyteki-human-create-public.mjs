@@ -1,3 +1,4 @@
+import { browserNetworkArgs } from './browser-network.mjs';
 /** Review draft: normal public-room UI preparation, then the same one-seat controller. */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -81,6 +82,7 @@ export async function runCreatePublic(input, { onEvidence } = {}) {
       updatedAt: new Date().toISOString(),
       driverPid: process.pid,
       browserProfile: config.browserProfile,
+      network: config.network,
       ...(instance
         ? { agentId: instance.agentId, cdpEndpoint: instance.cdpEndpoint, pageUrl: instance.page.url() }
         : {}),
@@ -119,8 +121,7 @@ export async function runCreatePublic(input, { onEvidence } = {}) {
     pool = new AgentBrowser({
       keepAlive: true,
       cleanupOnExit: false,
-      // No workstation-specific proxy override; the configured browser uses normal network settings.
-      extraArgs: [],
+      extraArgs: browserNetworkArgs(config.network),
     });
     instance = await pool.getBrowser(humanBrowserAgentId(config.output), {
       mode: 'per-agent',

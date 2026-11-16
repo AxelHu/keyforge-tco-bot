@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { normalizeHumanConfig, humanPreflight, HUMAN_SCHEMA, REPO_ROOT } from './keyteki-human-config.mjs';
 import { normalizeCampaignConfig } from './keyteki-live-campaign.mjs';
+import { normalizeBrowserNetwork } from './browser-network.mjs';
 import { inspectBrowserProcess, signalOwnedBrowser } from './browser-provider.mjs';
 import { createInterface } from 'node:readline/promises';
 import { DEFAULT_CODE_POLICY, strategyMenu, strategyDetails, renderStrategyMenu, renderStrategyDetails, resolveStrategyChoice } from './strategy-menu.mjs';
@@ -17,11 +18,13 @@ export const HELP = `kf-auto：本机策略宿主与单账号浏览器运行器
   strategies show ID [--json]
   init --directory DIR --origin ORIGIN --account NAME --server-deck-id ID --deck-name NAME
        [--deck-uuid UUID] [--policy ID | --choose-policy] [--game-socket-path EXACT_HTTP_PATH] [--chat-language zh-CN|en] [--headful]
+       [--network system|direct|proxy] [--proxy-server SCHEME://HOST:PORT]
   preflight --config FILE [--create-public]
   seat run|create --config FILE
   host start --profile DIR --config FILE
   host status|pause|resume|stop --profile DIR
   campaign prepare --seat FILE --manifest FILE --config NEW_FILE --output NEW_DATA_DIR --id NAME
+       [--max-natural-games N] [--max-attempts N] [--max-elapsed-ms N]
   campaign run|status|pause|enable-unattended --config FILE
   runtime freeze --output ABSOLUTE_NEW_DIR
   recovery storage prepare --config FILE --output NEW_REQUEST
@@ -105,10 +108,18 @@ export function initializeConfig(args) {
   const directory = path.resolve(required(args, 'directory'));
   if (fs.existsSync(directory)) fail('CONFIG_DIRECTORY_ALREADY_EXISTS');
   const account = required(args, 'account');
+  for (const flag of ['network', 'proxy-server'])
+    if (args.filter((arg) => arg === '--' + flag).length > 1) fail('NETWORK_OPTION_DUPLICATED');
+  const network = normalizeBrowserNetwork({
+    mode: args.includes('--network') ? required(args, 'network') :
+      args.includes('--proxy-server') ? 'proxy' : 'system',
+    ...(args.includes('--proxy-server') ? { server: required(args, 'proxy-server') } : {}),
+  });
   if (args.filter(arg => arg === '--chat-language').length > 1) fail('CHAT_LANGUAGE_OPTION_DUPLICATED');
   const seat = {
     schema: HUMAN_SCHEMA,
     origin: required(args, 'origin'),
+    network,
     self: {
       name: account,
       serverDeckId: Number(required(args, 'server-deck-id')),
@@ -143,6 +154,7 @@ export function initializeConfig(args) {
     credentials: seat.credentialsPath,
     codePolicy: seat.self.codePolicy,
     chatLanguage: seat.social.language,
+    network,
     passwordMustBeFilledLocally: true,
     browserStarted: false,
   };
@@ -167,6 +179,18 @@ export function prepareCampaign(args) {
     runtimeManifest: manifestFile,
     runtimeManifestSha256: createHash('sha256').update(manifestBytes).digest('hex'),
     seat: JSON.parse(fs.readFileSync(seatFile, 'utf8')),
+    ...Object.fromEntries([
+      ['max-natural-games', 'maxNaturalGames'],
+      ['max-attempts', 'maxAttempts'],
+      ['max-elapsed-ms', 'maxElapsedMs'],
+    ].flatMap(([flag, key]) => {
+      const count = args.filter((arg) => arg === '--' + flag).length;
+      if (count > 1) fail('CAMPAIGN_BUDGET_OPTION_DUPLICATED');
+      if (!count) return [];
+      const value = required(args, flag);
+      if (!/^[1-9][0-9]*$/.test(value)) fail('CAMPAIGN_BUDGET_INVALID');
+      return [[key, Number(value)]];
+    })),
   };
   normalizeCampaignConfig(input);
   if (fs.existsSync(input.output)) fail('CAMPAIGN_OUTPUT_ALREADY_EXISTS');
