@@ -1,17 +1,18 @@
-/** Public AI knowledge only. Legal moves and outcomes always come from the remote referee. */
+/** 完整静态卡牌知识。合法菜单与实际结算仍由远端裁判提供。 */
 import type { CardDefinition } from '../contracts/observation.js';
 import { BUILTIN_CARD_DATA } from './builtin-data.js';
-import { CARD_KNOWLEDGE_FIELDS, EFFECT_KNOWLEDGE_FIELDS } from './schema.js';
+import { CARD_KNOWLEDGE_FIELDS, EFFECT_KNOWLEDGE_FIELDS, AFTER_KNOWLEDGE_FIELDS } from './schema.js';
 export { KNOWLEDGE_COVERAGE } from './coverage.js';
-/** Presence is conservative; it never certifies all printed rules as modeled. */
+/** Explicit incompleteness and unresolved research conventions remain visible; this is not an estimator-support certificate. */
 export function cardKnowledgeIsPartial(value: unknown): boolean {
   if (Array.isArray(value)) return value.some(cardKnowledgeIsPartial);
   if (!value || typeof value !== 'object') return false;
   const record = value as Record<string, unknown>;
-  return record.unmodeled === true || record.kind === 'unmodeled' || Object.values(record).some(cardKnowledgeIsPartial);
+  return record.unmodeled === true || record.kind === 'unmodeled' || (record.status === 'research-convention' && record.officialRulingConfirmed === false) || Object.values(record).some(cardKnowledgeIsPartial);
 }
 const cardFields = new Set(CARD_KNOWLEDGE_FIELDS);
-const effectArrayFields = new Set(["after","afterFight","afterSuccessful","effects","grantedEffects","otherwise","then"]);
+const effectArrayFields = new Set(["after","afterFight","afterSuccessful","afterPlay","effects","grantedEffects","otherwise","then"]);
+const cardKinds = new Set(["creature", "action", "artifact", "upgrade"]);
 const forbidden = new Set(['__proto__', 'constructor', 'prototype', 'entry', 'hidden', 'physicalIndex', 'houseChangeOrder', 'queue', 'gameState', 'frame']);
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
 function inspect(value: unknown, depth = 0, effect = false): void {
@@ -19,13 +20,13 @@ function inspect(value: unknown, depth = 0, effect = false): void {
   if (Array.isArray(value)) { for (const item of value) inspect(item, depth + 1, effect); return; }
   if (!object(value)) {
     if (effect) throw Error('Invalid knowledge effect object');
-    if (value !== null && !['string', 'boolean', 'number'].includes(typeof value)) throw Error('Knowledge must be JSON data');
+    if (value !== null && value !== undefined && !['string', 'boolean', 'number'].includes(typeof value)) throw Error('Knowledge must be data, not executable code');
     if (typeof value === 'number' && !Number.isFinite(value)) throw Error('Nonfinite knowledge');
     return;
   }
   if (value.unmodeled !== undefined && value.unmodeled !== true) throw Error('Invalid unmodeled marker');
   if (Object.keys(value).some(key => forbidden.has(key))) throw Error('Private or executable knowledge field');
-  if (effect) {
+  if (effect || (typeof value.kind === 'string' && !cardKinds.has(value.kind))) {
     if (typeof value.kind !== 'string' || !Object.hasOwn(EFFECT_KNOWLEDGE_FIELDS, value.kind)) throw Error('Unsupported knowledge effect kind');
     const fields = EFFECT_KNOWLEDGE_FIELDS[value.kind];
     if (Object.keys(value).some(key => !fields.includes(key))) throw Error('Unsupported knowledge effect field');
@@ -38,7 +39,7 @@ function inspect(value: unknown, depth = 0, effect = false): void {
         inspect(values, depth + 1, true);
       }
     } else {
-      if (key === 'after' && object(item) && Object.keys(item).some(field => !['when', 'atLeast', 'bindAffected', 'effects', 'unmodeled'].includes(field))) throw Error('Unsupported after-estimate field');
+      if (key === 'after' && object(item) && Object.keys(item).some(field => !AFTER_KNOWLEDGE_FIELDS.includes(field))) throw Error('Unsupported after-estimate field');
       inspect(item, depth + 1, effectArrayFields.has(key) && Array.isArray(item));
     }
   }
@@ -48,7 +49,7 @@ export function validateCardKnowledge(value: unknown): asserts value is CardDefi
   if (typeof value.id !== 'string' || (!value.id.length || value.id.length > 128 || /[\u0000-\u001f\u007f/\\]/.test(value.id) || forbidden.has(value.id)) || typeof value.name !== 'string' || value.name.length > 160 || typeof value.number !== 'string' || typeof value.house !== 'string' || !['creature', 'action', 'artifact', 'upgrade'].includes(String(value.kind))) throw Error('Invalid card identity');
   if (!['power', 'armor', 'amber'].every(key => typeof value[key] === 'number' && Number.isFinite(value[key]) && Number(value[key]) >= 0)) throw Error('Invalid printed numeric facts');
   if (value.unmodeled !== undefined && value.unmodeled !== true) throw Error('Invalid unmodeled marker');
-  if (typeof value.summary !== 'string' || value.summary.length > 512) throw Error('Invalid authored summary');
+  if (typeof value.summary !== 'string' || value.summary.length > 512) throw Error('Invalid card summary');
   if (value.summaryFeatures !== undefined && (!Number.isSafeInteger(value.summaryFeatures) || Number(value.summaryFeatures) < 0 || Number(value.summaryFeatures) >= 4096)) throw Error('Invalid heuristic text features');
   inspect(value);
 }

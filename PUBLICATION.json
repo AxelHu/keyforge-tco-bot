@@ -1,14 +1,17 @@
 {
-  "schema": "keyforge-tco-publication-v1",
+  "schema": "keyforge-tco-publication-v2",
   "package": "keyforge-tco-bot",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": "https://github.com/AxelHu/keyforge-tco-bot",
   "date": "2026-11-16",
+  "defaultDocumentationLanguage": "zh-CN",
   "license": "MIT",
+  "licenseScope": "Original implementation and authored knowledge; separately attributed third-party text retains its underlying rights. See NOTICE.md.",
   "validatedSourceDigest": {
     "algorithm": "sha256 of UTF-8 JSON.stringify(validatedFiles), sorted by path",
-    "sha256": "7d6e77dab3c417aa17f0fd0f4175b6749bc768e3654e2c4173e0390f157165d8"
+    "sha256": "7567573552c2e7c1a637488ea27a06e458669b4fe6d7a209f11136e7513e5c23"
   },
+  "validatedFilesScope": "Production source, tools, CLI, scripts, tests, package manifests and TypeScript configuration. Documentation and this publication record are bound by the release Git tree, not this non-recursive input digest.",
   "validation": {
     "build": {
       "passed": true,
@@ -17,57 +20,71 @@
     },
     "offlineSuite": {
       "command": "npm test",
-      "startedAt": "2026-11-16T02:48:35.768518+00:00",
-      "passed": 181,
+      "startedAt": "2026-11-16T03:25:30.396192+00:00",
+      "passed": 185,
       "failed": 0,
       "skipped": 0,
       "cancelled": 0,
-      "stdoutSha256": "f2b4e595ed6d66c5fef576727eb1ea106dec56e89b25d90525cc7bd7dad5588b"
+      "strategyTests": 14,
+      "runtimeTests": 22,
+      "transportTests": 149,
+      "sourceStable": true,
+      "stdoutSha256": "879954fdd6bf72e418450d7fa33e54a07233d63930c5807b76b9429c14fdb5e5"
     },
-    "browser": {
-      "command": "npm run test:browser",
-      "startedAt": "2026-11-16T02:51:43.167550+00:00",
+    "fullStaticKnowledgeComparison": {
+      "startedAt": "2026-11-16T03:31:24.896110+00:00",
       "passed": true,
-      "playwright": "1.59.1",
-      "sandboxEnabled": true,
-      "inlineHtmlOnly": true,
-      "checks": [
-        "two-client shared browser",
-        "first release preserves second client",
-        "final release confirms exit and retains profile/lock",
-        "real pidfd rejects changed identity and signals owned child"
-      ],
-      "stdoutSha256": "601a2ecc0124fb8297da7fd669f7a5a040ad63c23c628ccb0a72e0e5b64e483e"
-    },
-    "frozenRuntime": {
-      "passed": true,
-      "packageAndDependencyFiles": 772,
-      "externalExecutionFiles": 307,
-      "sourceFingerprint": "e2b03787c0c06e4aa734b2f41d46851f61e037beb5145685d2f87bbf79135505",
-      "noGitRequired": true,
-      "cliChecks": [
-        "help",
-        "init",
-        "preflight",
-        "campaign prepare",
-        "runtime verify",
-        "not-started status rejection"
-      ]
+      "sourceStable": true,
+      "expectedCards": 2546,
+      "fullFieldMatches": 2546,
+      "exactSummaryMatches": 2546,
+      "predicateComparisons": 30552,
+      "predicateMatches": 30552,
+      "originalCanonicalSha256": "77d3d8424cbf6f7f9b1f43f0fc3645f7416d878707bbdbe10d3349f1bf241ea6",
+      "candidateCanonicalSha256": "77d3d8424cbf6f7f9b1f43f0fc3645f7416d878707bbdbe10d3349f1bf241ea6",
+      "explicitUndefinedRestored": 1,
+      "boundedAssessmentComparisons": 4,
+      "directExportedHelperCalls": 16,
+      "tullibintSurveyEqual": true,
+      "namedLockPositiveAndNegativeEqual": true,
+      "modelVisibleStateEqual": true,
+      "modelQuestionsEqual": true,
+      "partOf185PublicTests": false,
+      "predecessorRequired": true,
+      "wholeStrategyEquivalenceEstablished": false,
+      "reportSha256": "ad5f7f3cd887fc7980b42f1f320d773dcf56cd4be5b45292252e97b6abc00d37",
+      "runnerSha256": "cae98be5003b370da6867f42f9c225626157f5ad04a96facfe07cb773a30c090",
+      "initialAttempt": "Private report assembly had an undefined-variable typo; preserved as a failed attempt. The corrected complete run is the successful record above; production source was unchanged."
     },
     "newLiveGames": 0,
     "officialTcoUnattendedValidated": false,
-    "limitedPrivateMigrationComparison": {
-      "startedAt": "2026-11-16T02:56:40.395895+00:00",
-      "passed": true,
-      "syntheticFixtures": 5,
-      "pureScoringCalls": 15,
-      "modeledSameObservationAndPublishedKnowledgeMatches": 4,
-      "expectedConservativeUnknownCases": 1,
-      "partOf181PublicTests": false,
-      "wholePackageEquivalenceEstablished": false,
-      "predecessorRequired": true,
-      "reportSha256": "9bee2ffc01ad53f89bff7a69148ed63ef9a4243823defde3a40479b77bee9841"
+    "historicalBrowserAndFrozenRuntime": {
+      "version": "0.1.0",
+      "commit": "c3194401ef28547b4fd6c97651fd543edbe874d8",
+      "currentVersionRerun": false,
+      "unchangedAiAdapterBackendCliAndBrowserSmokeFiles": 102,
+      "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/c3194401ef28547b4fd6c97651fd543edbe874d8/docs/validation.md"
     }
+  },
+  "knowledge": {
+    "cards": 2546,
+    "sourceCardFields": 194,
+    "staticEffectKinds": 267,
+    "typedEstimateEffectKinds": 47,
+    "typedEstimateKindsInStaticCatalog": 46,
+    "uninterpretedStaticEffectKinds": 221,
+    "omittedCardFields": 0,
+    "omittedEffectNodes": 0,
+    "omittedEffectFields": 0,
+    "generatedUnmodeledMarkers": 0,
+    "generatedSummaryFeatures": 0,
+    "researchConventionCards": 2,
+    "explicitUndefinedProperties": 1,
+    "printedTextAssignments": 108,
+    "nonemptyThirdPartySummaries": 107,
+    "fullCompactJsonBytes": 1257878,
+    "previousProjectionCompactJsonBytes": 1095139,
+    "compactJsonIncreaseBytes": 162739
   },
   "validatedFiles": [
     {
@@ -76,11 +93,11 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "bc7969a59d09eb13ab53f247399408391fd785ec110eb6989d303f497e0516a6"
+      "sha256": "21e5e1934af838e025a8d257e637de5b8b955ce41d188acf0ae4d325bf0fcee6"
     },
     {
       "path": "package.json",
-      "sha256": "3055be9899755774b2d8c8ecaf6dbdfa96d1cecf8675941995e4591b90bc7ec5"
+      "sha256": "b7f87add3146aeea6efebf448fd0c156bb43ec61b3342dcbc1eb0c75821a141e"
     },
     {
       "path": "scripts/browser-smoke.mjs",
@@ -316,7 +333,7 @@
     },
     {
       "path": "src/contracts/observation.ts",
-      "sha256": "735eca4d7d40beeb6551101d4ba78e62d8a4acb6b70c3ac9154a5345342e89a8"
+      "sha256": "ffa88f65649b21abef91c9be98f4b8af7d76453d2fafa5236cc77359a61564c5"
     },
     {
       "path": "src/index.ts",
@@ -324,15 +341,23 @@
     },
     {
       "path": "src/knowledge/builtin-data.ts",
-      "sha256": "e4a695852ca4438013670ab890b7298fe3985bafbddbbbd6a2d2f5c905ef4889"
+      "sha256": "e4489d64290d961b0df6020cb17c30b4e8a825c117b253b8dab494ef5b39a2d1"
+    },
+    {
+      "path": "src/knowledge/card-types.ts",
+      "sha256": "64abb8685f2d9b61fcf913addaedd24f6c9957f30433e79d8797904a0e721462"
     },
     {
       "path": "src/knowledge/catalog.ts",
-      "sha256": "e76f4c0083feb1d90942d6dd996c545fa99dfc11ab07a7a836dd17fd9f14052e"
+      "sha256": "6d0a7fa28af84527a6cb1737a16ff22046da97de7c545df81fc84943605031db"
     },
     {
       "path": "src/knowledge/coverage.ts",
-      "sha256": "7696ee0a812c8899db1cfa5182c066242fa64e11a63f1333efd42bf8028dcfcf"
+      "sha256": "1ec580d81ddf9b2c15db045eca7db0119fdb77ceb68024b6f006e0e0ec83dee8"
+    },
+    {
+      "path": "src/knowledge/printed-text.ts",
+      "sha256": "9f3fa244142a13a14ace5099d14dba64d66900f2f76d85cde0bca0a44bfd2276"
     },
     {
       "path": "src/knowledge/prophecy-facts.ts",
@@ -340,15 +365,19 @@
     },
     {
       "path": "src/knowledge/schema.ts",
-      "sha256": "bce34ec1271f8a9988e52985aaabd7920c2e15148ea329b3120716d7eb52a6a9"
+      "sha256": "095bae3a680ce45784761083b5b37f49059bc112aebd9f79b67752b7caf620e8"
+    },
+    {
+      "path": "src/knowledge/static-rule-kinds.ts",
+      "sha256": "265734b2701e6699b57184dcd75913cdd23c1bf561db182330c8ddc8dd825b16"
     },
     {
       "path": "src/knowledge/text-features.ts",
-      "sha256": "61aefebf013deb399614d31212ff9fdec2c8499dbf3f26eb0d7c3bf61da8bf0a"
+      "sha256": "43a85aaad6dfba5eab99d21cdd33f776bb83548c90ba1b41877377705a4c100b"
     },
     {
       "path": "src/knowledge/token-facts.ts",
-      "sha256": "a4ed23d1eab9d12cfcbf3158f3b393f00161b2eb543959e1ada4f0f2ac89c86a"
+      "sha256": "8bcfdc91bf3b0a5edb2b960ad50f18cc2892156b1d1cfe9453561ca6c32d5bc6"
     },
     {
       "path": "src/knowledge/upgrade-form.ts",
@@ -380,7 +409,7 @@
     },
     {
       "path": "test/strategy/standalone-strategy.test.mjs",
-      "sha256": "fa54b38626d333e1a0242d6152ac2ffe29902a2a3ef9e7e3017f7a6701a749f0"
+      "sha256": "531bce38212d26a7c32e3a1a7ef4c05f3299c29a4fa1730eca019f58620402f3"
     },
     {
       "path": "test/transport/keyteki-browser-bootstrap.test.mjs",

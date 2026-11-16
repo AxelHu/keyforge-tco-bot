@@ -1,4 +1,4 @@
-/** Public printed token identities; full original card text is not included. */
+/** 公开衍生物身份；完整静态定义与原始说明来自默认知识库。 */
 import { ALL_DEFINITIONS } from "./catalog.js";
 export const TOC_TOKEN_FACTS = [
   {

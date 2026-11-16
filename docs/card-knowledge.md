@@ -1,45 +1,53 @@
-# Card knowledge and strategy boundary
+# 卡牌知识与策略范围
 
-This package contains an observation-based strategy, not a KeyForge referee. The remote Keyteki-compatible server supplies the legal menu and settles the actual card effects. No game constructor, authoritative transition function, hidden deck order, replay executor, rule scheduler, or replica card module is included.
+本包根据玩家观察选择动作。远端 Keyteki 兼容服务器提供合法菜单，并结算真实卡牌效果。本包保留策略所需的静态卡牌知识，不包含 Game 构造器、权威状态推进函数、隐藏牌序、重放执行器、规则调度器或可运行的复刻卡牌模块。
 
-## What the package keeps
+## 默认保留哪些知识
 
-The current `tactical-style-engine-v3` scoring implementation and its registered code-policy family are included. They rank actions already present in the observation. Bounded public estimates for Unity Prism, Sir Jaune, They Tell No Tales, Infurnace, public destruction/refunds, house defense, and ready-work sequencing remain strategy computations. An estimated resource change is not a real settlement or proof of a future legal action.
+默认知识包恢复**原目录中全部 2,546 份完整静态卡牌定义**，合计涉及 **194 种根字段**，包括原有 `summary` 说明和 `ruleInterpretations` 解释标注。卡名、印刷数值、阵营、类型、力量、护甲、琥珀、特性、关键词，以及定义中其他静态规则字段一并保留；这不是对所有已发行卡牌的完整覆盖声明。卡牌知识可以描述规则，实际合法性和结算仍以远端服务器为准。
 
-`src/contracts/observation.ts` defines player-view data and the evaluation input language. It has no `GameState`, engine `Frame`, settlement queue, or complete card execution instruction union. `src/shared/canonical.ts` is the original pure stable serialization function, separated from the original replay executor. Explicit `undefined` remains significant to its hashes.
+恢复后的默认目录没有删去原字段或效果节点，没有生成的人工 unknown 标记，也没有默认 `summaryFeatures`。原目录中的 **2 份研究约定（research-convention）**原样保留。数据是纯静态结构，并保留原有属性存在性：Chronometer 的 `filter.kind` 有 **1 处显式 `undefined`**，它与属性缺失不同，不能经过普通 JSON 往返后丢失。
 
-The default knowledge pack contains 2,546 public card identities and a finite projection of facts used by these strategies. Public names, printed numbers, houses, types, power, armor, amber, traits, and keywords are metadata. Additional fields are explicitly whitelisted heuristic inputs or conservative guards. The compatibility name `CardDefinition` refers to that limited input contract, not an executable rules definition.
+策略数据中的卡名、卡文和解释标注保留原语言，中文化只作用于项目说明。ToC/WoE 来源原文单独放在 `src/knowledge/printed-text.ts`，共 **107 条非空原文和 1 个必要空值**；对应来源记录绑定仓库、提交、URL、原始文件 SHA256 和每条文本的 SHA256。另有 3 条 WoE 自有 fallback 说明保留在内置定义中，不计入这些第三方非空原文。第三方文字的来源和许可不能笼统归入本项目原创代码的 MIT 声明，具体见 [NOTICE](../NOTICE.md)。
 
-The original internal effect language has 439 distinct instruction kinds after expanding its alias and intersection branches. This contract recognizes 47 scoring or shape-recognition kinds; the central action estimator explicitly evaluates 36 of them. The other retained shapes support existing public prompt recognition, specialist estimates, or uncertainty checks. No generic interpreter can advance a game from these inputs. The source modules that implemented card rules are not distributed.
+用于体积比较的完整定义紧凑 JSON 序列化为 **1,257,878 字节**；首次发布的有限投影为 **1,095,139 字节**，差额为 **162,739 字节**。这只是序列化体积指标，不能表达前述显式 `undefined` 的属性存在性，也不代表源码、编译输出、依赖或冻结运行时的总占用。实际静态定义保留该属性。恢复这些知识不需要引入 Game、服务器或完整可执行规则闭包。
 
-## Unmodeled content stays visible to the strategy
+## 完整数据与有限估值分别看待
 
-Generation replaced 799 unsupported effect nodes with `{kind: "unmodeled"}`. It also retained a top-level `unmodeled: true` marker on 357 card entries with additional rules outside the selected input fields. Research interpretation annotations are not published as prose; their presence also retains the unmodeled marker. Unknown instructions are not silently turned into zero effects. Array positions and conservative presence tests are preserved. If an otherwise understood effect has omitted fields, it retains its own unmodeled marker as well as the card marker; its estimate is uncertain.
+包中保留 `tactical-style-engine-v3` 及其已注册代码策略系列，对观察中已经出现的动作排序。Unity Prism、Sir Jaune、They Tell No Tales、Infurnace、公开摧毁/琥珀返还、阵营防守和可用工作排序等，仍属于策略计算。预计资源变化不是实际结算，也不能证明未来动作一定合法。
 
-For example, a two-capture continuation must reject additional unmodeled text, and refill planning must reject an unmodeled before-refill hook. The capture guard ignores only the newly introduced nonsemantic summary-feature mask; it still rejects the unmodeled marker. The adapter reports partial knowledge in its qualifications. A visible card with no identity in the knowledge pack remains unsupported; the adapter does not invent its abilities or legal actions.
+数据类型与运行逻辑分开。实际静态定义包含 **267 种 effect kind**：其中 **46 种**落在现有 **47 个强类型估值标签**之内；另一个估值标签 `finishAction` 未在默认静态库中出现。接口另外支持显式 `unmodeled` 扩展。其余 **221 种**作为完整只读静态数据保留；主要效果估值分支未直接解释这些规则，现有防护判断仍可读取其标签和字段。标签匹配本身也不等于该效果的所有交互都经过完整模拟。
 
-These counts describe the generated package, not complete support for 2,546 cards. Known identity, partially understood text, bounded scoring support, and fully verified strategy behavior are different claims. `src/knowledge/coverage.ts` records the precise generation counts.
+类型定义不会引入引擎的 Frame、PendingChoice 或结算执行器。`CardDefinition` 是静态知识接口的兼容名称，`ALL_DEFINITIONS` 和 `registerCardKnowledge()` 保持原有接口；这些接口不代表本包能够执行完整对局。
 
-## Card text and legacy heuristics
+“知道这张牌是谁”“保留其完整静态定义”“能够估计部分效果”“在特定场景验证了策略行为”是不同的结论。未知或不支持的效果不能因为字段已保留，就被当作已理解的确定性零影响。公开状态、当前可用动作和估计中的不确定性仍是策略判断的边界。
 
-The original card `summary` strings are not included, including the upstream ToC text table. Every built-in entry has the authored description “Heuristic card knowledge; printed rules text is not included.”
+`cardKnowledgeIsPartial()` 会报告显式 `unmodeled`，以及 `status: "research-convention"` 且 `officialRulingConfirmed: false` 的知识情况。这个标志不认证全部效果都能被估值；原研究约定也不会因恢复完整数据而自动变成官方裁定。
 
-Twelve finite legacy text predicates still matter to code-policy fallbacks. Their boolean results are stored in a 12-bit `summaryFeatures` mask. `summaryFeature()` reads these booleans; it does not recover or encode the original prose. This preserves those predicates without shipping the card text. Names and short choice labels remain public identification or menu-binding data. Optional model consumers receive the limited authored descriptions, so model behavior is not claimed equivalent to the original full-text research setup.
+`src/contracts/observation.ts` 定义玩家视角和决策数据。`src/shared/canonical.ts` 提供从原重放执行器分离出的纯稳定序列化函数；显式 `undefined` 仍会影响其哈希结果。静态知识的具体类型和数据位于 `src/knowledge`。
 
-## Extending the pack
+## 卡文与原有文本启发式
 
-`registerCardKnowledge(entries)` accepts additional owned or appropriately authorized knowledge before a session starts. Entries must pass the explicit card/effect field schema and JSON/depth limits. A duplicate or invalid pack is rejected before any of its entries is installed; existing built-in identities cannot be silently overwritten. Definitions are cloned and frozen. The adapter reads the current catalog when resolving names.
+默认恢复真实的 `summary`，以及已有的 `ruleInterpretations`。原先为替代卡文而生成的 `summaryFeatures` 掩码和人工投影标记不再作为默认静态知识内容。现有文本启发式可直接读取恢复后的卡文，不能仅凭数据恢复就宣称所有策略输出已完全等价。
 
-A custom knowledge pack must continue to distinguish uncertain observations from known zero effects. It may not add internal execution instructions, hidden physical identities, account data, or a replica game implementation. The extension interface is for public strategy knowledge, not authoritative rule settlement.
+卡文是策略输入，不是运行指令。保留规则描述、分支或解释标注，并不会新增本地游戏结算能力。可选模型消费者与代码启发式也可能使用不同字段；其实际行为需要分别验证。
 
-## Validation and performance claims
+## 扩展知识包
 
-The included standalone tests use hand-built protocol/observation fixtures and the real adapter, strategy and controller. They do not start a local Game or contact a server. Build/test receipts and any private same-frame differential validation belong to the release review.
+`registerCardKnowledge(entries)` 用于在会话开始前注册额外静态知识。条目需要通过静态数据结构、深度限制和字段校验。重复或无效知识包会在安装任何条目前整体拒绝，不能静默覆盖内置身份。定义会被复制并冻结；适配器解析卡名时读取当前目录。
 
-The historical 17–3 natural-game result belongs to its original frozen runtime. This extracted package has a changed knowledge representation, a separate identity, and no new live win-rate claim. Preserving scoring source does not by itself establish behavioral equivalence: differences in omitted rules, unknown handling, text features, names, or observations must be checked. Private historical decision frames are not published as fixtures.
+扩展接口仍是策略数据接口。加入静态规则知识不等于加入隐藏物理牌身份、账号数据或本地对局执行器。对于未支持的规则和不确定观察，调用方应保留这种区别，不能用已知零效果代替未知情况。
 
-## Deployment-specific allocation contracts
+## 验证与棋力说明
 
-Personal deck UUIDs and historical source/runtime manifests are not included as default attestations. The generic strategy catalog no longer carries personal deck recommendations. The Tullibint strategy still identifies its exact public card composition and retains its specialized planning; it does not depend on a personal UUID.
+公开测试使用手工构造的协议/观察夹具，直接调用真实适配器、策略和控制器，不启动本地 Game 或连接服务器。0.2.0 已完成严格编译、185 项回归，以及全 2,546 份定义与 30,552 项文本谓词的独立差分检查，结果绑定本版源码输入；首次发布的检查作为历史记录保留，见[验证记录](validation.md)。
 
-Verified public capture and Veil allocation require explicit, once-per-process local registration through `configurePublicCaptureFacts()` or `configureVerifiedVeilFacts()` before sessions start. Registration must use the operator's audited source/runtime digests and exact public composition/physical-configuration facts. The original participant, profile, origin/frontend, complete 36-card, enhancement and source/runtime binding checks remain. Missing or mismatched local facts fail closed; no synthetic production attestation or broad server-support claim replaces the removed defaults. These registrations are local configuration and are not evidence that a public server runs the reference code.
+历史 17 胜 3 负的自然对局结果属于原冻结运行时。独立包有自己的打包、部署配置和版本身份；没有新增实战战绩，就不能给出新的胜率结论。恢复静态定义有助于保留策略输入，但仍须核对名字、观察、未知处理及估值路径，不能只凭算法源码未改就认定全部行为等价。私有历史决策帧不随仓库作为测试夹具发布。
+
+## 部署相关的分配契约
+
+个人牌组 UUID、历史源码和运行时 manifest 不作为默认事实证明发布。通用策略目录不附带个人牌组推荐。Tullibint 策略仍识别其精确公开卡牌构成，并保留专用规划，不依赖个人 UUID。
+
+已验证的公开捕获和 Veil 分配，需要在会话开始前通过 `configurePublicCaptureFacts()` 或 `configureVerifiedVeilFacts()` 显式注册，每个进程只注册一次。注册使用操作者核验过的源码/运行时摘要，以及精确公开构成和物理配置事实。参与者、profile、origin/前端、完整 36 张牌、增强和源码/运行时绑定检查继续保留。
+
+本地事实缺失或不匹配时会拒绝使用该特殊契约，不会用合成的生产证明或宽泛服务器支持声明代替被移除的私有默认值。这些注册只是本地配置，不能证明某个公开服务器运行的就是参考代码。
