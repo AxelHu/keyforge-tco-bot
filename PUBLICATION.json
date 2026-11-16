@@ -1,0 +1,606 @@
+{
+  "schema": "keyforge-tco-publication-v1",
+  "package": "keyforge-tco-bot",
+  "version": "0.1.0",
+  "repository": "https://github.com/AxelHu/keyforge-tco-bot",
+  "date": "2026-11-16",
+  "license": "MIT",
+  "validatedSourceDigest": {
+    "algorithm": "sha256 of UTF-8 JSON.stringify(validatedFiles), sorted by path",
+    "sha256": "7d6e77dab3c417aa17f0fd0f4175b6749bc768e3654e2c4173e0390f157165d8"
+  },
+  "validation": {
+    "build": {
+      "passed": true,
+      "node": "22.22.3",
+      "typescript": "5.9.3"
+    },
+    "offlineSuite": {
+      "command": "npm test",
+      "startedAt": "2026-11-16T02:48:35.768518+00:00",
+      "passed": 181,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "stdoutSha256": "f2b4e595ed6d66c5fef576727eb1ea106dec56e89b25d90525cc7bd7dad5588b"
+    },
+    "browser": {
+      "command": "npm run test:browser",
+      "startedAt": "2026-11-16T02:51:43.167550+00:00",
+      "passed": true,
+      "playwright": "1.59.1",
+      "sandboxEnabled": true,
+      "inlineHtmlOnly": true,
+      "checks": [
+        "two-client shared browser",
+        "first release preserves second client",
+        "final release confirms exit and retains profile/lock",
+        "real pidfd rejects changed identity and signals owned child"
+      ],
+      "stdoutSha256": "601a2ecc0124fb8297da7fd669f7a5a040ad63c23c628ccb0a72e0e5b64e483e"
+    },
+    "frozenRuntime": {
+      "passed": true,
+      "packageAndDependencyFiles": 772,
+      "externalExecutionFiles": 307,
+      "sourceFingerprint": "e2b03787c0c06e4aa734b2f41d46851f61e037beb5145685d2f87bbf79135505",
+      "noGitRequired": true,
+      "cliChecks": [
+        "help",
+        "init",
+        "preflight",
+        "campaign prepare",
+        "runtime verify",
+        "not-started status rejection"
+      ]
+    },
+    "newLiveGames": 0,
+    "officialTcoUnattendedValidated": false,
+    "limitedPrivateMigrationComparison": {
+      "startedAt": "2026-11-16T02:56:40.395895+00:00",
+      "passed": true,
+      "syntheticFixtures": 5,
+      "pureScoringCalls": 15,
+      "modeledSameObservationAndPublishedKnowledgeMatches": 4,
+      "expectedConservativeUnknownCases": 1,
+      "partOf181PublicTests": false,
+      "wholePackageEquivalenceEstablished": false,
+      "predecessorRequired": true,
+      "reportSha256": "9bee2ffc01ad53f89bff7a69148ed63ef9a4243823defde3a40479b77bee9841"
+    }
+  },
+  "validatedFiles": [
+    {
+      "path": "bin/kf-auto.mjs",
+      "sha256": "a0cd9b46ee6cbfa35c5e20a7f42e1314a1d5674a40bec9fb9cc601307fba87c2"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "bc7969a59d09eb13ab53f247399408391fd785ec110eb6989d303f497e0516a6"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3055be9899755774b2d8c8ecaf6dbdfa96d1cecf8675941995e4591b90bc7ec5"
+    },
+    {
+      "path": "scripts/browser-smoke.mjs",
+      "sha256": "c8e5a27f44e3018996cbd776c1f0c6a99410fb368ed6fb7fc2cd0150d1c9b68d"
+    },
+    {
+      "path": "scripts/check-package.mjs",
+      "sha256": "d168abfff431dbeb795942fd76495bd03a70e61569454c72eb7a4598da4e023a"
+    },
+    {
+      "path": "scripts/test.mjs",
+      "sha256": "2419b9a7716107aba31ec20aaef374fc5fdd3d3b91ad82dbe2b518d4adc0e3ca"
+    },
+    {
+      "path": "src/adapters/keyteki-allocation.ts",
+      "sha256": "b8d3c76871167d6949a1d8cf045c7052a92d0273fc24a023ac526f0ed92a498c"
+    },
+    {
+      "path": "src/adapters/keyteki-infurnace.ts",
+      "sha256": "b170204ed8c2513beb1e384f034fcd0e8d60d6859e728a03cd6dde65cbf14596"
+    },
+    {
+      "path": "src/adapters/keyteki-navigation.ts",
+      "sha256": "825bff75002413ee0037a4fd0f658100dec3199b6abf9fbd729c79be4f463363"
+    },
+    {
+      "path": "src/adapters/keyteki-public-capture-facts.ts",
+      "sha256": "124a1f0abed5d456c698545e6a1cb20f29103a567ca8b15fbc5789aefd5bb8c7"
+    },
+    {
+      "path": "src/adapters/keyteki-public-capture.ts",
+      "sha256": "5f517a4fe2a453212541506f77861ae4c8fdcfe4907b4f0997619361bba1a85a"
+    },
+    {
+      "path": "src/adapters/keyteki-token-references.ts",
+      "sha256": "5bce874c6979accb63bda0530f587aae855cd513e9fc64606a846232c146327f"
+    },
+    {
+      "path": "src/adapters/keyteki.ts",
+      "sha256": "321ed231d130d9b60efa4e65a4eaade5013ad703a0aa990fa6009941fa8db7c6"
+    },
+    {
+      "path": "src/ai/algorithm-policies.ts",
+      "sha256": "784eba3e0470514b68fe549facf9c0f6bb6187d05ba9e2b91f8fd4ff3daf5921"
+    },
+    {
+      "path": "src/ai/card-aware-policy.ts",
+      "sha256": "a9d031d4ef18843270fdf387162a23ef26f20a05bcbf4fb429b068fb90555d03"
+    },
+    {
+      "path": "src/ai/card-aware-sequence.ts",
+      "sha256": "19b7e585b936ff862f0b73349cf1ca54410f2b736d68683e40d9f66c97761ec8"
+    },
+    {
+      "path": "src/ai/card-aware-v2-policy.ts",
+      "sha256": "6794e473b27e81a9c401040f9b10a6e12a652f0ce9c2766bdbef04384caa061a"
+    },
+    {
+      "path": "src/ai/card-aware-v3-policy.ts",
+      "sha256": "bf52e3711f98d90e2c7b872d349ef4ff532c370f466832cddc91fe40b53f1de2"
+    },
+    {
+      "path": "src/ai/card-aware-v3-sequence.ts",
+      "sha256": "c5d1b707828afc6abd5c738b693b9c5f112411c5cb1311cf5424291da53d438e"
+    },
+    {
+      "path": "src/ai/code-strategies.ts",
+      "sha256": "4bb0224dd1a0cfbfb2c8280be1262fff92482d764fe4660f6bb199e0f15314e1"
+    },
+    {
+      "path": "src/ai/competitive-policy.ts",
+      "sha256": "fb8c5b34ef8953d1a765e852cee4250814ae5e2cbf42d1e539687c9c0c0c5812"
+    },
+    {
+      "path": "src/ai/dok-policy.ts",
+      "sha256": "84165bbab56f10621ee6044a66003105af31b35e6a7c2d4ee0054d82347b5c75"
+    },
+    {
+      "path": "src/ai/dsf-cache-layout.ts",
+      "sha256": "63d5b8f6a7675586a5587fcab1355cd3c8c397d949deea2ef9926ffb4f9c8c12"
+    },
+    {
+      "path": "src/ai/dsf-dialogue.ts",
+      "sha256": "36cb27918599d618bc6685fc8b8b78dd183961252656538218fdcf26d22daed3"
+    },
+    {
+      "path": "src/ai/economy-policy.ts",
+      "sha256": "146884e2e0e75008cbc880ffe3b0f798a208465f69de8a5bc55117ba95380c04"
+    },
+    {
+      "path": "src/ai/forge-lock-policy.ts",
+      "sha256": "be6d42257d712f50081efb48e4b8159d7e041c01024d903b9a405f36db6fc600"
+    },
+    {
+      "path": "src/ai/jev-context.ts",
+      "sha256": "1744df82d969844f02fefe81647a2553cad74820a1a1af3ec144edec07d20562"
+    },
+    {
+      "path": "src/ai/jev-input.ts",
+      "sha256": "9d4cdce29ee8435ca2bd268a5021161b7a8058a1cfac8c66465c608294e2698b"
+    },
+    {
+      "path": "src/ai/ladder-policy.ts",
+      "sha256": "e3d467de87e9d52cf68412d06d805aa897f60b60650690b1b52a3a96cc679edc"
+    },
+    {
+      "path": "src/ai/loop-guard.ts",
+      "sha256": "f97afb48de48f663bb31172610231d0b1b26651d925414c25688e51f94541873"
+    },
+    {
+      "path": "src/ai/mirror-input.ts",
+      "sha256": "de55cf849500c03761445fe26859229bf7278edb904e94b2c3df66f668fa6a93"
+    },
+    {
+      "path": "src/ai/persona-styles.ts",
+      "sha256": "d106a95435b066094d7ec02a890dbdda596d7320c94dcaffe0ea123990b9ffc9"
+    },
+    {
+      "path": "src/ai/policies.ts",
+      "sha256": "c11b8608a0bb93068d0df83099d27713eef16f38caa6276fc87d0ee8ca2bbf65"
+    },
+    {
+      "path": "src/ai/prophecy-guided-policy.ts",
+      "sha256": "2a3ef571a1e2952bd5dce03365003cfc322c34dc6170ff38e91555350bc948ca"
+    },
+    {
+      "path": "src/ai/prophecy-guided-v5-policy.ts",
+      "sha256": "77453605e4c86a85a8f48341ca967485f8238966629eba1c55cfa29abb4fcdfb"
+    },
+    {
+      "path": "src/ai/prophecy-policy.ts",
+      "sha256": "e00db161e44929d90c13eb6fc6cdb259a7d6228c499d31995996c84a7115d4bb"
+    },
+    {
+      "path": "src/ai/public-card-value.ts",
+      "sha256": "a4dc143cc9052fd9c961a99f2398efdc63054c4334e8382b6c4b2d219cbd1f1a"
+    },
+    {
+      "path": "src/ai/public-guidance-guards.ts",
+      "sha256": "3dd5047ef63fbcc21296628693237bc07f43007eb7ef898e15e35449665d5b9b"
+    },
+    {
+      "path": "src/ai/public-house-defense.ts",
+      "sha256": "dad2e1e3a27b18272eb5b1181d0f9614d9f00355b78d2e9af7cb444cc79d5ab9"
+    },
+    {
+      "path": "src/ai/public-reap-control.ts",
+      "sha256": "cbe11e4be0a28f97f2293c3e67eed3e49acc0e475bb58c4fba8748556f92032a"
+    },
+    {
+      "path": "src/ai/public-refill-planning.ts",
+      "sha256": "b93957ac885ce518aa4d1d5b449a01ccd98609a95eee50443c2687c3dd77f031"
+    },
+    {
+      "path": "src/ai/recovery-forge.ts",
+      "sha256": "e3133f51176b41c8e1e1e0225ae3f47a02775274b2a34cbec99b6091f70edb25"
+    },
+    {
+      "path": "src/ai/reorder-policy.ts",
+      "sha256": "a56a2b1200a9ded94f9db98ed72b2f4dfd9990924aa245dfd9e63c82e4a70df1"
+    },
+    {
+      "path": "src/ai/season-filter-policy.ts",
+      "sha256": "dc0a265a519cd38cf7d420418d252fe62ce70e69583917086cd625c30e8447da"
+    },
+    {
+      "path": "src/ai/season-policy.ts",
+      "sha256": "aea9ddb1f13692f7e69ebf5f0dd07750fd44a5dab4a9f717d499bfef53fcd8d0"
+    },
+    {
+      "path": "src/ai/season-tide-policy.ts",
+      "sha256": "63c2704450b313ab799294964b24d3ff2979e9ff1a898fa24bd6c14f01fb6dd9"
+    },
+    {
+      "path": "src/ai/season-utility.ts",
+      "sha256": "066f30049f985a63079db67b9e51c573c3811972252df3354e7c20230255d9d3"
+    },
+    {
+      "path": "src/ai/strategy-catalog.ts",
+      "sha256": "7185dadd0c371c20c19114d7bf3b8c18bb1b1371c36341d419b8d19c4c30d4a7"
+    },
+    {
+      "path": "src/ai/strategy-controller.ts",
+      "sha256": "e9f6489879d9e6271ff929c3ae9795e2a99b103a73461b883900bd0fbf16abe2"
+    },
+    {
+      "path": "src/ai/style-engine-recovery-policy.ts",
+      "sha256": "c7fed9709ac7bc6e67cae785581f1d79c4241a38ccb0bf0f2ebc0378ef01931b"
+    },
+    {
+      "path": "src/ai/style-policy-upgrades.ts",
+      "sha256": "e504ae1d1b75d21814ecd81646fe63c69176a5dc1fc7010f69f6d38b6298b022"
+    },
+    {
+      "path": "src/ai/style-policy.ts",
+      "sha256": "3c8f2f6a91929bd8b30d942a1e8244bc78409559f2901fdcac2c70eb3b4e533f"
+    },
+    {
+      "path": "src/ai/tactical-strength-policy.ts",
+      "sha256": "c642416ecde46ec36a300f167a0f1424b193205613447ecb480f94370f36cc23"
+    },
+    {
+      "path": "src/ai/toc-policy.ts",
+      "sha256": "8d7fe7595a2732adb068952f6640f73702f7c998b88664179696ae878b5812a4"
+    },
+    {
+      "path": "src/ai/toc-public-utility.ts",
+      "sha256": "f602661a0d853991ea4810a934d50d614d175c4cf7a65a077b8339ed5846c575"
+    },
+    {
+      "path": "src/ai/tullibint-burst-policy.ts",
+      "sha256": "19cce519b759d8316bb1e9fe3b65d050cc998f33353759e89559d1bee6888a24"
+    },
+    {
+      "path": "src/ai/tullibint-combo-policy.ts",
+      "sha256": "061c389c69f83d7315089632a104c3bd8ea58e5f76d344479355d40dad41463a"
+    },
+    {
+      "path": "src/ai/tullibint-guided-policy.ts",
+      "sha256": "26e95c10f8f5a24ef72115a354fa19a1391a1190fa0ab8fd3a4771f21123248f"
+    },
+    {
+      "path": "src/ai/tullibint-guided-v5-policy.ts",
+      "sha256": "803b602abd4b8d42cd7656daf9c7d5545e4de1571dcf5ec341d15464bb9753d1"
+    },
+    {
+      "path": "src/ai/tullibint-policy.ts",
+      "sha256": "461d53c668f5fca0aa80048826e61dc28ea7c562d768edde3cd9ae590789416b"
+    },
+    {
+      "path": "src/contracts/model-choice.ts",
+      "sha256": "5aa9626b18e380d3f5da32b27538ea604767c8ba47e89adbfcbecf543c6caa24"
+    },
+    {
+      "path": "src/contracts/observation.ts",
+      "sha256": "735eca4d7d40beeb6551101d4ba78e62d8a4acb6b70c3ac9154a5345342e89a8"
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "1682607839bc8b18c996733d4b02c4c91970f2c3fc3839e6e59cdf08cb129040"
+    },
+    {
+      "path": "src/knowledge/builtin-data.ts",
+      "sha256": "e4a695852ca4438013670ab890b7298fe3985bafbddbbbd6a2d2f5c905ef4889"
+    },
+    {
+      "path": "src/knowledge/catalog.ts",
+      "sha256": "e76f4c0083feb1d90942d6dd996c545fa99dfc11ab07a7a836dd17fd9f14052e"
+    },
+    {
+      "path": "src/knowledge/coverage.ts",
+      "sha256": "7696ee0a812c8899db1cfa5182c066242fa64e11a63f1333efd42bf8028dcfcf"
+    },
+    {
+      "path": "src/knowledge/prophecy-facts.ts",
+      "sha256": "3a93c4ccf2297ec99b0ece0ff0900cc079cd9c5eda46bff3b672d22484b204be"
+    },
+    {
+      "path": "src/knowledge/schema.ts",
+      "sha256": "bce34ec1271f8a9988e52985aaabd7920c2e15148ea329b3120716d7eb52a6a9"
+    },
+    {
+      "path": "src/knowledge/text-features.ts",
+      "sha256": "61aefebf013deb399614d31212ff9fdec2c8499dbf3f26eb0d7c3bf61da8bf0a"
+    },
+    {
+      "path": "src/knowledge/token-facts.ts",
+      "sha256": "a4ed23d1eab9d12cfcbf3158f3b393f00161b2eb543959e1ada4f0f2ac89c86a"
+    },
+    {
+      "path": "src/knowledge/upgrade-form.ts",
+      "sha256": "8da9b53f558423ae6fa8bd013edb1075f19409dabcdffef1010481444c7d12ab"
+    },
+    {
+      "path": "src/shared/canonical.ts",
+      "sha256": "59df1304bec469ae9cae04790cb8536a236a585e2a88e119dd39f0b9c59ba15d"
+    },
+    {
+      "path": "test/runtime/browser-lease.test.mjs",
+      "sha256": "b24f558d74069e37db90a036a009ab1dc2d19c3e0dfad6dd6af1755fedb6d422"
+    },
+    {
+      "path": "test/runtime/cli.test.mjs",
+      "sha256": "992c957b3019206148bd9f57d400d7518892a24f32ec1214bcc78e9fbe26cb1c"
+    },
+    {
+      "path": "test/runtime/portable-config.test.mjs",
+      "sha256": "884bafe42ed4429a09916b1cfff07e76db452f1d506f3f306a5c783a9c8e417d"
+    },
+    {
+      "path": "test/runtime/recovery-binding.test.mjs",
+      "sha256": "3aed22fab955aee69303f3bf4ac6419fb7a398cb6694d086147473b324fa9f37"
+    },
+    {
+      "path": "test/runtime/runtime-freeze.test.mjs",
+      "sha256": "527e738dfe2d9212b2f1aed20882c8dc68ec15b7b88a557288ff50961f230548"
+    },
+    {
+      "path": "test/strategy/standalone-strategy.test.mjs",
+      "sha256": "fa54b38626d333e1a0242d6152ac2ffe29902a2a3ef9e7e3017f7a6701a749f0"
+    },
+    {
+      "path": "test/transport/keyteki-browser-bootstrap.test.mjs",
+      "sha256": "44a0d3bef49c61db5cb73ecc0bb1f47c2a44ec5c99b8e0ea458810f1095f452c"
+    },
+    {
+      "path": "test/transport/keyteki-human-bridge-ingress.test.mjs",
+      "sha256": "fbda0541cea9d4331e11d25630bb823780c8625cc1226f6059c28f3a64a066d8"
+    },
+    {
+      "path": "test/transport/keyteki-human-watchdog-observation.test.mjs",
+      "sha256": "9bb4ec5d75d9a4497cdf39746e77f5d75b3d6c246b845963377c40d4830a4daa"
+    },
+    {
+      "path": "test/transport/keyteki-human-watchdog-runtime.test.mjs",
+      "sha256": "acf426d22a1e5ed5610c0ddc1ba64d75dfc51aa2ef3d5a115600552dc29c4823"
+    },
+    {
+      "path": "test/transport/keyteki-human-watchdog.test.mjs",
+      "sha256": "24f72f33f9de9d3853e6865a727f339d3ef43f016cfbf704ca1967e29c08774b"
+    },
+    {
+      "path": "test/transport/keyteki-managed-sessions.test.mjs",
+      "sha256": "217e5577938671a69458221ab4b69bd702f6242dac90cc3701f7636850607f17"
+    },
+    {
+      "path": "test/transport/keyteki-observed-receipt.test.mjs",
+      "sha256": "0ca1ec60912ba2f1a88682082a84300682d1718e7dc6171e0f496589a3a821ec"
+    },
+    {
+      "path": "test/transport/keyteki-userscript.test.mjs",
+      "sha256": "474429d46129b142c7bc3eeb8d268f716edbf7307b76ec8de619ff5d849bd795"
+    },
+    {
+      "path": "tools/browser-paths.mjs",
+      "sha256": "71662ea19b143399f0036738f24eed28b0eeb120d06dd03c6ebeecc3d03f6227"
+    },
+    {
+      "path": "tools/browser-provider.mjs",
+      "sha256": "447e39534c41f0119d11885aaf4e2aba4807a2b822612ba49db1efcf83c8e49b"
+    },
+    {
+      "path": "tools/cli.mjs",
+      "sha256": "936078a38b5d9f6975ba558354e6c7bc351c324e75e684b9acaf7b1d97e99857"
+    },
+    {
+      "path": "tools/freeze-keyteki-live.mjs",
+      "sha256": "ac74fe719cf9a3082d66b24a34f99f2c3155d246b367d96a9f1c0511d9233a68"
+    },
+    {
+      "path": "tools/keyteki-administrative-session.mjs",
+      "sha256": "b1ae8bd333f509944b259960aec94ad195b2c040672c0456c18a665f97a4f977"
+    },
+    {
+      "path": "tools/keyteki-bridge-runtime.mjs",
+      "sha256": "b7e4098be71ade67e4e382b5c5cd0f139c773de221209f01bed67809cabc81e6"
+    },
+    {
+      "path": "tools/keyteki-bridge-social.mjs",
+      "sha256": "70051e1b4c7a73a9f95113fc11d1cfccdc9fd8559882ac340775dd83dad4862a"
+    },
+    {
+      "path": "tools/keyteki-browser-bootstrap.mjs",
+      "sha256": "8ec94b4c95aafe70166266129cd1532802267fc0b1ba8299ad4dd6414d561139"
+    },
+    {
+      "path": "tools/keyteki-browser-bridge.mjs",
+      "sha256": "6724307ea79b45e439a3a6cf401f6c0c88a468e41e55ed642890524f48797877"
+    },
+    {
+      "path": "tools/keyteki-decision-evidence.mjs",
+      "sha256": "e3850fa70b65d9cdc6f73706fc175cd68ed9e3151656f3c5c2d768031d7fcf53"
+    },
+    {
+      "path": "tools/keyteki-finished-chat-drain.mjs",
+      "sha256": "7671abda3a3140a5f0e27fb4a06c7fc2c4bef79ddd500d9b07e92f3b1b83f356"
+    },
+    {
+      "path": "tools/keyteki-finished-room-exit.mjs",
+      "sha256": "6ccf49934a0b86bddc4088621e812b02338a3452686a1c03dee18112d143154e"
+    },
+    {
+      "path": "tools/keyteki-fuzhou-ui.mjs",
+      "sha256": "8edceb51c3278195bbe75c10b2d80bee8fecbd118948d7a2c1cdad96987aa229"
+    },
+    {
+      "path": "tools/keyteki-host-operator-intent.mjs",
+      "sha256": "84e94d67679604142f6f51575a6110430a96a31adaa9937257e87f5a7fec16a7"
+    },
+    {
+      "path": "tools/keyteki-human-bridge-callback.mjs",
+      "sha256": "51093c85f5d96903c738ab803fa8709080144b5f682b5f0d8d820703f3b18936"
+    },
+    {
+      "path": "tools/keyteki-human-config.mjs",
+      "sha256": "dc8e34b1b8e110b83a0191a17d9cc7b2a3250e37a700abe87c479a239423c8a0"
+    },
+    {
+      "path": "tools/keyteki-human-create-public.mjs",
+      "sha256": "b806f140d44123d0187277e12caa9c207b7bf71286d2feaa22df79aafc4be947"
+    },
+    {
+      "path": "tools/keyteki-human-launcher.mjs",
+      "sha256": "3d67c9e5b8da50c0d8362f27b951c74b7b80795e47f78bc54bdff03684e28a74"
+    },
+    {
+      "path": "tools/keyteki-human-public-room-ui.mjs",
+      "sha256": "0c9f7dd4a4f3d9f2bc9ffb5c94e7840a6024dcd181a5e3ef1620cfb2caccf9eb"
+    },
+    {
+      "path": "tools/keyteki-human-watchdog-browser.mjs",
+      "sha256": "ca7c0c606a251db7e323bced2f769f6a8179e17572550624df36ec98ba963691"
+    },
+    {
+      "path": "tools/keyteki-human-watchdog.mjs",
+      "sha256": "ff2cbe51dcf646eff61b517a259a7dbdbb7265233d6baef9f0e2334885c45f1f"
+    },
+    {
+      "path": "tools/keyteki-joined-pending-exit.mjs",
+      "sha256": "5aed1d5c0773206757ea0821238ef5456ddde17325f81e60ba768d3078811825"
+    },
+    {
+      "path": "tools/keyteki-live-campaign-policy.mjs",
+      "sha256": "cfbe9ddaed7c70c14a0568a0d2c462f1621db25b71a20b6f54fe054eb2087128"
+    },
+    {
+      "path": "tools/keyteki-live-campaign-worker.mjs",
+      "sha256": "99aaf8d87d5c3fb23223af1d447b762a12ac26bdf65089a88872cc809dac4ae3"
+    },
+    {
+      "path": "tools/keyteki-live-campaign.mjs",
+      "sha256": "dff21c35e9e4e6feb769472b7ddc08c53ea37e1921f1b624f275590e18e99cf7"
+    },
+    {
+      "path": "tools/keyteki-live-lobby.mjs",
+      "sha256": "3e3f74377c9f72fde574409a5850aaf8e1c0357bf74d221ca2f9a3315f85f76c"
+    },
+    {
+      "path": "tools/keyteki-managed-sessions.mjs",
+      "sha256": "93ba4168523e2d7d788b9a23bff5ba0059388e7b2c6cb7e52eaa9d1318d3e412"
+    },
+    {
+      "path": "tools/keyteki-owned-browser-release.mjs",
+      "sha256": "3d99df0c678e2b6b7033a4e7acc909479b38b038bbde657efa58022bdba50117"
+    },
+    {
+      "path": "tools/keyteki-public-browser-game.mjs",
+      "sha256": "c7945e45036142d35b0e03fd25ba141e8ead21c9cee60a5e4ba02be82f7ae57b"
+    },
+    {
+      "path": "tools/keyteki-public-history.mjs",
+      "sha256": "5d6387b62ea6b4b0b90080baf8a7858e03ce0dc21f649463650b5aa47f022621"
+    },
+    {
+      "path": "tools/keyteki-public-managed-observation.mjs",
+      "sha256": "81365493a214ed3803ab28686b992c8620832be7cb20d88322262ed2bea412c0"
+    },
+    {
+      "path": "tools/keyteki-public-transport-diagnostics.mjs",
+      "sha256": "c6646f538d897ca897f0f7164f325daf30d1050d8a3980b8d918641dc7a7c447"
+    },
+    {
+      "path": "tools/keyteki-reconcile-unjoined.mjs",
+      "sha256": "16c35c33d7d506ef43f4b60c53002c4f5940686f2f8c9e046908875906ff36d3"
+    },
+    {
+      "path": "tools/keyteki-resume-storage.mjs",
+      "sha256": "1af2f0bfe0f6e87159e26c96ca344362d41e5064add665cb99bac8ea0212ae14"
+    },
+    {
+      "path": "tools/keyteki-session-host.mjs",
+      "sha256": "160949c764fcf4bd0cb4229dc23b135e344e6adbbd1882eb8fcd481a929aa8e2"
+    },
+    {
+      "path": "tools/keyteki-shared-strategy.user.js",
+      "sha256": "6c0cf23be3d5943b27c42502c8904977366d23c8af6c7c97009e978bd3a4527f"
+    },
+    {
+      "path": "tools/keyteki-social-projection.mjs",
+      "sha256": "8bb678864235d43251af146c3ff8581b85577e83df0163d107e7a2f692833ddf"
+    },
+    {
+      "path": "tools/keyteki-social-session.mjs",
+      "sha256": "5d5cb51114035b487d908132009d87ed502b177bc87ac5d0dca99c8b2442d3da"
+    },
+    {
+      "path": "tools/keyteki-transport-recovery.mjs",
+      "sha256": "10f558b468fdd40e83201ebbaf24a4f4e4ff62e2f6c1d7f4775326c71ab3c260"
+    },
+    {
+      "path": "tools/keyteki-unjoined-host-stop.mjs",
+      "sha256": "ea6d8284d4bf306958c6459efcc9f4221ba1e1d734d194458c9dbe04eddb1c0f"
+    },
+    {
+      "path": "tools/keyteki-unjoined-reconciliation-contract.mjs",
+      "sha256": "80f8b7d325d347deee3bec582231211458a9097ba6fecdca3aa6ca0094fdf053"
+    },
+    {
+      "path": "tools/keyteki-wire-session.mjs",
+      "sha256": "e57ccf74e27b43c7f20a38e77f85d8f90879e7c37e32b6e2d8488ed614f9c3a1"
+    },
+    {
+      "path": "tools/minimax-credentials.mjs",
+      "sha256": "32f1a8c7371e71f7df9f3187d2493faab5b265ccc688decb2bb71911dea79a72"
+    },
+    {
+      "path": "tools/minimax-social-provider.mjs",
+      "sha256": "47c64f338d5f130fc8a3f1ae2e35dc1943fb6dca9a77372041e7e23b9f23802a"
+    },
+    {
+      "path": "tools/runtime-executables.mjs",
+      "sha256": "76ab5ec0835b147decae5d7fa24e04a15a09a01fffd72c991b2c925912c9f2d1"
+    },
+    {
+      "path": "tools/site-origin.mjs",
+      "sha256": "29fa73d52a8866e554008ab5cfa55f7322af47f65710657feeb0ffe04684b3d1"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "941d61fa59858195473dd4c0e67e02e24c5e9e67629109b8a9cb153372dae552"
+    }
+  ]
+}

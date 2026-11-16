@@ -1,0 +1,47 @@
+{
+  "name": "keyforge-tco-bot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Observation-based KeyForge strategies and browser automation for Keyteki-compatible servers.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12 <25"
+  },
+  "license": "MIT",
+  "author": "AxelHu",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AxelHu/keyforge-tco-bot.git"
+  },
+  "bin": {
+    "kf-auto": "bin/kf-auto.mjs"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node scripts/test.mjs",
+    "test:offline": "node scripts/test.mjs",
+    "check:package": "node scripts/check-package.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs"
+  },
+  "dependencies": {
+    "jsondiffpatch": "0.4.1",
+    "playwright": "1.59.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.11",
+    "socket.io": "4.8.3",
+    "typescript": "5.9.3"
+  },
+  "files": [
+    "bin/",
+    "dist/src/",
+    "tools/",
+    "examples/",
+    "docs/",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE",
+    "NOTICE.md",
+    "PUBLICATION.json"
+  ]
+}

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.local/
+.state/
+.env
+.env.*
+*.log
+*.jsonl
+*.tgz
+coverage/
+playwright-report/
+test-results/
+credentials.json
+*credentials.local.json
+*.local.json

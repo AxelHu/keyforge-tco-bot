@@ -1,0 +1,28 @@
+{
+  "schema": "keyteki-human-one-seat-draft-v1",
+  "origin": "https://your-keyteki.example",
+  "self": {
+    "name": "YourAccount",
+    "serverDeckId": 12345,
+    "deckName": "Your deck name",
+    "mode": "code",
+    "codePolicy": "tactical-style-engine-v3"
+  },
+  "room": {
+    "name": "AI game",
+    "gameType": "beginner",
+    "gameFormat": "normal"
+  },
+  "credentialsPath": "/absolute/local/credentials.json",
+  "output": "/absolute/local/seat-run",
+  "headless": true,
+  "leaveAfterFinish": true,
+  "watchdog": {
+    "enabled": true
+  },
+  "social": {
+    "enabled": false
+  },
+  "ownAccountNames": ["YourAccount"],
+  "gameSocketPaths": []
+}
