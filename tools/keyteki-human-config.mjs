@@ -54,7 +54,7 @@ export function normalizeHumanConfig(value, { createPublic = false } = {}) {
     fail('OBSERVED_NORMAL_DECK_FLOW_REQUIRED');
   if (
     createPublic &&
-    (room.gameType !== 'beginner' ||
+    (!['beginner', 'casual'].includes(room.gameType) ||
       !/(?:\bAI\b|人工智能)/iu.test(room.name) ||
       room.gameId !== undefined ||
       room.opponentName !== undefined)
@@ -260,7 +260,9 @@ export function humanPreflight(input, options) {
       network: config.network,
       gameId: config.room.gameId ?? null,
       participants: config.participants,
-      entry: config.createPublic ? 'create-one-public-beginner-room' : 'join-observed-public-room',
+      entry: config.createPublic
+        ? 'create-one-public-' + config.room.gameType + '-room'
+        : 'join-observed-public-room',
       ...(config.createPublic
         ? { waitForOpponentMs: config.waitForOpponentMs, pairLockRequiredBeforeHost: true }
         : {}),
@@ -290,7 +292,8 @@ export function humanPreflight(input, options) {
         fs.existsSync(fileURLToPath(BROWSER_MODULE)),
       runtimeChecksStillRequired: [
         config.createPublic
-          ? 'Only our created public, unpassworded beginner/normal room may bind one non-owned opponent before host startup'
+          ? 'Only our created public, unpassworded ' + config.room.gameType +
+            '/normal room may bind one non-owned opponent before host startup'
           : 'Fresh native listing must match the supplied room/pair and remain public, unstarted, unpassworded and one-seat-open',
         'Observed SPA join and existing Select deck controls must be present on the current frontend',
         'Only our own selected deck and first native full game view may activate the controller',

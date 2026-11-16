@@ -435,6 +435,7 @@ export async function createPublicRoomUi(page, observer, config) {
   observer.assertHealthy();
   if (
     !config.createPublic ||
+    !['beginner', 'casual'].includes(config.room?.gameType) ||
     observer.pending ||
     observer.createdGameId ||
     new URL(page.url()).origin !== config.origin
@@ -443,8 +444,12 @@ export async function createPublicRoomUi(page, observer, config) {
   await page.locator('a[href="/play"]:visible').click();
   await keytekiUiButton(page, 'newGame').click();
   await page.locator('#name').fill(config.room.name);
-  const gameType = await fuzhouSelectGameType(page, 'beginner');
-  await waitForObserved(() => gameType.isChecked(), config.setupTimeoutMs, 'BEGINNER_NOT_SELECTED');
+  const gameType = await fuzhouSelectGameType(page, config.room.gameType);
+  await waitForObserved(
+    () => gameType.isChecked(),
+    config.setupTimeoutMs,
+    config.room.gameType.toUpperCase() + '_NOT_SELECTED',
+  );
   const normal = page.locator('input[type="radio"][name="gameFormat"][value="normal"]');
   if ((await normal.count()) !== 1) fail('NORMAL_FORMAT_CONTROL_UNVERIFIED');
   if (!(await normal.isChecked())) await normal.locator('xpath=ancestor::label[1]').click();

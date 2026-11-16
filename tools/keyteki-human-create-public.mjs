@@ -135,7 +135,7 @@ export async function runCreatePublic(input, { onEvidence } = {}) {
     save();
     const setup = ui.createFuzhouUiSetup({
       origin: config.origin,
-      gameType: 'beginner',
+      gameType: config.room.gameType,
       timeoutMs: config.setupTimeoutMs,
     });
     await setup.preparePlayer({
@@ -145,7 +145,7 @@ export async function runCreatePublic(input, { onEvidence } = {}) {
       origin: config.origin,
     });
     healthy();
-    state.phase = 'create-public-beginner-room';
+    state.phase = 'create-public-' + config.room.gameType + '-room';
     save();
     const room = await createPublicRoomUi(instance.page, observer, config);
     state.gameId = room.gameId;

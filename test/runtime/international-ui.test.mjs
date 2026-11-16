@@ -9,6 +9,8 @@ import {
 } from '../../tools/keyteki-ui-contract.mjs';
 import {
   PublicRoomObserver,
+  createPublicRoomUi,
+  createdPublicPendingReceipt,
   leaveUnjoinedOwnRoomUi,
   startOwnBoundRoomUi,
 } from '../../tools/keyteki-human-public-room-ui.mjs';
@@ -229,5 +231,32 @@ test('bound Start preserves disabled-control rejection for both exact UI names',
     } };
     await assert.rejects(startOwnBoundRoomUi(page, observer, base), { code: 'BOUND_HOST_START_NOT_READY' });
     assert.equal(clicked, false);
+  }
+});
+
+test('created beginner and casual rooms bind the exact native type and public normal settings', () => {
+  for (const gameType of ['beginner', 'casual']) {
+    const config = { ...base, createPublic: true, participants: [own], room: { ...base.room, gameId: null, gameType } };
+    const raw = { ...native(), gameType };
+    const receipt = createdPublicPendingReceipt(raw, config, { socketId: 'fixture-own-socket' });
+    assert.equal(receipt.gameType, gameType);
+    assert.equal(receipt.gameId, gameId);
+    assert.equal(receipt.public, true);
+    assert.equal(receipt.requiresPassword, false);
+    for (const mismatch of [
+      { gameType: gameType === 'casual' ? 'beginner' : 'casual' },
+      { gameType: 'competitive' }, { gameFormat: 'sealed' }, { gamePrivate: true }, { needsPassword: true },
+    ]) assert.throws(() => createdPublicPendingReceipt({ ...raw, ...mismatch }, config), { code: 'PUBLIC_ROOM_NOT_EXPECTED_JOINABLE_KIND' });
+  }
+});
+
+test('public create UI rejects an out-of-scope type before any DOM action', async () => {
+  for (const gameType of ['competitive', 'unknown', undefined]) {
+    let domActions = 0;
+    const page = { url: () => origin + '/play', locator: () => { domActions++; throw Error('DOM action not expected'); } };
+    const observer = { assertHealthy() {}, pending: null, createdGameId: null };
+    const config = { ...base, createPublic: true, room: { ...base.room, gameType } };
+    await assert.rejects(createPublicRoomUi(page, observer, config), { code: 'PUBLIC_CREATION_PRECONDITION' });
+    assert.equal(domActions, 0);
   }
 });

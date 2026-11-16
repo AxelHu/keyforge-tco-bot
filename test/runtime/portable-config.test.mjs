@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeHumanConfig, makeOneSeatBridgeConfig } from '../../tools/keyteki-human-config.mjs';
+import { normalizeHumanConfig, makeOneSeatBridgeConfig, humanPreflight } from '../../tools/keyteki-human-config.mjs';
 import { normalizeCampaignConfig } from '../../tools/keyteki-live-campaign.mjs';
 import { configuredMinimaxKey } from '../../tools/minimax-credentials.mjs';
 import { exactSiteOrigin, normalizeGameSocketPaths } from '../../tools/site-origin.mjs';
@@ -126,4 +126,40 @@ test('campaign policy selection and disk budget are portable while lifecycle gua
     () => normalizeCampaignConfig({ ...campaign, seat: { ...seat, leaveAfterFinish: false } }),
     /CAMPAIGN_LIFECYCLE_REQUIRED/,
   );
+});
+
+test('public creation and campaign preserve explicit beginner or casual room types', () => {
+  for (const gameType of ['beginner', 'casual']) {
+    const seat = input();
+    seat.room.gameType = gameType;
+    const config = normalizeHumanConfig(seat, { createPublic: true });
+    assert.equal(config.room.gameType, gameType);
+    assert.equal(config.room.gameFormat, 'normal');
+    assert.equal(config.createPublic, true);
+    assert.equal(humanPreflight(seat, { createPublic: true }).report.entry, 'create-one-public-' + gameType + '-room');
+    const campaign = normalizeCampaignConfig({
+      schema: 'keyteki-live-campaign-v1', id: 'room-type-test', output: '/local/campaign',
+      runtimeManifest: '/local/runtime/runtime-manifest.json', runtimeManifestSha256: 'a'.repeat(64), seat,
+    });
+    assert.equal(campaign.seat.room.gameType, gameType);
+  }
+});
+
+test('casual creation keeps competitive, disclosure, normal-format and unbound-pair guards', () => {
+  for (const [change, code] of [
+    [{ gameType: 'competitive' }, 'PUBLIC_CREATION_SCOPE_CHANGED'],
+    [{ gameType: 'unknown' }, 'OBSERVED_NORMAL_DECK_FLOW_REQUIRED'],
+    [{ gameFormat: 'sealed' }, 'OBSERVED_NORMAL_DECK_FLOW_REQUIRED'],
+    [{ name: 'Example room' }, 'PUBLIC_CREATION_SCOPE_CHANGED'],
+    [{ gameId: 'existing-room' }, 'PUBLIC_CREATION_SCOPE_CHANGED'],
+    [{ opponentName: 'ExternalUser' }, 'PUBLIC_CREATION_SCOPE_CHANGED'],
+  ]) {
+    const seat = input();
+    seat.room = { ...seat.room, gameType: 'casual', ...change };
+    assert.throws(() => normalizeHumanConfig(seat, { createPublic: true }), { code });
+    assert.throws(() => normalizeCampaignConfig({
+      schema: 'keyteki-live-campaign-v1', id: 'room-type-test', output: '/local/campaign',
+      runtimeManifest: '/local/runtime/runtime-manifest.json', runtimeManifestSha256: 'a'.repeat(64), seat,
+    }), { code });
+  }
 });
