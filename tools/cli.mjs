@@ -5,14 +5,18 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { normalizeHumanConfig, HUMAN_SCHEMA, REPO_ROOT } from './keyteki-human-config.mjs';
+import { normalizeHumanConfig, humanPreflight, HUMAN_SCHEMA, REPO_ROOT } from './keyteki-human-config.mjs';
 import { normalizeCampaignConfig } from './keyteki-live-campaign.mjs';
 import { inspectBrowserProcess, signalOwnedBrowser } from './browser-provider.mjs';
+import { createInterface } from 'node:readline/promises';
+import { DEFAULT_CODE_POLICY, strategyMenu, strategyDetails, renderStrategyMenu, renderStrategyDetails, resolveStrategyChoice } from './strategy-menu.mjs';
 
-export const HELP = `kf-auto: a local strategy host and one-account browser runner
+export const HELP = `kf-auto：本机策略宿主与单账号浏览器运行器
 
+  strategies list [--all] [--json]
+  strategies show ID [--json]
   init --directory DIR --origin ORIGIN --account NAME --server-deck-id ID --deck-name NAME
-       [--deck-uuid UUID] [--policy ID] [--game-socket-path EXACT_HTTP_PATH] [--headful]
+       [--deck-uuid UUID] [--policy ID | --choose-policy] [--game-socket-path EXACT_HTTP_PATH] [--headful]
   preflight --config FILE [--create-public]
   seat run|create --config FILE
   host start --profile DIR --config FILE
@@ -45,7 +49,59 @@ const repeated = (args, name) =>
 const writeNewJson = (file, value) =>
   fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n', { mode: 0o600, flag: 'wx' });
 
+/** Validate policy flags before any directory or credential template can be created. */
+export function initializationPolicy(args) {
+  const explicit = args.filter((arg) => arg === '--policy').length;
+  const interactive = args.filter((arg) => arg === '--choose-policy').length;
+  if (explicit > 1 || interactive > 1) fail('POLICY_OPTION_DUPLICATED');
+  if (explicit && interactive) fail('POLICY_SELECTION_CONFLICT');
+  return { interactive: interactive === 1, policy: explicit ? required(args, 'policy') : DEFAULT_CODE_POLICY };
+}
+export async function choosePolicyInteractively({ input = process.stdin, output = process.stdout } = {}) {
+  if (!input.isTTY || !output.isTTY) fail('INTERACTIVE_TERMINAL_REQUIRED');
+  const terminal = createInterface({ input, output, terminal: true });
+  const abort = new AbortController();
+  terminal.once('close', () => abort.abort());
+  terminal.once('SIGINT', () => abort.abort());
+  output.write(renderStrategyMenu(strategyMenu()) + '\n\n');
+  try {
+    while (true) {
+      let answer;
+      try {
+        answer = await terminal.question('输入常用编号或完整策略 ID；回车使用默认：', { signal: abort.signal });
+      } catch {
+        fail('POLICY_SELECTION_CANCELLED');
+      }
+      const selected = resolveStrategyChoice(answer);
+      if (selected) return selected;
+      output.write('无效选择，请输入 1–5、已注册策略 ID，或直接回车。\n');
+    }
+  } finally {
+    terminal.close();
+  }
+}
+export function strategyCommand(args) {
+  const [action = 'list', ...rest] = args;
+  const json = rest.includes('--json');
+  if (action === 'list') {
+    if (rest.some((arg) => !['--all', '--json'].includes(arg)) || new Set(rest).size !== rest.length)
+      fail('STRATEGY_LIST_OPTIONS');
+    const result = strategyMenu({ all: rest.includes('--all') });
+    return json ? JSON.stringify(result, null, 2) : renderStrategyMenu(result);
+  }
+  if (action === 'show') {
+    const [id, ...flags] = rest;
+    if (!id || id.startsWith('--')) fail('STRATEGY_ID_REQUIRED');
+    if (flags.some((arg) => arg !== '--json') || flags.length > 1) fail('STRATEGY_SHOW_OPTIONS');
+    const result = strategyDetails(id);
+    return json ? JSON.stringify(result, null, 2) : renderStrategyDetails(result);
+  }
+  fail('STRATEGY_ACTION_UNKNOWN');
+}
+
 export function initializeConfig(args) {
+  const selected = initializationPolicy(args);
+  if (selected.interactive) fail('INTERACTIVE_SELECTION_NOT_RESOLVED');
   const directory = path.resolve(required(args, 'directory'));
   if (fs.existsSync(directory)) fail('CONFIG_DIRECTORY_ALREADY_EXISTS');
   const account = required(args, 'account');
@@ -57,7 +113,7 @@ export function initializeConfig(args) {
       serverDeckId: Number(required(args, 'server-deck-id')),
       deckName: required(args, 'deck-name'),
       mode: 'code',
-      codePolicy: option(args, 'policy') ?? 'tactical-style-engine-v3',
+      codePolicy: selected.policy,
       ...(option(args, 'deck-uuid') ? { deckSelector: option(args, 'deck-uuid') } : {}),
     },
     room: { name: 'AI game', gameType: 'beginner', gameFormat: 'normal' },
@@ -83,6 +139,7 @@ export function initializeConfig(args) {
     created: true,
     config: path.join(directory, 'seat.json'),
     credentials: seat.credentialsPath,
+    codePolicy: seat.self.codePolicy,
     passwordMustBeFilledLocally: true,
     browserStarted: false,
   };
@@ -126,7 +183,7 @@ export function commandFor(args) {
   const [command, action, ...rest] = args;
   if (command === 'preflight') {
     if (args.includes('--run')) fail('PREFLIGHT_CANNOT_RUN');
-    return { script: 'keyteki-human-launcher.mjs', args: args.slice(1) };
+    return { operation: 'offline-preflight', args: args.slice(1) };
   }
   if (command === 'seat' && ['run', 'create'].includes(action))
     return {
@@ -164,8 +221,21 @@ export async function runCli(args = process.argv.slice(2)) {
     console.log(HELP);
     return 0;
   }
+  if (args[0] === 'strategies') {
+    console.log(strategyCommand(args.slice(1)));
+    return 0;
+  }
   if (args[0] === 'init') {
-    console.log(JSON.stringify(initializeConfig(args.slice(1)), null, 2));
+    let options = args.slice(1);
+    const selected = initializationPolicy(options);
+    if (selected.interactive) {
+      // Check required arguments before asking; selection itself still creates no files.
+      for (const name of ['directory', 'origin', 'account', 'server-deck-id', 'deck-name']) required(options, name);
+      if (fs.existsSync(path.resolve(required(options, 'directory')))) fail('CONFIG_DIRECTORY_ALREADY_EXISTS');
+      const id = await choosePolicyInteractively();
+      options = [...options.filter((arg) => arg !== '--choose-policy'), '--policy', id];
+    }
+    console.log(JSON.stringify(initializeConfig(options), null, 2));
     return 0;
   }
   if (args[0] === 'campaign' && args[1] === 'prepare') {
@@ -173,6 +243,13 @@ export async function runCli(args = process.argv.slice(2)) {
     return 0;
   }
   const command = commandFor(args);
+  if (command.operation === 'offline-preflight') {
+    // A missing build must be reported, not imported through the live launcher.
+    const input = JSON.parse(fs.readFileSync(path.resolve(required(command.args, 'config')), 'utf8'));
+    const { report } = humanPreflight(input, { createPublic: command.args.includes('--create-public') });
+    console.log(JSON.stringify(report, null, 2));
+    return 0;
+  }
   const child = spawn(process.execPath, [path.join(REPO_ROOT, 'tools', command.script), ...command.args], {
     cwd: REPO_ROOT,
     env: process.env,

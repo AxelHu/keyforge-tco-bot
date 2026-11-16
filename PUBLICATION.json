@@ -1,7 +1,7 @@
 {
-  "schema": "keyforge-tco-publication-v2",
+  "schema": "keyforge-tco-publication-v3",
   "package": "keyforge-tco-bot",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "repository": "https://github.com/AxelHu/keyforge-tco-bot",
   "date": "2026-11-16",
   "defaultDocumentationLanguage": "zh-CN",
@@ -9,9 +9,24 @@
   "licenseScope": "Original implementation and authored knowledge; separately attributed third-party text retains its underlying rights. See NOTICE.md.",
   "validatedSourceDigest": {
     "algorithm": "sha256 of UTF-8 JSON.stringify(validatedFiles), sorted by path",
-    "sha256": "7567573552c2e7c1a637488ea27a06e458669b4fe6d7a209f11136e7513e5c23"
+    "sha256": "35c311f9ee05e3d6ff0404630ca7e5441d7be319875b55de789c26a8c34a5580"
   },
-  "validatedFilesScope": "Production source, tools, CLI, scripts, tests, package manifests and TypeScript configuration. Documentation and this publication record are bound by the release Git tree, not this non-recursive input digest.",
+  "validatedFilesScope": "Production source, tools, CLI, scripts, tests, manifests, TypeScript configuration and the public benchmark JSON read by tests. Prose documentation and this non-recursive publication record are bound by the release Git tree.",
+  "strategySelection": {
+    "registeredPolicies": 89,
+    "commonPolicies": 5,
+    "defaultPolicy": "tactical-style-engine-v3",
+    "allRegisteredPoliciesRemainSelectable": true,
+    "interactiveInit": "--choose-policy",
+    "queries": [
+      "strategies list",
+      "strategies list --all",
+      "strategies show ID"
+    ],
+    "unknownPolicyRejectedBeforeInitializationOrPreflight": true,
+    "offlinePreflightWorksWithoutBuild": true,
+    "strategyAlgorithmSourceChanged": false
+  },
   "validation": {
     "build": {
       "passed": true,
@@ -20,51 +35,103 @@
     },
     "offlineSuite": {
       "command": "npm test",
-      "startedAt": "2026-11-16T03:25:30.396192+00:00",
-      "passed": 185,
+      "startedAt": "2026-11-16T04:08:01.357485+00:00",
+      "durationSeconds": 14.7,
+      "passed": 194,
       "failed": 0,
       "skipped": 0,
       "cancelled": 0,
       "strategyTests": 14,
-      "runtimeTests": 22,
+      "runtimeTests": 31,
       "transportTests": 149,
       "sourceStable": true,
-      "stdoutSha256": "879954fdd6bf72e418450d7fa33e54a07233d63930c5807b76b9429c14fdb5e5"
+      "stdoutSha256": "fadd10fdbd6423b07bda0d4a3ddc5aa3ef4e8ade6b6b7350c5be8fa84b59e585"
     },
-    "fullStaticKnowledgeComparison": {
-      "startedAt": "2026-11-16T03:31:24.896110+00:00",
+    "cliAndFrozenRuntime": {
       "passed": true,
+      "startedAt": "2026-11-16T04:08:58.741599+00:00",
+      "durationSeconds": 8.813,
       "sourceStable": true,
-      "expectedCards": 2546,
-      "fullFieldMatches": 2546,
-      "exactSummaryMatches": 2546,
-      "predicateComparisons": 30552,
-      "predicateMatches": 30552,
-      "originalCanonicalSha256": "77d3d8424cbf6f7f9b1f43f0fc3645f7416d878707bbdbe10d3349f1bf241ea6",
-      "candidateCanonicalSha256": "77d3d8424cbf6f7f9b1f43f0fc3645f7416d878707bbdbe10d3349f1bf241ea6",
-      "explicitUndefinedRestored": 1,
-      "boundedAssessmentComparisons": 4,
-      "directExportedHelperCalls": 16,
-      "tullibintSurveyEqual": true,
-      "namedLockPositiveAndNegativeEqual": true,
-      "modelVisibleStateEqual": true,
-      "modelQuestionsEqual": true,
-      "partOf185PublicTests": false,
-      "predecessorRequired": true,
-      "wholeStrategyEquivalenceEstablished": false,
-      "reportSha256": "ad5f7f3cd887fc7980b42f1f320d773dcf56cd4be5b45292252e97b6abc00d37",
-      "runnerSha256": "cae98be5003b370da6867f42f9c225626157f5ad04a96facfe07cb773a30c090",
-      "initialAttempt": "Private report assembly had an undefined-variable typo; preserved as a failed attempt. The corrected complete run is the successful record above; production source was unchanged."
+      "checks": [
+        "help",
+        "common",
+        "all",
+        "init",
+        "preflight",
+        "freeze",
+        "frozen-menu",
+        "frozen-init",
+        "frozen-preflight",
+        "campaign-prepare",
+        "runtime-verify-api",
+        "not-started"
+      ],
+      "runtimeFiles": 777,
+      "runtimeBytes": 20216460,
+      "externalExecutionFiles": 307,
+      "sourceFingerprint": "9f955933692a24ad6fd9012cca489db4012019de1b552a3c9c8e3dfa166d8ad6",
+      "manifestSha256": "5f24c572b1e8d43c5eb59f53c95618fe8fcaff15884e54c033e3861c13b646f0",
+      "withoutSourceDocsOrGit": true,
+      "credentialContentsRead": false,
+      "browserStarted": false,
+      "reportSha256": "b88a50a38d9961a8c0d0b14116906982ddbbeb0b9b094a9539f350fbcfab0c76",
+      "temporaryRuntimeRemoved": true
     },
+    "interactiveTerminal": {
+      "passed": true,
+      "realPty": true,
+      "selection": "3",
+      "writtenPolicy": "tactical-style-cycle-v2",
+      "sourceStable": true,
+      "browserStarted": false,
+      "temporaryConfigRemoved": true,
+      "reportSha256": "40c2aabbf9342cbf7a9e04d792fda0e7385c44c085d0d76e31217c221eb612ab"
+    },
+    "earlierAttempts": [
+      {
+        "passed": 193,
+        "failed": 1,
+        "cause": "Isolated fixture omitted the required Playwright production dependency; the fixture now includes the real production closure."
+      },
+      {
+        "passed": 193,
+        "failed": 1,
+        "cause": "The missing-build test exposed offline preflight importing the live launcher before it could report missing compiled files; CLI preflight now calls the pure preflight function directly."
+      }
+    ],
     "newLiveGames": 0,
+    "newStrategyRatingGames": 0,
     "officialTcoUnattendedValidated": false,
-    "historicalBrowserAndFrozenRuntime": {
+    "historicalKnowledgeValidation": {
+      "version": "0.2.0",
+      "commit": "d2ab1ccc34c903d9fc5825f12db55f91156728cc",
+      "cardDefinitionsCompared": 2546,
+      "textPredicatesCompared": 30552,
+      "currentVersionRerun": false,
+      "sourceUnchanged": true,
+      "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/d2ab1ccc34c903d9fc5825f12db55f91156728cc/docs/validation.md"
+    },
+    "historicalBrowserValidation": {
       "version": "0.1.0",
       "commit": "c3194401ef28547b4fd6c97651fd543edbe874d8",
       "currentVersionRerun": false,
-      "unchangedAiAdapterBackendCliAndBrowserSmokeFiles": 102,
       "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/c3194401ef28547b4fd6c97651fd543edbe874d8/docs/validation.md"
     }
+  },
+  "historicalStrategyBenchmark": {
+    "id": "strategy-elo-20261113",
+    "date": "2026-11-13",
+    "kind": "historical-local-simulation",
+    "sourceCommit": "aeb9d1e79652b7e58ed1b1f7b52ca54e9d21548b",
+    "sourceDigest": "e45f2d1bc7779e038198503d8a317bdb24271fdf937ef5cf50f4a23622594f64",
+    "publicData": "docs/data/strategy-elo-20261113.json",
+    "publicDataSha256": "71ef1e3fb685f80808c5b97574dfb6d743b6cf8d0f31749f1e4c277c6c12cc08",
+    "currentImplementationMayDiffer": true,
+    "totalGames": 864,
+    "ratingGames": 720,
+    "mirrorGames": 144,
+    "ratedPolicies": 6,
+    "isCurrentVersionRating": false
   },
   "knowledge": {
     "cards": 2546,
@@ -92,12 +159,16 @@
       "sha256": "a0cd9b46ee6cbfa35c5e20a7f42e1314a1d5674a40bec9fb9cc601307fba87c2"
     },
     {
+      "path": "docs/data/strategy-elo-20261113.json",
+      "sha256": "71ef1e3fb685f80808c5b97574dfb6d743b6cf8d0f31749f1e4c277c6c12cc08"
+    },
+    {
       "path": "package-lock.json",
-      "sha256": "21e5e1934af838e025a8d257e637de5b8b955ce41d188acf0ae4d325bf0fcee6"
+      "sha256": "e05ee061db3fb32ed2203f981146977c843ee237fd272015c7c355e10f74e4cc"
     },
     {
       "path": "package.json",
-      "sha256": "b7f87add3146aeea6efebf448fd0c156bb43ec61b3342dcbc1eb0c75821a141e"
+      "sha256": "344cda006baba5ffb71dcac3916433514b539019f46f925039faa7fcc9d1ffa1"
     },
     {
       "path": "scripts/browser-smoke.mjs",
@@ -393,7 +464,7 @@
     },
     {
       "path": "test/runtime/cli.test.mjs",
-      "sha256": "992c957b3019206148bd9f57d400d7518892a24f32ec1214bcc78e9fbe26cb1c"
+      "sha256": "8c71bd119911e8cadebaef5f7454dd70181052c80f1813196738a95c999c6087"
     },
     {
       "path": "test/runtime/portable-config.test.mjs",
@@ -406,6 +477,10 @@
     {
       "path": "test/runtime/runtime-freeze.test.mjs",
       "sha256": "527e738dfe2d9212b2f1aed20882c8dc68ec15b7b88a557288ff50961f230548"
+    },
+    {
+      "path": "test/runtime/strategy-menu.test.mjs",
+      "sha256": "382fe091d6e75a2924d10cf08b97d0ff69f029db9dbe6d2e8e3b430185cf8b50"
     },
     {
       "path": "test/strategy/standalone-strategy.test.mjs",
@@ -453,7 +528,7 @@
     },
     {
       "path": "tools/cli.mjs",
-      "sha256": "936078a38b5d9f6975ba558354e6c7bc351c324e75e684b9acaf7b1d97e99857"
+      "sha256": "6a51ba3ad718964a29564a6013b0265597931041f9af57e71d5b8f5385ef1c4f"
     },
     {
       "path": "tools/freeze-keyteki-live.mjs",
@@ -505,7 +580,7 @@
     },
     {
       "path": "tools/keyteki-human-config.mjs",
-      "sha256": "dc8e34b1b8e110b83a0191a17d9cc7b2a3250e37a700abe87c479a239423c8a0"
+      "sha256": "6d69c0292268264dcf33320e1135f306616c93de6c8a44c36d81ffdd106f8c68"
     },
     {
       "path": "tools/keyteki-human-create-public.mjs",
@@ -626,6 +701,14 @@
     {
       "path": "tools/site-origin.mjs",
       "sha256": "29fa73d52a8866e554008ab5cfa55f7322af47f65710657feeb0ffe04684b3d1"
+    },
+    {
+      "path": "tools/strategy-benchmark.mjs",
+      "sha256": "73401e0e46c921edda5ab1b345997884618d711dff30465b87e118ab4113dd26"
+    },
+    {
+      "path": "tools/strategy-menu.mjs",
+      "sha256": "aab814871f5e2a66ec0331ec75dee16cddde13a3da19ca1c7e04b481c604fed8"
     },
     {
       "path": "tsconfig.json",

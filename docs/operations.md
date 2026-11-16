@@ -1,8 +1,18 @@
 # 使用与恢复
 
-本指南介绍如何在 Keyteki 兼容服务器上运行一个受控席位，假设已经完成安装和构建。浏览器归属、支持的操作系统和恢复的具体边界见[运行环境与边界](runtime-notes.md)。
+本指南介绍如何在 Keyteki 兼容服务器上运行一个受控席位，假设已经完成安装和构建。公开仓包含独立运行所需的策略、静态知识、桥接和后台工具；目标站点还需兼容当前支持的登录、选牌与房间界面。浏览器归属、支持的操作系统和恢复的具体边界见[运行环境与边界](runtime-notes.md)。
 
-## 1. 创建本地配置
+## 1. 选择策略并创建本地配置
+
+先查看本地策略选单：
+
+```sh
+node bin/kf-auto.mjs strategies list
+node bin/kf-auto.mjs strategies list --all
+node bin/kf-auto.mjs strategies show tactical-style-engine-v3
+```
+
+默认展示 Engine V3、ToC V2、Cycle V2、Effects V4、Control V2 五项，默认策略保持 Engine V3。完整列表保留原项目的全部 89 个注册 ID，包含专项、实验和历史策略；`--json` 可输出供脚本使用的数据。选单不连接服务器、不打开浏览器、不修改已有配置。用途和历史 Elo 见[策略指南](strategy-guide.md)。
 
 填写自己的服务器、账号，以及服务器选牌界面使用的牌组 ID：
 
@@ -12,14 +22,19 @@ node bin/kf-auto.mjs init \
   --origin 'https://your-keyteki.example' \
   --account 'YourAccount' \
   --server-deck-id 12345 \
-  --deck-name 'Your deck name'
+  --deck-name 'Your deck name' \
+  --policy tactical-style-engine-v3
 ```
 
-该命令创建私有目录、`seat.json` 和密码为空的 `credentials.json`。在本地凭据文件中填写密码。初始化不会打开浏览器，也不会覆盖已有目标目录。真实账号文件不要放进 `examples/`。
+该命令创建私有目录、`seat.json` 和密码为空的 `credentials.json`。在本地凭据文件中填入实际密码。初始化不会打开浏览器，也不会覆盖已有目标目录。真实账号文件不要放进 `examples/`。
+
+也可以把 `--policy tactical-style-engine-v3` 换成 `--choose-policy`，在交互终端按编号选择；这两个选项互斥，`--choose-policy` 只支持 TTY。自动化脚本应显式使用 `--policy ID`。选好有效策略并通过配置校验后，初始化才写入新配置；两者都不指定时仍使用 Engine V3。
 
 origin 必须是精确的 HTTP(S) 源地址。服务器牌组 ID 不一定是 Master Vault UUID。如果部署的游戏 socket 位于另一个 origin，使用 `--game-socket-path` 显式提供每一个完整的 HTTP(S) socket 路径；默认只允许同源连接。包中没有内置前身使用的服务器地址。
 
-默认策略为 `tactical-style-engine-v3`，属于代码策略，不需要语言模型密钥。牌桌聊天默认关闭。`ownAccountNames` 应列出自己拥有的全部账号，方便匹配时排除。
+这些入口运行代码策略，不需要语言模型密钥。牌桌聊天默认关闭。`ownAccountNames` 应列出自己拥有的全部账号，方便匹配时排除。
+
+尚未启动的席位配置可以直接修改 `self.codePolicy`，然后重新预检查；全部 89 个注册 ID 均可选择，未注册的 ID 会在配置校验阶段拒绝。不要在已经开始的 campaign 上热改策略，它绑定了配置摘要和已有记录。需要更换时，准备新的配置与输出目录，并保留原尝试的未解决状态。
 
 ## 2. 检查配置
 
@@ -29,7 +44,7 @@ node bin/kf-auto.mjs preflight \
   --create-public
 ```
 
-检查输出中的 `readyForExplicitRun`。预检查会核对必要文件、凭据文件权限和输出目录是否为新目录；它不会读取密码、访问站点、验证登录成功或认证当前站点界面。空密码模板也可以通过文件系统检查，因此实际运行前仍须填写密码。
+检查输出中的 `readyForExplicitRun`。预检查会核对策略 ID 是否已注册、必要文件、凭据文件权限和输出目录是否为新目录；它不会读取密码、访问站点、验证登录成功或认证当前站点界面。空密码模板也可以通过文件系统检查，因此实际运行前仍须填写密码。
 
 后台运行需要 Linux（包括 WSL 内的 Linux）、Node 22.12–24.x、带 `fcntl` 和 pidfd 支持的 Python 3，以及直接可执行的 Chromium 二进制。默认使用 Playwright 对应版本的 Chromium。`KF_BOT_CHROME` 可以选择直接 ELF 二进制；shell 启动包装脚本会被拒绝。
 
@@ -46,7 +61,7 @@ node bin/kf-auto.mjs seat create \
 
 加入已经观察到的房间时，使用新的席位配置，填写准确的 `room.gameId`、`room.opponentName`、房间名和类型。先执行不带 `--create-public` 的 preflight，再执行 `seat run`。旧输出目录不会被静默复用于另一局。
 
-登录、选牌和房间自动操作以一个本地化的 Keyteki 部署为开发依据。本独立版尚未验证公开 TCO 当前站点的无人值守登录和大厅流程；配置 origin 或匹配用户脚本网址都不能扩大该兼容性结论。
+登录、选牌和房间自动操作以一个本地化的 Keyteki 部署为开发依据。当前流程使用 `/login` 和 `/api/account/login`，要求 `Select deck`、`Select row <serverDeckId>` 选牌控件，以及“新游戏”“开始”等中文房间按钮。它是具体的中英混合 UI 绑定。**当前公开 TCO 的完整无人值守流程尚未端到端实战验证**；只修改 origin 或匹配用户脚本网址，不能证明该站点已经兼容。
 
 ## 4. 为连续对局冻结运行时
 
@@ -65,6 +80,8 @@ node bin/kf-auto.mjs campaign prepare \
 ```
 
 这两个命令都只准备本地文件，不会开始对局。冻结包含公开运行时和生产 npm 依赖，并对选定的 Node、Python 和 Chromium 安装内容计算哈希；不会复制凭据、浏览器 profile 或连续对局数据。这是内容快照，不是容器或完整操作系统镜像。
+
+`campaign prepare` 把当时的席位配置（包括 `self.codePolicy`）复制进新 campaign 配置。之后修改原 `seat.json` 不会自动改变已准备的 campaign；请在准备前确定策略，运行后不要直接改其配置摘要所绑定的内容。
 
 从冻结的入口启动：
 

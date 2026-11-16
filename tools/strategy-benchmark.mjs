@@ -1,0 +1,205 @@
+// 来源：keyforge-lab 已封存的 2026-11-13 六策略同池报告；详见 sources。
+// 历史本地模拟聚合结果，不等于 TCO 人类实战或当前公开 HEAD 的新测评级。
+// 与 docs/data/strategy-elo-20261113.json 从同一对象生成，保留原始数值精度。
+
+export const STRATEGY_ELO_BENCHMARK = {
+  "schema": "kf-strategy-elo-benchmark-v1",
+  "id": "strategy-elo-20261113",
+  "description": "从 keyforge-lab 已封存报告提取的聚合结果；不是 TCO 人类实战 Elo，也不是当前公开版本的新测评级。",
+  "date": "2026-11-13",
+  "kind": "historical-local-simulation",
+  "totalGames": 864,
+  "ratingGames": 720,
+  "mirrorGames": 144,
+  "gamesPerPolicy": 240,
+  "deckCount": 12,
+  "sasRange": [
+    55,
+    84
+  ],
+  "sourceProject": "keyforge-lab",
+  "sourceCommit": "aeb9d1e79652b7e58ed1b1f7b52ca54e9d21548b",
+  "sourceDigest": "e45f2d1bc7779e038198503d8a317bdb24271fdf937ef5cf50f4a23622594f64",
+  "archiveCommit": "6091f7a925022154ba04a4f83660468b96ddab81",
+  "currentImplementationMayDiffer": true,
+  "method": {
+    "name": "regularized-Bradley-Terry",
+    "eloMean": 1500,
+    "eloScale": 400,
+    "priorSdElo": 400,
+    "fit": "joint-likelihood",
+    "probability": "1 / (1 + 10 ** ((ratingB - ratingA) / 400))",
+    "completeBlocks": 12,
+    "gamesPerBlock": 72,
+    "bootstrapReplicates": 1000,
+    "bootstrapUnit": "complete-deck-pair-seed-block",
+    "intervalConfidence": 0.95,
+    "firstPlayerHandling": "交换策略所持套牌和先手的四局汇总后拟合；策略模型不另估计先手项。",
+    "mirrorHandling": "同策略镜像保留在审计和行为统计中，不参与策略差异评级。",
+    "versionConfirmation": "同研究的独立新旧直接对照，每家 144 局、36 个四腿单元；区间以胜率为单位。"
+  },
+  "sources": [
+    {
+      "path": "artifacts/20261113-strategy-strength/reports/candidate-league-report.json",
+      "sha256": "134796f155e5182b90a7867b40a738d5c9625883b21677a1d2598db39fe0935c"
+    },
+    {
+      "path": "artifacts/20261113-strategy-strength/reports/confirmation-report.json",
+      "sha256": "83832a4ae0b6cefef74f6aa1347ca6bccad2f080fd681cae448415b92776abfc"
+    },
+    {
+      "path": "artifacts/20261113-strategy-strength/FINDINGS.md",
+      "sha256": "315056a7f792b494f9665f472c25e15e7624e6d6295298040c08539b6707c097"
+    },
+    {
+      "path": "artifacts/20261113-strategy-strength/verification/committed-source-binding.json",
+      "sha256": "496417e234948db811df916cdc0e3aecd9bb9f5a1474242dec494807dd5260df"
+    },
+    {
+      "path": "tools/strength_study_report.py",
+      "sha256": "4ccdba8a97156cc1a41fc8d86f02748cb5ec76db04d452d5607dd3ea741cd751"
+    },
+    {
+      "path": "tools/deck_elo_model.py",
+      "sha256": "ec027d39208ddb6f32a4a79696ed3a00ade46c6e3d5747e3e1a0340342d4dcf9"
+    }
+  ],
+  "rows": [
+    {
+      "rank": 1,
+      "policyId": "tactical-toc-v2",
+      "label": "ToC 牌效 V2",
+      "elo": 1534.1496289981444,
+      "low95": 1502.487195104676,
+      "high95": 1569.827185414053,
+      "wins": 134,
+      "losses": 106,
+      "games": 240
+    },
+    {
+      "rank": 2,
+      "policyId": "tactical-style-cycle-v2",
+      "label": "快周转 V2",
+      "elo": 1524.3784004200074,
+      "low95": 1485.521893218736,
+      "high95": 1559.0141215628566,
+      "wins": 130,
+      "losses": 110,
+      "games": 240
+    },
+    {
+      "rank": 3,
+      "policyId": "tactical-card-effects-v4",
+      "label": "牌效战术 V4",
+      "elo": 1517.0749998549281,
+      "low95": 1483.0288612991353,
+      "high95": 1554.2353212866574,
+      "wins": 127,
+      "losses": 113,
+      "games": 240
+    },
+    {
+      "rank": 4,
+      "policyId": "tactical-style-engine-v3",
+      "label": "场面引擎 V3",
+      "elo": 1500.0788088950578,
+      "low95": 1460.6519828129826,
+      "high95": 1544.6830317967529,
+      "wins": 120,
+      "losses": 120,
+      "games": 240
+    },
+    {
+      "rank": 5,
+      "policyId": "tactical-style-control-v2",
+      "label": "干扰控制 V2",
+      "elo": 1485.5127592447573,
+      "low95": 1442.9108968079684,
+      "high95": 1529.1008055720267,
+      "wins": 114,
+      "losses": 126,
+      "games": 240
+    },
+    {
+      "rank": 6,
+      "policyId": "tactical-ladder-balanced-v2",
+      "label": "均衡阶梯 V2",
+      "elo": 1438.805402587105,
+      "low95": 1373.405150283312,
+      "high95": 1492.832200142485,
+      "wins": 95,
+      "losses": 145,
+      "games": 240
+    }
+  ],
+  "versionConfirmation": [
+    {
+      "policyId": "tactical-ladder-balanced-v2",
+      "baselinePolicyId": "tactical-ladder-balanced",
+      "games": 144,
+      "wins": 74,
+      "losses": 70,
+      "winRate": 0.5138888888888888,
+      "winRateLow95": 0.4583333333333333,
+      "winRateHigh95": 0.5694444444444444
+    },
+    {
+      "policyId": "tactical-card-effects-v4",
+      "baselinePolicyId": "tactical-card-effects-v3",
+      "games": 144,
+      "wins": 72,
+      "losses": 72,
+      "winRate": 0.5,
+      "winRateLow95": 0.4513888888888889,
+      "winRateHigh95": 0.5486111111111112
+    },
+    {
+      "policyId": "tactical-toc-v2",
+      "baselinePolicyId": "tactical-toc-v1",
+      "games": 144,
+      "wins": 69,
+      "losses": 75,
+      "winRate": 0.4791666666666667,
+      "winRateLow95": 0.4305555555555556,
+      "winRateHigh95": 0.5208333333333334
+    },
+    {
+      "policyId": "tactical-style-cycle-v2",
+      "baselinePolicyId": "tactical-style-cycle-v1",
+      "games": 144,
+      "wins": 75,
+      "losses": 69,
+      "winRate": 0.5208333333333334,
+      "winRateLow95": 0.5,
+      "winRateHigh95": 0.5555555555555556
+    },
+    {
+      "policyId": "tactical-style-engine-v3",
+      "baselinePolicyId": "tactical-style-engine-v1",
+      "games": 144,
+      "wins": 70,
+      "losses": 74,
+      "winRate": 0.4861111111111111,
+      "winRateLow95": 0.4375,
+      "winRateHigh95": 0.5347222222222222
+    },
+    {
+      "policyId": "tactical-style-control-v2",
+      "baselinePolicyId": "tactical-style-control-v1",
+      "games": 144,
+      "wins": 70,
+      "losses": 74,
+      "winRate": 0.4861111111111111,
+      "winRateLow95": 0.4652777777777778,
+      "winRateHigh95": 0.5
+    }
+  ],
+  "scopeNotes": [
+    "评分绑定 2026-11-13 的冻结实现；同名策略此后有修订，当前公开版本未用这批数据重新评级。",
+    "牌池为 12 副、六个扩展、SAS 55–84；不代表全部自有套牌、SAS≥85 套牌或全部注册策略。",
+    "每策略 240 局是跨策略结果；144 局镜像不参与评级。864 局全部自然结束，原报告记录零保护介入、零 cap／halt、零技术错误。",
+    "Elo 在本池内独立居中到 1500，不能与其他牌池或旧榜直接相减解释升级幅度。",
+    "95% 区间是条件于该面板的名义完整块经验重采样区间；不保证对未见套牌的覆盖率。前三项区间重叠，点排序不证明稳定冠军。",
+    "原报告判定六个新版均未达到预设的整体增强证据门槛；候选间排名与是否胜过各自旧版是不同问题。"
+  ]
+};
