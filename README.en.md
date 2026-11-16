@@ -35,11 +35,14 @@ The protocol adapter was developed against Keyteki revision
 Keyteki-derived deployment; the extracted package is a new build with its own
 knowledge boundary.
 
-Version 0.4.0 adds English UI and table-chat support. Anonymous visits to the
-international site's home, login and play pages have been performed. **Authenticated
-end-to-end games on international TCO are still pending validation.** Public-page
-checks and local component tests are recorded separately from live game acceptance.
-See [international TCO configuration and status](docs/international-tco.md).
+Version 0.4.0 has completed controlled private-game acceptance on the real
+international site. On 2026-11-16, three games ended naturally: **one passed the
+complete automatic lifecycle, while two retain their manual-cleanup outcomes**.
+All 696 game commands were acknowledged, and English fallback openings received
+native echoes. Two owned accounts exercised login, deck selection, dynamic game-node
+handshakes, full games and terminal departure/resource release. Human opponents,
+paid model chat and fault recovery were not tested; these are not new Elo results.
+See [international TCO configuration, results and limitations](docs/international-tco.md).
 
 The managed CLI currently targets **Linux or Linux inside WSL**, Node.js
 **22.12–24.x**, Python 3 and Chromium. Process identity and recovery use Linux

@@ -172,9 +172,9 @@
       "failure": "A new synthetic echo arrived before the fixture recorded the attempted apology; the fixture was aligned with the existing callback-failure and independent native-pull scenario. Production recovery guards were unchanged.",
       "finalUnifiedSuiteIncludesSubsequentCliErrorCodeRegression": true
     },
-    "newLiveGames": 0,
+    "newLiveGames": 3,
     "newStrategyRatingGames": 0,
-    "officialTcoUnattendedValidated": false,
+    "officialTcoUnattendedValidated": true,
     "historicalKnowledgeValidation": {
       "version": "0.2.0",
       "commit": "d2ab1ccc34c903d9fc5825f12db55f91156728cc",
@@ -188,6 +188,42 @@
       "version": "0.3.0",
       "commit": "bc440490ee71db3209a07d4a1f756e32b0da78c5",
       "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/bc440490ee71db3209a07d4a1f756e32b0da78c5/docs/validation.md"
+    },
+    "newLiveGamesCountBasis": "Three naturally completed controlled two-seat private games, counted once per game; one full automatic pass and two retained partial/manual-cleanup attempts.",
+    "officialTcoUnattendedValidationScope": "One controlled private-game lifecycle between two owned accounts. No human/public opponent, paid model, continuous public campaign or fault-recovery claim.",
+    "authenticatedInternationalAcceptance": {
+      "date": "2026-11-16",
+      "status": "passed-with-retained-partial-attempts",
+      "scope": "controlled owned-account private-game lifecycle",
+      "codeCommit": "1379c0f03a44cdb3810da3afb860905599422655",
+      "evidence": "docs/evidence/international-2026-11-16.json",
+      "evidenceSha256": "80f803d0c01373638716b80d29ce6427691362dc2ba7a363bd5e21907b580275",
+      "summarySha256": "b489a81f0016b1bee331bfc9b9a9c2a68e7bc59e64cbba7b514e3b64ad834fea",
+      "independentReviewSha256": "201b05e30c24aae6af712e37478b6c097cb5e589f6710a62ec51b2850a72f0fe",
+      "registeredOwnedAccounts": 2,
+      "loginIdentityConfirmedAccounts": 2,
+      "loginApiUserVerifiedTrueAccounts": 2,
+      "emailVerificationLinkFlowExercised": false,
+      "nativeDeckImports": 4,
+      "naturallyCompletedGames": 3,
+      "fullyAutomaticAcceptedGames": 1,
+      "manualCleanupPartialGames": 2,
+      "commands": 696,
+      "acknowledgedCommands": 696,
+      "states": 1411,
+      "decisions": 697,
+      "evidenceRowsScanned": 11681,
+      "gameplayRowsScanned": 7448,
+      "realModelCalls": 0,
+      "humanOpponentGames": 0,
+      "faultRecoveryExercised": false,
+      "sourceInputsUnchanged": true,
+      "executedProductionInputs": 119,
+      "executedProductionManifestSha256": "8121aea482cd52c0ad962b8c69530f6af943dfbe94f92fd43e09bee9fd3c2f92",
+      "observedSameOriginGameSocketPaths": [
+        "/node-0/socket.io",
+        "/node-1/socket.io"
+      ]
     }
   },
   "historicalStrategyBenchmark": {
@@ -819,8 +855,9 @@
       "leavegame with no argument",
       "leavegame with exactly the bound gameId"
     ],
-    "authenticatedEndToEndStatus": "pending-account-validation",
+    "authenticatedEndToEndStatus": "validated-controlled-private-game-lifecycle",
     "strategyAlgorithmSourceChanged": false,
-    "guide": "docs/international-tco.md"
+    "guide": "docs/international-tco.md",
+    "acceptanceEvidence": "docs/evidence/international-2026-11-16.json"
   }
 }
