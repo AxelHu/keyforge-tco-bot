@@ -1,0 +1,364 @@
+{
+  "schema": "keyforge-tco-bot-hypnotic-single-aember-evidence-v1",
+  "language": "zh-CN",
+  "summary": "保留两次福州自有双账号专项：001 未触发目标且遇到 Bring Low 中文外层解析故障后技术认输；修复后的 0.5.3 与 v2 夹具在 002 实际通过 Hypnotic 单琥珀的效果、计划、发送、ACK 和原生结算链，并自然 0:3 自动退出。002 的 DM 目标后仍处于私有定向脚本，两局都不计策略 Elo。",
+  "target": {
+    "card": "Hypnotic Command",
+    "purpose": "无 rule contract 时，用本次新鲜效果和敌方公开池恰好为 1 确认单单位分配。",
+    "minimumAcceptance": [
+      "本次新鲜物理来源、效果消息和原生 capture prompt 连续关联，敌池严格为数字 1。",
+      "真实生产 plan 只有 1 个合法敌方目标分配命令；发送、原生发送帧、ACK 对应。",
+      "新鲜原生后果为敌池 1→0、同一接收者捕获量 +1、动作方池不变。"
+    ],
+    "internalEvidenceQualification": "冻结 0.5.2/0.5.3 的 offer 均未公开 descriptor.amountEvidence.kind；从连续真实原生输入重建的 kind 明确标为离线推导，不能当作现场内部日志。"
+  },
+  "attempts": [
+    {
+      "attempt": "hypnotic-001",
+      "release": "0.5.2",
+      "startedAt": "2026-11-17T04:34:29.467896+00:00",
+      "endedAt": "2026-11-17T04:52:47.381697+00:00",
+      "scope": {
+        "environment": "福州服；两个自有账号；私房；direct",
+        "seatA": "DM 牌组，定向寻找 Hypnotic，之后交回 tactical-style-engine-v3",
+        "seatB": "DT 牌组，正常动作准备敌池 1 和接收生物，之后交回 tactical-ladder-balanced",
+        "provider": "既有 model-all 接口上的纯本地 JavaScript 脚本化选择器",
+        "externalModelCalls": 0,
+        "externalHumanGames": 0,
+        "ruleContractsEnabled": false,
+        "mustNotCountElo": true,
+        "chatQualification": "策略聊天关闭；生产看门狗实际另发送 1 条固定故障道歉。"
+      },
+      "result": {
+        "classification": "target-not-triggered; technical-failure",
+        "targetTriggered": false,
+        "mechanismAccepted": false,
+        "naturalCompletion": false,
+        "allocationPlansDispatched": 0,
+        "allocationPlansObserved": 0,
+        "preparationFinding": "18 个本座位观测回合的定向窗口未抽到目标牌。原生顶层提供 Play 开手牌菜单，缺少直接 Discard；v1 选择器只查直接 Discard，导致手牌 6 / 牌库 29 从 turn 3 起停滞。准备条件曾有敌池 1、己方 Mars 与敌方生物，但不能等同目标分支触发。",
+        "productionFault": {
+          "card": "Bring Low",
+          "reason": "allocation-new-public-amount-message-missing-or-ambiguous",
+          "directEvidence": "本次新鲜原生消息的外层连接词为中文“ 使用 ”和“ 来 ”，内层带 capture 数量 1；冻结解析器只接受英语 uses/to。",
+          "nativeMessageAmount": 1,
+          "opposingPublicAmber": 6,
+          "hypnoticQualification": "同一严格英语外层检查也存在于 Hypnotic 路径；本局实际报错卡是 Bring Low，不能说本局已触发或修复 Hypnotic。"
+        },
+        "terminalType": "automatic-watchdog-technical-concession",
+        "watchdogSamePageRecoveryAttempts": 1,
+        "nativeFixedFaultChatCommands": 1,
+        "nativeConcedeCommands": 1,
+        "normalGameResultForRanking": null
+      },
+      "commandAccounting": {
+        "seatA": {
+          "hostGenerated": 187,
+          "hostQueued": 187,
+          "hostAcknowledged": 187,
+          "nativeGameSendFrames": 188,
+          "nativeLeaveCommands": 1,
+          "manualAdditionalLeaveCommands": 0
+        },
+        "seatB": {
+          "hostGenerated": 200,
+          "hostQueued": 200,
+          "hostAcknowledged": 200,
+          "nativeGameSendFrames": 203,
+          "nativeLeaveCommands": 1,
+          "manualAdditionalLeaveCommands": 1
+        },
+        "qualification": "真实原生帧计数来自绑定 game endpoint 的被动 framesent；host 计数之外还包括看门狗故障聊天、认输和正常 Leave，不把这些解释为分配命令。"
+      },
+      "retirement": {
+        "actualDriverExitCode": -1,
+        "actualWrapperExitCode": 129,
+        "driverTerminationSignal": "SIGHUP",
+        "signalQualification": "仅在两席原生离开、精确暂停 host 正常停止、原浏览器退出之后结束 held driver；保留技术失败，不伪造 exit 0。",
+        "supplementalCleanupExitCode": 0,
+        "naturalSuccessFinalizerRun": false,
+        "bothAnonymousWholeAccountsAbsent": true,
+        "allOriginalDriverHostBrowserProcessesGone": true,
+        "accountLocksReacquiredAndReleased": true,
+        "liveBrowserRegistryRecords": 0,
+        "checkpointResolved": true,
+        "sourceInputsUnchanged": true,
+        "handoffQualification": "失败时 handoff 已原样保全；正常清退期间原观察器又记录了刷新、唯一补 Leave 和 socket 关闭，最终 handoff 保持原失败分类。",
+        "privateBrowserProfilesRetained": 3
+      },
+      "offlineCausalReconstruction": {
+        "card": "Bring Low",
+        "newSiteOrAccountActions": 0,
+        "originalFrozenReplayStatus": "unsupported",
+        "englishOuterConnectorCounterfactualStatus": "ready",
+        "counterfactualAmount": 1,
+        "qualification": "仅在已记录输入的离线克隆中替换两个外层连接词，原见证和冻结源码未变。这是故障因果重建，不是现场修复或结算证明。",
+        "receiptSha256": "e5ad67d158221ebe6ef118078ac142586f40202b4c8b4b11ea4194264b2439d8"
+      },
+      "frozenRuntime": {
+        "manifestSourceCommit": null,
+        "sourceGitHead": "5534735f7918d9d2002db6a2d69658ecc621e6b7",
+        "productionSourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+        "manifestSha256": "63977e21c0fc9bbeb219f466028f55e34c292b8882de9f0923147dacc2f21c39",
+        "externalSourceBindingSha256": "fdaddafbd2d753ca3b61baab7b95d00a4ecb3c9e8bb0a86808f5438993f7ca39"
+      },
+      "evidenceBindings": {
+        "actualDriverExecutionSha256": "f58489187f7333eec3939e97219c5245fbec425d3bec411cf634e2e0a4fe7363",
+        "failureHandoffBeforeCleanupSha256": "e8d750ee2682e97769cacb3ccc8bf9012ce2d40a474ff949671600175c3765a0",
+        "finalHandoffSha256": "8d354a9e75290d2e5f2f2b01f3bfba77d4f183d76b069b49b2de99df6c4d8282",
+        "supplementalCleanupExecutionSha256": "eb656aafb8c2ca4fb4f2ed5bdab8b196c74d28a1f0d9a15412de4a25d9e025a5",
+        "resourceClosureSha256": "a5c5fbbaff2249d4cf5fb65000d805c55fdc1ca234f2c3fa70330576f70779ce",
+        "finalAnonymousRosterSha256": "b8d8bc1b49030f78b53a19f537bc05755685597b832cfaafbba091b76b4480ed",
+        "seatANativeGameSendsSha256": "41fb6287ba8f00c72e4d9103f49e064ee0bf427bbcf28434b0c05b2964541372",
+        "seatBNativeGameSendsSha256": "5ed9fde4d271b28f4fad4f3e3adbd587abcb0aec6374e5642207d46c317e98c2",
+        "seatBHostWitnessSha256": "7477f229d9714ef2fd328ea6117e16a1915e881acadb20fed86bc046ee19c551"
+      },
+      "independentReview": {
+        "outcome": "CONFIRMED_TECHNICAL_FAILURE_WITH_RESOURCE_CLOSURE",
+        "targetAcceptance": "not-triggered",
+        "targetPasses": 0,
+        "naturalResult": false,
+        "receiptSha256": "7eb3c0e5c4bb1f55a6f486ad985d24e5b0bc2f126feb6510946d878001249509",
+        "qualification": "独立确认真实技术失败与补充资源清退，不是自然对局或目标机制 PASS。"
+      }
+    },
+    {
+      "attempt": "hypnotic-002",
+      "release": "0.5.3",
+      "startedAt": "2026-11-17T05:08:11.949781+00:00",
+      "endedAt": "2026-11-17T05:11:16.030818+00:00",
+      "scope": {
+        "environment": "福州服；两个自有账号；私房；direct；策略聊天关闭",
+        "provider": "既有 model-all 接口上的纯本地 JavaScript 定向夹具",
+        "freshWholeAccountAbsenceAndNativeDeckBinding": true,
+        "ruleContractsEnabled": false,
+        "externalModelCalls": 0,
+        "externalHumanGames": 0,
+        "mustNotCountElo": true,
+        "nativeStateOrTransportPayloadRewrittenByFixture": false
+      },
+      "result": {
+        "classification": "mechanism-pass; natural-completion; private-fixture-handoff-limitation",
+        "targetTriggered": true,
+        "mechanismAccepted": true,
+        "naturalCompletion": true,
+        "allocationPlansDispatched": 1,
+        "allocationPlansObserved": 1,
+        "targetPasses": 1,
+        "naturalResult": {
+          "winnerSeat": "B",
+          "keys": [
+            0,
+            3
+          ],
+          "rankingEligible": false
+        },
+        "nativeFixedFaultChatCommands": 0,
+        "nativeChatCommands": 0,
+        "nativeConcedeCommands": 0,
+        "watchdogEvents": 0
+      },
+      "directMechanismEvidence": {
+        "card": "Hypnotic Command",
+        "recipient": "Chelonia",
+        "nativeSequences": [
+          70,
+          71,
+          72
+        ],
+        "turn": 12,
+        "effectAnnouncement": {
+          "outerConnectorPair": [
+            " 使用 ",
+            " 来 "
+          ],
+          "shape": "带类型的动作方与来源卡，内层效果描述仍为英文"
+        },
+        "settlementAnnouncement": {
+          "connectorFragments": [
+            " uses ",
+            " to have ",
+            " capture "
+          ],
+          "shape": "另外一条英文结算消息，带接收者与数字数量"
+        },
+        "messageQualification": "中文外层的新鲜效果公告与英文结算公告是不同形状；本例不证明所有聊天或所有结算消息都已中文化。",
+        "opposingAmber": [
+          1,
+          0
+        ],
+        "recipientCapturedAmber": [
+          0,
+          1
+        ],
+        "actorAmber": [
+          0,
+          0
+        ],
+        "sourceEnteredOwnDiscard": true,
+        "nativePromptClosed": true,
+        "planAmount": 1,
+        "legalRecipientCount": 1,
+        "planCommands": 1,
+        "queuedCount": 1,
+        "actualNativeCommandFrames": 1,
+        "nativeCommandOrdinal": 46,
+        "sameOwnerDocumentTicketPlanAndSequence": true,
+        "hostAckBefore": 45,
+        "hostAckAfter": 46,
+        "ackAdvancedOnlyAfterNativeState": true,
+        "ackQualification": "通用命令进度 ACK 与计划、queued 回执和实际发送关联；捕获结算另由原生池、生物捕获量、来源去向及提示关闭独立核验。",
+        "hostWitnessDropped": 0,
+        "hostWitnessIoFailures": 0,
+        "nativeObserverFailures": 0
+      },
+      "offlineAmountEvidence": {
+        "classification": "offline-derived-from-recorded-native-inputs-and-immutable-frozen-0.5.3",
+        "kind": "new-public-hypnotic-effect-and-single-opponent-amber",
+        "descriptorIdExactlyMatchesLiveAllocationId": true,
+        "liveOfferExposesAmountEvidence": false,
+        "qualification": "内部 descriptor.amountEvidence.kind 由冻结 0.5.3 对已记录原生历史重建，不能写成现场内部日志。实际效果、plan、发送、ACK 与原生后果另有直接记录。"
+      },
+      "commandAccounting": {
+        "seatA": {
+          "hostGenerated": 95,
+          "hostQueued": 95,
+          "hostAcknowledged": 95,
+          "nativeGameSendFrames": 96,
+          "nativeLeaveCommands": 1,
+          "manualAdditionalLeaveCommands": 0,
+          "internalModelCounter": 89,
+          "fallbackCounter": 1
+        },
+        "seatB": {
+          "hostGenerated": 103,
+          "hostQueued": 103,
+          "hostAcknowledged": 103,
+          "nativeGameSendFrames": 104,
+          "nativeLeaveCommands": 1,
+          "manualAdditionalLeaveCommands": 0,
+          "internalModelCounter": 17,
+          "fallbackCounter": 70
+        },
+        "totals": {
+          "commands": 198,
+          "queued": 198,
+          "acknowledged": 198
+        },
+        "qualification": "model-all 是纯本地 provider 接口；stats.model/fallback 属于本地脚本选择与交回代码后备策略的计数，不是付费或网络模型调用。实际原生帧来自被动发送观察，包含两次正常 Leave。"
+      },
+      "actualPostTargetControl": {
+        "seatA": "唯一合法目标由生产 forced 分支处理，没有调用本地 provider 的选目标分支，因此 captureCandidate 未赋值。目标结算后 DM 仍继续定向弃牌，未回 baseline。",
+        "seatAPostSettlementControllers": {
+          "localScriptModel": 47,
+          "forced": 2
+        },
+        "seatAPostSettlementDiscards": 18,
+        "seatALastTurn": 22,
+        "seatB": "目标后 DT 回到代码 baseline。",
+        "seatBPostTargetControllers": {
+          "codeFallback": 70,
+          "forced": 10
+        },
+        "qualification": "这个私有夹具释放缺口不撤销独立核对的目标结算和自然生命周期；自然 0:3 不是两个 baseline 策略的胜负比较，不加入 Elo。已执行的 002 输入不回写。"
+      },
+      "retirement": {
+        "actualDriverExitCode": 0,
+        "actualFinalizerExitCode": 0,
+        "actualWrapperExitCode": 0,
+        "manualInterventions": 0,
+        "bothNativeSeatsCleared": true,
+        "bothAnonymousWholeAccountsAbsent": true,
+        "allOriginalDriverHostBrowserProcessesGone": true,
+        "remainingAccountLockHolders": 0,
+        "liveBrowserRegistryRecords": 0,
+        "bothOriginalBrowserProfilesRemoved": true,
+        "checkpointResolved": true,
+        "sourceInputsAndRuntimePinsUnchanged": true,
+        "optionalWatchdogLogs": "没有发生事件，按需日志未创建；记录 present:false，未伪造空日志。"
+      },
+      "frozenRuntime": {
+        "manifestSourceCommit": null,
+        "sourceGitHead": "a14f6706e13c5dfbb43a481d796dcc17961f0f65",
+        "productionSourceCommit": "a14f6706e13c5dfbb43a481d796dcc17961f0f65",
+        "manifestSha256": "e2218290434280a5dd410267a5046110fe13083e414da535eb1914b0456b6388",
+        "externalSourceBindingSha256": "dad48cc2e6ad1a238dd12eb8eddfe4ea31c064af70a0e25a8191b08c66c264fc"
+      },
+      "independentReview": {
+        "outcome": "MECHANISM_AND_RESOURCE_PASS_WITH_PRIVATE_FIXTURE_HANDOFF_LIMITATION",
+        "mechanismVerdict": "PASS",
+        "lifecycleVerdict": "PASS_NATURAL_AUTOMATIC_RESOURCE_CLOSURE",
+        "receiptSha256": "16278763993c8c135cfb871d2f59562ce892d32b212a4b993afde7b957d6363c",
+        "qualification": "含 DM 私有夹具未释放的限制；机制与自然/资源结论分别判断。",
+        "readOnlyReviewRetry": {
+          "firstAttempt": "完整历史只读审计超过工具截止；原脚本及超时回执保留。",
+          "firstTimeoutReceiptSha256": "96cb4ba40066db3fdea4bf5d994dc7b8c62702d9ea3ec776eb4972c1d9ebcf89",
+          "completedReviewExecutionSha256": "2041d4d724f21ae07e9c9077fded41e8e431aa1fc29c5af343210448b33b951f",
+          "newLiveGames": 0,
+          "newProductionSuiteRuns": 0,
+          "qualification": "后一次只读审查将冻结历史重建限于目标窗口，并按严格连续序号应用后续原生 delta 检查终局；没有改原记录。"
+        }
+      },
+      "evidenceBindings": {
+        "actualDriverExecutionSha256": "60e612f09efc199171ae218f0e7efb498ff973c2d3a1a2b77eb151f39612940f",
+        "actualFinalizerExecutionSha256": "9a4c01586fe72f8c47505e577530c5ecf1b6ecb9bfd58d4e7459cdfd1dad856f",
+        "resourceClosureSha256": "1fef3137545510580fb3e6045d1218c5691a32415c57e08fa2ede6701461790b",
+        "mechanismEvidenceIndexSha256": "7d0bd1e3179218958d4f2f8dcc61aac7fd8e3247a4e352d60e264086e1621e97",
+        "finalAnonymousRosterSha256": "2942dd25148865fdf8a341f98c6f81732391766c22e3818c573223f2f903ce56",
+        "seatAHostWitnessSha256": "c50aa18e5a2c6962cf5fd80a2a242d42d74d12076450adf40ba38d011093361b",
+        "seatBHostWitnessSha256": "7475b98b1e2a2f7fa87cb193251eecc8825ad32b04a9e4adf5e5a58de0aa0a01",
+        "seatANativeGameSendsSha256": "f36f952323ed8b6b0620094411deec128164ab911a0e2c0e50aaaa1fe86230df",
+        "seatBNativeGameSendsSha256": "b38580831fa7d951565cefba23e491d09c227efe752dc5bbbdfa8eb7b3b07959"
+      }
+    }
+  ],
+  "limits": [
+    "这是 2 次自有脚本化机制尝试：001 未触发且技术失败，002 仅证明 1 个严格单敌池 Hypnotic 场景；不外推到更多琥珀、任意持续修正或所有卡牌。",
+    "001 没有 Hypnotic 分配 plan、发送或结算证据；它保留在尝试分母，原始 0.5.2 失败未被新版本结果覆盖。",
+    "002 的中文新鲜效果公告和英文结算公告分别核验；descriptor.amountEvidence.kind 仅冻结 0.5.3 离线重建。",
+    "002 仅接收席回 baseline，DM 继续定向弃牌；自然 0:3 是生命周期证据，不是双方 baseline 的策略强度比较。",
+    "Bring Low 的修复有原失败输入离线重放及生产回归依据；本记录不声称 002 另做了 Bring Low 现场结算。"
+  ],
+  "privacy": "公开内容仅使用 seat A/B、卡牌和策略名、统计、资格说明及哈希；不公开账号、牌组名称、房间/文档/票据标识、服务器地址、凭据、原聊天或私有文件路径。",
+  "accounting": {
+    "liveAttempts": 2,
+    "targetMechanismPasses": 1,
+    "targetNotTriggered": 1,
+    "technicalFailures": 1,
+    "naturalCompletions": 1,
+    "rankingEligibleGames": 0,
+    "externalHumanGames": 0,
+    "externalModelCalls": 0,
+    "qualification": "001 原失败和未触发保留在分母；002 的机制 PASS 与私有控制行为限制同时保留。"
+  },
+  "fixesAndOfflineRegression": {
+    "production053": {
+      "commit": "a14f6706e13c5dfbb43a481d796dcc17961f0f65",
+      "change": "Bring Low 与 Hypnotic 的新鲜效果解析精确接受英语或中文外层连接词对；混合/近似字符串仍拒绝，原有类型、物理来源、新鲜性、数量、池和合法目标检查保留。",
+      "strategyAlgorithmsChanged": false,
+      "independentSourceReviewSha256": "b02e12acb1a19549d6946a5360b62082b54bd392e1745269d03df71ecb8280de"
+    },
+    "productionOfflineSuite": {
+      "passed": 392,
+      "failed": 0,
+      "actualExitCode": 0,
+      "sourceAndCompiledInputsUnchanged": true,
+      "receiptSha256": "7b865dec90c7975464d7bebd1c09bf98cc33077d2e73a7c4d68ee84c110176c0",
+      "qualification": "这是 0.5.3 生产全套离线回归，未把私有夹具测试或现场对局重复累计进去。"
+    },
+    "bringLowRepairEvidence": {
+      "classification": "offline-replay-of-original-failed-native-input",
+      "receiptSha256": "bb05f370354446a283a484b02cbeb6401d6ac45d0ef70d8e8078c20c69e74ffd",
+      "qualification": "新代码对 001 原始中文输入重放得到 ready amount 1；002 的现场目标是 Hypnotic，不把这份 Bring Low 离线重放称为现场复验。"
+    },
+    "privateFixtureV2": {
+      "change": "以本回合与物理手牌绑定 Play/Discard 意图，只在完整菜单确认资格下进入真实原生菜单，再选择实际提供的 Discard；保留目标牌。",
+      "preparedChecksPassed": 28,
+      "frozen053MenuChecksPassed": 2,
+      "countsSeparateFromProductionSuite": true,
+      "finalBundleSha256": "9ba32f760af6705d11d638c8607df8b96bcbefdc771f51cf17e161e9a49305e3",
+      "qualification": "002 真实手牌循环和目标触发已验证；其 forced 目标后未释放 DM 偏好的另一个局限仍如实记录，不能用后续候选修正覆盖本局行为。",
+      "preparedChecksQualification": "28 项在 0.5.2 准备环境完成；已审选择器逻辑在绑定 0.5.3 时保持不变，再对真实冻结 0.5.3 做 2 项菜单检查，不声称 28 项重新运行。"
+    }
+  }
+}
