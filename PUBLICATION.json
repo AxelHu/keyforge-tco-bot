@@ -1550,20 +1550,69 @@
     "newInternationalHumanGamesOn052": 0,
     "packageBoundary": {
       "status": "passed",
-      "files": 325,
+      "files": 327,
       "moduleEdges": 974,
       "findings": 0,
       "actualExitCode": 0,
-      "receiptSha256": "84c4cc647c1a7a76fe09797af697b3679a726017c66e932e1c2607573e15db00"
+      "receiptSha256": "481ea37d71b8bfcc70857897d7a8f35e8697bd6cb26bb20f98dd85e9b46b1aa2",
+      "scope": "0.5.2 publication after owned fault-recovery evidence and documentation update"
     },
-    "fuzhouNaturalGamesAcross052Stages": 2,
-    "fuzhouNaturalGamesOnFinalSource": 1,
+    "fuzhouNaturalGamesAcross052Stages": 3,
+    "fuzhouNaturalGamesOnFinalSource": 2,
     "previousPackageBoundary": {
       "status": "source-boundary-passed-final-live-document-review-pending",
       "files": 324,
       "moduleEdges": 970,
       "findings": 0,
       "receiptSha256": "442dd12f76eb39585c3b2cc4cc4963398ec29642cfc6043dd90455f87ec2155c"
+    },
+    "ownedFaultRecovery052": {
+      "status": "passed-independent-real-owned-game-review",
+      "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+      "sourceGitHead": "5534735f7918d9d2002db6a2d69658ecc621e6b7",
+      "productionImplementationChangedForThisAcceptance": false,
+      "evidence": {
+        "path": "docs/evidence/fuzhou-recovery-2026-11-17.json",
+        "sha256": "9719b746ea95d8f8f48715ba4edbf2728fde9c1c66167b621a574a285b9cce9f"
+      },
+      "report": "docs/recovery-validation.md",
+      "liveAttempts": 1,
+      "faultInjections": 1,
+      "automaticRecoveries": 1,
+      "naturalKeys": [
+        3,
+        0
+      ],
+      "commandsGenerated": 193,
+      "commandsQueued": 193,
+      "acknowledged": 193,
+      "oldCommandNativeSends": 1,
+      "reconciliationDidNotInflateAcknowledgements": true,
+      "hostRestarts": 0,
+      "actualDriverExitCode": 0,
+      "firstFinalizerExitCode": 1,
+      "localCompletionFinalizerExitCode": 0,
+      "resourceClosureVerified": true,
+      "privateFixtureChecks": 17,
+      "privateFixtureChecksAddedToProductionTotal": false,
+      "hostFetchDeadlineLiveExercised": false,
+      "externalHumanGames": 0,
+      "newStrategyRatingGames": 0,
+      "independentReviewSha256": "d9008206a790cac32886f7bd8c0352f47e67ff4c6cb348291cc0c8e6d3a6edb5"
+    },
+    "fuzhouNaturalGameAccounting": {
+      "scope": "owned functional/lifecycle tests only; not strategy-rating games",
+      "ordinaryLifecycleGamesAcross052Stages": 2,
+      "controlledRecoveryGamesOnFinalSource": 1,
+      "scriptedCardMechanismGamesOnFinalSource": 0
+    },
+    "sourcePublicationPackageBoundary": {
+      "status": "passed",
+      "files": 325,
+      "moduleEdges": 974,
+      "findings": 0,
+      "actualExitCode": 0,
+      "receiptSha256": "84c4cc647c1a7a76fe09797af697b3679a726017c66e932e1c2607573e15db00"
     }
   },
   "internationalTco": {

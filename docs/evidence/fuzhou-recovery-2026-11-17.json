@@ -1,0 +1,183 @@
+{
+  "schema": "keyforge-tco-bot-fuzhou-recovery-evidence-v1",
+  "recordedAt": "2026-11-17T04:21:23.898493+00:00",
+  "language": "zh-CN",
+  "release": "0.5.2",
+  "summary": "福州服一局自有私房中，一次已成功处理的 /state 浏览器回程被延迟；真实 GM 超时后，生产看门狗用已观察送达证明清理未知账本并刷新同页，原动作没有重发。恢复后自然 3:0 结束，生成/排队/ACK 为 193/193/193，实际 driver exit 0，资源闭合并获独立 PASS。",
+  "runtime": {
+    "manifestSourceCommit": null,
+    "sourceGitHead": "5534735f7918d9d2002db6a2d69658ecc621e6b7",
+    "productionSourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+    "sourceFingerprint": "420ca850982e79fadf822c451633e8054765034803e236a3451d23eb3566cc34",
+    "manifestSha256": "63977e21c0fc9bbeb219f466028f55e34c292b8882de9f0923147dacc2f21c39",
+    "externalSourceBindingSha256": "fdaddafbd2d753ca3b61baab7b95d00a4ecb3c9e8bb0a86808f5438993f7ca39",
+    "qualification": "标准冻结运行时的 manifest.sourceCommit 原值为 null，未回填或改写；Git 来源由外置内容比对记录绑定。生产代码、策略和编译产物未为本次注入修改。"
+  },
+  "liveAcceptance": {
+    "environment": "福州服；两个自有账号；私房；direct；纯代码策略；关闭聊天",
+    "liveAttempts": 1,
+    "faultInjections": 1,
+    "completedRecoveries": 1,
+    "automaticRetries": 0,
+    "externalHumanGames": 0,
+    "faultScope": "原生产 binder 已完成真实 /state 处理并返回 HTTP 200，仅延迟返回浏览器的原结果；请求、响应内容和原生帧均未改写。",
+    "timingMs": {
+      "origin": "相对 Node binding 入口；不是浏览器 GM 创建时刻的精确测量",
+      "configuredGmDeadline": 15000,
+      "originalBinderReturned": 629,
+      "injectionSelected": 669,
+      "firstTimeoutDiagnostic": 18363,
+      "delayedOriginalResponseReturned": 20005,
+      "lateResponseFenceDiagnostic": 20255,
+      "watchdogRecoveryStarted": 45916,
+      "observedReceiptReturned": 45943,
+      "samePageReloadCompleted": 46259,
+      "newOwnerAttached": 47772,
+      "qualification": "15000 ms 是配置截止值；首个有效超时样本实际在 18363 ms，不声称实测恰好在 15 秒触发。"
+    },
+    "directEvidence": {
+      "originalHostHttpStatus": 200,
+      "originalRequestAndResponseBytesUnchanged": true,
+      "timeoutPauseReason": "bridge-timeout",
+      "unknownLedgerPreservedAfterTimeout": true,
+      "lateSuccessDidNotClearLedger": true,
+      "receiptOnlyRequests": 1,
+      "receiptOnlyHttpStatus": 200,
+      "observedDeliveryStage": "observed",
+      "exactOriginalDeliveryTupleMatched": true,
+      "productionObservedProofConfirmed": true,
+      "receiptProbeCounters": {
+        "commands": 1,
+        "queuedCommands": 1,
+        "acknowledged": 1
+      },
+      "proofAndReattachAddedNoCommandsOrAcks": true,
+      "samePageReloads": 1,
+      "documentChanged": true,
+      "ownerEpochBefore": 1,
+      "ownerEpochAfter": 2,
+      "targetNativeCommandFramesThroughRecovery": 1,
+      "newAuthorizedDecisionAfterRecovery": true,
+      "sameHostRunIdentity": true,
+      "sameHostProcess": true,
+      "hostRestarts": 0,
+      "manualRecoveryOrReplayCommands": 0
+    },
+    "naturalResult": {
+      "winnerSeat": "A",
+      "keys": [
+        3,
+        0
+      ],
+      "generated": 193,
+      "queued": 193,
+      "acknowledged": 193,
+      "seats": [
+        {
+          "seat": "A",
+          "policy": "tactical-card-effects-v3",
+          "finalKeys": 3,
+          "generated": 118,
+          "queued": 118,
+          "acknowledged": 118,
+          "modelCalls": 0,
+          "fallbacks": 0,
+          "lastCommandRejection": null,
+          "hostRestarts": 0,
+          "nativeConcedeCommands": 0,
+          "chatDrain": {
+            "outcome": "skipped",
+            "reason": "social-disabled",
+            "budgetMs": 0,
+            "checks": 0,
+            "elapsedMs": 1
+          },
+          "normalLeaveCommands": 1
+        },
+        {
+          "seat": "B",
+          "policy": "tactical-ladder-balanced",
+          "finalKeys": 0,
+          "generated": 75,
+          "queued": 75,
+          "acknowledged": 75,
+          "modelCalls": 0,
+          "fallbacks": 0,
+          "lastCommandRejection": null,
+          "hostRestarts": 0,
+          "nativeConcedeCommands": 0,
+          "chatDrain": {
+            "outcome": "skipped",
+            "reason": "social-disabled",
+            "budgetMs": 0,
+            "checks": 0,
+            "elapsedMs": 0
+          },
+          "normalLeaveCommands": 1
+        }
+      ]
+    },
+    "retirement": {
+      "actualDriverExitCode": 0,
+      "bothNativeSeatsCleared": true,
+      "bothAnonymousServerSeatsAbsent": true,
+      "allRecordedDriverHostBrowserProcessesGone": true,
+      "remainingAccountLockHolders": 0,
+      "liveBrowserRegistryRecords": 0,
+      "checkpointResolved": true,
+      "sourcesAndPrivateFixtureUnchanged": true,
+      "finalizerCompletionMode": "复用 r1 已采集的真实匿名名单，验证其原采集时间窗口；r2 仅重新读取本机进程、锁、registry 和源文件，无新增站点或账号请求。"
+    }
+  },
+  "validationAccounting": {
+    "privateFixtureChecks": {
+      "passed": 17,
+      "failed": 0,
+      "scope": "私有注入谓词、单次性、真实回程保持、被动帧记录；不算实服恢复案例。"
+    },
+    "productionOfflineReference": {
+      "passed": 386,
+      "rerunForThisAcceptance": false,
+      "privateFixtureChecksAddedToProductionCount": false,
+      "evidence": "preparation-retirement-2026-11-17.json",
+      "qualification": "沿用已发布 0.5.2 的 386/386；冻结内容与其来源绑定保持一致。"
+    },
+    "recordedNonDriverFailures": [
+      {
+        "stage": "准备阶段语法预检",
+        "nodeExitCode": 1,
+        "validationWrapperExitCode": 2,
+        "siteOrAccountActions": 0,
+        "reason": "私有派生 runner 的动态 import 别名误用了 import-as 语法；修正后语法检查、17 项夹具检查和冻结校验通过。",
+        "receiptSha256": "4695aa09e86ede85c2a9ed03c0acb00b6b2bd0174685d0db7c989718e86649c3"
+      },
+      {
+        "stage": "driver 正常退出后的回执整理 r1",
+        "actualExitCode": 1,
+        "reason": "非注入对照席没有看门狗事件，按需写入的事件日志不存在；末尾计算该可选文件哈希时抛 ENOENT。原失败和日志保留，未生成虚假空日志。",
+        "receiptSha256": "e4c3eb5f4e66ee99c5117cf4564a1e56e58cfad6c334e4e7b2d623feeebe1222",
+        "completionR2ExitCode": 0,
+        "completionR2NewSiteOrAccountRequests": 0
+      }
+    ],
+    "independentFinalReview": {
+      "outcome": "PASS",
+      "receiptSha256": "d9008206a790cac32886f7bd8c0352f47e67ff4c6cb348291cc0c8e6d3a6edb5"
+    }
+  },
+  "evidenceBindings": {
+    "finalAcceptanceSha256": "f2b9b35cf0cdcce0130f99692a19d17d6ce7e7448c664ea1a8903ff83c3cdb07",
+    "driverExecutionSha256": "35d49d31ea4c464a9750d4b01b7be2543cab15464cd1ed010e2b4bc8c3d5f49b",
+    "localCompletionExecutionSha256": "45d92dc6fdbaca4e3d68dcef5c6f1ec39edb6f93a762a92bbe5b3c36bc15a383",
+    "privateFixtureValidationSha256": "3add155de3ed29c24a641fe0d1fbcaeafcbc2a027f5bae8e422f431b531a3bd3",
+    "privateFixtureReviewInputsSha256": "060669a1e888a83075959414a38a50dba688fe21111d36bc405690855130c8ec"
+  },
+  "limits": [
+    "这是 1 个可控自有私房恢复案例，不是国际服真人对局、胜率或 Elo 排名。",
+    "本次 live 覆盖浏览器 GM 截止、迟到成功回调栅栏与已观察送达恢复；host fetch 的 16 秒截止并未在实站触发。",
+    "身份变化、操作员暂停、未观察到效果等其他拒绝边界仍以既有离线检查为证，没有在本局逐项故障注入。",
+    "本次明确制造的是成功结果的浏览器回程延迟，不能据此倒推原事故的上游根因。",
+    "正常终局宽限、原生身份、单次 Leave 和资源退役门禁均保持；关闭聊天时等待预算与轮询次数为 0，函数耗时实测分别为 1 ms 和 0 ms。"
+  ],
+  "privacy": "公开内容仅使用 seat A/B、策略名、统计、资格说明和哈希；未公开账号、邮箱、房间/文档/票据标识、服务器地址、凭据、聊天或私有文件路径。"
+}
