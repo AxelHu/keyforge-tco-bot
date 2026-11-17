@@ -867,6 +867,7 @@ export function installFinishedRoomExit({
       const drain = await waitForFinishedChat({
         identity: { origin: config.origin, gameId: config.room.gameId, playerName: config.self.name },
         readStatus: inspectChat,
+        socialEnabled: config.social?.enabled,
         cancelled,
         timeoutMs: chatDrainMs,
       });
