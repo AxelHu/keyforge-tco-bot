@@ -54,11 +54,11 @@
     "previousProjectionCompactJsonBytes": 1095139,
     "compactJsonIncreaseBytes": 162739
   },
-  "schema": "keyforge-tco-publication-v7",
-  "version": "0.5.2",
+  "schema": "keyforge-tco-publication-v8",
+  "version": "0.5.3",
   "date": "2026-11-17",
-  "publicationStatus": "validated-offline-and-owned-fuzhou-live",
-  "codeCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+  "publicationStatus": "validated-offline-and-owned-fuzhou-mechanism-with-private-fixture-limitation",
+  "codeCommit": "a14f6706e13c5dfbb43a481d796dcc17961f0f65",
   "validatedFiles": [
     {
       "path": "bin/kf-auto.mjs",
@@ -82,11 +82,11 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "c539d66e2072a24ee4f26525dd35e54d8c5047816ae4c2cd27e558ad72421dd0"
+      "sha256": "b87e2273f609007b5c807eaeb7c5ded0d31330a0dd72e21201b1ab7d9e3306fc"
     },
     {
       "path": "package.json",
-      "sha256": "bec80abf6233c1d0508d29cf6fd2320f9bbd7345bb7a519bcff7f4cce352dd26"
+      "sha256": "8387d080c22b29c3ed0e63231bb12f582a7a3a02653a71d44794d9c3a89c362c"
     },
     {
       "path": "scripts/browser-smoke.mjs",
@@ -110,7 +110,7 @@
     },
     {
       "path": "src/adapters/keyteki-allocation.ts",
-      "sha256": "f2d7568319414247ce468856f2d18c7ff794bbe8921f3a700773a20f88f83886"
+      "sha256": "c0f817caca7f3e3f1e9fdc09fcea48569382f474fe9f98074ccc234e2f75e097"
     },
     {
       "path": "src/adapters/keyteki-infurnace.ts",
@@ -453,6 +453,10 @@
       "sha256": "382fe091d6e75a2924d10cf08b97d0ff69f029db9dbe6d2e8e3b430185cf8b50"
     },
     {
+      "path": "test/strategy/allocation-effect-localization.test.mjs",
+      "sha256": "234944d1d626a0267222302cbae516bd04c54dd2850fe5cb4dc938c39a311427"
+    },
+    {
       "path": "test/strategy/hypnotic-single-pool.test.mjs",
       "sha256": "7fc0c7840d766d6a5bd7f46024e00abce664a42262e8aefd6081fcf1ccb5d204"
     },
@@ -725,8 +729,8 @@
       "sha256": "941d61fa59858195473dd4c0e67e02e24c5e9e67629109b8a9cb153372dae552"
     }
   ],
-  "validatedSourceDigest": "f6507f8114678085af83dd93d2a24afc6b8444cf643d432aa4fe60066ece228b",
-  "validatedFilesScope": "Files under bin/scripts/src/test/tools and published examples, package manifests, TypeScript configuration and public benchmark JSON. Generated dist, prose documentation, evidence JSON and this publication record are excluded. This snapshot binds the 0.5.2 source commit; historical live results retain their actual source versions.",
+  "validatedSourceDigest": "fca35201f10c1b01de8a1e3935c78533079f7118238510ead6b93c44dd1ce11b",
+  "validatedFilesScope": "Files under bin/scripts/src/test/tools and published examples, package manifests, TypeScript configuration and public benchmark JSON. Generated dist, prose documentation, evidence JSON and this publication record are excluded. These 167 inputs bind the 0.5.3 source commit and are included unchanged in the 305-input full offline snapshot; historical live results retain their actual source versions.",
   "historicalValidation": [
     {
       "version": "0.4.0",
@@ -784,6 +788,55 @@
         "natural-002"
       ],
       "laterSourceResultsMustNotBeBackdated": true
+    },
+    {
+      "version": "0.5.2",
+      "stage": "final-source-including-owned-recovery-acceptance",
+      "codeCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+      "publicationCommit": "e411b09134fd7206525122c90d5ecae232811c31",
+      "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/e411b09134fd7206525122c90d5ecae232811c31/PUBLICATION.json",
+      "validatedSourceDigest": "f6507f8114678085af83dd93d2a24afc6b8444cf643d432aa4fe60066ece228b",
+      "validatedInputCount": 166,
+      "offlineTests": 386,
+      "historicalLiveEvidence": "docs/evidence/preparation-retirement-2026-11-17.json",
+      "historicalLiveEvidenceSha256": "80b290927d7cdbc74fd5ccb145f9feb0859071378631148caf00cd443afefc71",
+      "ownedFaultRecovery": {
+        "status": "passed-independent-real-owned-game-review",
+        "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+        "sourceGitHead": "5534735f7918d9d2002db6a2d69658ecc621e6b7",
+        "productionImplementationChangedForThisAcceptance": false,
+        "evidence": {
+          "path": "docs/evidence/fuzhou-recovery-2026-11-17.json",
+          "sha256": "9719b746ea95d8f8f48715ba4edbf2728fde9c1c66167b621a574a285b9cce9f"
+        },
+        "report": "docs/recovery-validation.md",
+        "liveAttempts": 1,
+        "faultInjections": 1,
+        "automaticRecoveries": 1,
+        "naturalKeys": [
+          3,
+          0
+        ],
+        "commandsGenerated": 193,
+        "commandsQueued": 193,
+        "acknowledged": 193,
+        "oldCommandNativeSends": 1,
+        "reconciliationDidNotInflateAcknowledgements": true,
+        "hostRestarts": 0,
+        "actualDriverExitCode": 0,
+        "firstFinalizerExitCode": 1,
+        "localCompletionFinalizerExitCode": 0,
+        "resourceClosureVerified": true,
+        "privateFixtureChecks": 17,
+        "privateFixtureChecksAddedToProductionTotal": false,
+        "hostFetchDeadlineLiveExercised": false,
+        "externalHumanGames": 0,
+        "newStrategyRatingGames": 0,
+        "independentReviewSha256": "d9008206a790cac32886f7bd8c0352f47e67ff4c6cb348291cc0c8e6d3a6edb5"
+      },
+      "rerunForCurrentRelease": false,
+      "detailsRetainedInHistoricalPublication": true,
+      "qualification": "The later hypnotic-001 technical failure on the same 0.5.2 code is separately retained in the current card evidence; it was not part of this historical publication."
     }
   ],
   "operatingPolicy": {
@@ -801,819 +854,152 @@
   },
   "validation": {
     "implementation": {
-      "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
-      "strategyAndCardAlgorithmsChanged": false,
-      "createdPreparationRetirementAdded": true,
-      "httpPollingSelectionObservationFixed": true,
-      "emptyChatOutputFiltered": true,
-      "fallbackTemplateAttributionFixed": true,
+      "sourceCommit": "a14f6706e13c5dfbb43a481d796dcc17961f0f65",
+      "change": "Exact complete English/Chinese outer connector pairs for fresh public capture effects; original actor, source, freshness, uniqueness, amount, pool and target guards retained.",
+      "strategyAlgorithmSourceChanged": false,
+      "dependencyVersionsChanged": false,
+      "build": {
+        "actualExitCode": 0,
+        "receiptSha256": "eec814233a24c858471f4514479a1bdaa132fc22bc9fcba561d2d1daa65e8182"
+      },
       "fullOffline": {
-        "tests": 386,
-        "passed": 386,
+        "passed": 392,
         "failed": 0,
         "skipped": 0,
         "cancelled": 0,
         "actualExitCode": 0,
-        "sourceAndCompiledInputsUnchanged": true,
-        "sourceAndCompiledInputCount": 303,
-        "receiptSha256": "dfb1db612ce4276132e66f09201844eeebde5f3374e54ab7d591d22e4ae940a9",
-        "logSha256": "cc0e79a6129f0294f8dccb77e7dcd386c9aecb218d100938f83267a5233c0823"
+        "previousTests": 386,
+        "newTests": 6,
+        "targetedTestsIncludedInFullTotal": 13,
+        "negativeVariationsInsideNewGroups": 42,
+        "sourceAndCompiledInputs": 305,
+        "inputsUnchanged": true,
+        "publishedInputsIncluded": 167,
+        "receiptSha256": "7b865dec90c7975464d7bebd1c09bf98cc33077d2e73a7c4d68ee84c110176c0"
       },
-      "firstRegression": {
-        "tests": 338,
-        "passed": 337,
-        "failed": 1,
-        "actualExitCode": 1,
-        "buildCompletedSuccessfully": true,
-        "failure": "Reviewed recovery helper still pinned the two previous source files. Updated only these reviewed SHA bindings.",
-        "receiptSha256": "72dccfd4c5ab4c504257a2a871c6979ada59af4d2ad5c6b7b746e384327e1b32",
-        "originalLogPreserved": true
-      },
-      "uniqueTestAccounting": {
-        "existing": 298,
-        "newCreatedPreparation": 33,
-        "newChatOutputQuality": 7,
-        "total": 386,
-        "targetedAndRepeatRunsNotAdded": true,
-        "independentBoundaryProbes": 5,
-        "independentBoundaryProbesAddedToTotal": false,
-        "newDocumentNavigationAndInitialization": 24,
-        "realLoopbackBrowserChecks": 5,
-        "realBfCacheProbePassed": true,
-        "browserChecksAddedToTotal": false,
-        "newDisabledChatDrainAndRetirementGuards": 24,
-        "newTestsTotal": 88,
-        "finalDisabledChatTargetedSubset": 44,
-        "navigationTargetedSubset": 77
-      },
-      "review": "APPROVE",
-      "sourceIntegrationReviewSha256": "d5e929fca436a3d8561afdacb2d5ab3853209e7ea822c10d0840683946b8a21f",
-      "sourceCommitBindingReviewSha256": "0079a6cd43cd9ec8678982f8ba7b966a5267e3ef7ce62d537a6ca8876a9a041e",
-      "sameDocumentNavigationFixed": true,
-      "documentInitializationHasOverallDeadline": true,
-      "previousCandidate": {
-        "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
-        "fullOfflineTests": 338,
-        "fullOfflinePassed": 338,
-        "receiptSha256": "5594bd42a0d8c57efd6882aaff9578ff52185636ea7a66b3766e8ff66f703cae",
-        "initialReviewWasSuperseded": true,
-        "supersedingFindingSha256": "a37f179cbea191bf999af7a681362c63a71115006d1f8406da55613369f615db",
-        "status": "retained-historical-candidate; real-owned-test investigation exposed a missing SPA-navigation case"
-      },
-      "finalSourceCommitReceiptSha256": "b9aa90f419e6811147fd99fdf3013702a08a10b52297ba8f3de92b7d7648e6b8",
-      "targetedRegression": {
-        "tests": 77,
-        "pass": 77,
-        "subsetOfFull362": true,
-        "receiptSha256": "2c744ab94b8e282e0921c4c8249e1de129867683a92a07f0587ccc2844d0a6bf",
-        "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
-        "unchangedCasesAlsoIncludedInFull386": true
-      },
-      "loopbackBrowser": {
-        "checks": 5,
-        "passed": 5,
-        "receiptSha256": "082440137fd20f2490d39f38bf257f0781b4a9f52a18a49e13a62af21689763a",
-        "realGameSiteVisited": false
-      },
-      "independentBfCache": {
-        "triggered": true,
-        "passed": true,
-        "receiptSha256": "683c1f15ede49161b76b4efabf10e3b0173b987343160e0439710604d9e7dcb0",
-        "realGameSiteVisited": false
-      },
-      "disabledChatDrainSkippedOnlyForExplicitFalse": true,
-      "normalTerminalAndRetirementGuardsPreserved": true,
-      "cumulativeSourceReviews": [
-        {
-          "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
-          "scope": "previous 20 release changes and 362-test navigation/preparation stage",
-          "sha256": "491006f4a106442fef8dcf0c4dedc49f293c72108a200c4d2f1a970f1b1dfea0"
-        },
-        {
-          "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
-          "scope": "three additional disabled-chat-drain files, complete 386-test input binding and inherited unchanged source",
-          "sha256": "d5e929fca436a3d8561afdacb2d5ab3853209e7ea822c10d0840683946b8a21f"
-        }
-      ],
-      "disabledChatDrainRegression": {
-        "tests": 44,
-        "newTests": 24,
-        "existingRetirementTests": 20,
-        "passed": 44,
-        "subsetOfFull386": true,
-        "receiptSha256": "187cb07af15e6c1468bde6751e33742a59a74fb1af1e7532d1958439ddc4efd8"
+      "independentSourceReviewSha256": "b02e12acb1a19549d6946a5360b62082b54bd392e1745269d03df71ecb8280de",
+      "originalNativeBringLowReplay": {
+        "classification": "offline-only-unmodified-original-failed-input",
+        "amount": 1,
+        "receiptSha256": "bb05f370354446a283a484b02cbeb6401d6ac45d0ef70d8e8078c20c69e74ffd",
+        "newLiveBringLowSettlementClaimed": false
       }
     },
     "currentEvidence": {
-      "path": "docs/evidence/preparation-retirement-2026-11-17.json",
-      "sha256": "80b290927d7cdbc74fd5ccb145f9feb0859071378631148caf00cd443afefc71"
+      "path": "docs/evidence/hypnotic-single-aember-2026-11-17.json",
+      "sha256": "118ebd9e91a69ab5f43a7c9252e43178b265d223937224fa8f76715cec51c3f4",
+      "report": "docs/localized-capture-validation.md",
+      "independentPublicEvidenceReviewSha256": "4200755f9a40c8a2a1a2a9c093d56772a61c9f3b35dafb69b57e81c13c0ac79d"
     },
-    "fuzhouOwnedLiveAcceptance": {
-      "status": "completed-source-bound-stages",
-      "fuzhouOwnedPreparationTimeout": {
-        "attempt": "pending-002",
-        "status": "passed",
-        "realServerResultClaimed": true,
-        "scope": "明示自有账号的 private/owned 原生 adapter 接入生产 retireCreatedPendingRoom 组件；保留 private/owned 原生身份和生产 public guards。",
-        "publicMatchmakingEndToEndClaimed": false,
-        "productionPublicGuardsRelaxed": false,
-        "privateNativeIdentityRetained": true,
-        "requiresPassword": true,
-        "nativePrivateRoomVisibleInAnonymousFullRoster": true,
-        "configuredReadinessWaitMs": 45000,
-        "realWaitMs": 45649,
-        "ownSelectionVerified": true,
-        "ownDeckMatches": true,
-        "controlledGuestNotReady": true,
-        "componentPassed": true,
-        "retirementPhase": "retired",
-        "uiLeaveAttempts": 1,
-        "nativeLeaveSends": 1,
-        "nativeAcknowledgementSource": "cleargamestate",
-        "freshAnonymousFullRosterBeforeAndAfter": true,
-        "wholeAccountAbsentAfterLeave": true,
-        "idleHostSessionCountBefore": 0,
-        "idleHostRestoredSessionCountBefore": 0,
-        "idleHostStopped": true,
-        "ownedBrowserLeaseReleased": true,
-        "runtimeRetired": true,
-        "driverActualExitCode": 0,
-        "toolExitCode": 0,
-        "processesVerifiedGone": 4,
-        "controlledGuestNormallyCleaned": true,
-        "bothAccountsFinallyAbsent": true,
-        "allBrowsersReleased": true,
-        "accountLeasesReleased": true,
-        "remainingAccountLockHolders": 0,
-        "neverNativeActive": true,
-        "zeroGameplaySends": true,
-        "modelCalls": 0,
-        "sourceInputsUnchanged": true,
-        "naturalResultsAdded": 0,
-        "independentReview": {
-          "status": "complete",
-          "decision": "PASS",
-          "recordedAt": "2026-11-17T01:43:01.435027+00:00",
-          "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
-          "inputCount": 129,
-          "allInputBytesUnchanged": true,
-          "productionInputsMatchFullR3": true,
-          "toolsMatchSourceCommit": true,
-          "nativePrivateAndOwnedFlagsPreserved": true,
-          "rawFramesRewritten": false,
-          "actualSameDocumentEpochMaintained": 1,
-          "noSyntheticRosterProbeInjected": true,
-          "actualDriverExitSource": "subprocess.Popen.wait",
-          "evidenceRoles": [
-            "fuzhou-pending-002-independent-review"
-          ]
-        },
-        "evidenceRoles": [
-          "fuzhou-pending-002-final-acceptance",
-          "fuzhou-pending-002-execution",
-          "fuzhou-pending-002-result",
-          "fuzhou-pending-002-production-retirement",
-          "fuzhou-pending-002-native-tracker",
-          "fuzhou-pending-002-final-anonymous-roster",
-          "fuzhou-pending-002-source-before",
-          "fuzhou-pending-002-source-after"
-        ],
-        "resourceSnapshotAt": "2026-11-17T01:39:02.389Z",
-        "resourceSnapshotQualification": "进程、registry 和锁的退出状态属于 pending-002 的已完成记录；精确锁无持有者的取样时点如上。独立审查没有重新操作可能已被后续自测使用的账号锁。",
-        "controlledGuestNormalLeaveSends": 1,
-        "controlledGuestNativeClearObserved": true,
-        "nativeClearAfterLeaveMs": 5,
-        "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f"
-      },
-      "fuzhouOwnedNormalLifecycle": {
-        "attempt": "natural-002",
-        "status": "passed",
-        "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
-        "realServerResultClaimed": true,
-        "scope": "一局真实福州自有账号私房，验证自然终局及正常自动退房、host/browser/driver 退役；用于功能与生命周期验证。",
-        "privateRoom": true,
-        "publicMatchmakingEndToEndClaimed": false,
-        "internationalPublicOpponentGames": 0,
-        "manualGameInterventions": 0,
-        "nativeNaturalResult": true,
-        "nativeFinalKeyCounts": [
-          3,
-          1
-        ],
-        "bothSeatsFullVerified": true,
-        "seats": [
-          {
-            "seat": "seat-1",
-            "policy": "tactical-card-effects-v3",
-            "won": true,
-            "keys": 3,
-            "fullVerified": true,
-            "commandsGenerated": 132,
-            "commandsQueued": 132,
-            "acknowledged": 132,
-            "clientNotSent": 0,
-            "modelCalls": 0,
-            "fallbacks": 0,
-            "stale": 0,
-            "unsupported": 0,
-            "strategyFault": null,
-            "loopInterventions": 0,
-            "loopHalts": 0,
-            "normalAutomaticLeaveAttempts": 1,
-            "localLeaveObserved": true,
-            "serverSeatAbsent": true,
-            "anonymousServerLeaveEvidence": true,
-            "serverLeaveEvidenceSource": "removegame",
-            "hostStopped": true,
-            "browserClosed": true,
-            "browserRecordAbsent": true,
-            "completed": true,
-            "held": false
-          },
-          {
-            "seat": "seat-2",
-            "policy": "tactical-ladder-balanced",
-            "won": false,
-            "keys": 1,
-            "fullVerified": true,
-            "commandsGenerated": 71,
-            "commandsQueued": 70,
-            "acknowledged": 70,
-            "clientNotSent": 1,
-            "modelCalls": 0,
-            "fallbacks": 0,
-            "stale": 0,
-            "unsupported": 0,
-            "strategyFault": null,
-            "loopInterventions": 0,
-            "loopHalts": 0,
-            "normalAutomaticLeaveAttempts": 1,
-            "localLeaveObserved": true,
-            "serverSeatAbsent": true,
-            "anonymousServerLeaveEvidence": true,
-            "serverLeaveEvidenceSource": "updategame",
-            "hostStopped": true,
-            "browserClosed": true,
-            "browserRecordAbsent": true,
-            "completed": true,
-            "held": false
-          }
-        ],
-        "commandsGenerated": 203,
-        "commandsQueued": 202,
-        "acknowledged": 202,
-        "clientNotSent": 1,
-        "modelCalls": 0,
-        "fallbacks": 0,
-        "unsupported": 0,
-        "strategyFaults": 0,
-        "unresolvedSentCommandsAtEnd": 0,
-        "commandAccountingQualification": "203 条生成指令中，1 条在客户端排队前被拒绝，记录为 client-not-sent；实际排队 202 条，ACK 202 条。该条不是丢失 ACK；原日志未保存足以坐实具体浏览器分支的细节，因此不认定为已证明的 obsolete/stale，也不宣称零拒绝或全部生成指令均发送成功。",
-        "configuredGameSocketEndpointCount": 1,
-        "observedGameSocketEndpointCount": 1,
-        "configuredAndObservedGameEndpointsMatch": true,
-        "chatMode": "off",
-        "liveChatAcceptanceClaimed": false,
-        "knownRetirementLatency": {
-          "implementation": "tools/keyteki-finished-chat-drain.mjs",
-          "socialEnabled": false,
-          "budgetMs": 65000,
-          "measuredMsPerSeat": [
-            65001,
-            65001
+    "frozenRuntime053": {
+      "productionSourceCommit": "a14f6706e13c5dfbb43a481d796dcc17961f0f65",
+      "manifestSha256": "e2218290434280a5dd410267a5046110fe13083e414da535eb1914b0456b6388",
+      "fingerprint": "0b2de04d4e187ddf52198348c838261678877695fcdb18cca4bf81cd2c2b7eb6",
+      "internalFiles": 786,
+      "externalBindings": 307,
+      "manifestSourceCommit": null,
+      "gitBinding": "separate-unmodified-source-binding-receipt",
+      "sourceBindingSha256": "dad48cc2e6ad1a238dd12eb8eddfe4ea31c064af70a0e25a8191b08c66c264fc",
+      "standardVerificationSha256": "c15c23ab3aa59097383162d395d8636a7d150a3a1fd324b74ba5aa5fa2e2fb96",
+      "runtimeIntersectionWithFullOfflineInputs": 129,
+      "runtimeFilesChangedFrom052": 3
+    },
+    "ownedCardMechanism": {
+      "attempts": 2,
+      "targetMechanismPasses": 1,
+      "technicalFailures": 1,
+      "targetNotTriggered": 1,
+      "attemptsSummary": [
+        {
+          "attempt": "hypnotic-001",
+          "version": "0.5.2",
+          "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+          "targetTriggered": false,
+          "classification": "technical-failure-with-resource-closure",
+          "generated": 387,
+          "queued": 387,
+          "acknowledged": 387,
+          "nativeKeysAtTechnicalConcession": [
+            1,
+            2
           ],
-          "outcomePerSeat": [
-            "timed-out",
-            "timed-out"
-          ],
-          "reason": "same-seat-session-unobserved",
-          "normalTerminalGraceMs": 10000,
-          "normalTerminalGraceIsAdditional": true,
-          "effect": "该 8ff 阶段即使关闭聊天，仍因缺少同席 social scheduling row 等待整个 drain 预算；随后正常 quiesce、取消确认和自动 Leave 均完成。真实 65001ms 延迟保留，后续优化必须另绑源码、测试与新现场结果。",
-          "sourceRoles": [
-            "fuzhou-natural-002-final-acceptance",
-            "fuzhou-natural-002-independent-review",
-            "fuzhou-owned-completed-stage-summary"
-          ]
+          "naturalGame": false,
+          "driverActualExitCode": -1,
+          "wrapperActualExitCode": 129,
+          "supplementalCleanupActualExitCode": 0,
+          "manualResourceCleanupRequired": true
         },
-        "resourceClosure": {
+        {
+          "attempt": "hypnotic-002",
+          "version": "0.5.3",
+          "sourceCommit": "a14f6706e13c5dfbb43a481d796dcc17961f0f65",
+          "targetTriggered": true,
+          "classification": "mechanism-and-resource-pass-with-private-fixture-handoff-limitation",
+          "enemyPool": [
+            1,
+            0
+          ],
+          "recipientCapturedAember": [
+            0,
+            1
+          ],
+          "actingPlayerPool": [
+            0,
+            0
+          ],
+          "targetNativeSends": 1,
+          "targetAckChange": [
+            45,
+            46
+          ],
+          "naturalKeys": [
+            0,
+            3
+          ],
+          "generated": 198,
+          "queued": 198,
+          "acknowledged": 198,
           "driverActualExitCode": 0,
           "finalizerActualExitCode": 0,
-          "driverExitEvidence": "subprocess.Popen.wait",
-          "finalizerExitEvidence": "completed-tool-execution-receipt",
-          "freshAnonymousFullRosterBothAccountsAbsent": true,
-          "rosterObservedAfterDriverExit": true,
-          "hostsStopped": 2,
-          "browsersClosed": 2,
-          "allFiveExactProcessIdentitiesAbsent": true,
-          "activeBrowserRegistryRecords": 0,
-          "checkpointResolved": true,
-          "exactAccountLockPathCount": 2,
-          "accountLockHolderCountAtSnapshot": 0,
-          "accountLockSnapshotAt": "2026-11-17T01:47:30.432Z",
-          "resourceSnapshotQualification": "仅描述 natural-002 结束后本次 finalizer 的精确身份检查；退出码来自真实执行回执，不由进程缺失推断。"
-        },
-        "sourceBinding": {
-          "productionInputCount": 126,
-          "sourceInputsUnchanged": true,
-          "productionInputsMatchFullR3": true,
-          "toolsMatchSourceCommit": true,
-          "fixtureAndWrapperMatchActualExecution": true
-        },
-        "independentReview": {
-          "status": "complete",
-          "decision": "PASS",
-          "recordedAt": "2026-11-17T01:50:53.242300+00:00",
-          "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
-          "evidenceRoles": [
-            "fuzhou-natural-002-independent-review"
-          ]
-        },
-        "naturalPrivateTestGames": 1,
-        "addedToInternationalHistoricalWins": 0,
-        "addedToInternationalHistoricalLosses": 0,
-        "eloUpdateClaimed": false,
-        "strategyStrengthImprovementClaimed": false,
-        "additionalOfflineTests": 0,
-        "evidenceRoles": [
-          "fuzhou-natural-002-final-acceptance",
-          "fuzhou-natural-002-execution",
-          "fuzhou-natural-002-finalizer-execution",
-          "fuzhou-natural-002-final-handoff",
-          "fuzhou-natural-002-final-checkpoint",
-          "fuzhou-natural-002-final-anonymous-roster",
-          "fuzhou-natural-002-final-source-inputs",
-          "fuzhou-natural-002-independent-review",
-          "fuzhou-owned-completed-stage-summary",
-          "fuzhou-natural-002-seat-1-evidence",
-          "fuzhou-natural-002-seat-2-evidence"
-        ]
-      },
-      "historicalFailedAttempts": [
-        {
-          "attempt": "pending-001",
-          "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
-          "status": "failed-before-production-retirement-component",
-          "actualExitCode": 2,
-          "failureCode": "OWN_DECK_SELECTION_NOT_CONFIRMED",
-          "failureStage": "select-creator-deck-only",
-          "componentAttempted": false,
-          "componentPassed": false,
-          "gameplayBridgeInstalled": false,
-          "gameplayStarted": false,
-          "modelCalls": 0,
-          "nativeSelection": {
-            "ownSelectdeckSendObserved": true,
-            "subsequentOwnSelectedAndNamedDeckObserved": true,
-            "offlinePrivateAdapterReplayPassed": true,
-            "sourceRoles": [
-              "fuzhou-pending-001-native-tracker",
-              "navigation-superseding-finding"
-            ]
-          },
-          "epochCauseQualification": "该次现场未记录导航事件，具体历史 epoch 转换属于推断；之后已在真正生产 PublicRoomObserver 上独立复现同文档路由缺陷。不能将原选择确认失败说成用户未选牌，也不能把原失败改为组件通过。",
-          "cleanup": {
-            "normalPendingLeaveAttempts": 1,
-            "nativeClearObserved": true,
-            "bothBrowserProcessesGone": true,
-            "bothBrowserLeasesReleased": true,
-            "accountLeasesReleased": true
-          },
-          "naturalResultsAdded": 0,
-          "sourceRoles": [
-            "fuzhou-pending-001-result",
-            "fuzhou-pending-001-execution",
-            "fuzhou-pending-001-native-tracker",
-            "navigation-superseding-finding"
-          ]
-        },
-        {
-          "attempt": "natural-001",
-          "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
-          "status": "failed-original-attempt-manually-retired",
-          "nativeGameStarted": true,
-          "bothSeatsFullVerified": false,
-          "hostAttachResponses": [
-            409,
-            409
-          ],
-          "original409ResponseBodyCaptured": false,
-          "configurationDiagnosis": {
-            "observedGameEndpoints": 1,
-            "crossOriginGameEndpointRequiresExactAllowlist": true,
-            "configuredGameSocketEndpointCounts": [
-              0,
-              0
-            ],
-            "configuredPageOriginsMatch": true,
-            "productionBindingRejectsMissingEndpoint": "transport-path-invalid",
-            "qualification": "私房 fixture 漏配福州跨端口游戏 socket 的精确 endpoint，生产 keytekiTransportBinding 对该输入必然拒绝。原 409 body 没有采集，因此不将这个确定的配置违规冒充原响应正文。",
-            "sourceRoles": [
-              "fuzhou-natural-001-original-handoff",
-              "fuzhou-natural-001-seat-config-1",
-              "fuzhou-natural-001-seat-config-2",
-              "production-transport-binding-source"
-            ]
-          },
-          "automaticOutcome": {
-            "watchdogTechnicalConcessions": 1,
-            "watchdogRecoveryAttemptsPerSeat": [
-              1,
-              1
-            ],
-            "nativeTerminalConfirmedForBothSeats": true,
-            "naturalGame": false,
-            "naturalWinsAdded": 0,
-            "naturalLossesAdded": 0,
-            "manualConcedeUsed": false,
-            "automaticFinishedLeaveAttempts": [
-              0,
-              0
-            ],
-            "automaticCleanupFailure": "PRIVATE_FINISHED_LEAVE_UNCONFIRMED"
-          },
-          "manualRetirement": {
-            "normalLeaveAttemptsPerSeat": [
-              1,
-              1
-            ],
-            "nativeLeaveSendsPerSeat": [
-              1,
-              1
-            ],
-            "bothNativeClearObserved": true,
-            "bothFreshAnonymousAccountAbsences": true,
-            "idleHostsStopped": 2,
-            "browserProcessesGone": 2,
-            "originalProcessCount": 5,
-            "allOriginalProcessesAbsent": true,
-            "driverSignal": "SIGHUP",
-            "originalDriverActualExitCode": -1,
-            "originalCheckpointPreserved": true,
-            "initialCleanupHelperExitCode": 2,
-            "initialCleanupHelperLastError": "ACCOUNT_ALREADY_RUNNING",
-            "accountLocksReacquired": true,
-            "accountLocksReleased": true,
-            "remainingAccountLockHolders": 0
-          },
-          "modelCalls": 0,
-          "sourceRoles": [
-            "fuzhou-natural-001-original-handoff",
-            "fuzhou-natural-001-execution",
-            "fuzhou-natural-001-manual-retirement",
-            "fuzhou-natural-001-final-retirement"
-          ]
+          "wrapperActualExitCode": 0,
+          "manualGameInterventions": 0,
+          "resourceClosureVerified": true,
+          "actingSeatReturnedToBaselineAfterTarget": false,
+          "strategyStrengthComparisonValid": false,
+          "independentReviewSha256": "16278763993c8c135cfb871d2f59562ce892d32b212a4b993afde7b957d6363c"
         }
       ],
-      "offlineTestsDoNotSubstituteForLiveAcceptance": true,
-      "newInternationalPublicGamesForThisFix": 0,
-      "completedStageSummary": {
-        "activeOwnedRunAtRecordedCompletion": null,
-        "allDriverHostBrowserPidsGone": true,
-        "bothAccountLocksWithoutKernelHolders": true,
-        "freshAnonymousBothAccountsAbsent": true,
-        "newRunsAfterNatural002AtSnapshot": 0,
-        "attemptActualExitCodes": [
-          2,
-          -1,
-          0,
-          0
-        ],
-        "snapshotAt": "2026-11-17T01:48:14.660089+00:00",
-        "sourceRoles": [
-          "fuzhou-owned-completed-stage-summary"
-        ],
-        "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f"
-      },
-      "sourceAttribution": "每个现场子项独立绑定实际运行的 sourceCommit；不使用顶层统一 sourceCommit 重标先前运行。",
-      "fuzhouOwnedDisabledChatLifecycle": {
-        "attempt": "natural-003",
-        "status": "passed",
-        "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
-        "realServerResultClaimed": true,
-        "scope": "与 natural-002 使用相同牌组及策略的福州自有账号私房；验证明确关闭聊天时跳过额外等待，并完成自然终局与全部正常退役。",
-        "privateRoom": true,
-        "sameDeckAndPolicyConfigurationAs": "natural-002",
-        "publicMatchmakingEndToEndClaimed": false,
-        "internationalPublicOpponentGames": 0,
-        "manualGameInterventions": 0,
-        "nativeNaturalResult": true,
-        "nativeFinalKeyCounts": [
-          3,
-          1
-        ],
-        "bothSeatsFullVerified": true,
-        "seats": [
-          {
-            "seat": "seat-1",
-            "policy": "tactical-card-effects-v3",
-            "won": true,
-            "keys": 3,
-            "fullVerified": true,
-            "commandsGenerated": 125,
-            "commandsQueued": 125,
-            "acknowledged": 125,
-            "clientNotSent": 0,
-            "lastCommandRejection": null,
-            "modelCalls": 0,
-            "fallbacks": 0,
-            "stale": 0,
-            "unsupported": 0,
-            "strategyFault": null,
-            "loopInterventions": 0,
-            "loopHalts": 0,
-            "normalAutomaticLeaveAttempts": 1,
-            "localLeaveObserved": true,
-            "serverSeatAbsent": true,
-            "anonymousServerLeaveEvidence": true,
-            "serverLeaveEvidenceSource": "removegame",
-            "hostStopped": true,
-            "browserClosed": true,
-            "browserRecordAbsent": true,
-            "completed": true,
-            "held": false,
-            "chatDrain": {
-              "outcome": "skipped",
-              "reason": "social-disabled",
-              "checks": 0,
-              "budgetMs": 0,
-              "elapsedMs": 0,
-              "lastObservable": false,
-              "lastDrained": false,
-              "serverEchoConfirmed": false,
-              "normalTerminalGraceMs": 10000,
-              "cancellationRequested": true,
-              "chatCancellationConfirmed": true
-            },
-            "terminalToConfirmedLeaveMs": 15204,
-            "countersMonotonic": true
-          },
-          {
-            "seat": "seat-2",
-            "policy": "tactical-ladder-balanced",
-            "won": false,
-            "keys": 1,
-            "fullVerified": true,
-            "commandsGenerated": 78,
-            "commandsQueued": 78,
-            "acknowledged": 78,
-            "clientNotSent": 0,
-            "lastCommandRejection": null,
-            "modelCalls": 0,
-            "fallbacks": 0,
-            "stale": 0,
-            "unsupported": 0,
-            "strategyFault": null,
-            "loopInterventions": 0,
-            "loopHalts": 0,
-            "normalAutomaticLeaveAttempts": 1,
-            "localLeaveObserved": true,
-            "serverSeatAbsent": true,
-            "anonymousServerLeaveEvidence": true,
-            "serverLeaveEvidenceSource": "updategame",
-            "hostStopped": true,
-            "browserClosed": true,
-            "browserRecordAbsent": true,
-            "completed": true,
-            "held": false,
-            "chatDrain": {
-              "outcome": "skipped",
-              "reason": "social-disabled",
-              "checks": 0,
-              "budgetMs": 0,
-              "elapsedMs": 0,
-              "lastObservable": false,
-              "lastDrained": false,
-              "serverEchoConfirmed": false,
-              "normalTerminalGraceMs": 10000,
-              "cancellationRequested": true,
-              "chatCancellationConfirmed": true
-            },
-            "terminalToConfirmedLeaveMs": 14180,
-            "countersMonotonic": true
-          }
-        ],
-        "commandsGenerated": 203,
-        "commandsQueued": 203,
-        "acknowledged": 203,
-        "clientNotSent": 0,
-        "modelCalls": 0,
-        "fallbacks": 0,
-        "unsupported": 0,
-        "strategyFaults": 0,
-        "unresolvedSentCommandsAtEnd": 0,
-        "commandAccountingQualification": "本局双席原生记录经独立核对，计数单调，生成、排队、ACK 均为 203，分席为 125 与 78，client-not-sent 为 0。该记录不改变 natural-002 的 203/202/202 和 1 条 client-not-sent，也不据此认定其未明触发原因已修复。",
-        "configuredGameSocketEndpointCount": 1,
-        "observedGameSocketEndpointCount": 1,
-        "configuredAndObservedGameEndpointsMatch": true,
-        "chatMode": "off",
-        "liveChatAcceptanceClaimed": false,
-        "disabledChatDrain": {
-          "outcomePerSeat": [
-            "skipped",
-            "skipped"
-          ],
-          "reason": "social-disabled",
-          "checksPerSeat": [
-            0,
-            0
-          ],
-          "budgetMsPerSeat": [
-            0,
-            0
-          ],
-          "measuredMsPerSeat": [
-            0,
-            0
-          ],
-          "normalTerminalGraceMs": 10000,
-          "normalTerminalGracePreserved": true,
-          "chatDrainSuccessOrServerEchoClaimed": false,
-          "preservedNativeDepartureAndQuiescenceGates": true,
-          "previousAttempt": "natural-002",
-          "previousSourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
-          "previousMeasuredMsPerSeat": [
-            65001,
-            65001
-          ],
-          "comparisonScope": "仅比较生产 chat drain 额外等待；0ms 不表示整次终局退房或进程退出耗时为零。",
-          "terminalToConfirmedLeaveMsPerSeat": [
-            15204,
-            14180
-          ]
-        },
-        "resourceClosure": {
-          "driverActualExitCode": 0,
-          "finalizerActualExitCode": 0,
-          "driverExitEvidence": "subprocess.Popen.wait",
-          "finalizerExitEvidence": "completed-tool-execution-receipt",
-          "freshAnonymousFullRosterBothAccountsAbsent": true,
-          "rosterObservedAfterDriverExit": true,
-          "hostsStopped": 2,
-          "browsersClosed": 2,
-          "allFiveExactProcessIdentitiesAbsent": true,
-          "activeBrowserRegistryRecords": 0,
-          "checkpointResolved": true,
-          "exactAccountLockPathCount": 2,
-          "accountLockHolderCountAtSnapshot": 0,
-          "accountLockSnapshotAt": "2026-11-17T02:01:45.770Z",
-          "resourceSnapshotQualification": "仅描述 natural-003 最终回执的精确进程、registry、原生名单与锁检查；driver 和 finalizer 退出码均来自各自实际执行回执。"
-        },
-        "sourceBinding": {
-          "productionInputCount": 126,
-          "sourceInputsUnchanged": true,
-          "fixtureUnchanged": true,
-          "sourceRoles": [
-            "fuzhou-natural-003-final-source-inputs",
-            "fuzhou-natural-003-execution",
-            "source-commit-disabled-chat"
-          ],
-          "productionInputsMatchFullR4": true,
-          "toolsMatchSourceCommit": true,
-          "fixtureAndWrapperMatchActualExecution": true,
-          "sameFixtureDecksPoliciesAndNetworkAsNatural002": true
-        },
-        "independentReview": {
-          "status": "complete",
-          "decision": "PASS",
-          "recordedAt": "2026-11-17T02:04:18.381717+00:00",
-          "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
-          "bothIndependentVerifiedTerminalStreamsAgree": true,
-          "countersMonotonicForBothSeats": true,
-          "clientNotSentRejections": 0,
-          "unresolvedBlockers": [],
-          "evidenceRoles": [
-            "fuzhou-natural-003-independent-review"
-          ]
-        },
-        "naturalPrivateTestGames": 1,
-        "addedToInternationalHistoricalWins": 0,
-        "addedToInternationalHistoricalLosses": 0,
-        "eloUpdateClaimed": false,
-        "strategyStrengthImprovementClaimed": false,
-        "additionalOfflineTests": 0,
-        "evidenceRoles": [
-          "fuzhou-natural-003-final-acceptance",
-          "fuzhou-natural-003-execution",
-          "fuzhou-natural-003-finalizer-execution",
-          "fuzhou-natural-003-final-handoff",
-          "fuzhou-natural-003-final-checkpoint",
-          "fuzhou-natural-003-final-anonymous-roster",
-          "fuzhou-natural-003-final-source-inputs",
-          "fuzhou-natural-003-seat-1-evidence",
-          "fuzhou-natural-003-seat-2-evidence",
-          "fuzhou-owned-completed-final-summary",
-          "fuzhou-natural-003-independent-review"
-        ]
-      },
-      "completedFinalSummary": {
-        "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
-        "activeOwnedRunAtRecordedCompletion": null,
-        "allDriverHostBrowserPidsGone": true,
-        "bothAccountLocksWithoutKernelHolders": true,
-        "freshAnonymousBothAccountsAbsent": true,
-        "newRunsAfterNatural003AtSnapshot": 0,
-        "attempts": [
-          {
-            "attempt": "pending-001",
-            "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
-            "actualDriverExitCode": 2
-          },
-          {
-            "attempt": "natural-001",
-            "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
-            "actualDriverExitCode": -1
-          },
-          {
-            "attempt": "pending-002",
-            "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
-            "actualDriverExitCode": 0
-          },
-          {
-            "attempt": "natural-002",
-            "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
-            "actualDriverExitCode": 0
-          },
-          {
-            "attempt": "natural-003",
-            "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
-            "actualDriverExitCode": 0
-          }
-        ],
-        "snapshotAt": "2026-11-17T02:02:43.862779+00:00",
-        "sourceRoles": [
-          "fuzhou-owned-completed-final-summary"
-        ]
+      "internalAmountEvidenceKindIsOfflineReconstruction": true,
+      "externalModelCalls": 0,
+      "externalHumanGames": 0,
+      "newStrategyRatingGames": 0
+    },
+    "privateFixtureValidation": {
+      "includedInProductionTestTotal": false,
+      "v2PreparedAgainst052": 28,
+      "v2MenuChecksAgainst053": 2,
+      "forcedTargetHandoffFix": {
+        "status": "offline-only-future-private-selector",
+        "behaviorChecksPassed": 6,
+        "actualExitCode": 0,
+        "usedInHypnotic002": false,
+        "additionalLiveGameStarted": false,
+        "receiptSha256": "a10bc86f30394854cd49fc63db4bb4a546e187058f1a2a2a187f5d09afda6149",
+        "independentReviewSha256": "2f07d8dfe7740eee0379c791f38bf0dd55fe6f6dcfe0104dee49c59aef9e1591"
       }
     },
-    "newStrategyRatingGames": 0,
-    "newInternationalHumanGamesOn052": 0,
     "packageBoundary": {
       "status": "passed",
-      "files": 327,
-      "moduleEdges": 974,
+      "files": 330,
+      "moduleEdges": 979,
       "findings": 0,
       "actualExitCode": 0,
-      "receiptSha256": "481ea37d71b8bfcc70857897d7a8f35e8697bd6cb26bb20f98dd85e9b46b1aa2",
-      "scope": "0.5.2 publication after owned fault-recovery evidence and documentation update"
+      "receiptSha256": "41d90db4ddede26fd66b20ac3181edd73616b04bb4f4f73fb310db7833ed9f6a",
+      "scope": "0.5.3 source and final owned-card evidence/documentation file set"
     },
-    "fuzhouNaturalGamesAcross052Stages": 3,
-    "fuzhouNaturalGamesOnFinalSource": 2,
-    "previousPackageBoundary": {
-      "status": "source-boundary-passed-final-live-document-review-pending",
-      "files": 324,
-      "moduleEdges": 970,
-      "findings": 0,
-      "receiptSha256": "442dd12f76eb39585c3b2cc4cc4963398ec29642cfc6043dd90455f87ec2155c"
-    },
-    "ownedFaultRecovery052": {
-      "status": "passed-independent-real-owned-game-review",
-      "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
-      "sourceGitHead": "5534735f7918d9d2002db6a2d69658ecc621e6b7",
-      "productionImplementationChangedForThisAcceptance": false,
-      "evidence": {
-        "path": "docs/evidence/fuzhou-recovery-2026-11-17.json",
-        "sha256": "9719b746ea95d8f8f48715ba4edbf2728fde9c1c66167b621a574a285b9cce9f"
-      },
-      "report": "docs/recovery-validation.md",
-      "liveAttempts": 1,
-      "faultInjections": 1,
-      "automaticRecoveries": 1,
-      "naturalKeys": [
-        3,
-        0
-      ],
-      "commandsGenerated": 193,
-      "commandsQueued": 193,
-      "acknowledged": 193,
-      "oldCommandNativeSends": 1,
-      "reconciliationDidNotInflateAcknowledgements": true,
-      "hostRestarts": 0,
-      "actualDriverExitCode": 0,
-      "firstFinalizerExitCode": 1,
-      "localCompletionFinalizerExitCode": 0,
-      "resourceClosureVerified": true,
-      "privateFixtureChecks": 17,
-      "privateFixtureChecksAddedToProductionTotal": false,
-      "hostFetchDeadlineLiveExercised": false,
-      "externalHumanGames": 0,
-      "newStrategyRatingGames": 0,
-      "independentReviewSha256": "d9008206a790cac32886f7bd8c0352f47e67ff4c6cb348291cc0c8e6d3a6edb5"
-    },
-    "fuzhouNaturalGameAccounting": {
-      "scope": "owned functional/lifecycle tests only; not strategy-rating games",
-      "ordinaryLifecycleGamesAcross052Stages": 2,
-      "controlledRecoveryGamesOnFinalSource": 1,
-      "scriptedCardMechanismGamesOnFinalSource": 0
-    },
-    "sourcePublicationPackageBoundary": {
-      "status": "passed",
-      "files": 325,
-      "moduleEdges": 974,
-      "findings": 0,
-      "actualExitCode": 0,
-      "receiptSha256": "84c4cc647c1a7a76fe09797af697b3679a726017c66e932e1c2607573e15db00"
-    }
+    "newStrategyRatingGames": 0,
+    "newInternationalHumanGamesOn053": 0,
+    "historical052RecoveryResultReattributedTo053": false
   },
   "internationalTco": {
     "defaultChatLanguage": "en",
@@ -1629,7 +1015,7 @@
     ],
     "strategyAlgorithmSourceChanged": false,
     "guide": "docs/international-tco.md",
-    "currentRuntimeLiveStatus": "0.5.2-not-run-against-international-human-opponents",
+    "currentRuntimeLiveStatus": "0.5.3-not-run-against-international-human-opponents",
     "historicalAcceptanceEvidence": "docs/evidence/international-2026-11-16.json",
     "networkAndSoakEvidence": "docs/evidence/international-soak-2026-11-16.json",
     "networkGuide": "docs/international-network.md",
@@ -1644,7 +1030,7 @@
       "aiRoomNameMarkerRequired": true,
       "newCliOptionAdded": false
     },
-    "liveStatusAsOf": "2026-11-17T02:06:44.742073+00:00",
+    "liveStatusAsOf": "2026-11-17T05:29:14.083372+00:00",
     "latestEvidence": "docs/evidence/preparation-retirement-2026-11-17.json",
     "latestGuide": "docs/preparation-retirement.md",
     "disconnectedOpponentExit": {
@@ -1657,6 +1043,7 @@
       "countsAsNaturalGame": false,
       "requiresActualDriverExit": true
     },
-    "historicalDetailedRecord": "https://github.com/AxelHu/keyforge-tco-bot/blob/be9916d73228cae8381e443996f9d193263858d3/PUBLICATION.json"
+    "historicalDetailedRecord": "https://github.com/AxelHu/keyforge-tco-bot/blob/be9916d73228cae8381e443996f9d193263858d3/PUBLICATION.json",
+    "humanMatchmakingStatus": "paused"
   }
 }
