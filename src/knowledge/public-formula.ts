@@ -299,6 +299,114 @@ function subtractValues(left: PublicValueResult, right: PublicValueResult): Publ
   ]);
 }
 
+/** Refresh only captured-amber dependencies after a declared public projection.
+ * This does not simulate continuous rules. Plain intrinsic scalar modifiers are
+ * recomputed; external/conditional modifiers retain explicit field uncertainty. */
+export function refreshCapturedFormulaDependencies(
+  context: PublicFormulaContext,
+  changedCaptured: ReadonlySet<string> = new Set(
+    [...(context.projection?.uncertainCardFields ?? [])]
+      .filter(([, fields]) => fields.has('captured')).map(([id]) => id),
+  ),
+): PublicFormulaContext {
+  if (!changedCaptured.size) return context;
+  const o = context.observation;
+  const board = o.players.flatMap((player) => [...player.battleline, ...player.artifacts, ...player.upgrades]);
+  const fields = new Map([...context.projection?.uncertainCardFields ?? []]
+    .map(([id, value]) => [id, new Set(value)]));
+  const mark = (id: string, field: string) => {
+    const row = fields.get(id) ?? new Set<string>(); row.add(field); fields.set(id, row);
+  };
+  const dependency = (input: unknown): { captured: boolean; global: boolean } => {
+    let captured = false, global = false, budget = 512;
+    const seen = new Set<object>();
+    const walk = (value: unknown) => {
+      if (!value || typeof value !== 'object' || seen.has(value) || --budget < 0) return;
+      seen.add(value);
+      for (const [key, child] of Object.entries(value)) {
+        if (key === 'sourceAmber') captured = true;
+        if (['creatureAmberTotal', 'bindingAmber', 'withAmber'].includes(key)) captured = global = true;
+        walk(child);
+      }
+    };
+    walk(input); return { captured, global };
+  };
+  const currentContext = (): PublicFormulaContext => ({ ...context, phase: 'current',
+    projection: { ...context.projection, uncertainCardFields: fields } });
+  // A capture-dependent aura can change another creature. Only its public
+  // candidate domain loses the affected characteristic; unrelated bodies remain exact.
+  for (const provider of board) for (const aura of provider.spec.auras ?? []) {
+    const sourceDependency = dependency(aura.sourceCondition), targetDependency = dependency(aura.filter);
+    const sourceChanged = (aura.sourceAmberMultiplier !== undefined || sourceDependency.captured) &&
+      (sourceDependency.global || changedCaptured.has(provider.id));
+    const targetChanged = aura.targetAmberMultiplier !== undefined || targetDependency.captured;
+    if (!sourceChanged && !targetChanged) continue;
+    // Select across both possible domains of a changed captured quantity. A
+    // target leaving withAmber must also lose the old aura-derived certainty.
+    // This selector-only uncertainty does not discard the known new quantity.
+    const domainFields = new Map([...fields].map(([id, value]) => [id, new Set(value)]));
+    for (const card of board) if (changedCaptured.has(card.id)) {
+      const row = domainFields.get(card.id) ?? new Set<string>();
+      row.add('captured');
+      if (card.spec.selfPower === 'captured' || dependency(card.spec.powerBonus).captured)
+        row.add('power');
+      domainFields.set(card.id, row);
+    }
+    const selected = selectPublicCards(aura.filter ?? {}, { ...currentContext(),
+      actor: provider.controller, source: provider, action: undefined,
+      projection: { ...context.projection, uncertainCardFields: domainFields } });
+    const candidates = [...selected.cards, ...selected.possibleCards];
+    for (const card of candidates) {
+      if (!sourceChanged && !targetDependency.global && !changedCaptured.has(card.id)) continue;
+      mark(card.id, aura.property === 'power' || aura.property === 'armor' ? aura.property : 'keywords');
+    }
+  }
+  const updates = new Map<string, CardView>();
+  for (const card of board) {
+    const bonusDependency = dependency(card.spec.powerBonus);
+    const intrinsic = card.spec.selfPower === 'captured' || bonusDependency.captured;
+    if (!intrinsic || (!changedCaptured.has(card.id) && !bonusDependency.global)) continue;
+    const before = fields.get(card.id);
+    const blocked = before?.has('power') || before?.has('spec') || before?.has('damage') ||
+      before?.has('powerCounters') || o.publicStateCoverage?.effectsComplete === false ||
+      !!card.gainedTextBoxes?.length ||
+      board.some((provider) => provider.spec.auras?.some((aura) => aura.property === 'power')) ||
+      o.players.some((player) => player.upgrades.some((upgrade) => upgrade.attachedTo === card.id)) ||
+      o.lasting.some((effect) => ['fixedCreatureStats', 'filteredPower', 'blankBoostNamed', 'blankCreatures'].includes(effect.rule)) ||
+      o.cardEffects.some((effect) => effect.target === card.id &&
+        ['powerBonus', 'swapPowerArmor', 'fixedPower', 'fixedStats', 'blank', 'blankWhileMarked'].includes(effect.rule));
+    mark(card.id, 'power');
+    if (blocked) continue;
+    const ctx = { ...currentContext(), actor: card.controller, source: card, action: undefined };
+    const bonus = card.spec.powerBonus === undefined ? exactPublicValue(0) : evaluatePublicValue(card.spec.powerBonus, ctx);
+    if (bonus.kind !== 'exact') continue;
+    let self = 0;
+    if (card.spec.selfPower === 'captured') {
+      const captured = evaluatePublicValue({ sourceAmber: true }, ctx);
+      if (captured.kind !== 'exact') continue;
+      self = captured.value;
+    } else if (card.spec.selfPower === 'unforgedKeys') self = 3 * (3 - o.players[card.controller].keys.length);
+    else if (card.spec.selfPower === 'flank') {
+      const selected = selectPublicCards({ sourceOnly: true, flank: true }, ctx);
+      if (!selected.identitiesComplete) continue;
+      self = selected.cards.length ? 2 : 0;
+    }
+    const next = { ...card, effective: { ...card.effective,
+      power: Math.max(0, card.spec.power + card.powerCounters + bonus.value + self +
+        (card.damage > 0 ? card.spec.damagedPowerBonus ?? 0 : 0)) } };
+    updates.set(card.id, next); fields.get(card.id)!.delete('power');
+  }
+  return { ...context,
+    observation: { ...o, players: o.players.map((player) => ({ ...player,
+      battleline: player.battleline.map((card) => updates.get(card.id) ?? card),
+      artifacts: player.artifacts.map((card) => updates.get(card.id) ?? card),
+      upgrades: player.upgrades.map((card) => updates.get(card.id) ?? card),
+    })) as Observation['players'] },
+    source: context.source ? updates.get(context.source.id) ?? context.source : undefined,
+    projection: { ...context.projection, uncertainCardFields: fields },
+  };
+}
+
 export function projectPublicFormulaContext(context: PublicFormulaContext): PublicFormulaContext {
   const view = makeFormulaView(context);
   const uncertainMetrics = new Set(context.projection?.uncertainMetrics ?? []);
@@ -323,7 +431,8 @@ export function projectPublicFormulaContext(context: PublicFormulaContext): Publ
         view.uncertain.set(card.id, fields);
       }
   }
-  if (source.spec.kind !== 'creature' && source.spec.kind !== 'artifact') return prepared;
+  if (source.spec.kind !== 'creature' && source.spec.kind !== 'artifact')
+    return refreshCapturedFormulaDependencies(prepared);
   // entryReadied runs after the source leaves its old zone, but before its
   // battleline insertion, creature-play ordinal and bonus icons resolve.
   const creature = source.spec.kind === 'creature';
@@ -532,7 +641,7 @@ export function projectPublicFormulaContext(context: PublicFormulaContext): Publ
       })) as Observation['players'],
     };
   }
-  return prepared;
+  return refreshCapturedFormulaDependencies(prepared);
 }
 
 function createEvaluator(initialContext?: PublicFormulaContext) {

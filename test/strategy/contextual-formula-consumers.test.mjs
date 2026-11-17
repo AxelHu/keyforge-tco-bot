@@ -351,3 +351,109 @@ test('shuffleDeck preserves public destination counts without reviving stale dec
   }
   assert.deepEqual(real, original, 'the actual catalog definition is never rewritten by the synthetic composition');
 });
+
+
+test('captured changes refresh intrinsic power for every known stored-amber operation', () => {
+  const cases = [
+    { effects: [{ kind: 'capture', amount: 1 }], amber: 0, expected: [3, 2] },
+    { effects: [{ kind: 'self', operation: 'captureOwn', amount: 1 }], amber: 3, expected: [5, 3] },
+    { effects: [{ kind: 'self', operation: 'addAmber', amount: 2 }], amber: 0, expected: [4, 3] },
+    { effects: [{ kind: 'capture', amount: 2 }, { kind: 'self', operation: 'takeAmber', amount: 1 }], amber: 0, expected: [4, 1] },
+    { effects: [{ kind: 'capture', amount: 2 }, { kind: 'self', operation: 'removeAmber', amount: 1 }], amber: 0, expected: [3, 1] },
+  ];
+  for (const row of cases) {
+    const o = fixture([...row.effects, { kind: 'gain', amount: { sourcePower: true } }],
+      { sourceExtra: { kind: 'creature', power: 2, selfPower: 'captured' }, amber: row.amber, opponentAmber: 3 });
+    assert.deepEqual(assess(o).estimatedAmber, row.expected, JSON.stringify(row.effects));
+  }
+  const centurion = Object.values(ALL_DEFINITIONS).find((d) => d.name === 'Centurion Stenopius');
+  const o = fixture([{ kind: 'capture', amount: 2 }, { kind: 'gain', amount: { sourcePower: true } }],
+    { sourceExtra: { kind: 'creature', power: centurion.power, powerBonus: centurion.powerBonus }, opponentAmber: 3 });
+  assert.equal(assess(o).estimatedAmber[0], centurion.power + 6);
+});
+
+test('captured-dependent power preserves existing counters and current copied characteristics', () => {
+  const o = fixture([], { opponentAmber: 3 });
+  const source = o.players[0].hand[0];
+  source.spec = spec('current-copy', { reap: [{ kind: 'capture', amount: 1 },
+    { kind: 'gain', amount: { sourcePower: true } }] }, { kind: 'creature', power: 2, selfPower: 'captured' });
+  source.definition = 'a-different-printed-definition'; source.copiedDefinition = 'yxili-marauder';
+  source.powerCounters = 4; source.effective.power = 6;
+  o.players[0].hand = []; o.players[0].handCount = 0; o.players[0].battleline = [source];
+  o.legalActions[0].action = { kind: 'reap', card: source.id };
+  assert.deepEqual(assess(o).estimatedAmber, [8, 2]);
+});
+
+test('uncertain captured branches do not revive old dependent power or hard-calculate external modifiers', () => {
+  const random = fixture([{ kind: 'randomCard', zone: 'hand', bind: 'picked', then: [
+    { kind: 'capture', amount: { bindingPower: 'picked' } },
+  ] }, { kind: 'gain', amount: { sourcePower: true } }],
+  { sourceExtra: { kind: 'creature', power: 2, selfPower: 'captured' },
+    held: [body('one', 0, 1), body('three', 0, 3)], opponentAmber: 5 });
+  assert.deepEqual(assess(random).estimatedAmber, [0, 3]);
+  assert.ok(assess(random).approximate);
+  const aura = body('aura'); aura.spec.auras = [{ property: 'power', amount: 5, filter: { side: 'friendly' } }];
+  const external = fixture([{ kind: 'capture', amount: 1 }, { kind: 'gain', amount: { sourcePower: true } }],
+    { sourceExtra: { kind: 'creature', power: 2, selfPower: 'captured' }, own: [aura], opponentAmber: 3 });
+  assert.equal(assess(external).estimatedAmber[0], 0);
+  assert.ok(assess(external).approximate);
+});
+
+test('Stratowise recomputes Haunted after its actual discard and preserves unresolved pile counts', () => {
+  const real = Object.values(ALL_DEFINITIONS).find((d) => d.name === 'Stratowise');
+  const source = card('stratowise', real), held = body('held');
+  const o = fixture([], { own: [source], held: [held], opponentAmber: 3 });
+  o.players[0].hand = [held]; o.players[0].handCount = 1;
+  o.players[0].discard = Array.from({ length: 9 }, (_, i) => body('old-' + i));
+  o.haunted = [false, false]; o.legalActions[0].action = { kind: 'reap', card: source.id };
+  assert.deepEqual(assess(o).estimatedAmber, [1, 2], 'discarding the tenth card makes this real Reap capture one');
+  const fallen = fixture([{ kind: 'target', filter: { side: 'friendly', zone: 'discard' }, operation: 'returnHand' },
+    { kind: 'gain', amount: { haunted: true } }]);
+  fallen.players[0].discard = Array.from({ length: 10 }, (_, i) => body('stored-' + i));
+  fallen.haunted = [true, false];
+  assert.equal(assess(fallen).estimatedAmber[0], 0, 'leaving ten cards also clears the old cached flag');
+  const unknown = fixture([{ kind: 'randomDiscard', side: 'opponent', amount: 1 },
+    { kind: 'gain', amount: { haunted: true, side: 'opponent' } }]);
+  unknown.players[1].handCount = 1; unknown.players[1].discard = Array.from({ length: 9 }, (_, i) => body('enemy-' + i, 1));
+  unknown.haunted = [false, false];
+  const result = assess(unknown);
+  assert.equal(result.estimatedAmber[0], 0);
+  assert.ok(result.reasons.some((reason) => reason.includes('projected-haunted-discard-count-unresolved')));
+});
+
+
+test('Haunted does not certify an old blanked provider spec after its blanking source leaves', () => {
+  const cemetery = Object.values(ALL_DEFINITIONS).find((d) => d.name === 'Junkyard Cemetery');
+  const blossom = Object.values(ALL_DEFINITIONS).find((d) => d.name === 'Blossom Drake');
+  const blankProvider = () => {
+    const { id, name, number, house, kind, power, armor, amber, traits } = cemetery;
+    return card('cemetery', { id, name, number, house, kind, power, armor, amber, traits,
+      summary: 'Only an already blanked public spec is available.', abilities: {} });
+  };
+  const make = ({ remainingBlanker = false, discardCount = 9, moveBlanker = true } = {}) => {
+    const effects = moveBlanker ? [{ kind: 'target', filter: { side: 'enemy', definition: blossom.id }, operation: 'purge' }] :
+      [{ kind: 'target', filter: { side: 'friendly', zone: 'discard' }, operation: 'returnHand' }];
+    const o = fixture([...effects, { kind: 'gain', amount: { haunted: true } }],
+      { enemy: [card('blanker', blossom, 1)] });
+    o.players[0].artifacts = [blankProvider()];
+    o.players[0].discard = Array.from({ length: discardCount }, (_, i) => body('old-' + i));
+    o.players[0].purged = [body('purged')];
+    o.haunted = [discardCount >= 10, false];
+    if (remainingBlanker) o.players[0].battleline = [card('remaining-blanker', blossom)];
+    return o;
+  };
+  const changed = assess(make());
+  assert.equal(changed.estimatedAmber[0], 0);
+  assert.ok(changed.reasons.some((reason) => reason.includes('provider-text-may-return-after-blanking-source-departure')),
+    'removing real Blossom Drake restores the real Cemetery text, so an old blanked spec cannot certify false Haunted');
+  const stillBlanked = assess(make({ remainingBlanker: true }));
+  assert.equal(stillBlanked.estimatedAmber[0], 0);
+  assert.ok(!stillBlanked.reasons.some((reason) => reason.includes('provider-text-may-return')),
+    'a surviving known global blanker keeps the observed text blank');
+  const ten = assess(make({ discardCount: 10 }));
+  assert.equal(ten.estimatedAmber[0], 1, 'ten actual discard cards establish Haunted without any provider text');
+  assert.ok(!ten.reasons.some((reason) => reason.includes('provider-text-may-return')));
+  const unchanged = assess(make({ discardCount: 10, moveBlanker: false }));
+  assert.equal(unchanged.estimatedAmber[0], 0, 'ordinary ten-to-nine movement with an unchanged blanker remains exact');
+  assert.ok(!unchanged.reasons.some((reason) => reason.includes('provider-text-may-return')));
+});

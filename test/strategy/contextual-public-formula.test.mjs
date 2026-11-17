@@ -5,6 +5,7 @@ import {
   evaluatePublicCondition,
   selectPublicCards,
   projectPublicFormulaContext,
+  refreshCapturedFormulaDependencies,
   expectedPublicValue,
   exactPublicValue,
 } from '../../dist/src/knowledge/public-formula.js';
@@ -796,4 +797,39 @@ test('pending capture assignment preserves captured-dependent power uncertainty 
   );
   source.bonusIcons = [];
   exact({ sourcePower: true }, ctx, 2);
+});
+
+
+test('capture icons propagate existing Yxili power uncertainty while unrelated powers stay exact', () => {
+  const o = observation(), source = card('enhanced-action', { kind: 'action', power: 0 }),
+    yxili = card('already-in-play', ALL_DEFINITIONS['yxili-marauder']), ordinary = card('ordinary', { power: 3 });
+  source.bonusIcons = ['capture'];
+  o.players[0].hand = [source]; o.players[0].handCount = 1;
+  o.players[0].battleline = [yxili, ordinary]; o.players[1].amber = 1;
+  const ctx = context(o, source, { phase: 'after-play', action: { kind: 'play', card: source.id } });
+  interval(evaluatePublicValue({ count: { side: 'friendly', powerMin: 3 } }, ctx), 1, 2);
+  exact({ count: { side: 'friendly', name: ordinary.spec.name, definition: ordinary.spec.id, powerMin: 3,
+    excludeBinding: 'yxili' } }, { ...ctx, bindings: new Map([['yxili', [yxili]]]) }, 1);
+  source.bonusIcons = [];
+  exact({ count: { side: 'friendly', powerMin: 3 } }, ctx, 1);
+});
+
+
+test('capture-dependent aura transitions retain targets leaving the old modifier domain', () => {
+  for (const field of ['armor', 'power']) {
+    const o = observation(), source = card('changed-recipient'), ordinary = card('unrelated');
+    const provider = card('aura-provider', { kind: 'artifact', power: 0,
+      auras: [{ property: field, amount: 1, filter: { side: 'friendly', withAmber: true } }] });
+    source.captured = 0;
+    source.effective[field] += 1; // Snapshot before this known captured 1 -> 0 transition.
+    o.players[0].battleline = [source, ordinary]; o.players[0].artifacts = [provider];
+    const ctx = context(o, source), before = structuredClone(ctx);
+    const refreshed = refreshCapturedFormulaDependencies(ctx, new Set([source.id]));
+    const result = evaluatePublicValue({ [field === 'armor' ? 'sourceArmor' : 'sourcePower']: true }, refreshed);
+    assert.notEqual(result.kind, 'exact', 'the previous aura contribution cannot remain an exact scalar');
+    assert.ok(refreshed.projection.uncertainCardFields.get(source.id).has(field));
+    assert.ok(!refreshed.projection.uncertainCardFields.get(ordinary.id)?.has(field),
+      'the unchanged unrelated creature does not lose its known characteristic');
+    assert.deepEqual(ctx, before, 'refreshing a dependency must leave public inputs unchanged');
+  }
 });

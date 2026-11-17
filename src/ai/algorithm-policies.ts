@@ -6,6 +6,7 @@ import {
   intervalPublicValue,
   unknownPublicValue,
   projectPublicFormulaContext,
+  refreshCapturedFormulaDependencies,
   selectPublicCards,
   type PublicCardSelection,
   type PublicFormulaContext,
@@ -661,6 +662,48 @@ function assessAlgorithmProjection(
           }
           return unknownPublicValue('no-public-scoped-destruction-receipt');
         }
+        if ('haunted' in leaf) {
+          const actor = leafContext.actor ?? o.you;
+          const seat = leaf.side === undefined || leaf.side === 'self' ? actor : leaf.side === 'opponent'
+            ? (actor === 0 ? 1 : 0) : leaf.side === 'active' ? o.activePlayer : undefined;
+          if (seat === undefined) return unknownPublicValue('missing-public-haunted-side');
+          const changed = projectedLocations.size > 0 || predictedRemoved.size > 0 || publicControlChanged ||
+            ['discard', 'purged', 'battleline', 'artifacts', 'upgrades'].some((zone) =>
+              uncertainFormulaZones.has(`${seat}:${zone}`) || uncertainCounts.has(`${seat}:${zone}`));
+          if (!changed) return undefined;
+          const relative = seat === actor ? 'friendly' : 'enemy';
+          const discard = selectPublicCards({ side: relative, zone: 'discard' }, leafContext).count;
+          if (discard.kind !== 'exact') return unknownPublicValue('projected-haunted-discard-count-unresolved');
+          if (discard.value >= 10) return exactPublicValue(1);
+          if (publicControlChanged || ['battleline', 'artifacts', 'upgrades'].some((zone) =>
+            uncertainFormulaZones.has(`${seat}:${zone}`) || uncertainCounts.has(`${seat}:${zone}`)))
+            return unknownPublicValue('projected-haunted-provider-unresolved');
+          const player = leafContext.observation.players[seat];
+          const providers = [...player.battleline, ...player.artifacts, ...player.upgrades];
+          const textBoxes = (card: CardView) => [card.spec, ...(card.gainedTextBoxes ?? [])];
+          const originalBoard = o.players.flatMap((p) => [...p.battleline, ...p.artifacts, ...p.upgrades]);
+          const departures = originalBoard.filter((card) =>
+            predictedRemoved.has(card.id) || projectedLocations.has(card.id));
+          // Observation specs already omit blanked text. Removing its public
+          // blanking source cannot restore that text by reusing the old spec.
+          const stillBlanksArtifacts = leafContext.observation.players.some((p) =>
+            p.battleline.some((card) => textBoxes(card).some((box) => box.blanksArtifacts)));
+          const artifactTextMayReturn = player.artifacts.length > 0 && !stillBlanksArtifacts &&
+            departures.some((card) => textBoxes(card).some((box) => box.blanksArtifacts));
+          const providerIds = new Set(providers.map((card) => card.id));
+          const hostTextMayReturn = departures.some((card) => card.attachedTo &&
+            providerIds.has(card.attachedTo) && textBoxes(card).some((box) => box.upgrade?.blanksHost) &&
+            !leafContext.observation.players.some((p) => p.upgrades.some((remaining) =>
+              remaining.attachedTo === card.attachedTo && textBoxes(remaining).some((box) => box.upgrade?.blanksHost))));
+          if (artifactTextMayReturn || hostTextMayReturn)
+            return unknownPublicValue('projected-haunted-provider-text-may-return-after-blanking-source-departure');
+          const purgeHaunted = providers.some((card) => textBoxes(card)
+            .some((box) => box.hauntedWithPurged));
+          if (!purgeHaunted) return exactPublicValue(0);
+          const purged = selectPublicCards({ side: relative, zone: 'purged' }, leafContext).count;
+          return purged.kind === 'exact' ? exactPublicValue(Number(discard.value + purged.value >= 10))
+            : unknownPublicValue('projected-haunted-purged-count-unresolved');
+        }
         const key = Object.keys(leaf)[0];
         const sourceField: Record<string, string> = { sourcePower: 'power', sourceArmor: 'armor',
           sourceDamage: 'damage', sourcePowerCounters: 'powerCounters' };
@@ -680,7 +723,9 @@ function assessAlgorithmProjection(
       },
       selectCards: (filter, current) => projectedSelection(filter, current),
     };
-    return ctx;
+    const changedCaptured = new Set([...predictedCaptured.keys(),
+      ...[...uncertainFields].filter(([, fields]) => fields.has('captured')).map(([id]) => id)]);
+    return refreshCapturedFormulaDependencies(ctx, changedCaptured);
   }
   function projectedSelection(filter: Filter, ctx: PublicFormulaContext): PublicCardSelection {
     if (publicControlChanged) return { cards: [], possibleCards: [],
