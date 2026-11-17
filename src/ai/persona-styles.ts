@@ -136,14 +136,24 @@ export function rankStyled(o: Observation, style: Style, foundation?: ActionAsse
         return Math.min(
           2.8,
           hand.filter((c) => {
-            const semantic = cardSemanticFeatures(c.spec);
+            const semantic = cardSemanticFeatures(c.spec, 'any', {
+              observation: o,
+              source: c,
+              action: { kind: 'play', card: c.id },
+              phase: 'after-play',
+            });
             return semantic.amberControl || semantic.boardControl;
           }).length * 0.65,
         );
       return Math.min(
         2.8,
         hand.filter((c) => {
-          const semantic = cardSemanticFeatures(c.spec);
+          const semantic = cardSemanticFeatures(c.spec, 'any', {
+              observation: o,
+              source: c,
+              action: { kind: 'play', card: c.id },
+              phase: 'after-play',
+            });
           return semantic.draw || semantic.archive || semantic.recover || semantic.forge;
         }).length * 0.65,
       );
@@ -166,7 +176,12 @@ export function rankStyled(o: Observation, style: Style, foundation?: ActionAsse
           ? 0.25
           : 0;
     if (!card || !['play', 'use', 'reap'].includes(a.kind)) return 0;
-    const semantic = cardSemanticFeatures(card.spec, a.kind === 'play' ? 'play' : 'use');
+    const semantic = cardSemanticFeatures(card.spec, a.kind === 'play' ? 'play' : 'use', {
+      observation: o,
+      source: card,
+      action: a,
+      phase: a.kind === 'play' ? 'after-play' : 'after-use',
+    });
     return semantic.draw || semantic.archive || semantic.recover || semantic.forge ? 1.6 : 0;
   }
   const ranked = candidates
