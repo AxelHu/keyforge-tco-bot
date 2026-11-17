@@ -1,5 +1,13 @@
 # KeyForge TCO Bot
 
+<!-- structured-semantics-060:start -->
+## 0.6.0 structured strategy semantics
+
+Code policies now use structured card capabilities and current-step intents in place of 12 summary predicates and text-based choice classification. Native prompt compatibility is centralized where possible, with narrow card-specific fallbacks retained. All static rules and printed text remain available. The final offline suite passed **426/426**; the separate core decision suite passed **13/13**. In 24 development games, **2,274** display-text mutation checks preserved the selected action.
+
+The fixed 12-deck local comparison recorded **44–52** in 96 development games and **186–198 (48.44%)** in the confirmation primary estimate. The confirmation plan contained 384 games. These results are separate from the historical Elo and from human/server play; see the [Chinese report](docs/structured-strategy-semantics.md) for per-family unit-bootstrap intervals, exclusions, source bindings and limits. No new online games were started.
+<!-- structured-semantics-060:end -->
+
 An experimental, observation-based strategy and browser automation stack for
 Keyteki-compatible servers. It includes the strategy host, native player-view
 adapter, browser bridge, watchdog, room lifecycle and sequential game campaigns.
