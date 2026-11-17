@@ -25,24 +25,25 @@ engine, game server, game UI and historical match data are not included.
 - Single-seat join/create flows, normal terminal retirement, account locks,
   campaign health gates, explicit pause and bounded recovery procedures.
 - Explicit browser direct/proxy routing and persistent campaign limits for natural
-  games, attempts and elapsed time; existing games finish before new matchmaking stops.
+  games, attempts and elapsed time. When a limit is reached, no new attempt is dispatched;
+  any game already in progress completes normal retirement.
 - A portable Chromium backend and explicit local configuration. OpenClaw,
   subscription credentials and the original research repository are not runtime
   dependencies. Optional social chat is disabled by default.
 
-## Compatibility
+## Compatibility and current validation
 
-The bot supports the Fuzhou deployment and international TCO. In this machine's measurements, proxy routing loaded the larger frontend assets more reliably, while direct routing had lower WebSocket round-trip latency. Prefer the proxy for this measured setup; this is not a claim about every network. See the [international guide](docs/international-tco.md) for configuration.
+The bot supports the Fuzhou deployment and international TCO. Current maintenance tests focus on **Fuzhou and owned-account games**. International matchmaking against other people has been paused since 2026-11-17. International compatibility and English chat configuration remain available; this is the project's current testing arrangement.
 
-The current **0.5.1** frozen source `365f06a` completed its public regression: **one natural 3:1 win with 133/133 commands acknowledged**. A separate opponent departure during setup produced a native 0:0 site win, classified as a non-natural terminal outcome and excluded from strategy win-rate counts. Across both attempts, **134/134 commands** were acknowledged and **six English native self-chat echoes** accompanied 4,012 tokens of provider usage. Both attempts retired automatically and the bounded batch exited normally. The three older natural losses remain attributed to their actual version; these small samples do not establish a new Elo or strategy improvement.
+**0.5.2** fixes created rooms that could keep their runtime alive after a deck-readiness timeout, includes outgoing deck selection observed over HTTP polling, preserves native evidence across SPA navigation while rejecting replaced documents, filters empty quotation marks and punctuation-only model chat, and skips the postgame chat wait when social chat is explicitly disabled. A preparation failure still pauses the campaign after safe resource retirement. Only an evidence-backed neutral pending departure permits continuation. Strategy scoring and card algorithms did not change.
 
-The previous international human-opponent batch (source `80c3cd3`) completed **three natural games: 0 wins, 3 losses**, with key scores 1:3, 1:3 and 2:3. All **483/483 commands** were acknowledged and all three games retired automatically. A fourth opponent disconnected during setup; an operator used the server-offered no-loss Leave Game action and recorded that intervention separately. It is not a strategy loss. The old batch is closed and paused, with its original budget preserved. The three completed games produced 17 real model calls and 17 native self-chat echoes: 16 contained English content and one contained only two quotation marks, a recorded output-quality issue.
+The full offline suite passed **386/386 tests**, with no failures, skips or cancellations, and the code received independent review. The 88 new tests are included in that total. Owned Fuzhou rooms passed a preparation-timeout retirement check and two natural lifecycle checks; the final source completed a 3:1 game with all 203 queued commands acknowledged. See the [preparation fixes and Fuzhou tests](docs/preparation-retirement.md) for live validation, historical cleanup and the precise scope.
 
-The expanded owned-account private tests separately completed three natural games with automatic cleanup, plus one technical failure requiring manual cleanup. Those phases retain their actual source versions. These are compatibility samples and do not establish a new Elo or human-opponent win rate.
+Historical international natural results remain attributed to their actual source: **0 wins / 3 losses on 0.5.0**, and **1 win / 1 loss on 0.5.1**, for **1 win / 4 losses overall**. The non-natural 0:0 site win, empty-room waits and preparation failures are excluded. The last 0.5.1 background batch contained one natural loss, three empty-room waits and one preparation failure; its remaining runtime was retired manually while preserving the original outcome and budget. These samples have not been used to update Elo.
 
-**0.5.1** adds an optional, default-off departure after a continuously disconnected opponent and an explicit server no-loss offer. It verifies the actual outgoing Leave, server seat absence and runtime retirement before continuing. One owned-account private fixture passed the complete automatic path after 145.3 seconds of continuous native disconnection, including the actual driver exit. This adds no natural win or loss. See the [latest results and configuration](docs/international-disconnected-exit.md).
+The optional, default-off opponent-disconnect departure introduced in 0.5.1 passed one real owned private fixture, including normal Leave and complete retirement after about 145.3 seconds of continuous native disconnection. Earlier multi-deck private results retain their actual versions. See [international validation](docs/international-tco.md) and [disconnect validation](docs/international-disconnected-exit.md).
 
-The latest full suite passed **298/298 tests**. Managed operation targets **Linux or Linux inside WSL**, with Node.js **22.12–24.x**, Python 3 and Chromium. Native Windows and macOS supervision has not been validated. See the [validation scope](docs/validation.md).
+Managed operation targets **Linux or Linux inside WSL**, with Node.js **22.12–24.x**, Python 3 and Chromium. Native Windows and macOS supervision has not been validated. See the [validation scope](docs/validation.md).
 
 ## Install
 
