@@ -19,10 +19,11 @@ export const JOINED_PENDING_TIMINGS = Object.freeze({
 });
 
 /** This observer is additional evidence. It never relaxes PublicRoomObserver's existing guards. */
-export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) {
-  const self = config.self?.name,
-    gameId = config.room?.gameId,
+export function createJoinedPendingRoomTracker(config, { now = Date.now, created = false } = {}) {
+  const self = config.self?.name;
+  let gameId = config.room?.gameId,
     opponent = config.room?.opponentName;
+  if (created && config.createPublic !== true) fail('CREATED_PENDING_ORIGIN_MODE_REQUIRED');
   const state = {
     joined: null,
     current: null,
@@ -34,6 +35,7 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
     blockedReason: null,
     continuity: null,
     leave: { attempts: 0, sent: 0, sentOrdinal: null, acknowledgement: null },
+    ...(created ? { createdPair: null, ownSelection: null } : {}),
   };
   let epoch = 0,
     boundTransport = null,
@@ -58,7 +60,7 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
   });
   const observeTransport = (kind, value = {}) => {
     const meta = transport(value);
-    if (meta.documentEpoch !== epoch || config.createPublic) return;
+    if (meta.documentEpoch !== epoch || (config.createPublic && !created)) return;
     const order = ++transportOrdinal;
     if (state.joined && meta.transportKey !== boundTransport) {
       block('JOINED_PENDING_TRANSPORT_CHANGED');
@@ -155,7 +157,7 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
   const pending = (raw) => {
     if (
       !object(raw) ||
-      raw.id !== gameId ||
+      (gameId ? raw.id !== gameId : !created || typeof raw.id !== 'string' || !raw.id) ||
       raw.name !== config.room.name ||
       raw.started !== false ||
       raw.gamePrivate !== false ||
@@ -171,11 +173,14 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
       names.length > 2 ||
       names.some((name) => !object(raw.players[name]) || raw.players[name].name !== name) ||
       !names.includes(self) ||
-      !names.includes(raw.owner)
+      !names.includes(raw.owner) ||
+      (created && (raw.owner !== self || names.some((name) =>
+        name !== self && ((opponent && name !== opponent) || config.ownAccountNames?.includes(name)))))
     )
       return null;
     if (socketId && typeof raw.players[self].id === 'string' && raw.players[self].id !== socketId)
       return null;
+    gameId ??= raw.id;
     return {
       gameId,
       playerName: self,
@@ -184,6 +189,11 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
       owner: typeof raw.owner === 'string' ? raw.owner : null,
       started: false,
       ownSelected: raw.players[self].deck?.selected === true,
+      ...(created ? {
+        ownDeckName: typeof raw.players[self].deck?.name === 'string' ? raw.players[self].deck.name : null,
+        allSelected: names.length === 2 && names.every((name) => raw.players[name].deck?.selected === true),
+        otherSelected: names.some((name) => name !== self && raw.players[name].deck?.selected === true),
+      } : {}),
       source: 'gamestate',
       ...stamp(),
     };
@@ -191,9 +201,29 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
   return {
     observeTransport,
     checkContinuity,
+    bindCreatedPair(boundConfig) {
+      const current = state.current, selection = state.ownSelection;
+      if (!created || state.createdPair || !state.joined || state.everStarted || state.blockedReason ||
+          boundConfig.room?.gameId !== gameId || boundConfig.self?.name !== self ||
+          current?.owner !== self || !same(current.participants, boundConfig.participants ?? []) ||
+          !same(current.participants, [self, boundConfig.room?.opponentName]) ||
+          !current.ownSelected || current.ownDeckName !== boundConfig.self.deckName ||
+          !selection || selection.gameId !== gameId || selection.serverDeckId !== boundConfig.self.serverDeckId ||
+          selection.isStandalone !== false || selection.ordinal >= current.ordinal) fail('CREATED_PENDING_PAIR_NOT_VERIFIED');
+      opponent = boundConfig.room.opponentName;
+      state.createdPair = { ...structuredClone(current), opponentName: opponent,
+        nativeTransportBound: true, documentEpoch: epoch, boundAt: now(), selection: structuredClone(selection) };
+      return structuredClone(state.createdPair);
+    },
     expectOwnedBrowserClose() {
       checkContinuity();
       expectedBrowserClose = true;
+    },
+    documentObservationLost({ closed = false } = {}) {
+      // Only an actual monitor close at the existing owned-browser boundary is expected.
+      if (expectedBrowserClose && closed) return false;
+      block('JOINED_PENDING_DOCUMENT_OBSERVATION_LOST');
+      return true;
     },
     documentChanged(nextEpoch) {
       if (nextEpoch === epoch) return;
@@ -206,6 +236,7 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
       {
         sent = false,
         joinRequested = false,
+        creationRequested = false,
         documentEpoch = epoch,
         transportKey = 'direct',
         transportKind = 'unknown',
@@ -213,7 +244,7 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
         requestId = null,
       } = {},
     ) {
-      if (config.createPublic || !gameId || !self || !opponent || documentEpoch !== epoch) return;
+      if ((config.createPublic && !created) || (!created && (!gameId || !opponent)) || !self || documentEpoch !== epoch) return;
       const text =
         typeof payload === 'string' ? payload : Buffer.isBuffer(payload) ? payload.toString('utf8') : '';
       if (!text || text.length > 4 * 1024 * 1024) return;
@@ -264,10 +295,13 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
           continue;
         }
         const event =
-          sent && pendingLeaveFrameMatches(part, gameId) ? ['leavegame'] : fuzhouSocketEvent(part);
+          sent && pendingLeaveFrameMatches(part, gameId) ? ['leavegame']
+            : created && sent && /^42\["startgame"(?:,|\])/.test(part) ? ['startgame']
+              : fuzhouSocketEvent(part);
         if (
           !event ||
           ![
+            ...(created ? ['startgame', 'selectdeck'] : []),
             'leavegame',
             'gamestate',
             'cleargamestate',
@@ -287,13 +321,26 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
           continue;
         }
         activity(meta, { received: !sent, native: true });
+        if (created && sent && event?.[0] === 'startgame' && state.joined) {
+          state.everStarted = true;
+          block('CREATED_PENDING_START_ALREADY_REQUESTED');
+          continue;
+        }
+        if (created && sent && event?.[0] === 'selectdeck' && state.joined) {
+          if (event[1] !== gameId) block('CREATED_PENDING_SELECTION_GAME_CHANGED');
+          else state.ownSelection = { gameId, serverDeckId: Number(event[2]), isStandalone: event[3], ...stamp() };
+          continue;
+        }
         if (sent) {
           if (event[0] !== 'leavegame' || !state.joined) continue;
           if (
             state.leave.attempts !== 1 ||
             state.leave.sent ||
             state.current?.owner !== self ||
-            !same(state.current?.participants ?? [], [self])
+            (created
+              ? !state.createdPair || !state.current?.participants?.includes(self) ||
+                state.current.participants.some((name) => ![self, opponent].includes(name))
+              : !same(state.current?.participants ?? [], [self]))
           ) {
             block('JOINED_PENDING_UNEXPECTED_LEAVE');
             continue;
@@ -304,7 +351,7 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
         }
         if (event[0] === 'gamestate' && object(event[1])) {
           const raw = event[1];
-          if (raw.id !== gameId) {
+          if (gameId && raw.id !== gameId) {
             if (state.joined && Object.hasOwn(raw.players ?? {}, self))
               block('JOINED_PENDING_DIFFERENT_GAME');
             continue;
@@ -314,13 +361,16 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
             if (state.departedAt !== null) block('JOINED_PENDING_GAME_STARTED');
             continue;
           }
+          if (created && !state.joined && !creationRequested) continue;
           const current = pending(raw);
           if (!current) {
             if (state.joined) block('JOINED_PENDING_NATIVE_SHAPE_CHANGED');
             continue;
           }
           if (!state.joined) {
-            if (!joinRequested || !same(current.participants, [self, opponent]) || current.owner !== opponent)
+            if (created
+              ? !creationRequested || current.owner !== self
+              : !joinRequested || !same(current.participants, [self, opponent]) || current.owner !== opponent)
               continue;
             state.joined = { ...current, nativeTransportBound: true, documentEpoch: epoch };
             boundTransport = transportKey;
@@ -338,13 +388,13 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
               block('JOINED_PENDING_SEAT_REAPPEARED');
             if (state.departedAt !== null && current.participants.some((name) => name !== self))
               block('JOINED_PENDING_OTHER_SEAT');
-            if (current.participants.some((name) => ![self, opponent].includes(name)))
+            if ((!created || state.createdPair) && current.participants.some((name) => ![self, opponent].includes(name)))
               block('JOINED_PENDING_OTHER_SEAT');
           }
           state.current = current;
           state.currentSource = 'gamestate';
           state.currentObservedAt = current.observedAt;
-          if (same(current.participants, [self])) {
+          if ((!created || state.createdPair) && same(current.participants, [self])) {
             if (current.owner !== self) block('JOINED_PENDING_OWNER_CHANGED');
             state.departedAt ??= current.observedAt;
           }
@@ -382,8 +432,9 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
               continue;
             }
             if (
-              Object.keys(raw.players).some((name) => ![self, opponent].includes(name)) ||
-              (state.departedAt !== null && Object.keys(raw.players).some((name) => name !== self))
+              ((!created || state.createdPair) && Object.keys(raw.players).some((name) => ![self, opponent].includes(name))) ||
+              (state.departedAt !== null && (!created || state.currentSource !== 'cleargamestate') &&
+                Object.keys(raw.players).some((name) => name !== self))
             )
               block('JOINED_PENDING_OTHER_SEAT');
             if (
@@ -400,10 +451,13 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now } = {}) 
         !state.joined ||
         state.blockedReason ||
         state.everStarted ||
-        state.departedAt === null ||
+        (!created && state.departedAt === null) ||
         state.currentSource !== 'gamestate' ||
         state.current?.owner !== self ||
-        !same(state.current?.participants ?? [], [self]) ||
+        (created
+          ? !state.createdPair || !state.current?.participants?.includes(self) ||
+            state.current.participants.some((name) => ![self, opponent].includes(name))
+          : !same(state.current?.participants ?? [], [self])) ||
         state.leave.attempts !== 0
       )
         fail('JOINED_PENDING_LEAVE_NOT_ELIGIBLE');

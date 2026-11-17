@@ -64,6 +64,24 @@ node bin/kf-auto.mjs preflight \
 
 此设置同时用于登录、建房、入座、大厅发现和终局席位核验所在的浏览器；本机回环地址保持直连。它不更改系统代理、VPN 或其他进程的配置，也不决定独立模型 API 请求的线路。`direct` 表示 Chromium 不使用显式代理，系统级 TUN／VPN 仍可能转发流量；比较真实线路时应另核实实际出口。
 
+### 页面与游戏节点使用不同地址时
+
+`network` 选择浏览器使用的线路；`gameSocketPaths` 声明该部署实际使用的游戏节点。即使 IP 或主机名相同，端口不同也属于不同的 origin。
+
+如果本方浏览器观察到的游戏 socket 不与网页同源，需要在尚未启动的 `seat.json` 顶层加入准确的 HTTP(S) 节点路径，例如：
+
+```json
+{
+  "gameSocketPaths": [
+    "http://your-keyteki.example:9500/node1/socket.io"
+  ]
+}
+```
+
+把示例换成该部署实际观察到的地址，保留节点路径，不复制 `EIO`、会话 ID 等连接查询参数。初始化时也可以重复传入 `--game-socket-path`。原生 WebSocket 地址由传输层对应到 HTTP(S) 路径；具体接受范围见[运行环境与边界](runtime-notes.md)。
+
+本次福州自有验收发现测试配置遗漏独立游戏端口，导致初次 host attach 被拒绝，随后技术终止。该失败保留在[真实验证记录](preparation-retirement.md)，后续尝试使用实际观察到的精确节点路径。
+
 ## 3. 启动单局
 
 公开建房支持新手房 `beginner` 和休闲房 `casual`。`init` 默认生成 `beginner`；需要休闲房时，在尚未启动的 `seat.json` 中调整现有 `room` 对象的这些字段：
@@ -89,13 +107,26 @@ node bin/kf-auto.mjs seat create \
 
 加入已经观察到的房间时，使用新的席位配置，填写准确的 `room.gameId`、`room.opponentName`、房间名和类型。先执行不带 `--create-public` 的 preflight，再执行 `seat run`。旧输出目录不会被静默复用于另一局。
 
-登录流程使用 `/login` 和 `/api/account/login`，选牌使用 `Select deck`、`Select row <serverDeckId>` 及精确牌组名。英文与既有中文房间控件均有适配。国际服已经完成自有账号私房和三场真人自然终局；逐阶段成绩、源码归属和已知限制见[国际服配置与验收](international-tco.md)。
+登录流程使用 `/login` 和 `/api/account/login`，选牌使用 `Select deck`、`Select row <serverDeckId>` 及精确牌组名。英文与既有中文房间控件均有适配。国际服已有自有账号私房及五场跨版本真人自然终局的历史记录；目前维护测试以福州服和自有账号为主，国际服真人匹配暂停。逐阶段成绩、源码归属和已知限制见[国际服配置与验收](international-tco.md)。
 
 ### 准备阶段停留或失败
 
+0.5.2 起，自建房锁定参与者后，正常选牌等待实际到期并产生 `HUMAN_DECK_NOT_READY`，且启用了 `leaveAfterFinish` 时，会尝试准备阶段的安全退役。它要求原生房间始终未开始、双方身份及本人房主身份准确、没有 Start 请求或待发／未知命令、没有操作员暂停、宿主没有游戏 session，并取得新鲜完整大厅证据。
+
+符合条件时只尝试一次普通 pending Leave；必须确认原生发送、服务端离席、精确宿主和浏览器租约释放，以及 worker 实际 exit 0。结果分为：
+
+- `created-pending-departure`：本方选牌命令与后续状态均匹配，对方尚未就绪或已离开；不计自然胜负，完整退役后可按原预算继续。
+- `setup-failure-retired`：本方准备状态不匹配或无法确定复合超时原因；资源完整释放后清空 activeAttempt，但暂停后续派发。
+
+任何证明不足的分支继续保留暂停状态。旧历史错误名本身不能证明是对手未选牌，也不能直接补记为自动退役。HTTP polling 下的原生选牌发送与 WebSocket 共用观察入口；不会为补记状态重发选牌命令。详细证据见[准备阶段修复记录](preparation-retirement.md)。
+
 公开建房尚未启动宿主时也可能遇到准备失败。新版本在 `preparePlayer` 出错且已有可用诊断时，将阶段失败信息保存在 `handoff.json` 的 `setupFailure`；检查该回执与原 hold 原因，可以区分已记录的准备阶段。原始泛化错误没有保存的阶段不能从后来的页面状态补造，也不能把空房等待或未开局的准备失败计作策略胜负。诊断信息不会自动消除 hold；后续恢复与资源处理继续遵循已绑定的状态和实际回执。
 
-本次较早 casual 运行的后续准备失败已完成人工退役，原失败分类及不可继续标志保留，未归为自动恢复成功；操作细节见[实测处置记录](international-network.md)。该较早公开阶段累计 4 次正常无对手等待、1 次准备失败。后续 r4 完成三场真人自然负局并自动收尾；第 4 局对手在准备阶段断线，已单独记为人工正常离桌并完整退役。原批次已暂停，预算与原始失败结果保留，详见[最新实测](international-disconnected-exit.md)。
+本次较早 casual 运行的后续准备失败已完成人工退役，原失败分类及不可继续标志保留，未归为自动恢复成功；操作细节见[实测处置记录](international-network.md)。该较早公开阶段累计 4 次正常无对手等待、1 次准备失败。后续 r4 完成三场真人自然负局并自动收尾；第 4 局对手在准备阶段断线，已单独记为人工正常离桌并完整退役。原批次已暂停，预算与原始失败结果保留，详见[0.5.1 历史实测](international-disconnected-exit.md)。
+
+### 关闭聊天时的自然终局收尾
+
+`social.enabled: false` 的运行会记录 `skipped / social-disabled`，不再等待不会建立的聊天 session；聊天开启或配置未知时仍使用原来的有界等待。正常的终局宽限、当前房间身份确认、宿主静默、唯一 Leave、原生离席证明及运行资源释放继续执行。跳过聊天等待不是跳过退场检查，也不是确认消息获得了服务端回显。
 
 ## 4. 为连续对局冻结运行时
 

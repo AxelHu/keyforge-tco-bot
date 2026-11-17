@@ -31,8 +31,8 @@ const preJoinGuard = 'CURRENT_PUBLIC_LISTING_NOT_OBSERVED';
 // This does not authorize migration of an unrelated private or older installation.
 // A generic PUBLIC_ROOM_PAIR_CHANGED is deliberately insufficient: it can occur after join.
 export const LEGACY_PREJOIN_GUARD_HASHES = Object.freeze({
-  "tools/keyteki-human-launcher.mjs": "d8a7f13fb074faefbd503bdc8ff13b0bfb3c750f9f45d202c9a9c80f0291e4c3",
-  "tools/keyteki-human-public-room-ui.mjs": "f6c50a08d6ef70eee1b3d555183f765148c392ab497cd9bb95682b867ef9e9c7",
+  "tools/keyteki-human-launcher.mjs": "20f8ac0d0121bf1827275573076a9b240376b42b766e1bd3a8eae51ffb72e61b",
+  "tools/keyteki-human-public-room-ui.mjs": "b13be08db8b58c043950a77ecdb93c7f0f069cdd88547739b4fbc60face6ec5c",
   "tools/keyteki-fuzhou-ui.mjs": "6ddb20c7de53203db7c9a0515863a06bb15606a9f5fcd52cc2d414e454856a22",
   "tools/keyteki-ui-contract.mjs": "e58a29eabe7e34a5a21d1924226855bce9d78d1e4087c4d317e285786a496d76",
 });

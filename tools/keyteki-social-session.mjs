@@ -189,6 +189,10 @@ export function normalizeSocialText(input, maxChars = 240) {
     .replace(/\s+/g, ' ')
     .trim();
   if (/^[\/!]/u.test(text) || [...text].length > maxChars) return null;
+  // Blank is the provider's explicit stay-quiet signal. Quotes or punctuation alone are not
+  // a message; retain short text, scores, graphic emoji/flags and complete keycap emoji.
+  // Bare punctuation with an emoji Unicode property still does not count as content.
+  if (text && !/[\p{L}\p{N}]|(?=\p{S})[\p{Extended_Pictographic}\p{Regional_Indicator}]|[#*]\uFE0F?\u20E3/u.test(text)) return null;
   return text;
 }
 
@@ -383,7 +387,7 @@ export function createKeytekiSocialSession(options) {
       if (event.kind === 'greeting') {
         const prefix = socialGreetingPrefix(snapshot, strategy, language);
         // A short fixed identity notice remains available even when the optional chat API fails.
-        source = text === null ? 'template' : 'model';
+        source = text ? 'model' : 'template';
         const continuation = text || (language === 'en' ? 'Good luck and have fun!' : '请多指教，咱们慢慢打。');
         text = normalizeSocialText(prefix + (language === 'en' ? ' ' : '') + continuation, policy.maxTextChars);
         if (text === null) {

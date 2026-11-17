@@ -1,0 +1,2113 @@
+{
+  "schema": "keyforge-tco-bot-preparation-retirement-evidence-v1",
+  "recordedAt": "2026-11-17T02:05:42.390519+00:00",
+  "language": "zh-CN",
+  "release": {
+    "version": "0.5.2",
+    "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+    "parentSourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+    "releaseBaseCommit": "be9916d73228cae8381e443996f9d193263858d3",
+    "sourceBindingStatus": "committed-bytes-match-final-offline-r4-and-independent-commit-binding",
+    "changedFileCount": 23,
+    "changedFiles": [
+      {
+        "path": "package-lock.json",
+        "sha256": "c539d66e2072a24ee4f26525dd35e54d8c5047816ae4c2cd27e558ad72421dd0"
+      },
+      {
+        "path": "package.json",
+        "sha256": "bec80abf6233c1d0508d29cf6fd2320f9bbd7345bb7a519bcff7f4cce352dd26"
+      },
+      {
+        "path": "scripts/international-ui-smoke.mjs",
+        "sha256": "c256d3fce9df08b45fbe1b0eeaa0ba1f7aa02d2eb6b3449add8a59ad258634e3"
+      },
+      {
+        "path": "scripts/pending-document-smoke.mjs",
+        "sha256": "797e3b8f10c1f734b8cdd0d61eb1afa965e45db5b8a968f289ab55c60f117de2"
+      },
+      {
+        "path": "test/helpers/pending-document-session.mjs",
+        "sha256": "bcf44887bcc68605051fea8ba937cf44b6e7df8fc11948617c477f147931b9a4"
+      },
+      {
+        "path": "test/runtime/created-pending-exit.test.mjs",
+        "sha256": "b11278b7433524116f905289515d9840979f956785c7f63160ca9105e1d09a38"
+      },
+      {
+        "path": "test/runtime/finished-chat-drain.test.mjs",
+        "sha256": "7c7da3228b385ba9ae7eb99816cb6447aaa0a8b7f8b928cf5f61537c3aa21633"
+      },
+      {
+        "path": "test/runtime/international-ui.test.mjs",
+        "sha256": "9dc732c721d19a4a0e78f143cde78d8568763e03409592a8c3e4639f92e85c76"
+      },
+      {
+        "path": "test/runtime/pending-document-navigation.test.mjs",
+        "sha256": "6f0c19dae40996fba2859965c66c3175eddcc91fe01b370c9fb4ce74b6061750"
+      },
+      {
+        "path": "test/runtime/public-preparation-failure.test.mjs",
+        "sha256": "4a0f61185f44de2d020858a51493f92a907a584fd05ee280df6e0459f18b69d8"
+      },
+      {
+        "path": "test/runtime/social-output-quality.test.mjs",
+        "sha256": "355b91ce2fdf01ed5d12eb7fe40b66456119fa8403eda7ee1aff2b3eda7a4edd"
+      },
+      {
+        "path": "tools/keyteki-created-pending-exit.mjs",
+        "sha256": "e9613177306018c67b2c3d0c49945c380552b0709a3bad26748a5e6de61c8f46"
+      },
+      {
+        "path": "tools/keyteki-document-observer.mjs",
+        "sha256": "f73e6f51b7b434ebe56cbf1b0c1c424cd54a751053550177666d58a3ddfc12dc"
+      },
+      {
+        "path": "tools/keyteki-finished-chat-drain.mjs",
+        "sha256": "24806c822da9f1c60faa034dc4ff5dcb2d6a5c73d1ecc49cc1c63423bc0ef9f5"
+      },
+      {
+        "path": "tools/keyteki-finished-room-exit.mjs",
+        "sha256": "3fbeeea36fec2c5c68199d6866df78996a0be23c11ee27add9bff6cc5ec62288"
+      },
+      {
+        "path": "tools/keyteki-human-create-public.mjs",
+        "sha256": "577cf0d0ecc98c828e5df8908f2ce3374c39124ef822e91beeb0108b14b9b70a"
+      },
+      {
+        "path": "tools/keyteki-human-launcher.mjs",
+        "sha256": "20f8ac0d0121bf1827275573076a9b240376b42b766e1bd3a8eae51ffb72e61b"
+      },
+      {
+        "path": "tools/keyteki-human-public-room-ui.mjs",
+        "sha256": "b13be08db8b58c043950a77ecdb93c7f0f069cdd88547739b4fbc60face6ec5c"
+      },
+      {
+        "path": "tools/keyteki-joined-pending-exit.mjs",
+        "sha256": "e3c10d2b6443fda15380d22b06cdda933a5088ae0e457f7e7c4d8850271ac8d1"
+      },
+      {
+        "path": "tools/keyteki-live-campaign-policy.mjs",
+        "sha256": "89046c813062bc7fef6973defe8c082a67815d2cb4c2b71490653f80d7653e0f"
+      },
+      {
+        "path": "tools/keyteki-live-campaign.mjs",
+        "sha256": "fab2b5e4edbfc9d51fe32912248f31b8367c4ae0c0b487b11a95ed3718cc4a45"
+      },
+      {
+        "path": "tools/keyteki-reconcile-unjoined.mjs",
+        "sha256": "896a0fe670ac356c1e63717bd492ac6708cfb0b0a477f61a5ea3f119c480b058"
+      },
+      {
+        "path": "tools/keyteki-social-session.mjs",
+        "sha256": "4d7d07543b61c9d226a655453e11f27626984f2cd483b5a6f8480b57727556a4"
+      }
+    ],
+    "followupChangedFileCount": 3,
+    "followupChangedFiles": [
+      "tools/keyteki-finished-chat-drain.mjs",
+      "tools/keyteki-finished-room-exit.mjs",
+      "test/runtime/finished-chat-drain.test.mjs"
+    ],
+    "historicalFrozenRuntimeModified": false,
+    "sourceRoles": [
+      "source-commit-disabled-chat",
+      "offline-full-r4",
+      "disabled-chat-drain-independent-review",
+      "disabled-chat-drain-independent-commit-binding"
+    ],
+    "validationStage": "disabled-chat-drain-2a47"
+  },
+  "summary": "0.5.2 最终源码 2a47 在准备房退役、polling 选牌、聊天内容与 SPA 文档身份修复基础上，进一步消除明确关闭聊天时的多余收尾等待。最终完整离线 386/386；新福州自有私房 natural-003 已自然 3:1 结束，生成/排队/ACK 为 203/203/203，双方 chat drain 实测跳过、0ms，正常宽限及自动退房保留，最终独立现场审查通过。8ff 阶段的 362/362、pending-002 组件通过、natural-002 的 203/202/202、1 条原因未完全定位的 client-not-sent 和 65001ms 等待均独立保留。国际服公开真人对战继续暂停。",
+  "changes": [
+    {
+      "id": "created-preparation-timeout-retirement",
+      "issue": 15,
+      "description": "仅在实际 HUMAN_DECK_NOT_READY 等待超时后，按同一原生连接、准确房间与玩家身份、始终未开局、零游戏发送和操作员状态核验，执行一次正常准备房 Leave。原生发送与确认、两次独立完整大厅证据、精确 idle host 及浏览器 lease 退役全部完成后，再等待真实 driver 正常退出。",
+      "newOutcomes": {
+        "created-pending-departure": "我方原生选牌已证明且对方未准备或已离开；完整退役和 driver exit 0 后才允许后续派发。",
+        "setup-failure-retired": "我方选牌失效或准备超时无法归因；仅释放资源，仍暂停后续派发。"
+      },
+      "naturalResultsAddedByCancellation": 0,
+      "guardsUnchanged": [
+        "active-game",
+        "unknown-send",
+        "operator-pause",
+        "exact-room-and-player-binding",
+        "public-versus-private-room",
+        "owned-opponent"
+      ],
+      "sourceRoles": [
+        "offline-full-r3",
+        "navigation-targeted-r2",
+        "navigation-final-independent-review"
+      ]
+    },
+    {
+      "id": "polling-selection-observer",
+      "issue": 15,
+      "description": "HTTP polling POST 与 WebSocket 使用同一主观察器 ingest 路径，避免 selectdeck 已发送但主观察器缺失选牌证据；POST 响应不重复计发送，保留 polling 到 WebSocket 的原生升级连续性。",
+      "sourceRoles": [
+        "offline-full-r3",
+        "navigation-targeted-r2",
+        "navigation-final-independent-review"
+      ]
+    },
+    {
+      "id": "chat-output-quality",
+      "issue": 13,
+      "description": "阻止仅由引号或标点组成的无有效内容回复进入桌聊；保留正常短回复、数字比分、名字、emoji 和完整 keycap。空白仍可表示安静，不新增模型重试；问候使用既有模板回退并正确标记来源。",
+      "liveChatAcceptanceClaimed": false,
+      "sourceRoles": [
+        "chat-final-implementation",
+        "chat-final-targeted-tests",
+        "chat-independent-review"
+      ]
+    },
+    {
+      "id": "spa-document-identity-and-bounded-readiness",
+      "issue": 15,
+      "description": "使用绑定当前页面的公开 CDPSession 区分真正主文档 commit 与 History API 同文档路由。准备导航前等待同一个 ready；prepared 路径复用 observer。newCDPSession、Page.enable、Page.getFrameTree 共用 setupTimeoutMs 的整体初始化期限，超时先拒绝 ready，再清理，迟到 session 只 detach 一次，迟到结果不能恢复可用状态。",
+      "sameDocumentPreserves": [
+        "native-websocket-metadata",
+        "in-flight-polling-metadata",
+        "native-deck-selection-and-pair-binding"
+      ],
+      "invalidatesOldEvidenceOn": [
+        "new-document",
+        "same-url-reload",
+        "back-forward-cache-restore",
+        "unverified-document-identity",
+        "unexpected-document-monitor-close",
+        "initialization-timeout"
+      ],
+      "iframeChangesAffectMainDocument": false,
+      "expectedCloseException": "仅既有精确 owned-browser 退役边界允许确认属于 CDP close 的正常关闭；身份不明、初始化失败和超时不因此放行。",
+      "productionPublicOrOwnedOpponentGuardsRelaxed": false,
+      "sourceRoles": [
+        "navigation-superseding-finding",
+        "navigation-final-source-inputs",
+        "navigation-targeted-r2",
+        "navigation-loopback-r3",
+        "navigation-independent-bfcache",
+        "navigation-final-independent-review"
+      ]
+    },
+    {
+      "id": "explicitly-disabled-chat-drain",
+      "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+      "parentSourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+      "description": "仅当规范化的 social.enabled 明确为 false 时，跳过终局聊天轮询预算；记录 outcome=skipped、reason=social-disabled、checks=0、budgetMs=0。启用或未知值继续原有有界等待，取消检查仍先于跳过分支。",
+      "normalizedConfigurationRequired": true,
+      "strictFalseOnly": true,
+      "receiptDoesNotClaimChatDrainOrEcho": true,
+      "preservedGuards": [
+        "normal-terminal-grace",
+        "current-native-document-and-terminal-identity",
+        "exact-player-and-room-binding",
+        "positive-anonymous-membership",
+        "host-quiescence",
+        "late-operator-pause",
+        "single-normal-Leave",
+        "native-server-absence",
+        "unknown-send-and-runtime-retirement"
+      ],
+      "strategyChanged": false,
+      "historicalObservedDelayMsPerSeat": [
+        65001,
+        65001
+      ],
+      "historicalObservationSourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+      "sourceRoles": [
+        "disabled-chat-drain-targeted-r1",
+        "offline-full-r4",
+        "disabled-chat-drain-independent-review",
+        "disabled-chat-drain-independent-commit-binding",
+        "fuzhou-natural-003-final-acceptance",
+        "fuzhou-natural-003-independent-review"
+      ]
+    }
+  ],
+  "offlineValidation": {
+    "acceptedRun": "offline-full-r4",
+    "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+    "uniqueProductionTests": 386,
+    "composition": {
+      "priorBaseline": 298,
+      "createdPreparationRetirement": 33,
+      "chatOutputQuality": 7,
+      "documentNavigationAndInitialization": 24,
+      "explicitlyDisabledChatDrain": 24,
+      "total": 386
+    },
+    "fullRuns": [
+      {
+        "role": "offline-full-r4",
+        "command": [
+          "taskset",
+          "-c",
+          "0,1",
+          "nice",
+          "-n",
+          "10",
+          "npm",
+          "run",
+          "test:offline"
+        ],
+        "startedAt": "2026-11-17T01:55:40.900827+00:00",
+        "endedAt": "2026-11-17T01:56:14.388365+00:00",
+        "actualExitCode": 0,
+        "tests": 386,
+        "pass": 386,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "sourceAndDistBytesUnchanged": true,
+        "sourceAndDistInputCount": 303,
+        "logSha256": "cc0e79a6129f0294f8dccb77e7dcd386c9aecb218d100938f83267a5233c0823",
+        "buildQualification": "r1 的 TypeScript build 已成功；r4 的 TypeScript 源码、tsconfig 仍与该 build 一致。r4 运行完整 offline suite，没有重建 dist；303 项 source/dist 输入前后字节一致。",
+        "sourceRoles": [
+          "offline-full-r4",
+          "offline-full-r4-log",
+          "source-commit-disabled-chat",
+          "disabled-chat-drain-independent-review",
+          "disabled-chat-drain-independent-commit-binding"
+        ]
+      }
+    ],
+    "targetedRuns": [
+      {
+        "role": "disabled-chat-drain-targeted-r1",
+        "tests": 44,
+        "pass": 44,
+        "fail": 0,
+        "actualExitCode": 0,
+        "newDisabledChatDrainCases": 24,
+        "existingRetirementCases": 20,
+        "subsetOf": "offline-full-r4",
+        "additionalTestsBeyondFullSuite": 0,
+        "sourceBytesUnchanged": true,
+        "networkRequests": 0,
+        "modelCalls": 0
+      }
+    ],
+    "independentReviews": [
+      {
+        "role": "disabled-chat-drain-independent-review",
+        "decision": "APPROVE",
+        "recordedAt": "2026-11-17T01:57:17.117607+00:00",
+        "changedFilesVerified": 3,
+        "allFullR4InputBytesMatch": true,
+        "reviewerReranNoTests": true,
+        "sourceCommitAtReview": "not-yet-committed",
+        "laterCommitBindingRole": "disabled-chat-drain-independent-commit-binding"
+      },
+      {
+        "role": "disabled-chat-drain-independent-commit-binding",
+        "decision": "APPROVE_BINDING",
+        "recordedAt": "2026-11-17T01:58:24.965345+00:00",
+        "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+        "parentSourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+        "changedFilesMatchReviewedBytesCommittedBlobsAndTestInputs": true,
+        "commitChangesExactlyReviewedThreeFiles": true,
+        "all303SourceAndDistInputsStillMatch": true,
+        "noTestsRerun": true
+      }
+    ],
+    "previousCompletedStagePath": "#/validationStages/0",
+    "countingRule": "386 = 原基线 298 + 准备退役 33 + 聊天内容 7 + 导航/初始化 24 + 关闭聊天收尾 24。新 44 定向以及先前 77、60、33、7 都是相应完整套件内的测试，不重复加总。历史独立 5 项边界探针、真实 Chromium 5 项检查、独立 BFCache 单次 probe 与真实福州现场分别记录，不加到 386。"
+  },
+  "historicalInternationalBackground": {
+    "runtimeLabel": "r5-bounded-background",
+    "sourceCommit": "365f06abdb81b13c47a9c1f1c48acd8e1f991eba",
+    "runtimeManifestSha256": "7ee244cf2a9b83a09f7bdaf6d3406a0e4290dbe3d3bc979c851631b21539d78f",
+    "strategy": "tactical-style-engine-v3",
+    "chatLanguage": "en",
+    "humanContinuousObservation": false,
+    "attempts": {
+      "total": 5,
+      "naturalGames": 1,
+      "naturalWins": 0,
+      "naturalLosses": 1,
+      "noOpponent": 3,
+      "unstartedPreparationFailureManuallyRetired": 1
+    },
+    "naturalGame": {
+      "scoreKeys": {
+        "self": 1,
+        "opponent": 3
+      },
+      "commands": 148,
+      "queuedCommands": 148,
+      "acknowledged": 148,
+      "strategyModelCalls": 0,
+      "fallbacks": 0,
+      "stale": 0
+    },
+    "originalPreparationFailure": {
+      "code": "HUMAN_DECK_NOT_READY",
+      "fullVerified": false,
+      "exactMissingReadyPredicateKnown": false,
+      "opponentOnlyFaultProven": false,
+      "note": "就绪判断包含双方选牌、我方选择与牌组名等复合条件；原错误不能单独证明对方未选牌。后续 operator-paused 事件不会覆盖该历史故障。"
+    },
+    "originalFifthRecordPreserved": {
+      "outcome": "operator-paused",
+      "started": false,
+      "terminal": false,
+      "natural": false,
+      "technicalFailure": false,
+      "operatorPaused": true,
+      "seatReleased": false,
+      "runtimeRetired": false,
+      "canContinue": false,
+      "finalized": true,
+      "won": null
+    },
+    "automaticBatchCompletionClaimed": false,
+    "historicalClassifiedTechnicalFailures": 0,
+    "technicalFailureCountQualification": "该字段来自原生产归账，0 不代表第 5 次准备阶段无故障，也不构成自动完整跑通证明。",
+    "sourceRoles": [
+      "background-original-independent-audit",
+      "background-readonly-collector-after-retirement",
+      "background-execution"
+    ]
+  },
+  "manualRetirementOfHistoricalAttempt": {
+    "kind": "operator-retired-unstarted-preparation",
+    "manual": true,
+    "automaticRecoveryClaimed": false,
+    "nativeSeatAlreadyAbsent": true,
+    "nativeAbsenceObservations": 2,
+    "uiLeaveAttempts": 0,
+    "hostStoppedNormally": true,
+    "hostStopCommandExitCode": 0,
+    "worker": {
+      "initialSignal": "SIGTERM",
+      "initialSignalPreservedHeldWorker": true,
+      "finalSignal": "SIGKILL",
+      "exactOriginalIdentityVerified": true,
+      "exitCodeInferredFromAbsence": false
+    },
+    "browser": {
+      "existingBrowserReused": true,
+      "newBrowserLaunches": 0,
+      "accountActions": 0,
+      "leaseReleased": true,
+      "registryRecordRemoved": true,
+      "profilePreserved": true
+    },
+    "allSixOriginalProcessIdentitiesAbsent": true,
+    "ownAccountKernelLocksAvailable": 2,
+    "driverActualExitCode": 0,
+    "wrapperActualExitCode": 2,
+    "driverExitEvidence": "own-subprocess.Popen.wait",
+    "checkpointReconciliation": {
+      "recordedAt": "2026-11-17T01:01:16.308910+00:00",
+      "activeAttempt": null,
+      "paused": true,
+      "phase": "paused",
+      "originalFiveRecordsUnchanged": true,
+      "originalBudgetUnchanged": true,
+      "originalHealthUnchanged": true,
+      "originalFifthRecordRuntimeRetiredNotRewritten": true,
+      "accountRecordUnchanged": true,
+      "checkpointBeforeSha256": "6e9a71798ad1a206fb69fc21220aca0db2b73d393529fa420bfa30c79da1ea7d",
+      "checkpointAfterSha256": "eb80883b5f871991c1710123c65175d4db332402e93ed8147f6ecbddadf4000e"
+    },
+    "counterChanges": {
+      "attemptsAdded": 0,
+      "naturalGamesAdded": 0,
+      "winsAdded": 0,
+      "lossesAdded": 0
+    },
+    "qualification": "先有两次真实原生大厅无席位证据，再人工停止遗留资源。只读 collector 快照生成于进程退役后、activeAttempt 人工清除之前；其未完成状态保留。此人工收尾不证明新自动退役路径已通过真实服务端验收。",
+    "sourceRoles": [
+      "manual-native-inspection",
+      "manual-native-absence-confirmation",
+      "manual-host-stop",
+      "manual-worker-term",
+      "manual-worker-final-stop",
+      "manual-browser-release",
+      "manual-independent-retirement-review",
+      "manual-checkpoint-reconciliation"
+    ]
+  },
+  "historicalNaturalResults": {
+    "priorR5PublicRegression": {
+      "naturalGames": 1,
+      "wins": 1,
+      "losses": 0,
+      "nonNaturalTerminalExcluded": 1,
+      "sourceRoles": [
+        "prior-r5-public-regression-summary",
+        "prior-r5-public-regression-review"
+      ]
+    },
+    "thisR5Background": {
+      "naturalGames": 1,
+      "wins": 0,
+      "losses": 1,
+      "sourceRoles": [
+        "background-readonly-collector-after-retirement"
+      ]
+    },
+    "sameFrozenR5Combined": {
+      "naturalGames": 2,
+      "wins": 1,
+      "losses": 1,
+      "description": "同一 r5 冻结源码的两批自然局历史合计；各批原始结果仍分别保留。"
+    },
+    "earlierR4": {
+      "naturalGames": 3,
+      "wins": 0,
+      "losses": 3,
+      "sourceCommits": [
+        "80c3cd36157bca3873caf37563c152dc13fad6cd"
+      ],
+      "sourceRoles": [
+        "historical-r4-natural-game-1",
+        "historical-r4-natural-game-2",
+        "historical-r4-natural-game-3"
+      ]
+    },
+    "crossVersionHistoricalTotal": {
+      "naturalGames": 5,
+      "wins": 1,
+      "losses": 4,
+      "description": "仅跨版本历史计数；不是当前 0.5.2 的对局战绩或受控策略比较。"
+    },
+    "newEloClaimed": false,
+    "estimatedHumanWinRateClaimed": false,
+    "strategyImprovementClaimed": false
+  },
+  "liveAcceptance": {
+    "status": "completed-source-bound-stages",
+    "fuzhouOwnedPreparationTimeout": {
+      "attempt": "pending-002",
+      "status": "passed",
+      "realServerResultClaimed": true,
+      "scope": "明示自有账号的 private/owned 原生 adapter 接入生产 retireCreatedPendingRoom 组件；保留 private/owned 原生身份和生产 public guards。",
+      "publicMatchmakingEndToEndClaimed": false,
+      "productionPublicGuardsRelaxed": false,
+      "privateNativeIdentityRetained": true,
+      "requiresPassword": true,
+      "nativePrivateRoomVisibleInAnonymousFullRoster": true,
+      "configuredReadinessWaitMs": 45000,
+      "realWaitMs": 45649,
+      "ownSelectionVerified": true,
+      "ownDeckMatches": true,
+      "controlledGuestNotReady": true,
+      "componentPassed": true,
+      "retirementPhase": "retired",
+      "uiLeaveAttempts": 1,
+      "nativeLeaveSends": 1,
+      "nativeAcknowledgementSource": "cleargamestate",
+      "freshAnonymousFullRosterBeforeAndAfter": true,
+      "wholeAccountAbsentAfterLeave": true,
+      "idleHostSessionCountBefore": 0,
+      "idleHostRestoredSessionCountBefore": 0,
+      "idleHostStopped": true,
+      "ownedBrowserLeaseReleased": true,
+      "runtimeRetired": true,
+      "driverActualExitCode": 0,
+      "toolExitCode": 0,
+      "processesVerifiedGone": 4,
+      "controlledGuestNormallyCleaned": true,
+      "bothAccountsFinallyAbsent": true,
+      "allBrowsersReleased": true,
+      "accountLeasesReleased": true,
+      "remainingAccountLockHolders": 0,
+      "neverNativeActive": true,
+      "zeroGameplaySends": true,
+      "modelCalls": 0,
+      "sourceInputsUnchanged": true,
+      "naturalResultsAdded": 0,
+      "independentReview": {
+        "status": "complete",
+        "decision": "PASS",
+        "recordedAt": "2026-11-17T01:43:01.435027+00:00",
+        "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+        "inputCount": 129,
+        "allInputBytesUnchanged": true,
+        "productionInputsMatchFullR3": true,
+        "toolsMatchSourceCommit": true,
+        "nativePrivateAndOwnedFlagsPreserved": true,
+        "rawFramesRewritten": false,
+        "actualSameDocumentEpochMaintained": 1,
+        "noSyntheticRosterProbeInjected": true,
+        "actualDriverExitSource": "subprocess.Popen.wait",
+        "evidenceRoles": [
+          "fuzhou-pending-002-independent-review"
+        ]
+      },
+      "evidenceRoles": [
+        "fuzhou-pending-002-final-acceptance",
+        "fuzhou-pending-002-execution",
+        "fuzhou-pending-002-result",
+        "fuzhou-pending-002-production-retirement",
+        "fuzhou-pending-002-native-tracker",
+        "fuzhou-pending-002-final-anonymous-roster",
+        "fuzhou-pending-002-source-before",
+        "fuzhou-pending-002-source-after"
+      ],
+      "resourceSnapshotAt": "2026-11-17T01:39:02.389Z",
+      "resourceSnapshotQualification": "进程、registry 和锁的退出状态属于 pending-002 的已完成记录；精确锁无持有者的取样时点如上。独立审查没有重新操作可能已被后续自测使用的账号锁。",
+      "controlledGuestNormalLeaveSends": 1,
+      "controlledGuestNativeClearObserved": true,
+      "nativeClearAfterLeaveMs": 5,
+      "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f"
+    },
+    "fuzhouOwnedNormalLifecycle": {
+      "attempt": "natural-002",
+      "status": "passed",
+      "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+      "realServerResultClaimed": true,
+      "scope": "一局真实福州自有账号私房，验证自然终局及正常自动退房、host/browser/driver 退役；用于功能与生命周期验证。",
+      "privateRoom": true,
+      "publicMatchmakingEndToEndClaimed": false,
+      "internationalPublicOpponentGames": 0,
+      "manualGameInterventions": 0,
+      "nativeNaturalResult": true,
+      "nativeFinalKeyCounts": [
+        3,
+        1
+      ],
+      "bothSeatsFullVerified": true,
+      "seats": [
+        {
+          "seat": "seat-1",
+          "policy": "tactical-card-effects-v3",
+          "won": true,
+          "keys": 3,
+          "fullVerified": true,
+          "commandsGenerated": 132,
+          "commandsQueued": 132,
+          "acknowledged": 132,
+          "clientNotSent": 0,
+          "modelCalls": 0,
+          "fallbacks": 0,
+          "stale": 0,
+          "unsupported": 0,
+          "strategyFault": null,
+          "loopInterventions": 0,
+          "loopHalts": 0,
+          "normalAutomaticLeaveAttempts": 1,
+          "localLeaveObserved": true,
+          "serverSeatAbsent": true,
+          "anonymousServerLeaveEvidence": true,
+          "serverLeaveEvidenceSource": "removegame",
+          "hostStopped": true,
+          "browserClosed": true,
+          "browserRecordAbsent": true,
+          "completed": true,
+          "held": false
+        },
+        {
+          "seat": "seat-2",
+          "policy": "tactical-ladder-balanced",
+          "won": false,
+          "keys": 1,
+          "fullVerified": true,
+          "commandsGenerated": 71,
+          "commandsQueued": 70,
+          "acknowledged": 70,
+          "clientNotSent": 1,
+          "modelCalls": 0,
+          "fallbacks": 0,
+          "stale": 0,
+          "unsupported": 0,
+          "strategyFault": null,
+          "loopInterventions": 0,
+          "loopHalts": 0,
+          "normalAutomaticLeaveAttempts": 1,
+          "localLeaveObserved": true,
+          "serverSeatAbsent": true,
+          "anonymousServerLeaveEvidence": true,
+          "serverLeaveEvidenceSource": "updategame",
+          "hostStopped": true,
+          "browserClosed": true,
+          "browserRecordAbsent": true,
+          "completed": true,
+          "held": false
+        }
+      ],
+      "commandsGenerated": 203,
+      "commandsQueued": 202,
+      "acknowledged": 202,
+      "clientNotSent": 1,
+      "modelCalls": 0,
+      "fallbacks": 0,
+      "unsupported": 0,
+      "strategyFaults": 0,
+      "unresolvedSentCommandsAtEnd": 0,
+      "commandAccountingQualification": "203 条生成指令中，1 条在客户端排队前被拒绝，记录为 client-not-sent；实际排队 202 条，ACK 202 条。该条不是丢失 ACK；原日志未保存足以坐实具体浏览器分支的细节，因此不认定为已证明的 obsolete/stale，也不宣称零拒绝或全部生成指令均发送成功。",
+      "configuredGameSocketEndpointCount": 1,
+      "observedGameSocketEndpointCount": 1,
+      "configuredAndObservedGameEndpointsMatch": true,
+      "chatMode": "off",
+      "liveChatAcceptanceClaimed": false,
+      "knownRetirementLatency": {
+        "implementation": "tools/keyteki-finished-chat-drain.mjs",
+        "socialEnabled": false,
+        "budgetMs": 65000,
+        "measuredMsPerSeat": [
+          65001,
+          65001
+        ],
+        "outcomePerSeat": [
+          "timed-out",
+          "timed-out"
+        ],
+        "reason": "same-seat-session-unobserved",
+        "normalTerminalGraceMs": 10000,
+        "normalTerminalGraceIsAdditional": true,
+        "effect": "该 8ff 阶段即使关闭聊天，仍因缺少同席 social scheduling row 等待整个 drain 预算；随后正常 quiesce、取消确认和自动 Leave 均完成。真实 65001ms 延迟保留，后续优化必须另绑源码、测试与新现场结果。",
+        "sourceRoles": [
+          "fuzhou-natural-002-final-acceptance",
+          "fuzhou-natural-002-independent-review",
+          "fuzhou-owned-completed-stage-summary"
+        ]
+      },
+      "resourceClosure": {
+        "driverActualExitCode": 0,
+        "finalizerActualExitCode": 0,
+        "driverExitEvidence": "subprocess.Popen.wait",
+        "finalizerExitEvidence": "completed-tool-execution-receipt",
+        "freshAnonymousFullRosterBothAccountsAbsent": true,
+        "rosterObservedAfterDriverExit": true,
+        "hostsStopped": 2,
+        "browsersClosed": 2,
+        "allFiveExactProcessIdentitiesAbsent": true,
+        "activeBrowserRegistryRecords": 0,
+        "checkpointResolved": true,
+        "exactAccountLockPathCount": 2,
+        "accountLockHolderCountAtSnapshot": 0,
+        "accountLockSnapshotAt": "2026-11-17T01:47:30.432Z",
+        "resourceSnapshotQualification": "仅描述 natural-002 结束后本次 finalizer 的精确身份检查；退出码来自真实执行回执，不由进程缺失推断。"
+      },
+      "sourceBinding": {
+        "productionInputCount": 126,
+        "sourceInputsUnchanged": true,
+        "productionInputsMatchFullR3": true,
+        "toolsMatchSourceCommit": true,
+        "fixtureAndWrapperMatchActualExecution": true
+      },
+      "independentReview": {
+        "status": "complete",
+        "decision": "PASS",
+        "recordedAt": "2026-11-17T01:50:53.242300+00:00",
+        "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+        "evidenceRoles": [
+          "fuzhou-natural-002-independent-review"
+        ]
+      },
+      "naturalPrivateTestGames": 1,
+      "addedToInternationalHistoricalWins": 0,
+      "addedToInternationalHistoricalLosses": 0,
+      "eloUpdateClaimed": false,
+      "strategyStrengthImprovementClaimed": false,
+      "additionalOfflineTests": 0,
+      "evidenceRoles": [
+        "fuzhou-natural-002-final-acceptance",
+        "fuzhou-natural-002-execution",
+        "fuzhou-natural-002-finalizer-execution",
+        "fuzhou-natural-002-final-handoff",
+        "fuzhou-natural-002-final-checkpoint",
+        "fuzhou-natural-002-final-anonymous-roster",
+        "fuzhou-natural-002-final-source-inputs",
+        "fuzhou-natural-002-independent-review",
+        "fuzhou-owned-completed-stage-summary",
+        "fuzhou-natural-002-seat-1-evidence",
+        "fuzhou-natural-002-seat-2-evidence"
+      ]
+    },
+    "historicalFailedAttempts": [
+      {
+        "attempt": "pending-001",
+        "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
+        "status": "failed-before-production-retirement-component",
+        "actualExitCode": 2,
+        "failureCode": "OWN_DECK_SELECTION_NOT_CONFIRMED",
+        "failureStage": "select-creator-deck-only",
+        "componentAttempted": false,
+        "componentPassed": false,
+        "gameplayBridgeInstalled": false,
+        "gameplayStarted": false,
+        "modelCalls": 0,
+        "nativeSelection": {
+          "ownSelectdeckSendObserved": true,
+          "subsequentOwnSelectedAndNamedDeckObserved": true,
+          "offlinePrivateAdapterReplayPassed": true,
+          "sourceRoles": [
+            "fuzhou-pending-001-native-tracker",
+            "navigation-superseding-finding"
+          ]
+        },
+        "epochCauseQualification": "该次现场未记录导航事件，具体历史 epoch 转换属于推断；之后已在真正生产 PublicRoomObserver 上独立复现同文档路由缺陷。不能将原选择确认失败说成用户未选牌，也不能把原失败改为组件通过。",
+        "cleanup": {
+          "normalPendingLeaveAttempts": 1,
+          "nativeClearObserved": true,
+          "bothBrowserProcessesGone": true,
+          "bothBrowserLeasesReleased": true,
+          "accountLeasesReleased": true
+        },
+        "naturalResultsAdded": 0,
+        "sourceRoles": [
+          "fuzhou-pending-001-result",
+          "fuzhou-pending-001-execution",
+          "fuzhou-pending-001-native-tracker",
+          "navigation-superseding-finding"
+        ]
+      },
+      {
+        "attempt": "natural-001",
+        "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
+        "status": "failed-original-attempt-manually-retired",
+        "nativeGameStarted": true,
+        "bothSeatsFullVerified": false,
+        "hostAttachResponses": [
+          409,
+          409
+        ],
+        "original409ResponseBodyCaptured": false,
+        "configurationDiagnosis": {
+          "observedGameEndpoints": 1,
+          "crossOriginGameEndpointRequiresExactAllowlist": true,
+          "configuredGameSocketEndpointCounts": [
+            0,
+            0
+          ],
+          "configuredPageOriginsMatch": true,
+          "productionBindingRejectsMissingEndpoint": "transport-path-invalid",
+          "qualification": "私房 fixture 漏配福州跨端口游戏 socket 的精确 endpoint，生产 keytekiTransportBinding 对该输入必然拒绝。原 409 body 没有采集，因此不将这个确定的配置违规冒充原响应正文。",
+          "sourceRoles": [
+            "fuzhou-natural-001-original-handoff",
+            "fuzhou-natural-001-seat-config-1",
+            "fuzhou-natural-001-seat-config-2",
+            "production-transport-binding-source"
+          ]
+        },
+        "automaticOutcome": {
+          "watchdogTechnicalConcessions": 1,
+          "watchdogRecoveryAttemptsPerSeat": [
+            1,
+            1
+          ],
+          "nativeTerminalConfirmedForBothSeats": true,
+          "naturalGame": false,
+          "naturalWinsAdded": 0,
+          "naturalLossesAdded": 0,
+          "manualConcedeUsed": false,
+          "automaticFinishedLeaveAttempts": [
+            0,
+            0
+          ],
+          "automaticCleanupFailure": "PRIVATE_FINISHED_LEAVE_UNCONFIRMED"
+        },
+        "manualRetirement": {
+          "normalLeaveAttemptsPerSeat": [
+            1,
+            1
+          ],
+          "nativeLeaveSendsPerSeat": [
+            1,
+            1
+          ],
+          "bothNativeClearObserved": true,
+          "bothFreshAnonymousAccountAbsences": true,
+          "idleHostsStopped": 2,
+          "browserProcessesGone": 2,
+          "originalProcessCount": 5,
+          "allOriginalProcessesAbsent": true,
+          "driverSignal": "SIGHUP",
+          "originalDriverActualExitCode": -1,
+          "originalCheckpointPreserved": true,
+          "initialCleanupHelperExitCode": 2,
+          "initialCleanupHelperLastError": "ACCOUNT_ALREADY_RUNNING",
+          "accountLocksReacquired": true,
+          "accountLocksReleased": true,
+          "remainingAccountLockHolders": 0
+        },
+        "modelCalls": 0,
+        "sourceRoles": [
+          "fuzhou-natural-001-original-handoff",
+          "fuzhou-natural-001-execution",
+          "fuzhou-natural-001-manual-retirement",
+          "fuzhou-natural-001-final-retirement"
+        ]
+      }
+    ],
+    "offlineTestsDoNotSubstituteForLiveAcceptance": true,
+    "newInternationalPublicGamesForThisFix": 0,
+    "completedStageSummary": {
+      "activeOwnedRunAtRecordedCompletion": null,
+      "allDriverHostBrowserPidsGone": true,
+      "bothAccountLocksWithoutKernelHolders": true,
+      "freshAnonymousBothAccountsAbsent": true,
+      "newRunsAfterNatural002AtSnapshot": 0,
+      "attemptActualExitCodes": [
+        2,
+        -1,
+        0,
+        0
+      ],
+      "snapshotAt": "2026-11-17T01:48:14.660089+00:00",
+      "sourceRoles": [
+        "fuzhou-owned-completed-stage-summary"
+      ],
+      "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f"
+    },
+    "sourceAttribution": "每个现场子项独立绑定实际运行的 sourceCommit；不使用顶层统一 sourceCommit 重标先前运行。",
+    "fuzhouOwnedDisabledChatLifecycle": {
+      "attempt": "natural-003",
+      "status": "passed",
+      "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+      "realServerResultClaimed": true,
+      "scope": "与 natural-002 使用相同牌组及策略的福州自有账号私房；验证明确关闭聊天时跳过额外等待，并完成自然终局与全部正常退役。",
+      "privateRoom": true,
+      "sameDeckAndPolicyConfigurationAs": "natural-002",
+      "publicMatchmakingEndToEndClaimed": false,
+      "internationalPublicOpponentGames": 0,
+      "manualGameInterventions": 0,
+      "nativeNaturalResult": true,
+      "nativeFinalKeyCounts": [
+        3,
+        1
+      ],
+      "bothSeatsFullVerified": true,
+      "seats": [
+        {
+          "seat": "seat-1",
+          "policy": "tactical-card-effects-v3",
+          "won": true,
+          "keys": 3,
+          "fullVerified": true,
+          "commandsGenerated": 125,
+          "commandsQueued": 125,
+          "acknowledged": 125,
+          "clientNotSent": 0,
+          "lastCommandRejection": null,
+          "modelCalls": 0,
+          "fallbacks": 0,
+          "stale": 0,
+          "unsupported": 0,
+          "strategyFault": null,
+          "loopInterventions": 0,
+          "loopHalts": 0,
+          "normalAutomaticLeaveAttempts": 1,
+          "localLeaveObserved": true,
+          "serverSeatAbsent": true,
+          "anonymousServerLeaveEvidence": true,
+          "serverLeaveEvidenceSource": "removegame",
+          "hostStopped": true,
+          "browserClosed": true,
+          "browserRecordAbsent": true,
+          "completed": true,
+          "held": false,
+          "chatDrain": {
+            "outcome": "skipped",
+            "reason": "social-disabled",
+            "checks": 0,
+            "budgetMs": 0,
+            "elapsedMs": 0,
+            "lastObservable": false,
+            "lastDrained": false,
+            "serverEchoConfirmed": false,
+            "normalTerminalGraceMs": 10000,
+            "cancellationRequested": true,
+            "chatCancellationConfirmed": true
+          },
+          "terminalToConfirmedLeaveMs": 15204,
+          "countersMonotonic": true
+        },
+        {
+          "seat": "seat-2",
+          "policy": "tactical-ladder-balanced",
+          "won": false,
+          "keys": 1,
+          "fullVerified": true,
+          "commandsGenerated": 78,
+          "commandsQueued": 78,
+          "acknowledged": 78,
+          "clientNotSent": 0,
+          "lastCommandRejection": null,
+          "modelCalls": 0,
+          "fallbacks": 0,
+          "stale": 0,
+          "unsupported": 0,
+          "strategyFault": null,
+          "loopInterventions": 0,
+          "loopHalts": 0,
+          "normalAutomaticLeaveAttempts": 1,
+          "localLeaveObserved": true,
+          "serverSeatAbsent": true,
+          "anonymousServerLeaveEvidence": true,
+          "serverLeaveEvidenceSource": "updategame",
+          "hostStopped": true,
+          "browserClosed": true,
+          "browserRecordAbsent": true,
+          "completed": true,
+          "held": false,
+          "chatDrain": {
+            "outcome": "skipped",
+            "reason": "social-disabled",
+            "checks": 0,
+            "budgetMs": 0,
+            "elapsedMs": 0,
+            "lastObservable": false,
+            "lastDrained": false,
+            "serverEchoConfirmed": false,
+            "normalTerminalGraceMs": 10000,
+            "cancellationRequested": true,
+            "chatCancellationConfirmed": true
+          },
+          "terminalToConfirmedLeaveMs": 14180,
+          "countersMonotonic": true
+        }
+      ],
+      "commandsGenerated": 203,
+      "commandsQueued": 203,
+      "acknowledged": 203,
+      "clientNotSent": 0,
+      "modelCalls": 0,
+      "fallbacks": 0,
+      "unsupported": 0,
+      "strategyFaults": 0,
+      "unresolvedSentCommandsAtEnd": 0,
+      "commandAccountingQualification": "本局双席原生记录经独立核对，计数单调，生成、排队、ACK 均为 203，分席为 125 与 78，client-not-sent 为 0。该记录不改变 natural-002 的 203/202/202 和 1 条 client-not-sent，也不据此认定其未明触发原因已修复。",
+      "configuredGameSocketEndpointCount": 1,
+      "observedGameSocketEndpointCount": 1,
+      "configuredAndObservedGameEndpointsMatch": true,
+      "chatMode": "off",
+      "liveChatAcceptanceClaimed": false,
+      "disabledChatDrain": {
+        "outcomePerSeat": [
+          "skipped",
+          "skipped"
+        ],
+        "reason": "social-disabled",
+        "checksPerSeat": [
+          0,
+          0
+        ],
+        "budgetMsPerSeat": [
+          0,
+          0
+        ],
+        "measuredMsPerSeat": [
+          0,
+          0
+        ],
+        "normalTerminalGraceMs": 10000,
+        "normalTerminalGracePreserved": true,
+        "chatDrainSuccessOrServerEchoClaimed": false,
+        "preservedNativeDepartureAndQuiescenceGates": true,
+        "previousAttempt": "natural-002",
+        "previousSourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+        "previousMeasuredMsPerSeat": [
+          65001,
+          65001
+        ],
+        "comparisonScope": "仅比较生产 chat drain 额外等待；0ms 不表示整次终局退房或进程退出耗时为零。",
+        "terminalToConfirmedLeaveMsPerSeat": [
+          15204,
+          14180
+        ]
+      },
+      "resourceClosure": {
+        "driverActualExitCode": 0,
+        "finalizerActualExitCode": 0,
+        "driverExitEvidence": "subprocess.Popen.wait",
+        "finalizerExitEvidence": "completed-tool-execution-receipt",
+        "freshAnonymousFullRosterBothAccountsAbsent": true,
+        "rosterObservedAfterDriverExit": true,
+        "hostsStopped": 2,
+        "browsersClosed": 2,
+        "allFiveExactProcessIdentitiesAbsent": true,
+        "activeBrowserRegistryRecords": 0,
+        "checkpointResolved": true,
+        "exactAccountLockPathCount": 2,
+        "accountLockHolderCountAtSnapshot": 0,
+        "accountLockSnapshotAt": "2026-11-17T02:01:45.770Z",
+        "resourceSnapshotQualification": "仅描述 natural-003 最终回执的精确进程、registry、原生名单与锁检查；driver 和 finalizer 退出码均来自各自实际执行回执。"
+      },
+      "sourceBinding": {
+        "productionInputCount": 126,
+        "sourceInputsUnchanged": true,
+        "fixtureUnchanged": true,
+        "sourceRoles": [
+          "fuzhou-natural-003-final-source-inputs",
+          "fuzhou-natural-003-execution",
+          "source-commit-disabled-chat"
+        ],
+        "productionInputsMatchFullR4": true,
+        "toolsMatchSourceCommit": true,
+        "fixtureAndWrapperMatchActualExecution": true,
+        "sameFixtureDecksPoliciesAndNetworkAsNatural002": true
+      },
+      "independentReview": {
+        "status": "complete",
+        "decision": "PASS",
+        "recordedAt": "2026-11-17T02:04:18.381717+00:00",
+        "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+        "bothIndependentVerifiedTerminalStreamsAgree": true,
+        "countersMonotonicForBothSeats": true,
+        "clientNotSentRejections": 0,
+        "unresolvedBlockers": [],
+        "evidenceRoles": [
+          "fuzhou-natural-003-independent-review"
+        ]
+      },
+      "naturalPrivateTestGames": 1,
+      "addedToInternationalHistoricalWins": 0,
+      "addedToInternationalHistoricalLosses": 0,
+      "eloUpdateClaimed": false,
+      "strategyStrengthImprovementClaimed": false,
+      "additionalOfflineTests": 0,
+      "evidenceRoles": [
+        "fuzhou-natural-003-final-acceptance",
+        "fuzhou-natural-003-execution",
+        "fuzhou-natural-003-finalizer-execution",
+        "fuzhou-natural-003-final-handoff",
+        "fuzhou-natural-003-final-checkpoint",
+        "fuzhou-natural-003-final-anonymous-roster",
+        "fuzhou-natural-003-final-source-inputs",
+        "fuzhou-natural-003-seat-1-evidence",
+        "fuzhou-natural-003-seat-2-evidence",
+        "fuzhou-owned-completed-final-summary",
+        "fuzhou-natural-003-independent-review"
+      ]
+    },
+    "completedFinalSummary": {
+      "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+      "activeOwnedRunAtRecordedCompletion": null,
+      "allDriverHostBrowserPidsGone": true,
+      "bothAccountLocksWithoutKernelHolders": true,
+      "freshAnonymousBothAccountsAbsent": true,
+      "newRunsAfterNatural003AtSnapshot": 0,
+      "attempts": [
+        {
+          "attempt": "pending-001",
+          "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
+          "actualDriverExitCode": 2
+        },
+        {
+          "attempt": "natural-001",
+          "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
+          "actualDriverExitCode": -1
+        },
+        {
+          "attempt": "pending-002",
+          "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+          "actualDriverExitCode": 0
+        },
+        {
+          "attempt": "natural-002",
+          "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+          "actualDriverExitCode": 0
+        },
+        {
+          "attempt": "natural-003",
+          "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+          "actualDriverExitCode": 0
+        }
+      ],
+      "snapshotAt": "2026-11-17T02:02:43.862779+00:00",
+      "sourceRoles": [
+        "fuzhou-owned-completed-final-summary"
+      ]
+    }
+  },
+  "currentExecutionArrangement": {
+    "internationalPublicOpponentPlay": "paused",
+    "preferredValidation": [
+      "fuzhou",
+      "owned-account-private-matches"
+    ],
+    "internationalAdapterRetained": true,
+    "internationalChatLanguage": "en",
+    "qualification": "这是本轮执行安排；保留生产适配能力，不将既有配置改成全局不可运行。"
+  },
+  "evidenceBindings": [
+    {
+      "role": "offline-full-r1",
+      "sha256": "72dccfd4c5ab4c504257a2a871c6979ada59af4d2ad5c6b7b746e384327e1b32",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "offline-full-r2",
+      "sha256": "5594bd42a0d8c57efd6882aaff9578ff52185636ea7a66b3766e8ff66f703cae",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "recovery-guard-binding-update",
+      "sha256": "29fae1e39c8b323613929d7b9fb5f13f0094b469ccc9f314a7871b7367df8af0",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "preparation-targeted-tests",
+      "sha256": "e6f028ea0469ac83f4c871aeb2a81f0dc2cb201fca6700269945a6a35b647195",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "preparation-independent-review",
+      "sha256": "72e6b7cea9fa59b96e3ec8e7ee4b61cfdc30eb7aae25fa34c89b79964ee12823",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "preparation-independent-boundaries",
+      "sha256": "adb113f4efad7aee397503b1bb7f0a41a59b900dda167cbc5664fd2b6f456f2a",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "chat-final-implementation",
+      "sha256": "68559542680ab0a3d47643170d39b5d52c91d224952cd69742c0617d9381b5f0",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "chat-final-targeted-tests",
+      "sha256": "179d6a229c580bd144d4c9c426ea2dc905505a87292dda7760e90bf9d6c4e1b2",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "chat-independent-review",
+      "sha256": "f143b6ef4b63f8fa3cec3bde9d9725b5da5e4b2e6d5eec9d73e77ff2bc05772d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "background-original-independent-audit",
+      "sha256": "a6915a1412635b250bafe0a46704d0792487e9279daf321719c93f9e4fd13002",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "background-execution",
+      "sha256": "91f1beddc24491cdc1cd684e14835430be7c189bf8f67ca1846a9b27b6c6a18d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "background-readonly-collector-after-retirement",
+      "sha256": "95c9aadca40f563b11f33bbd833f877d8417ce4839b214e2283c1804b300d9f1",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "manual-native-inspection",
+      "sha256": "4fb22841d43bb9c9c8fae2e84e46e8750d1ebd4229d48573249605e00c71a22c",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "manual-native-absence-confirmation",
+      "sha256": "f817bfe30c3a7a8090f5a9cfddf608c0433ad743c5a00c4825c58844fa8985a7",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "manual-host-stop",
+      "sha256": "5f09c8f4c6c2029af6c19552fd015752188fd5557216dada0e77a8d6c651d20e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "manual-worker-term",
+      "sha256": "e286b9d043ba00bb16c407a4a0ee140a39c55fe5ed9031149da18e6f09e700d6",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "manual-worker-final-stop",
+      "sha256": "8d6e7b9a60d323504006a3a2dad20a989dd757037198ca96504ad7ae5dab6a42",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "manual-browser-release",
+      "sha256": "1873041787837e0a6cc983c65d187dd1477e26eeec38777e1f95c05c5b94115e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "manual-independent-retirement-review",
+      "sha256": "526359c6742550772688574dd73fbb50e5cda3031270e18f4c17965c232e3921",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "manual-checkpoint-reconciliation",
+      "sha256": "a9714cb15ece9a705f44e04d8ebbf9465357488d66dbf51ce64fc2617a5e9e40",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "background-checkpoint-before-manual-reconciliation",
+      "sha256": "6e9a71798ad1a206fb69fc21220aca0db2b73d393529fa420bfa30c79da1ea7d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "background-checkpoint-after-manual-reconciliation",
+      "sha256": "eb80883b5f871991c1710123c65175d4db332402e93ed8147f6ecbddadf4000e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "prior-r5-public-regression-summary",
+      "sha256": "cb26861c409919e923583dcc0b8ae5272ed90996e49db281d8e6f85f5704061a",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "prior-r5-public-regression-review",
+      "sha256": "39e7cb577964279be3abd29550064d039ff8782c7a76e8050bac519968623f41",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "historical-r4-natural-game-1",
+      "sha256": "3da2defbee9af6ce9469a1aff91dbfdeaf65dda609c339041983b1a8acb64351",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "historical-r4-natural-game-2",
+      "sha256": "f97767b245a6fe4712bf115992c7350cf28f915272e79b120cab4786fab67716",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "historical-r4-natural-game-3",
+      "sha256": "5571ad2d23ebbeb56d30700ee12042337eda1aa16b81388ab5507002609344df",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "source-commit-final",
+      "sha256": "6c1e4fdc54bee0176606f3a76b9928c494a363143f658061b92980bd91450e26",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "offline-full-r3",
+      "sha256": "3874d4a32712b46da8838f7783c87c7d8a793e7d19ce75d9a73ef3cfb17cace8",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "offline-full-r3-log",
+      "sha256": "a01ac7fe9d6e76437607bcd2005b49cb33085432cb58638cc12de4a5b89318b8",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-superseding-finding",
+      "sha256": "a37f179cbea191bf999af7a681362c63a71115006d1f8406da55613369f615db",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "historical-integration-review",
+      "sha256": "0bc5aed93dd3f97e23cbf7b8c5143ecc79c9c79e4abab53b5c2e65905588dc73",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "historical-source-commit-binding-review",
+      "sha256": "33b005e82e7fcc8dd1eaae9c3a6b66142ba5e8a4f49f811789426a11bb39ee37",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-final-source-inputs",
+      "sha256": "971284bfba87dee6b019edc713280122f6342c9d3c07afed79f2eb61239728f1",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-targeted-r1",
+      "sha256": "d70e452c92fa970df5ce3e06ee2d0d31a376a87d898f17eef4a0d00b8da457a2",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-targeted-r2",
+      "sha256": "2c744ab94b8e282e0921c4c8249e1de129867683a92a07f0587ccc2844d0a6bf",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-targeted-r2-log",
+      "sha256": "f5c19a0c93cd2bd21e3941fe86513c15610ac7b583588f445504fe47cf91940c",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-loopback-r1",
+      "sha256": "53b1f46e3033405ae7180e5008e423931a45fd0dbbad07fc0d50ccfb343cc3a2",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-loopback-r2",
+      "sha256": "85f6d968b78a1fbe7038b28509119f685a20a3de4874054d6d7e6321bcaac4ba",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-loopback-r3",
+      "sha256": "082440137fd20f2490d39f38bf257f0781b4a9f52a18a49e13a62af21689763a",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-loopback-r3-log",
+      "sha256": "4ad86095558d5f28235cb578a0d4f7942540df59f5a69081c8d9ad59b7f9c9e5",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-final-independent-review",
+      "sha256": "491006f4a106442fef8dcf0c4dedc49f293c72108a200c4d2f1a970f1b1dfea0",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-independent-bfcache",
+      "sha256": "683c1f15ede49161b76b4efabf10e3b0173b987343160e0439710604d9e7dcb0",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "navigation-independent-bfcache-result",
+      "sha256": "1132269b9530096c8f7d6de42e24e917225e3164ddb0e471967df9cba165feac",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-001-result",
+      "sha256": "3fed0c517f6f126be6a57462e9097f8b03636aec2dcf9295d54557a57e813e9c",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-001-execution",
+      "sha256": "5eb68a59a89e4c5178ac1847e062335065ccec7fbc681bddd1487de8dc60fc1d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-001-native-tracker",
+      "sha256": "c41d8d9f905d28546b9412d6b2fd47bba556470b3ef1a47f8f440a95e698f753",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-001-original-handoff",
+      "sha256": "fb74408220fd1eea67940f51d75847463b8bfa3182c27924b49e42ea5d3bea0b",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-001-execution",
+      "sha256": "78c5f335ebdb6317d1a3b02604d6ce835e189f51bc10115f82dd5c025206d83e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-001-manual-retirement",
+      "sha256": "0bb19f99e07d0f99f70a2510553662112df20ef0a9d7d9249ec5c56010a14309",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-001-final-retirement",
+      "sha256": "5d7d10d57f03221832017c64291f1dace6a48b4225aaa2a79f7f802875293c9b",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "production-transport-binding-source",
+      "sha256": "10f558b468fdd40e83201ebbaf24a4f4e4ff62e2f6c1d7f4775326c71ab3c260",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-result",
+      "sha256": "42fe2bda2959c68e3a17dd0eb950acc85c6787efe551dc3eecaa8b73bce60c89",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-execution",
+      "sha256": "3a26faf4878771d28c93ed499dbf9da01faaa707a428d536868914c38096bccb",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-production-retirement",
+      "sha256": "37975e07906737a690996977b7252919610a7a0b49c8f2649ce21192d5aede34",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-final-acceptance",
+      "sha256": "b61f06d7bb55ad1683ae971da7668ac98d54dde09fb0c3b4e0cbddd9e7538c71",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-native-tracker",
+      "sha256": "8787434188ebd198c6debd0b91a29f1bb01309c845e15253745254c9f164197c",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-final-anonymous-roster",
+      "sha256": "525a1cee4a5df74b0d330c0e49865e408d2ba19d41b025b6cfb98b61438b65d1",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-source-before",
+      "sha256": "3d33bf1164a60a193bda96661a93f30a9fa5a9dd8774fe0a5d6cb1991dcfd47e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-source-after",
+      "sha256": "3d33bf1164a60a193bda96661a93f30a9fa5a9dd8774fe0a5d6cb1991dcfd47e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-001-seat-config-1",
+      "sha256": "b5930843a8da4446e629f3cf017f6466efc59b1bb27815d2eaa2b27b9fffe2d2",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-001-seat-config-2",
+      "sha256": "77d76464c4d7fc9970e8265e3f191e2e8edc724fe00480357a534fadac435f32",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-pending-002-independent-review",
+      "sha256": "4504bb4dcf2924b3c4242b2df40b158349d6ebfbb14b590508c7c55befb8365e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-final-acceptance",
+      "sha256": "d91b60e8453e92d9e8891ae13c9944f2d3b8bb200b157aac64282c0497047e21",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-execution",
+      "sha256": "93a82133bef59fb9c69d6f1dc27cae136b2af8c298cde8d87f7d0c30871982b0",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-finalizer-execution",
+      "sha256": "18fb539f9a6c634f63aee091dc76c7fa1be7b6f894fad7f341114e399435fa4d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-final-handoff",
+      "sha256": "d3231cb29522a82dc94e5573ced49f2065d516998359ed6262ff975c726769b9",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-final-checkpoint",
+      "sha256": "62dd0a4f34537e76b987f9a9ac0eb5a77bc6a22480fcf229afa030d5cab55a77",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-final-anonymous-roster",
+      "sha256": "b2ce409b27d77d21014cd0ef6ed2b9fcb5f02f031b2669cc18ae39a267eecd5b",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-final-source-inputs",
+      "sha256": "a39ceeb20568de1e39b7524dad8fd9ceb68d75e94c55c76bf07fb3f30acfa7e4",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-independent-review",
+      "sha256": "f73307725a5040b6d6e898fe5cb3e31dbe31845cd5370f7d52d67c38b8fd3174",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-owned-completed-stage-summary",
+      "sha256": "79ea3f8899ea713bd7f212e9fcba564102e53d749820c850d848b8371c177d4e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-seat-1-evidence",
+      "sha256": "6e65d20f9e057689c4ffb6a88f0df4b1f2b65c80bb4d055bc6bffe860d803b7f",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-002-seat-2-evidence",
+      "sha256": "182b537a5fb6e314c8b4ddeeb8554997f5f21446f3b65df1d65c96f4a6d56d96",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "public-evidence-8ff-stage-snapshot",
+      "sha256": "e8cb98806aeced939571b3f1842d8b19b7a48d70993617d59fef27a46b8ff28b",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "source-commit-disabled-chat",
+      "sha256": "b9aa90f419e6811147fd99fdf3013702a08a10b52297ba8f3de92b7d7648e6b8",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "offline-full-r4",
+      "sha256": "dfb1db612ce4276132e66f09201844eeebde5f3374e54ab7d591d22e4ae940a9",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "offline-full-r4-log",
+      "sha256": "cc0e79a6129f0294f8dccb77e7dcd386c9aecb218d100938f83267a5233c0823",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "disabled-chat-drain-production-diff",
+      "sha256": "02f9d24ae81e5a2b83e63ec6c148f6f7d5dfc46cc600982e6831f6f2aeaeeb39",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "disabled-chat-drain-targeted-r1",
+      "sha256": "187cb07af15e6c1468bde6751e33742a59a74fb1af1e7532d1958439ddc4efd8",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "disabled-chat-drain-targeted-r1-log",
+      "sha256": "5db8f61984eb9309a4709ea3ce25d1e46bb5f46803efd11d68fd08f00f02683d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "disabled-chat-drain-independent-review",
+      "sha256": "d5e929fca436a3d8561afdacb2d5ab3853209e7ea822c10d0840683946b8a21f",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "disabled-chat-drain-independent-commit-binding",
+      "sha256": "0079a6cd43cd9ec8678982f8ba7b966a5267e3ef7ce62d537a6ca8876a9a041e",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-final-acceptance",
+      "sha256": "aad1f931572f5c9dc41d5914396ebcde88301cfdbd28991e67c8a8fe0a50ea59",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-execution",
+      "sha256": "f21927771a06ed7461136f05266ba08e4f6e5b9806f27078e50126d0d668cdc5",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-finalizer-execution",
+      "sha256": "54e29495c0a564979da3f3abdf16649732a8e6826caf6dd999cbfd0dc92395e9",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-final-handoff",
+      "sha256": "ed268eb920c95d6a8e9579262740eb4b82330c9942299e751d3bec76d4ae9b42",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-final-checkpoint",
+      "sha256": "0da51819712d388f7bf6edb5e764c0c02c2a5293de02704c4793d41995a4b71d",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-final-anonymous-roster",
+      "sha256": "cd178c9c8d2035ad09c89187156d44ceefd9333a9736ac5492b4ceae71e85867",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-final-source-inputs",
+      "sha256": "9eabb19a45a9bcb97a0f6e9562f0bd8319e32c6cd10b3ff9633a2cda6f93f9b5",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-seat-1-evidence",
+      "sha256": "2e2c032ff085ec4b74a4ab6c111d3b132b5dc1d2f7764a283eed8d04aeedc1b4",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-seat-2-evidence",
+      "sha256": "db8e6cb766d4defe7eb14009763740440510fe53de4ccd331446269da62dc856",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-owned-completed-final-summary",
+      "sha256": "884b47244b75047d9c06a43498c1a8af3329a9a27239fd61725a6a0b289ed1a3",
+      "publicRawEvidence": false
+    },
+    {
+      "role": "fuzhou-natural-003-independent-review",
+      "sha256": "cb2a7a8cd57ea716dbbf21635a3998c10d94734e249cec3c481d1c731dc267a9",
+      "publicRawEvidence": false
+    }
+  ],
+  "privacy": {
+    "absolutePrivatePathsIncluded": false,
+    "accountOrOpponentNamesIncluded": false,
+    "roomIdentifiersIncluded": false,
+    "credentialsOrTokensIncluded": false,
+    "rawChatIncluded": false,
+    "rawEvidencePublic": false
+  },
+  "limits": [
+    "最终 2a47 的 386 离线测试与 8ff 的 362、真实 loopback Chromium、福州私房组件和自然完整对局按阶段分别记录；互不冒充范围，也不跨阶段累计成新测试数。",
+    "pending-002 证明明示 private/owned adapter 与生产准备退役组件在真实福州服务端完成安全退役，不证明国际服公开匹配入口端到端通过。",
+    "pending-001 与 natural-001 原失败、旧候选 338/338 及其被覆盖的批准结论均保留，不改写成成功。",
+    "人工收尾、自然胜负、无人入席、准备失败和受控未开局取消分别记账。",
+    "历史原始证据文件保持原样；本文件提供脱敏绑定，未公开凭据、账号、房间身份、聊天或本地私有路径。",
+    "8ff 阶段与最终 2a47 阶段各自绑定源码、完整回归和现场结果；natural-002 的 65001ms 与一条原因未定的 client-not-sent 原样保留。natural-003 新阶段已绑定独立审查 PASS；不把该次 chat-off 验收当成启用模型聊天或国际服公开真人验证。",
+    "关闭聊天后的 0ms 仅指 chat drain 的额外轮询等待；正常 10 秒终局宽限、quiescence、原生 Leave 和资源退役仍需完成。聊天开启或配置未知的路径仍保留原有有界等待。"
+  ],
+  "historicalCandidates": [
+    {
+      "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
+      "release": {
+        "version": "0.5.2",
+        "sourceCommit": "5eac0ffabc953aeda7b2191bc43f6f9baf961434",
+        "sourceBindingStatus": "committed-bytes-match-accepted-offline-r2",
+        "changedFileCount": 13,
+        "changedFiles": [
+          {
+            "path": "package-lock.json",
+            "sha256": "c539d66e2072a24ee4f26525dd35e54d8c5047816ae4c2cd27e558ad72421dd0"
+          },
+          {
+            "path": "package.json",
+            "sha256": "bec80abf6233c1d0508d29cf6fd2320f9bbd7345bb7a519bcff7f4cce352dd26"
+          },
+          {
+            "path": "test/runtime/created-pending-exit.test.mjs",
+            "sha256": "e224808826441e5207d80b79c248efb8b5f72397cccc9d198d935155780af37d"
+          },
+          {
+            "path": "test/runtime/social-output-quality.test.mjs",
+            "sha256": "355b91ce2fdf01ed5d12eb7fe40b66456119fa8403eda7ee1aff2b3eda7a4edd"
+          },
+          {
+            "path": "tools/keyteki-created-pending-exit.mjs",
+            "sha256": "e9613177306018c67b2c3d0c49945c380552b0709a3bad26748a5e6de61c8f46"
+          },
+          {
+            "path": "tools/keyteki-human-create-public.mjs",
+            "sha256": "da15a4b91d74cfa3199a4e0227f9c7c7de119150caed6c88aac057466816635a"
+          },
+          {
+            "path": "tools/keyteki-human-launcher.mjs",
+            "sha256": "afd4b8c3e6a780ff6702676d1ff554d2cf9e91647c6ed6b7e2ab24d28e00cd6f"
+          },
+          {
+            "path": "tools/keyteki-human-public-room-ui.mjs",
+            "sha256": "3c0d1be51c26ba4ee97908d4e78e30d4f1c8f27622174628e57ad55a437047c8"
+          },
+          {
+            "path": "tools/keyteki-joined-pending-exit.mjs",
+            "sha256": "6bc0fdd5894f28a2e26d6a45cb287cc7826f7f05b2c5734a1e7881d840fdf9f2"
+          },
+          {
+            "path": "tools/keyteki-live-campaign-policy.mjs",
+            "sha256": "89046c813062bc7fef6973defe8c082a67815d2cb4c2b71490653f80d7653e0f"
+          },
+          {
+            "path": "tools/keyteki-live-campaign.mjs",
+            "sha256": "fab2b5e4edbfc9d51fe32912248f31b8367c4ae0c0b487b11a95ed3718cc4a45"
+          },
+          {
+            "path": "tools/keyteki-reconcile-unjoined.mjs",
+            "sha256": "122b41503955d2a6c9fc934bce498e627fec5770b2bcae88e994e912adeee6a8"
+          },
+          {
+            "path": "tools/keyteki-social-session.mjs",
+            "sha256": "4d7d07543b61c9d226a655453e11f27626984f2cd483b5a6f8480b57727556a4"
+          }
+        ],
+        "historicalFrozenRuntimeModified": false,
+        "sourceRoles": [
+          "offline-full-r2",
+          "recovery-guard-binding-update"
+        ]
+      },
+      "offlineValidation": {
+        "acceptedRun": "offline-full-r2",
+        "uniqueProductionTests": 338,
+        "fullRuns": [
+          {
+            "role": "offline-full-r1",
+            "command": [
+              "taskset",
+              "-c",
+              "0,1",
+              "nice",
+              "-n",
+              "10",
+              "npm",
+              "test"
+            ],
+            "startedAt": "2026-11-17T00:57:21.772750+00:00",
+            "endedAt": "2026-11-17T00:57:57.032236+00:00",
+            "actualExitCode": 1,
+            "tests": 338,
+            "pass": 337,
+            "fail": 1,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0,
+            "sourceUnchanged": true,
+            "logSha256": "b12546c959a85935591430e11babd178e1f115a8cbbe368e8eb6f342313fb954",
+            "failure": "bounded unjoined recovery pins match this published package guard version",
+            "cause": "本轮已审查源码变更后，当前恢复工具仍持有旧 guard 哈希。",
+            "disposition": "保留原 337/338 失败记录；独立审查对应 guards 后只更新当前绑定，未改历史冻结 runtime。",
+            "sourceRoles": [
+              "offline-full-r1",
+              "recovery-guard-binding-update"
+            ]
+          },
+          {
+            "role": "offline-full-r2",
+            "command": [
+              "taskset",
+              "-c",
+              "0,1",
+              "nice",
+              "-n",
+              "10",
+              "npm",
+              "run",
+              "test:offline"
+            ],
+            "startedAt": "2026-11-17T01:00:22.211751+00:00",
+            "endedAt": "2026-11-17T01:00:49.241334+00:00",
+            "actualExitCode": 0,
+            "tests": 338,
+            "pass": 338,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0,
+            "sourceUnchanged": true,
+            "logSha256": "c546970b8751ed682da548249393f9853952b2e83765b071ba93d2856c0c5846",
+            "buildQualification": "r1 的 TypeScript build 已成功；此后 TypeScript 源码未改变。r2 运行完整 offline suite，未重新构建正在验收的输入。",
+            "sourceRoles": [
+              "offline-full-r2"
+            ]
+          }
+        ],
+        "targetedRuns": [
+          {
+            "role": "preparation-targeted-tests",
+            "tests": 60,
+            "pass": 60,
+            "fail": 0,
+            "newUniqueCases": 33,
+            "subsetOf": "offline-full-r2",
+            "additionalTestsBeyondFullSuite": 0,
+            "sourceUnchangedVerifiedByIndependentReview": true,
+            "networkStarted": false
+          },
+          {
+            "role": "chat-final-targeted-tests",
+            "tests": 7,
+            "pass": 7,
+            "fail": 0,
+            "actualExitCode": 0,
+            "newUniqueCases": 7,
+            "subsetOf": "offline-full-r2",
+            "additionalTestsBeyondFullSuite": 0,
+            "providerNetworkRequests": 0,
+            "liveChatSent": 0
+          }
+        ],
+        "independentReviews": [
+          {
+            "role": "preparation-independent-review",
+            "decision": "APPROVE",
+            "blockingFindings": 0,
+            "separateBoundaryProbe": {
+              "role": "preparation-independent-boundaries",
+              "checks": 5,
+              "pass": 5,
+              "fail": 0,
+              "actualExitCode": 0,
+              "addedToProductionTestTotal": false,
+              "sourceUnchanged": true
+            },
+            "supersededBy": "navigation-superseding-finding"
+          },
+          {
+            "role": "chat-independent-review",
+            "decision": "APPROVE",
+            "blockingFindings": 0,
+            "keycapRegressionFoundAndResolved": true,
+            "normalizerProbeAssertionsNotAddedToProductionTotal": true
+          }
+        ],
+        "countingRule": "338 是完整生产离线测试的唯一计数。60 定向测试、其中新增的 33 项准备退役测试，以及 7 项聊天测试均已包含在 338 中，不重复相加。独立 review 的 5 项边界探针单列，不与生产测试数累加。",
+        "acceptedRunQualification": "这是当时 5eac0ff 候选的历史通过记录；不代表最终导航修复的验证。原执行事实保留，旧批准范围被后续已复现的 SPA 缺陷覆盖。"
+      },
+      "disposition": "superseded-by-confirmed-same-document-navigation-finding",
+      "supersedingFinding": {
+        "role": "navigation-superseding-finding",
+        "productionReproductionPassed": true,
+        "livePending001ExactHistoricalEpochCaptured": false,
+        "description": "Playwright page.framenavigated 包含同文档路由；原逻辑递增 epoch 后拒绝同一 socket 的后续真实选牌与房间帧。原 338/338 执行仍是真实历史事实，不能覆盖后来复现的集成缺陷。"
+      },
+      "additionalSupersededApprovals": [
+        "historical-integration-review",
+        "historical-source-commit-binding-review"
+      ],
+      "originalPrivateEvidencePreserved": true
+    },
+    {
+      "name": "navigation-draft-before-whole-initialization-deadline",
+      "sourceCommit": null,
+      "sourceBindingStatus": "uncommitted-working-tree-candidate-with-hashed-inputs",
+      "targeted": {
+        "role": "navigation-targeted-r1",
+        "tests": 70,
+        "pass": 70,
+        "fail": 0,
+        "actualExitCode": 0,
+        "appliesToFinalDeadlineRepair": false
+      },
+      "browserAttempts": [
+        {
+          "role": "navigation-loopback-r1",
+          "actualExitCode": 1,
+          "failureCode": "OWN_ACCOUNT_CONFIG",
+          "cause": "本地 smoke fixture 用户名含空格，配置校验在创建文档监控前失败。",
+          "productionNavigationFailureClaimed": false
+        },
+        {
+          "role": "navigation-loopback-r2",
+          "actualExitCode": 0,
+          "checksPassed": 5,
+          "appliesToFinalDeadlineRepair": false
+        }
+      ],
+      "disposition": "独立审查发现 CDP 初始化本身无有限期限；补整体 deadline、迟到结果清理和 7 项边界后，重新运行最终 77 定向及真实浏览器 r3。",
+      "originalPrivateEvidencePreserved": true
+    }
+  ],
+  "browserValidation": {
+    "scope": "真实 Chromium 上的本机 loopback 页面与原生 Socket.IO fixture；没有使用真实站点、账号或游戏。",
+    "productionUnitTestsAdded": 0,
+    "authorLoopback": {
+      "role": "navigation-loopback-r3",
+      "actualExitCode": 0,
+      "checksPassed": 5,
+      "checks": {
+        "historyRoutingKeepsNativeSocketAndCreatedSelection": true,
+        "iframeNavigationKeepsMainDocument": true,
+        "sameUrlReloadInvalidatesOldNativeEvidence": true,
+        "onlyLoopbackCommands": true,
+        "ownedBrowserAndLeaseReleased": true
+      },
+      "realSiteOrAccountUsed": false,
+      "liveGameVerified": false,
+      "sourceBytesUnchanged": true
+    },
+    "independentBFCache": {
+      "role": "navigation-independent-bfcache",
+      "resultRole": "navigation-independent-bfcache-result",
+      "actualExitCode": 0,
+      "runs": 1,
+      "browserConfigurations": 1,
+      "actualBFCacheObserved": true,
+      "pageshowPersisted": true,
+      "sameOriginalDocumentObject": true,
+      "originalLoaderReused": true,
+      "navigationType": "BackForwardCacheRestore",
+      "commitCountBeforeBack": 2,
+      "commitCountAfterBack": 3,
+      "trueRestoreCommitDelivered": true,
+      "sourceUnchanged": true,
+      "loopbackOnly": true,
+      "realSiteOrAccountUsed": false,
+      "ownedBrowserAndRegistryRetired": true,
+      "addedToProductionTestTotal": false
+    },
+    "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+    "validationStage": "navigation-created-retirement-8ff",
+    "rerunForDisabledChatFollowup": false
+  },
+  "validationStages": [
+    {
+      "id": "navigation-created-retirement-8ff",
+      "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+      "status": "completed-and-preserved",
+      "snapshotEvidenceRole": "public-evidence-8ff-stage-snapshot",
+      "release": {
+        "version": "0.5.2",
+        "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+        "releaseBaseCommit": "be9916d73228cae8381e443996f9d193263858d3",
+        "sourceBindingStatus": "committed-bytes-match-final-offline-r3-and-independent-review",
+        "changedFileCount": 20,
+        "changedFiles": [
+          {
+            "path": "package-lock.json",
+            "sha256": "c539d66e2072a24ee4f26525dd35e54d8c5047816ae4c2cd27e558ad72421dd0"
+          },
+          {
+            "path": "package.json",
+            "sha256": "bec80abf6233c1d0508d29cf6fd2320f9bbd7345bb7a519bcff7f4cce352dd26"
+          },
+          {
+            "path": "scripts/international-ui-smoke.mjs",
+            "sha256": "c256d3fce9df08b45fbe1b0eeaa0ba1f7aa02d2eb6b3449add8a59ad258634e3"
+          },
+          {
+            "path": "scripts/pending-document-smoke.mjs",
+            "sha256": "797e3b8f10c1f734b8cdd0d61eb1afa965e45db5b8a968f289ab55c60f117de2"
+          },
+          {
+            "path": "test/helpers/pending-document-session.mjs",
+            "sha256": "bcf44887bcc68605051fea8ba937cf44b6e7df8fc11948617c477f147931b9a4"
+          },
+          {
+            "path": "test/runtime/created-pending-exit.test.mjs",
+            "sha256": "b11278b7433524116f905289515d9840979f956785c7f63160ca9105e1d09a38"
+          },
+          {
+            "path": "test/runtime/international-ui.test.mjs",
+            "sha256": "9dc732c721d19a4a0e78f143cde78d8568763e03409592a8c3e4639f92e85c76"
+          },
+          {
+            "path": "test/runtime/pending-document-navigation.test.mjs",
+            "sha256": "6f0c19dae40996fba2859965c66c3175eddcc91fe01b370c9fb4ce74b6061750"
+          },
+          {
+            "path": "test/runtime/public-preparation-failure.test.mjs",
+            "sha256": "4a0f61185f44de2d020858a51493f92a907a584fd05ee280df6e0459f18b69d8"
+          },
+          {
+            "path": "test/runtime/social-output-quality.test.mjs",
+            "sha256": "355b91ce2fdf01ed5d12eb7fe40b66456119fa8403eda7ee1aff2b3eda7a4edd"
+          },
+          {
+            "path": "tools/keyteki-created-pending-exit.mjs",
+            "sha256": "e9613177306018c67b2c3d0c49945c380552b0709a3bad26748a5e6de61c8f46"
+          },
+          {
+            "path": "tools/keyteki-document-observer.mjs",
+            "sha256": "f73e6f51b7b434ebe56cbf1b0c1c424cd54a751053550177666d58a3ddfc12dc"
+          },
+          {
+            "path": "tools/keyteki-human-create-public.mjs",
+            "sha256": "577cf0d0ecc98c828e5df8908f2ce3374c39124ef822e91beeb0108b14b9b70a"
+          },
+          {
+            "path": "tools/keyteki-human-launcher.mjs",
+            "sha256": "20f8ac0d0121bf1827275573076a9b240376b42b766e1bd3a8eae51ffb72e61b"
+          },
+          {
+            "path": "tools/keyteki-human-public-room-ui.mjs",
+            "sha256": "b13be08db8b58c043950a77ecdb93c7f0f069cdd88547739b4fbc60face6ec5c"
+          },
+          {
+            "path": "tools/keyteki-joined-pending-exit.mjs",
+            "sha256": "e3c10d2b6443fda15380d22b06cdda933a5088ae0e457f7e7c4d8850271ac8d1"
+          },
+          {
+            "path": "tools/keyteki-live-campaign-policy.mjs",
+            "sha256": "89046c813062bc7fef6973defe8c082a67815d2cb4c2b71490653f80d7653e0f"
+          },
+          {
+            "path": "tools/keyteki-live-campaign.mjs",
+            "sha256": "fab2b5e4edbfc9d51fe32912248f31b8367c4ae0c0b487b11a95ed3718cc4a45"
+          },
+          {
+            "path": "tools/keyteki-reconcile-unjoined.mjs",
+            "sha256": "896a0fe670ac356c1e63717bd492ac6708cfb0b0a477f61a5ea3f119c480b058"
+          },
+          {
+            "path": "tools/keyteki-social-session.mjs",
+            "sha256": "4d7d07543b61c9d226a655453e11f27626984f2cd483b5a6f8480b57727556a4"
+          }
+        ],
+        "navigationChangedFileCount": 13,
+        "historicalFrozenRuntimeModified": false,
+        "sourceRoles": [
+          "source-commit-final",
+          "offline-full-r3",
+          "navigation-final-independent-review"
+        ],
+        "validationStage": "navigation-and-created-retirement-8ff-before-disabled-chat-drain-follow-up"
+      },
+      "offlineValidation": {
+        "acceptedRun": "offline-full-r3",
+        "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+        "uniqueProductionTests": 362,
+        "composition": {
+          "priorBaseline": 298,
+          "createdPreparationRetirement": 33,
+          "chatOutputQuality": 7,
+          "documentNavigationAndInitialization": 24,
+          "total": 362
+        },
+        "fullRuns": [
+          {
+            "role": "offline-full-r3",
+            "command": [
+              "taskset",
+              "-c",
+              "0,1",
+              "nice",
+              "-n",
+              "10",
+              "npm",
+              "run",
+              "test:offline"
+            ],
+            "startedAt": "2026-11-17T01:32:58.149401+00:00",
+            "endedAt": "2026-11-17T01:33:27.507294+00:00",
+            "actualExitCode": 0,
+            "tests": 362,
+            "pass": 362,
+            "fail": 0,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0,
+            "sourceAndDistBytesUnchanged": true,
+            "sourceAndDistInputCount": 302,
+            "logSha256": "a01ac7fe9d6e76437607bcd2005b49cb33085432cb58638cc12de4a5b89318b8",
+            "buildQualification": "r1 的 TypeScript build 已成功；最终 r3 的 TypeScript 源码、tsconfig 仍与该 build 一致。r3 运行完整 offline suite，没有重建 dist；302 项 source/dist 输入前后字节一致。",
+            "sourceRoles": [
+              "offline-full-r3",
+              "offline-full-r3-log",
+              "source-commit-final",
+              "navigation-final-independent-review"
+            ]
+          }
+        ],
+        "targetedRuns": [
+          {
+            "role": "navigation-targeted-r2",
+            "tests": 77,
+            "pass": 77,
+            "fail": 0,
+            "actualExitCode": 0,
+            "newNavigationCases": 24,
+            "otherIncludedCases": 53,
+            "subsetOf": "offline-full-r3",
+            "additionalTestsBeyondFullSuite": 0,
+            "sourceBytesUnchanged": true,
+            "networkStarted": false
+          },
+          {
+            "role": "chat-final-targeted-tests",
+            "tests": 7,
+            "pass": 7,
+            "fail": 0,
+            "actualExitCode": 0,
+            "newUniqueCases": 7,
+            "subsetOf": "offline-full-r3",
+            "additionalTestsBeyondFullSuite": 0,
+            "providerNetworkRequests": 0,
+            "liveChatSent": 0,
+            "qualification": "聊天源文件和对应 7 项测试与已审查版本字节相同，并再次包含在最终 r3 完整回归中。"
+          }
+        ],
+        "independentReviews": [
+          {
+            "role": "navigation-final-independent-review",
+            "decision": "APPROVE",
+            "blockingFindings": 0,
+            "sourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+            "navigationChangedFilesVerified": 13,
+            "releaseChangedFilesVerified": 20,
+            "allCommittedAndTestedBytesMatch": true,
+            "historicalApprovalsPreservedAndSuperseded": true,
+            "liveSiteAcceptanceClaimed": false
+          },
+          {
+            "role": "chat-independent-review",
+            "decision": "APPROVE",
+            "blockingFindings": 0,
+            "keycapRegressionFoundAndResolved": true,
+            "normalizerProbeAssertionsNotAddedToProductionTotal": true
+          }
+        ],
+        "countingRule": "362 = 原基线 298 + 准备退役 33 + 聊天 7 + 导航/初始化 24。最终 77 定向、历史 60 定向及其中 33、聊天 7 都不是完整套件之外的新测试数。历史独立 5 项边界探针、真实 Chromium 5 项检查及独立 BFCache 单次 probe 分别记证据，不加到 362。"
+      },
+      "browserValidationPath": "#/browserValidation",
+      "liveAcceptancePaths": [
+        "#/liveAcceptance/fuzhouOwnedPreparationTimeout",
+        "#/liveAcceptance/fuzhouOwnedNormalLifecycle"
+      ],
+      "qualification": "本阶段结果仍精确归属于 8ff；自然对局中观察到的 65001ms 等待与 203/202/202 指令计数不被后续修复改写。"
+    },
+    {
+      "id": "disabled-chat-drain-2a47",
+      "sourceCommit": "2a47cc5f6415aad0cd3214d184095714940f1b09",
+      "parentSourceCommit": "8ff8ef506a524fb1029520d1f9a66fea28b59a6f",
+      "status": "completed-and-independently-reviewed",
+      "changedFilesFromParent": 3,
+      "releasePath": "#/release",
+      "offlineValidationPath": "#/offlineValidation",
+      "liveAcceptancePaths": [
+        "#/liveAcceptance/fuzhouOwnedDisabledChatLifecycle"
+      ],
+      "priorLiveResultsRelabeled": false
+    }
+  ]
+}

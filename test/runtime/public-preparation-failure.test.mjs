@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { EventEmitter } from 'node:events';
+import { mockPendingDocumentSession } from '../helpers/pending-document-session.mjs';
 import { AgentBrowser } from '../../tools/browser-provider.mjs';
 import { runCreatePublic } from '../../tools/keyteki-human-create-public.mjs';
 
@@ -23,6 +24,7 @@ async function failedPreparation(mode) {
     credentialsPath, output, setupTimeoutMs: 1000, social: { enabled: false },
   };
   const page = new EventEmitter(), socket = new EventEmitter(), calls = [];
+  mockPendingDocumentSession(page);
   let currentUrl = origin + '/login';
   page.url = () => currentUrl;
   page.addInitScript = async () => {};

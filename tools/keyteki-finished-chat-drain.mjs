@@ -66,6 +66,7 @@ const boundedRead = (readStatus, timeoutMs) => {
 export async function waitForFinishedChat({
   identity,
   readStatus,
+  socialEnabled,
   cancelled = () => null,
   timeoutMs = FINISHED_CHAT_DRAIN_MS,
   pollMs = 250,
@@ -73,7 +74,7 @@ export async function waitForFinishedChat({
   clock = Date.now,
   wait = pause,
 }) {
-  const budget = Math.max(1, Math.min(FINISHED_CHAT_DRAIN_MS, timeoutMs));
+  const budget = socialEnabled === false ? 0 : Math.max(1, Math.min(FINISHED_CHAT_DRAIN_MS, timeoutMs));
   const started = clock(),
     deadline = started + budget;
   let checks = 0,
@@ -89,6 +90,13 @@ export async function waitForFinishedChat({
     last,
     serverEchoConfirmed: false,
   });
+  // Only an explicit normalized false skips polling; missing/unknown configuration still waits.
+  if (socialEnabled === false) {
+    const reason = cancelled();
+    if (reason) return receipt('cancelled', reason);
+    last = { observable: false, drained: false, reason: 'social-disabled' };
+    return receipt('skipped', 'social-disabled');
+  }
   while (clock() < deadline) {
     const before = cancelled();
     if (before) return receipt('cancelled', before);

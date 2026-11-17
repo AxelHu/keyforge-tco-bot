@@ -173,6 +173,7 @@ try {
       html = fixtureHtml(locale, gameType === 'casual' ? 'beginner' : 'casual');
       await page.goto(origin + '/play', { waitUntil: 'domcontentloaded' });
       observer = new PublicRoomObserver(page, config);
+      await observer.ready;
       observer.ingest('40{"sid":"fixture-own-socket"}');
       const created = await createPublicRoomUi(page, observer, config);
       assert.equal(created.gameId, gameId);
@@ -199,6 +200,7 @@ try {
       };</script>`);
     const boundConfig = { ...config, createPublic: false, participants: [own, other], room: { ...config.room, gameId, opponentName: other } };
     observer = new PublicRoomObserver(page, boundConfig);
+    await observer.ready;
     observer.joinRequested = true;
     observer.ingest('40{"sid":"fixture-own-socket"}');
     currentRaw = publicRoom([own, other]);

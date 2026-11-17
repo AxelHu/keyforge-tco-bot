@@ -25,6 +25,8 @@ import { createOneSeatBridgeBinding, managedHumanBootstrap } from './keyteki-hum
 import { installHumanWatchdog, createHumanHoldController } from './keyteki-human-watchdog-browser.mjs';
 import { installFinishedRoomExit } from './keyteki-finished-room-exit.mjs';
 import { installJoinedPendingRoomExit } from './keyteki-joined-pending-exit.mjs';
+import { retireCreatedPendingRoom } from './keyteki-created-pending-exit.mjs';
+import { stopUnjoinedHost } from './keyteki-unjoined-host-stop.mjs';
 import { installDisconnectedOpponentExit } from './keyteki-disconnected-opponent-exit.mjs';
 import { stopDisconnectedHost } from './keyteki-disconnected-host-stop.mjs';
 import { releaseOwnedHumanBrowser } from './keyteki-owned-browser-release.mjs';
@@ -244,6 +246,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
     await page.setViewportSize({ width: 1440, height: 1100 });
     page.setDefaultTimeout(config.setupTimeoutMs);
     observer ??= new PublicRoomObserver(page, config);
+    await observer.ready;
     page.on('pageerror', () => {
       void hold('BROWSER_PAGE_ERROR');
     });
@@ -378,8 +381,29 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
       await page.evaluate(bootstrap);
       healthy();
       state.phase = 'waiting-for-human-deck';
+      state.createdPreparationWait = { startedAt: Date.now() };
+      state.createdPreparationWait.deadlineAt = state.createdPreparationWait.startedAt + config.setupTimeoutMs;
       handoff();
-      const start = await startOwnBoundRoomUi(page, observer, config);
+      let start;
+      try {
+        start = await startOwnBoundRoomUi(page, observer, config);
+      } catch (error) {
+        if (error?.code !== 'HUMAN_DECK_NOT_READY' || !config.leaveAfterFinish || !observer.createdPending) throw error;
+        Object.assign(state.createdPreparationWait, { code: error.code, expiredAt: Date.now() });
+        const retired = await retireCreatedPendingRoom({
+          page, config, state, tracker: observer.createdPending, hostIdentity,
+          inspectHost: () => hostRequest('/status'),
+          externalCancellation: () => hostStopWasRequested(config.profile, connection),
+          stopHost: () => stopUnjoinedHost(config, unjoinedHostBinding),
+          release: () => releaseOwnedHumanBrowser({ pool, instance, config }),
+          quiesce: () => { watchdogRuntime?.close(); finishedExit?.close(); disconnectedExit?.close(); },
+          afterRetired: () => { observer.dispose(); process.off('SIGINT', signal); process.off('SIGTERM', signal); },
+          save: () => { write('created-pending-exit.json', state.createdPendingExit); handoff(); },
+        });
+        if (!retired) throw error;
+        return { config, state, pool, instance, observer, hold, watchdog: watchdogRuntime,
+          unjoinedHostBinding, save: handoff };
+      }
       write('own-start-receipt.json', start);
       await waitForObserved(
         () => state.fullVerified,
