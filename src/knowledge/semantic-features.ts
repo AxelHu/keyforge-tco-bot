@@ -212,12 +212,28 @@ const STATIC_FIELDS = new Set([
   'retainedUpgrade',
 ]);
 const CACHE = new WeakMap<CardDefinition, Partial<Record<SemanticScope, CardSemanticFeatures>>>();
-function deeplyFrozen(value: unknown, seen = new Set<object>()): boolean {
-  if (value === null || typeof value !== 'object' || seen.has(value)) return true;
-  if (!Object.isFrozen(value)) return false;
-  seen.add(value);
-  return Object.values(value).every((child) => deeplyFrozen(child, seen));
+function deeplyFrozen(value: unknown): boolean {
+  const seen = new Set<object>();
+  let budget = 4096;
+  function visit(item: unknown, depth: number): boolean {
+    if (--budget < 0 || depth > 32) return false;
+    if (item === null || typeof item !== 'object' || seen.has(item)) return true;
+    if (!Object.isFrozen(item)) return false;
+    seen.add(item);
+    if (Array.isArray(item)) {
+      for (let index = 0; index < item.length; index++) {
+        if (budget <= 0 || !visit(item[index], depth + 1)) return false;
+      }
+    } else {
+      for (const key of Object.keys(item)) {
+        if (budget <= 0 || !visit((item as Row)[key], depth + 1)) return false;
+      }
+    }
+    return true;
+  }
+  return visit(value, 0);
 }
+
 function flip(side: RelativeSide): RelativeSide {
   return side === 'friendly' ? 'enemy' : side === 'enemy' ? 'friendly' : side;
 }
@@ -359,7 +375,13 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
       if (value !== undefined) unknown('effect-list');
       return;
     }
-    for (const e of value) effect(e, context, depth);
+    for (let index = 0; index < value.length; index++) {
+      if (budget <= 0) {
+        unknown('effect-budget-or-cycle');
+        break;
+      }
+      effect(value[index], context, depth);
+    }
   }
   function effect(value: unknown, context: Context, depth: number) {
     const e = object(value);
@@ -582,7 +604,12 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
         effects(reaction.effects, ctx, 0);
       }
       effects(card.startTurnFromDiscard, ctx, 0);
-      effects(card.attackerBeforeFight, ctx, 0);
+      if (card.attackerBeforeFight?.length) {
+        // The defender grants this bundle to the attacker, who supplies both
+        // actor and source. The defender's own controller is not its beneficiary.
+        flags.conditional = true;
+        unknown('attacker-before-fight-context');
+      }
       effects(card.afterAttach, ctx, 0);
     }
     if (scope !== 'use') {

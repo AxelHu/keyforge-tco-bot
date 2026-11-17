@@ -507,3 +507,53 @@ test('selection locator distinguishes healing from destruction within the same s
   assert.equal(assess('friendly'), 0);
   assert.equal(assess('enemy'), 0);
 });
+
+test('attackerBeforeFight is not classified as a benefit to its defending source controller', () => {
+  const value = features([], {
+    attackerBeforeFight: [
+      { kind: 'gain', amount: 2 },
+      { kind: 'draw', amount: 1 },
+      { kind: 'self', operation: 'heal', amount: 2 },
+      { kind: 'capture', amount: 1 },
+    ],
+  });
+  assert.equal(value.gain, false);
+  assert.equal(value.draw, false);
+  assert.equal(value.heal, false);
+  assert.equal(value.amberControl, false);
+  assert.equal(value.conditional, true);
+  assert.ok(value.unknownKinds.includes('attacker-before-fight-context'));
+});
+
+test('deeply frozen definitions beyond the depth budget are inspected without memoizing them', () => {
+  let effect = Object.freeze({ kind: 'gain', amount: 1 });
+  for (let index = 0; index < 40; index++)
+    effect = Object.freeze({ kind: 'futureWrapper', then: Object.freeze([effect]) });
+  const spec = Object.freeze(
+    definition({ traits: Object.freeze([]), abilities: Object.freeze({ play: Object.freeze([effect]) }) }),
+  );
+  const first = cardSemanticFeatures(spec),
+    second = cardSemanticFeatures(spec);
+  assert.equal(first.unknown, true);
+  assert.equal(first.gain, false);
+  assert.notStrictEqual(first, second, 'cache eligibility must obey its own depth limit');
+});
+
+test('wide effect lists stop before reading beyond the evaluation and caching budgets', () => {
+  const effects = Array(5000).fill(Object.freeze({ kind: 'gain', amount: 0 }));
+  Object.defineProperty(effects, 4096, {
+    enumerable: true,
+    get() {
+      throw new Error('read beyond the supported effect budget');
+    },
+  });
+  Object.freeze(effects);
+  const spec = Object.freeze(
+    definition({ traits: Object.freeze([]), abilities: Object.freeze({ play: effects }) }),
+  );
+  const first = cardSemanticFeatures(spec),
+    second = cardSemanticFeatures(spec);
+  assert.equal(first.gain, false);
+  assert.ok(first.unknownKinds.includes('effect-budget-or-cycle'));
+  assert.notStrictEqual(first, second, 'large frozen lists are not memoized through an unbounded scan');
+});
