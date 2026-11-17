@@ -1,13 +1,5 @@
 # KeyForge TCO Bot
 
-<!-- structured-semantics-060:start -->
-## 0.6.0 structured strategy semantics
-
-Code policies now use structured card capabilities and current-step intents in place of 12 summary predicates and text-based choice classification. Native prompt compatibility is centralized where possible, with narrow card-specific fallbacks retained. All static rules and printed text remain available. The final offline suite passed **426/426**; the separate core decision suite passed **13/13**. In 24 development games, **2,274** display-text mutation checks preserved the selected action.
-
-The fixed 12-deck local comparison recorded **44–52** in 96 development games and **186–198 (48.44%)** in the confirmation primary estimate. The confirmation plan contained 384 games. These results are separate from the historical Elo and from human/server play; see the [Chinese report](docs/structured-strategy-semantics.md) for per-family unit-bootstrap intervals, exclusions, source bindings and limits. No new online games were started.
-<!-- structured-semantics-060:end -->
-
 An experimental, observation-based strategy and browser automation stack for
 Keyteki-compatible servers. It includes the strategy host, native player-view
 adapter, browser bridge, watchdog, room lifecycle and sequential game campaigns.
@@ -41,23 +33,21 @@ engine, game server, game UI and historical match data are not included.
 
 ## Compatibility and current validation
 
-The bot supports the Fuzhou deployment and international TCO. Current maintenance tests focus on **Fuzhou and owned-account games**. International matchmaking against other people has been paused since 2026-11-17. International compatibility and English chat configuration remain available; this is the project's current testing arrangement.
+<!-- contextual-formulas-061:start -->
+### 0.6.1 contextual formulas
 
-**0.5.3** fixes capture-effect quota recognition when the Fuzhou server uses the observed Chinese outer conjunctions. It accepts complete English or Chinese pairs while preserving the actor, source, message-window and numeric checks. The full offline suite passed **392/392 tests**, including six new cases. Strategy scoring and historical Elo are unchanged. See the [localized-effect and single-aember validation report](docs/localized-capture-validation.md) for the preserved original failure, replay of the unmodified failed input and owned-game verification.
+Current public state now drives deterministic quantities and bounded sequential projections; supported random outcomes are valued before caps and averaging. The final candidate also refreshes captured-based power and haunted dependencies when their public inputs change, while propagating unresolved captured amounts. Missing public history remains explicit uncertainty.
 
-The new source also completed an owned-game Hypnotic single-aember allocation: the opponent pool changed **1→0**, the recipient's captured aember **0→1**, and the acting player's pool stayed unchanged, with one native send and its ACK. The game ended naturally **0:3** with **198/198** commands acknowledged and automatic resource retirement. The private directed selector did not fully hand control back to the baseline after the target, so this score is not a strategy comparison. The first attempt, which never triggered the target and ended in a technical failure, remains in the record.
+The full offline suite passed **483/483**, including **57** new tests. Separate independent checks passed **94** cases and **97** whole-input immutability assertions. Against 0.6.0, the fixed development primary estimate was **51–45** and confirmation was **201–183 (52.34%)**. The separate 0.5.3 reference was **102–90 (53.12%)**.
 
-**The 0.5.2 stage** fixed created rooms that could keep their runtime alive after a deck-readiness timeout, includes outgoing deck selection observed over HTTP polling, preserves native evidence across SPA navigation while rejecting replaced documents, filters empty quotation marks and punctuation-only model chat, and skips the postgame chat wait when social chat is explicitly disabled. A preparation failure still pauses the campaign after safe resource retirement. Only an evidence-backed neutral pending departure permits continuation. Strategy scoring and card algorithms did not change.
+Results are not pooled. The 849 completed games from superseded candidates remain separate from the final 672 games. All final seeds were used in candidate02, so this is a repeated fixed-design comparison, not an entirely unseen holdout. See the [Chinese report](docs/contextual-formula-evaluation.md) for per-family intervals, corrected scope metadata and limits. No new online games, Elo ratings or deployment changes are claimed.
+<!-- contextual-formulas-061:end -->
 
-That 0.5.2 source passed the full offline suite of **386/386 tests**, with no failures, skips or cancellations, and the code received independent review. The 88 new tests are included in that total. Owned Fuzhou rooms passed a preparation-timeout retirement check and two natural lifecycle checks; the final source completed a 3:1 game with all 203 queued commands acknowledged. See the [preparation fixes and Fuzhou tests](docs/preparation-retirement.md) for live validation, historical cleanup and the precise scope.
+The bot supports the Fuzhou deployment and international TCO. Current maintenance tests focus on **Fuzhou and owned-account games**. International matchmaking against other people has been paused since 2026-11-17; the adapter and English chat configuration remain available.
 
-The same **0.5.2** production source also passed one real owned-game recovery fixture. A delayed local state response caused the browser deadline to expire; the late response remained fenced, and the watchdog recovered using an exactly bound observed-delivery receipt. The original command appeared once and reconciliation did not inflate ACKs. The game then ended naturally **3:0**, with **193/193** commands acknowledged and all resources retired. No strategy or Elo changes are claimed. See the [request deadline and delivery recovery report](docs/recovery-validation.md) for measured timing, coverage limits and the preserved finalizer failure.
+The new 0.6.1 validation covers public formulas and complete local comparison games. Existing server evidence includes 0.5.3 localized capture allocation and 0.5.2 preparation retirement and delivery recovery, each attributed to its actual source and scope. Current results, historical failures and server evidence are collected in the [validation record](docs/validation.md).
 
-Historical international natural results remain attributed to their actual source: **0 wins / 3 losses on 0.5.0**, and **1 win / 1 loss on 0.5.1**, for **1 win / 4 losses overall**. The non-natural 0:0 site win, empty-room waits and preparation failures are excluded. The last 0.5.1 background batch contained one natural loss, three empty-room waits and one preparation failure; its remaining runtime was retired manually while preserving the original outcome and budget. These samples have not been used to update Elo.
-
-The optional, default-off opponent-disconnect departure introduced in 0.5.1 passed one real owned private fixture, including normal Leave and complete retirement after about 145.3 seconds of continuous native disconnection. Earlier multi-deck private results retain their actual versions. See [international validation](docs/international-tco.md) and [disconnect validation](docs/international-disconnected-exit.md).
-
-Managed operation targets **Linux or Linux inside WSL**, with Node.js **22.12–24.x**, Python 3 and Chromium. Native Windows and macOS supervision has not been validated. See the [validation scope](docs/validation.md).
+Managed operation targets **Linux or Linux inside WSL**, with Node.js **22.12–24.x**, Python 3 and Chromium. Native Windows and macOS supervision has not been validated.
 
 ## Install
 
