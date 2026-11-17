@@ -50,7 +50,12 @@ export function rankCompetitive(
         delta =
           (me.hand ?? []).filter((c) => {
             if (!(c.effective.houses ?? [c.effective.house]).includes(a.house!)) return false;
-            const semantic = cardSemanticFeatures(c.spec);
+            const semantic = cardSemanticFeatures(c.spec, 'any', {
+              observation: o,
+              source: c,
+              action: { kind: 'play', card: c.id },
+              phase: 'after-play',
+            });
             return semantic.amberControl || semantic.boardControl;
           }).length * 0.4;
     }

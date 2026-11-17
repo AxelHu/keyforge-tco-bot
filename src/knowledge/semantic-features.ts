@@ -4,7 +4,14 @@
  * will resolve now. Unknown rules remain explicit; neither summary prose nor the
  * retired summaryFeatures mask participates in classification.
  */
-import type { CardDefinition } from '../contracts/observation.js';
+import type { CardDefinition, Condition, Filter, Value } from '../contracts/observation.js';
+import {
+  evaluatePublicCondition,
+  evaluatePublicValue,
+  selectPublicCards,
+  type PublicFormulaContext,
+  type PublicValueResult,
+} from './public-formula.js';
 
 export type SemanticScope = 'any' | 'play' | 'use';
 export interface CardSemanticFeatures {
@@ -30,10 +37,13 @@ type Actor = 1 | -1 | 0;
 interface Selection {
   side: RelativeSide;
   zone?: unknown;
+  count?: PublicValueResult;
 }
 interface Context {
   actor: Actor;
   bindings: Map<string, Selection>;
+  formula?: PublicFormulaContext;
+  scalarValues?: ReadonlyMap<string, PublicValueResult>;
 }
 const object = (value: unknown): Row | undefined =>
   value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as Row) : undefined;
@@ -249,11 +259,12 @@ function relativeSide(side: unknown, actor: Actor): RelativeSide {
 export function cardSemanticFeatures(
   card: CardDefinition | undefined,
   scope: SemanticScope = 'any',
+  context?: PublicFormulaContext,
 ): CardSemanticFeatures {
-  const cached = card && CACHE.get(card)?.[scope];
+  const cached = !context && card && CACHE.get(card)?.[scope];
   if (cached) return cached;
-  const result = inspect(card, scope);
-  if (card && deeplyFrozen(card)) {
+  const result = inspect(card, scope, context);
+  if (!context && card && deeplyFrozen(card)) {
     const entries = CACHE.get(card) ?? {};
     entries[scope] = result;
     CACHE.set(card, entries);
@@ -261,7 +272,11 @@ export function cardSemanticFeatures(
   return result;
 }
 
-function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSemanticFeatures {
+function inspect(
+  card: CardDefinition | undefined,
+  scope: SemanticScope,
+  context?: PublicFormulaContext,
+): CardSemanticFeatures {
   const flags = {
     amberControl: false,
     forge: false,
@@ -282,21 +297,51 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
     unknownKinds.add(kind);
   };
   const active = new Set<object>();
-  const ctx: Context = { actor: 1, bindings: new Map() };
-  function positive(value: unknown, field = 'amount'): boolean {
+  const ctx: Context = { actor: 1, bindings: new Map(), formula: context };
+  function positive(value: unknown, field = 'amount', effectContext = ctx): boolean {
     if (value === undefined) return true;
-    if (typeof value === 'number' && Number.isFinite(value)) return value > 0;
-    // A formula can be zero, negative, conditional, or unsupported. Potential
-    // benefit is not established merely by the presence of an object value.
+    const raw = object(value);
+    const bound =
+      typeof raw?.storedValue === 'string'
+        ? effectContext.scalarValues?.get(raw.storedValue)
+        : undefined;
+    const result = bound ?? evaluatePublicValue(value as Value, effectContext.formula);
+    if (result.kind === 'exact') return result.value > 0;
     flags.conditional = true;
-    unknown('dynamic:' + field);
-    return false;
+    for (const reason of result.reasons) unknown('quantity:' + field + ':' + reason);
+    if (!result.reasons.length) unknown('quantity:' + field + ':' + result.kind);
+    if (result.kind === 'interval' || result.kind === 'expected') return result.upper > 0;
+    if (result.upper !== undefined) return result.upper > 0;
+    // Recognized public quantities with missing context retain conditional
+    // capability potential. An unrecognized formula is not a positive fact.
+    return !result.reasons.some(
+      (reason) =>
+        reason.startsWith('unsupported-public-formula:') ||
+        reason === 'invalid-value-shape' ||
+        reason === 'non-finite-value' ||
+        reason === 'formula-cycle',
+    );
+  }
+  function conditionPotential(value: unknown, effectContext = ctx): boolean | undefined {
+    const result = evaluatePublicCondition(value as Condition, effectContext.formula);
+    if (result.kind === 'exact') return result.value;
+    flags.conditional = true;
+    for (const reason of result.reasons) unknown('condition:' + reason);
+    return undefined;
   }
   function selection(filter: unknown, context: Context): Selection {
     const f = object(filter);
     if (!f) return { side: 'unknown' };
-    if (typeof f.bound === 'string' && context.bindings.has(f.bound)) return context.bindings.get(f.bound)!;
-    if (f.sourceOnly === true) return { side: 'friendly', zone: f.zone };
+    if (typeof f.bound === 'string' && context.bindings.has(f.bound))
+      return context.bindings.get(f.bound)!;
+    if (f.sourceOnly === true)
+      return {
+        side: 'friendly',
+        zone: f.zone,
+        count: context.formula
+          ? selectPublicCards(filter as Filter, context.formula).count
+          : undefined,
+      };
     let side: RelativeSide =
       f.side === 'friendly' || f.side === 'enemy' || f.side === 'any'
         ? f.side
@@ -307,11 +352,19 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
       side = 'unknown';
     if (context.actor === -1) side = flip(side);
     if (context.actor === 0) side = 'unknown';
-    return { side, zone: f.zone };
+    const count = context.formula
+      ? selectPublicCards(filter as Filter, context.formula).count
+      : undefined;
+    return { side, zone: f.zone, count };
   }
   const friendly = (side: RelativeSide) => side === 'friendly' || side === 'any';
   const enemy = (side: RelativeSide) => side === 'enemy' || side === 'any';
-  function operation(op: unknown, target: Selection, effect: Row) {
+  function operation(op: unknown, target: Selection, effect: Row, effectContext = ctx) {
+    if (target.count?.kind === 'exact' && target.count.value === 0) return;
+    if (target.count && target.count.kind !== 'exact') {
+      flags.conditional = true;
+      for (const reason of target.count.reasons) unknown('selection:' + reason);
+    }
     if (target.side === 'unknown') {
       unknown('operation-target');
       return;
@@ -319,7 +372,7 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
     if (
       ['damage', 'heal', 'capture', 'captureOwn'].includes(String(op)) &&
       !(op === 'heal' && effect.fullHeal === true) &&
-      !positive(effect.amount)
+      !positive(effect.amount, 'amount', effectContext)
     )
       return;
     switch (op) {
@@ -370,17 +423,148 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
         unknown('operation:' + String(op));
     }
   }
+  // A static feature walk does not simulate effect sequences. Once an earlier
+  // instruction can change a quantity, later reads retain conditional potential
+  // instead of falsely proving a branch from the pre-instruction observation.
+  function afterInstruction(value: unknown, context: Context): Context {
+    if (!context.formula) return context;
+    const e = object(value);
+    if (!e) return context;
+    const kind = String(e.kind);
+    if (['reveal', 'finishAction'].includes(kind)) return context;
+    const formula = context.formula;
+    let pool = false,
+      zones = false,
+      board = false,
+      history = false,
+      step = true;
+    if (kind === 'gain' || kind === 'loseOpponent' || kind === 'payOpponent') pool = true;
+    else if (kind === 'draw') zones = true;
+    else if (kind === 'chains') step = false;
+    else if (kind === 'resource') {
+      pool = e.operation !== 'draw' && e.operation !== 'chains';
+      zones = e.operation === 'draw';
+    } else if (['bindCards', 'bindPhysicalCards'].includes(kind) && !array(e.then).length)
+      step = false;
+    else {
+      pool = zones = board = history = true;
+    }
+    const invalid = (input: Exclude<Value, number>) => {
+      if ('metric' in input)
+        return input.metric === 'amber'
+          ? pool
+          : input.metric === 'handSize' || input.metric === 'archives'
+            ? zones
+            : history;
+      if (
+        'count' in input ||
+        'armorTotal' in input ||
+        'creatureAmberTotal' in input ||
+        'powerCounterTotal' in input ||
+        'maximumPower' in input ||
+        'distinctHouses' in input ||
+        'distinctPowers' in input ||
+        'sharedHousePair' in input ||
+        'markerCount' in input
+      ) {
+        const filter =
+          'count' in input
+            ? input.count
+            : 'armorTotal' in input
+              ? input.armorTotal
+              : 'creatureAmberTotal' in input
+                ? input.creatureAmberTotal
+                : 'powerCounterTotal' in input
+                  ? input.powerCounterTotal
+                  : 'maximumPower' in input
+                    ? input.maximumPower
+                    : 'distinctHouses' in input
+                      ? input.distinctHouses
+                      : 'distinctPowers' in input
+                        ? input.distinctPowers
+                        : 'sharedHousePair' in input
+                          ? input.sharedHousePair
+                          : input.markerCount.filter;
+        const requested = Array.isArray(filter.zone) ? filter.zone : [filter.zone ?? 'battleline'];
+        return requested.some((zone) =>
+          ['play', 'battleline', 'artifacts', 'upgrades'].includes(zone) ? board : zones,
+        );
+      }
+      if ('ownTurn' in input || 'activeIsController' in input || 'tokenReferenceIs' in input)
+        return false;
+      if (
+        'lastAmount' in input ||
+        'eventAmount' in input ||
+        'storedValue' in input ||
+        'chosenHouseIs' in input ||
+        'chosenNumber' in input
+      )
+        return step;
+      if (
+        'keyForged' in input ||
+        'playedHouse' in input ||
+        'friendlyExaltedThisTurn' in input ||
+        'sourceUsesThisTurn' in input ||
+        'stolenThisTurn' in input ||
+        'wasStolenFromPreviousTurn' in input ||
+        'creatureFightsThisTurn' in input ||
+        'usedCreatureCount' in input ||
+        'drawnInDrawStep' in input ||
+        'friendlyDestroyedThisTurn' in input ||
+        'enemyDestroyedThisTurn' in input
+      )
+        return history;
+      if ('discardAtLeast' in input || 'haunted' in input) return zones || board;
+      return board;
+    };
+    return {
+      ...context,
+      formula: {
+        ...formula,
+        resolveLeaf: (input, current) =>
+          invalid(input)
+            ? {
+                kind: 'unknown',
+                reasons: ['earlier-instruction-needs-projection:' + kind],
+              }
+            : formula.resolveLeaf?.(input, current),
+        selectCards: (filter, current) => {
+          const requested = Array.isArray(filter.zone)
+            ? filter.zone
+            : [filter.zone ?? 'battleline'];
+          if (
+            requested.some((zone) =>
+              ['play', 'battleline', 'artifacts', 'upgrades'].includes(zone) ? board : zones,
+            )
+          )
+            return {
+              cards: [],
+              possibleCards: [],
+              count: {
+                kind: 'unknown',
+                reasons: ['earlier-instruction-needs-projection:' + kind],
+              },
+              identitiesComplete: false,
+              reasons: ['earlier-instruction-needs-projection:' + kind],
+            };
+          return formula.selectCards?.(filter, current);
+        },
+      },
+    };
+  }
   function effects(value: unknown, context: Context, depth: number) {
     if (!Array.isArray(value)) {
       if (value !== undefined) unknown('effect-list');
       return;
     }
+    let current = context;
     for (let index = 0; index < value.length; index++) {
       if (budget <= 0) {
         unknown('effect-budget-or-cycle');
         break;
       }
-      effect(value[index], context, depth);
+      effect(value[index], current, depth);
+      current = afterInstruction(value[index], current);
     }
   }
   function effect(value: unknown, context: Context, depth: number) {
@@ -404,7 +588,7 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
     const actor = relativeSide('self', context.actor);
     const source: Selection = { side: 'friendly' };
     const follow = (field: string, c = context) => effects(e[field], c, next);
-    const amountActive = positive(e.amount);
+    const amountActive = positive(e.amount, 'amount', context);
     switch (e.kind) {
       case 'gain':
         if (amountActive && actor === 'friendly') flags.gain = true;
@@ -417,7 +601,7 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
           flags.amberControl = true;
           flags.gain = true;
         }
-        follow('then');
+        follow('then', afterInstruction(e, context));
         break;
       case 'loseOpponent':
         if (amountActive && context.actor === 1) flags.amberControl = true;
@@ -426,10 +610,10 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
         if (context.actor === 1) flags.amberControl = true;
         break;
       case 'capture':
-        operation('capture', source, e);
+        operation('capture', source, e, context);
         break;
       case 'healSelf':
-        operation('heal', source, e);
+        operation('heal', source, e, context);
         break;
       case 'resource':
         if (own === 'unknown') unknown('resource-side');
@@ -447,7 +631,7 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
       case 'forgeEffect':
         if (context.actor === 1) flags.forge = true;
         else if (context.actor === 0) unknown('forge-actor');
-        follow('after');
+        follow('after', afterInstruction(e, context));
         break;
       case 'archiveChoice':
       case 'archiveTop':
@@ -461,23 +645,28 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
       case 'target':
       case 'all':
       case 'repeatTarget': {
-        if (e.kind === 'repeatTarget' && !positive(e.count, 'count')) break;
+        if (e.kind === 'repeatTarget' && !positive(e.count, 'count', context)) break;
         const target = selection(e.filter, context);
-        operation(e.operation, target, e);
+        operation(e.operation, target, e, context);
         const after = object(e.after);
         if (after) {
           flags.conditional = true;
-          effects(after.effects, context, next);
+          effects(after.effects, afterInstruction(e, context), next);
         }
         break;
       }
       case 'self':
-        operation(e.operation, source, e);
-        effects(object(e.after)?.effects, context, next);
+        operation(e.operation, source, e, context);
+        effects(object(e.after)?.effects, afterInstruction(e, context), next);
         break;
       case 'bound':
-        operation(e.operation, context.bindings.get(String(e.key)) ?? { side: 'unknown' }, e);
-        effects(object(e.after)?.effects, context, next);
+        operation(
+          e.operation,
+          context.bindings.get(String(e.key)) ?? { side: 'unknown' },
+          e,
+          context,
+        );
+        effects(object(e.after)?.effects, afterInstruction(e, context), next);
         break;
       case 'chooseCards':
       case 'bindCards':
@@ -485,40 +674,143 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
         const bindings = new Map(context.bindings);
         if (typeof e.bind === 'string') bindings.set(e.bind, selection(e.filter, context));
         else unknown('selection-binding');
-        follow('then', { ...context, bindings });
+        let formula = context.formula;
+        if (formula && typeof e.bind === 'string') {
+          const known = new Map(formula.bindings);
+          known.delete(e.bind); // A future choice must not reuse an earlier same-name binding.
+          if (e.kind !== 'chooseCards') {
+            const selected = selectPublicCards(e.filter as Filter, formula);
+            if (selected.identitiesComplete) known.set(e.bind, selected.cards);
+          }
+          formula = { ...formula, bindings: known };
+        }
+        follow('then', { ...context, bindings, formula });
         break;
       }
+      case 'withValue': {
+        if (typeof e.bind !== 'string') {
+          unknown('scalar-binding');
+          break;
+        }
+        const value = evaluatePublicValue(e.value as Value, context.formula);
+        const scalarValues = new Map(context.scalarValues);
+        scalarValues.set(e.bind, value);
+        const scalarBindings = new Map(context.formula?.scalarBindings);
+        scalarBindings.set(e.bind, value);
+        follow('then', {
+          ...context,
+          scalarValues,
+          formula: context.formula ? { ...context.formula, scalarBindings } : undefined,
+        });
+        break;
+      }
+      case 'randomCard':
+      case 'bindRandom': {
+        const side = own === 'friendly' ? 'friendly' : own === 'enemy' ? 'enemy' : undefined;
+        const filter = { side, zone: e.zone } as Filter;
+        const target = side ? selection(filter, context) : { side: 'unknown' as const };
+        const count = target.count;
+        const selectedCount: PublicValueResult | undefined =
+          count?.kind === 'exact'
+            ? { kind: 'exact', value: Number(count.value > 0), reasons: count.reasons }
+            : count?.kind === 'interval' || count?.kind === 'expected'
+              ? {
+                  kind: 'interval',
+                  lower: Number(count.lower > 0),
+                  upper: Number(count.upper > 0),
+                  reasons: count.reasons,
+                }
+              : count;
+        const bindings = new Map(context.bindings);
+        if (typeof e.bind !== 'string') {
+          unknown('random-binding');
+          break;
+        }
+        bindings.set(e.bind, { ...target, count: selectedCount });
+        let formula = context.formula;
+        if (formula) {
+          const visible = side ? selectPublicCards(filter, formula) : undefined;
+          const known = new Map(formula.bindings);
+          known.delete(e.bind);
+          if (visible?.identitiesComplete && visible.cards.length <= 1)
+            known.set(e.bind, visible.cards);
+          const previous = formula.resolveLeaf,
+            key = e.bind;
+          formula = {
+            ...formula,
+            bindings: known,
+            resolveLeaf: (input, current) =>
+              'bindingCount' in input && input.bindingCount === key && selectedCount
+                ? selectedCount
+                : previous?.(input, current),
+          };
+        }
+        flags.conditional = true;
+        follow('then', { ...context, bindings, formula });
+        break;
+      }
+      case 'randomDeckTop':
+        flags.conditional = true;
+        operation('deckTop', selection(e.filter, context), e, context);
+        break;
       case 'choose':
         for (const option of array(e.options)) effects(object(option)?.effects, context, next);
         flags.conditional = true;
         break;
       case 'chooseHouse':
-        follow('then');
+        follow('then', {
+          ...context,
+          formula: context.formula ? { ...context.formula, chosenHouse: undefined } : undefined,
+        });
         flags.conditional = true;
         break;
-      case 'if':
-        flags.conditional = true;
-        follow('then');
-        follow('otherwise');
+      case 'if': {
+        const holds = conditionPotential(e.condition, context);
+        if (holds !== false) follow('then');
+        if (holds !== true) follow('otherwise');
         break;
+      }
       case 'forEach':
       case 'recur':
-        if (positive(e.count, 'count')) follow('effects');
-        if (typeof e.count !== 'number') flags.conditional = true;
+        if (positive(e.count, 'count', context)) follow('effects');
         break;
       case 'orderedChild':
         follow('effects');
-        follow('then');
+        follow('then', afterInstruction(e, context));
         break;
       case 'eachPlayer':
-        follow('effects', { actor: 1, bindings: new Map(context.bindings) });
-        follow('effects', { actor: -1, bindings: new Map(context.bindings) });
+        const base = ctx.formula?.actor ?? ctx.formula?.observation.you;
+        follow('effects', {
+          actor: 1,
+          bindings: new Map(context.bindings),
+          formula:
+            context.formula && base !== undefined ? { ...context.formula, actor: base } : undefined,
+        });
+        follow('effects', {
+          actor: -1,
+          bindings: new Map(context.bindings),
+          formula:
+            context.formula && base !== undefined
+              ? { ...context.formula, actor: base === 0 ? 1 : 0 }
+              : undefined,
+        });
         flags.conditional ||= e.condition !== undefined;
         break;
       case 'asPlayer': {
         const actor: Actor = own === 'friendly' ? 1 : own === 'enemy' ? -1 : 0;
         if (!actor) unknown('asPlayer-side');
-        follow('effects', { actor, bindings: new Map(context.bindings) });
+        const base = ctx.formula?.actor ?? ctx.formula?.observation.you;
+        follow('effects', {
+          actor,
+          bindings: new Map(context.bindings),
+          formula:
+            context.formula && base !== undefined && actor !== 0
+              ? {
+                  ...context.formula,
+                  actor: actor === 1 ? base : base === 0 ? 1 : 0,
+                }
+              : undefined,
+        });
         break;
       }
       case 'useChoice': {
@@ -543,8 +835,7 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
         break;
       case 'lasting':
         if (e.rule === 'skipForge' && own === 'enemy') flags.amberControl = true;
-        else if (e.rule === 'keyCost' && own === 'enemy' && typeof e.amount === 'number' && e.amount > 0)
-          flags.amberControl = true;
+        else if (e.rule === 'keyCost' && own === 'enemy' && amountActive) flags.amberControl = true;
         else unknown('lasting:' + String(e.rule));
         break;
       case 'permission': {
@@ -561,7 +852,7 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
       case 'finishAction':
       case 'reveal':
       case 'storeAmber':
-        follow('then');
+        follow('then', afterInstruction(e, context));
         break;
       default:
         unknown(e.kind);
@@ -587,7 +878,10 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
   }
   if (!card) unknown('card-unavailable');
   else {
-    if (card.unmodeled || card.ruleInterpretations?.some((note) => note.officialRulingConfirmed === false))
+    if (
+      card.unmodeled ||
+      card.ruleInterpretations?.some((note) => note.officialRulingConfirmed === false)
+    )
       unknown('card-unmodeled-or-research-convention');
     for (const [field, value] of Object.entries(card)) {
       if (value !== undefined && !NEUTRAL_FIELDS.has(field) && !STATIC_FIELDS.has(field))
@@ -595,8 +889,8 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
     }
     abilities(card.abilities);
     for (const item of card.conditionalAbilities ?? []) {
-      flags.conditional = true;
-      abilities(item.abilities);
+      const holds = conditionPotential(item.condition);
+      if (holds !== false) abilities(item.abilities);
     }
     if (scope === 'any') {
       for (const reaction of card.reactions ?? []) {
@@ -631,11 +925,15 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
           unknown('capture-replacement-context');
       }
       flags.amberControl ||= (card.keyTaxes ?? []).some(
-        (row) => row.side === 'opponent' && positive(row.amount),
+        (row) =>
+          row.side === 'opponent' &&
+          (!row.condition || conditionPotential(row.condition) !== false) &&
+          positive(row.amount),
       );
-      flags.amberControl ||= (card.forgeRestrictions ?? []).some((row) => row.side === 'opponent');
-      if (card.keyTaxes?.some((row) => row.condition) || card.forgeRestrictions?.some((row) => row.condition))
-        flags.conditional = true;
+      flags.amberControl ||= (card.forgeRestrictions ?? []).some(
+        (row) => row.side === 'opponent' && conditionPotential(row.condition) !== false,
+      );
+
       flags.draw ||= !!(
         card.discardDrawReplacement ||
         (card.drawBonus ?? 0) > 0 ||
@@ -669,11 +967,12 @@ function inspect(card: CardDefinition | undefined, scope: SemanticScope): CardSe
         (card.opponentArtifactPlayTax ?? 0) > 0 || (card.opponentArtifactUseTax ?? 0) > 0;
       for (const grant of card.grantsAbilities ?? []) {
         const side = selection(grant.filter, ctx).side;
-        if (side === 'friendly') abilities(grant.abilities);
+        if (side === 'friendly') abilities(grant.abilities, { ...ctx, formula: undefined });
         else unknown('granted-ability-controller');
         flags.conditional = true;
       }
-      if (card.upgrade || card.playAsUpgrade || card.retainedUpgrade) unknown('upgrade-host-controller');
+      if (card.upgrade || card.playAsUpgrade || card.retainedUpgrade)
+        unknown('upgrade-host-controller');
       if (card.auras?.length) unknown('aura-context');
     }
   }

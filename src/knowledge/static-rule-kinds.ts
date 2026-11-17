@@ -14,7 +14,6 @@ export type UninterpretedStaticRuleKind =
   | "barterReveal"
   | "bindDiscardSubset"
   | "bindPhysicalCards"
-  | "bindRandom"
   | "bindTop"
   | "blankBoostNamed"
   | "blasterChoice"
@@ -151,8 +150,6 @@ export type UninterpretedStaticRuleKind =
   | "pvSoulLockDiscard"
   | "pvSoulLockStore"
   | "pvTradeDamage"
-  | "randomCard"
-  | "randomDeckTop"
   | "randomHandOffer"
   | "reattachLinked"
   | "rebindAfterPublicMove"
@@ -219,7 +216,6 @@ export type UninterpretedStaticRuleKind =
   | "withAmount"
   | "withBoundHouse"
   | "withLinkedSource"
-  | "withValue"
   | "wordReturning";
 export interface UninterpretedStaticEffect {
   readonly kind: UninterpretedStaticRuleKind;

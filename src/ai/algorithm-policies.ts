@@ -1,5 +1,16 @@
 import { cardSemanticFeatures } from '../knowledge/semantic-features.js';
 import {
+  evaluatePublicValue,
+  exactPublicValue,
+  expectedPublicValue,
+  intervalPublicValue,
+  unknownPublicValue,
+  projectPublicFormulaContext,
+  selectPublicCards,
+  type PublicCardSelection,
+  type PublicFormulaContext,
+} from '../knowledge/public-formula.js';
+import {
   HOUSES,
   type Action,
   type CardView,
@@ -199,24 +210,23 @@ function assessAlgorithmProjection(
     unresolvedEffects = false;
   const reasons: string[] = [];
   const c = 'card' in a ? find(a.card) : undefined;
-  const source =
-    a.kind === 'play' && a.copy
-      ? find(a.copy)
-      : (c ?? (features.contextualEffects ? find(o.pending?.source ?? '') : undefined));
+  const physicalSource = c ?? (features.contextualEffects ? find(o.pending?.source ?? '') : undefined);
+  // A copy supplies the rule tree, while source quantities refer to the physical card.
+  const source = a.kind === 'play' && a.copy ? find(a.copy) : physicalSource;
   const evaluatedInPlay = (id: string) =>
-    inPlay(id) ||
-    !!(
-      features.contextualEffects &&
-      a.kind === 'play' &&
-      source?.id === id &&
-      ['creature', 'artifact', 'upgrade'].includes(source.spec.kind)
-    );
+    (!features.contextualEffects || (!projectedLocations.has(id) && !predictedRemoved.has(id) && !uncertainLocations.has(id))) &&
+    (inPlay(id) || !!(features.contextualEffects && a.kind === 'play' && physicalSource?.id === id &&
+      ['creature', 'artifact', 'upgrade'].includes(physicalSource.spec.kind)));
   const boardWorth = (card: CardView) =>
     (features.contextualEffects ? contextualBoardWorth(o, card) : legacyBoardWorth(card)) +
     (features.tokenEconomy ? tokenEngineValue(o, card) : 0);
-  const hands = [me.handCount - Number(a.kind === 'play'), foe.handCount];
+  const departingPhysicalIds = new Set(a.kind === 'play'
+    ? [a.card, ...(a.otherHalf ? [a.otherHalf] : [])] : []);
+  const hands = [me.handCount - (me.hand ?? []).filter((card) => departingPhysicalIds.has(card.id)).length, foe.handCount];
+  const archives = [me.archiveCount - (me.archives ?? []).filter((card) => departingPhysicalIds.has(card.id)).length, foe.archiveCount];
   const drawSupply = [me.deckCount + me.discard.length, foe.deckCount + foe.discard.length];
   const bindings = new Map<string, CardView[]>();
+  const scalarBindings = new Map<string, number>();
   // Scoped physical receipts; these are estimates from public destruction assessment,
   // not selected-card counts or a copied referee destruction history.
   const directDestructions = new Map<string, { id: string; controller: Seat }[]>();
@@ -235,12 +245,26 @@ function assessAlgorithmProjection(
       unknownValues++;
     }
   }
-  const idx = (side?: Side) =>
-    side === undefined || side === 'self' ? 0 : side === 'opponent' ? 1 : (markUnknown(), 0);
+  const idx = (side?: Side) => {
+    if (side === undefined || side === 'self') return 0;
+    if (side === 'opponent') return 1;
+    if (features.contextualEffects && side === 'active') return o.activePlayer === o.you ? 0 : 1;
+    markUnknown();
+    // Missing public event/last-owner context does not establish the referee's
+    // default actor. Keep the legacy path separate from current attribution.
+    return features.contextualEffects ? -1 : 0;
+  };
   const player = (i: number) => (i === 0 ? me : foe);
   const ability = (card: CardView | undefined, k: 'play' | 'reap' | 'action' | 'omni') =>
     card?.spec.abilities?.[k] ?? [];
-  function filtered(filter: Filter, src = source): CardView[] {
+  function filtered(filter: Filter, src = features.contextualEffects ? physicalSource : source): CardView[] {
+    if (features.contextualEffects && !filter.notTaggedForDestruction) {
+      const ctx = formulaContext();
+      const result = selectPublicCards(filter, { ...ctx,
+        source: src?.id === physicalSource?.id ? ctx.source : src ? projectedCard(src) : ctx.source });
+      if (!result.identitiesComplete) markUnknown();
+      return [...result.cards];
+    }
     if (features.contextualEffects) {
       if (filter.house === 'chosenHouse' || filter.notHouse === 'chosenHouse') {
         if (!features.publicHouseChoices || !chosenHouse) {
@@ -394,6 +418,16 @@ function assessAlgorithmProjection(
   function value(v: Value | undefined): number {
     if (v === undefined) return 0;
     if (typeof v === 'number') return v;
+    if (features.contextualEffects) {
+      const result = evaluatePublicValue(v, formulaContext());
+      if (result.kind === 'exact') return result.value;
+      // An interval/expectation is not a deterministic threshold or loop count.
+      // Random effects enumerate concrete public outcomes separately.
+      markUnknown();
+      const reason = `public-formula: ${result.kind}: ${result.reasons.join(', ')}`;
+      if (!reasons.includes(reason)) reasons.push(reason);
+      return 0;
+    }
     if ('add' in v) return v.add.reduce<number>((n, x) => n + value(x), 0);
     if ('subtract' in v) return value(v.subtract[0]) - value(v.subtract[1]);
     if ('half' in v) return Math.floor(value(v.half) / 2);
@@ -496,8 +530,9 @@ function assessAlgorithmProjection(
       if (known !== null) return known;
     }
     if ('metric' in v) {
-      const i = idx(v.side),
-        p = player(i);
+      const i = idx(v.side);
+      if (i === -1) return 0;
+      const p = player(i);
       switch (v.metric) {
         case 'amber':
           return pool[i];
@@ -535,12 +570,240 @@ function assessAlgorithmProjection(
   const predictedRemoved = new Set<string>();
   const predictedWards = new Map<string, boolean>();
   const predictedCaptured = new Map<string, number>();
+  const projectedFields = new Map<string, Partial<Pick<CardView, 'ready' | 'stunned'>>>();
+  type ProjectedZone = 'hand' | 'archives' | 'discard' | 'purged' | 'deck';
+  const projectedLocations = new Map<string, { card: CardView; seat: Seat; zone: ProjectedZone }>();
+  const uncertainLocations = new Set<string>();
+  // Local public-operation versions distinguish a fresh selection in a new zone
+  // from an older binding. They are never referee entry counters.
+  const projectedEntries = new Map<string, number>();
+  const publicCardEntries = new WeakMap<CardView, number>();
+  const uncertainFormulaZones = new Set<string>();
+  const changedFormulaFields = new Map<string, Set<string>>();
+  const uncertainPools = new Set<number>();
+  const uncertainCounts = new Set<string>();
+  const uncertainSupplies = new Set<number>();
+  let preparedFormulaContext: PublicFormulaContext | undefined;
+  function preparedContext(): PublicFormulaContext {
+    return (preparedFormulaContext ??= projectPublicFormulaContext({
+      observation: o,
+      source: physicalSource,
+      action: a,
+      phase: a.kind === 'play' ? 'after-play' : ['use', 'reap', 'fight'].includes(a.kind) ? 'after-use' : 'current',
+    }));
+  }
+  function projectedCard(card: CardView): CardView {
+    const result = predictedCaptured.has(card.id) || predictedWards.has(card.id) || projectedFields.has(card.id)
+      ? { ...card, ...projectedFields.get(card.id), captured: predictedCaptured.get(card.id) ?? card.captured,
+          warded: predictedWards.get(card.id) ?? card.warded }
+      : card;
+    publicCardEntries.set(result, publicCardEntries.get(card) ?? 0);
+    return result;
+  }
+  function formulaContext(): PublicFormulaContext {
+    const prepared = preparedContext();
+    const base = prepared.observation;
+    const players = base.players.map((p, seat) => {
+      const relative = seat === o.you ? 0 : 1;
+      const pile = (zone: Exclude<ProjectedZone, 'deck'> | 'battleline' | 'artifacts' | 'upgrades') => {
+        const original = p[zone];
+        if ((zone === 'hand' || zone === 'archives') &&
+          (!original || uncertainFormulaZones.has(`${seat}:${zone}`))) return undefined;
+        const kept = (original ?? []).filter((card) =>
+          !projectedLocations.has(card.id) &&
+          (!['battleline', 'artifacts', 'upgrades'].includes(zone) || !predictedRemoved.has(card.id)));
+        const added = [...projectedLocations.values()].filter((move) => move.seat === seat && move.zone === zone)
+          .map((move) => move.card);
+        return [...kept, ...added].map(projectedCard);
+      };
+      return { ...p, amber: pool[relative], handCount: hands[relative], archiveCount: archives[relative],
+        hand: pile('hand'), archives: pile('archives'), battleline: pile('battleline')!,
+        artifacts: pile('artifacts')!, upgrades: pile('upgrades')!, discard: pile('discard')!, purged: pile('purged')! };
+    }) as Observation['players'];
+    const projected = { ...base, players };
+    const uncertainFields = new Map<string, ReadonlySet<string>>(prepared.projection?.uncertainCardFields ?? []);
+    for (const [id, fields] of changedFormulaFields)
+      uncertainFields.set(id, new Set([...(uncertainFields.get(id) ?? []), ...fields]));
+    for (const [id, fields] of projectedFields) {
+      const unknown = new Set(uncertainFields.get(id) ?? []);
+      for (const field of Object.keys(fields)) unknown.delete(field);
+      uncertainFields.set(id, unknown);
+    }
+    const ctx: PublicFormulaContext = {
+      ...prepared, observation: projected,
+      source: prepared.source ? projectedCard(prepared.source) : undefined,
+      bindings: new Map([...bindings].map(([key, cards]) => [key, cards.map(projectedCard)])),
+      scalarBindings, lastAmount, chosenHouse,
+      projection: { ...prepared.projection, uncertainCardFields: uncertainFields },
+      resolveLeaf: (leaf, leafContext) => {
+        if ('metric' in leaf && ['amber', 'handSize', 'archives'].includes(leaf.metric)) {
+          if (leaf.side !== undefined && !['self', 'opponent', 'active'].includes(leaf.side)) return undefined;
+          const actor = (leafContext.actor ?? o.you) === o.you ? 0 : 1;
+          const side = leaf.side === 'active' ? (o.activePlayer === o.you ? 0 : 1) : leaf.side === 'opponent' ? 1 - actor : actor;
+          if (leaf.metric === 'amber') return uncertainPools.has(side)
+            ? unknownPublicValue('resource-pool-depends-on-random-outcome') : exactPublicValue(pool[side]);
+          const zone = leaf.metric === 'handSize' ? 'hand' : 'archives';
+          return uncertainCounts.has(`${side === 0 ? o.you : opp}:${zone}`)
+            ? unknownPublicValue('zone-count-depends-on-random-or-unmodeled-continuation')
+            : exactPublicValue(leaf.metric === 'handSize' ? hands[side] : archives[side]);
+        }
+        if ('destroyedBinding' in leaf) {
+          const receipts = directDestructions.get(leaf.destroyedBinding);
+          if (features.publicDestructionPayments && leaf.direct === true && receipts &&
+            (leaf.side === undefined || leaf.side === 'self' || leaf.side === 'opponent')) {
+            const actor = leafContext.actor ?? o.you;
+            const controller = leaf.side === 'opponent' ? (actor === 0 ? 1 : 0) : actor;
+            return exactPublicValue(receipts.filter((receipt) => receipt.controller === controller).length);
+          }
+          return unknownPublicValue('no-public-scoped-destruction-receipt');
+        }
+        const key = Object.keys(leaf)[0];
+        const sourceField: Record<string, string> = { sourcePower: 'power', sourceArmor: 'armor',
+          sourceDamage: 'damage', sourcePowerCounters: 'powerCounters' };
+        if (sourceField[key] && physicalSource && changedFormulaFields.get(physicalSource.id)?.has(sourceField[key]))
+          return unknownPublicValue('source-field-changed-in-unmodeled-continuation');
+        const bindingField: Record<string, string> = { bindingPower: 'power', bindingPowerSum: 'power',
+          boundPowerOrLastKnown: 'power', bindingDamage: 'damage', bindingPowerCounters: 'powerCounters' };
+        if (bindingField[key]) {
+          const binding = (leaf as unknown as Record<string, unknown>)[key];
+          if (typeof binding === 'string' && bindings.get(binding)?.some((card) => changedFormulaFields.get(card.id)?.has(bindingField[key])))
+            return unknownPublicValue('bound-field-changed-in-unmodeled-continuation');
+        }
+        if (publicControlChanged && ['count', 'armorTotal', 'powerCounterTotal', 'maximumPower', 'distinctPowers',
+          'creatureAmberTotal', 'distinctHouses', 'sharedHousePair'].includes(key))
+          return unknownPublicValue('controller-changed-in-unmodeled-continuation');
+        return undefined;
+      },
+      selectCards: (filter, current) => projectedSelection(filter, current),
+    };
+    return ctx;
+  }
+  function projectedSelection(filter: Filter, ctx: PublicFormulaContext): PublicCardSelection {
+    if (publicControlChanged) return { cards: [], possibleCards: [],
+      count: unknownPublicValue('controller-changed-in-unmodeled-continuation'), identitiesComplete: false,
+      reasons: ['controller-changed-in-unmodeled-continuation'] };
+    const zones = filter.zone ? [filter.zone].flat() : ['battleline'];
+    const actor = ctx.actor ?? o.you;
+    const seats = filter.side === 'friendly' ? [actor] : filter.side === 'enemy' ? [actor === 0 ? 1 : 0] : [0, 1];
+    if (seats.some((seat) => zones.some((zone) => uncertainCounts.has(`${seat}:${zone}`)))) return {
+      cards: [], possibleCards: [], count: unknownPublicValue('zone-count-depends-on-random-or-unmodeled-continuation'),
+      identitiesComplete: false, reasons: ['public-projection-incomplete'],
+    };
+    const uncertainZone = seats.some((seat) => zones.some((zone) => uncertainFormulaZones.has(`${seat}:${zone}`)));
+    const changedField = [...changedFormulaFields.values()].some((fields) =>
+      (filter.damaged !== undefined && fields.has('damage')) ||
+      ((filter.powerMin !== undefined || filter.powerMax !== undefined || filter.powerExtreme) && fields.has('power')) ||
+      (filter.ready !== undefined && fields.has('ready')) || (filter.stunned !== undefined && fields.has('stunned')));
+    let selectionBindings = ctx.bindings;
+    for (const key of [filter.bound, filter.excludeBinding].filter((key): key is string => !!key)) {
+      const original = selectionBindings?.get(key);
+      if (!original) continue;
+      if (original.some((card) => uncertainLocations.has(card.id))) return {
+        cards: [], possibleCards: [], count: unknownPublicValue('binding-location-varies-across-random-outcomes'),
+        identitiesComplete: false, reasons: ['binding-location-varies-across-random-outcomes'],
+      };
+      selectionBindings = new Map(selectionBindings).set(key, original.filter((card) =>
+        (publicCardEntries.get(card) ?? 0) === (projectedEntries.get(card.id) ?? 0)));
+    }
+    const base = selectPublicCards(filter, { ...ctx, bindings: selectionBindings, selectCards: undefined });
+    for (const card of base.cards) if (projectedLocations.has(card.id) && !uncertainLocations.has(card.id))
+      publicCardEntries.set(card, projectedEntries.get(card.id) ?? 0);
+    if (uncertainZone && Object.keys(filter).every((key) => ['side', 'zone'].includes(key)) &&
+      zones.every((zone) => zone === 'hand' || zone === 'archives')) return {
+      ...base, cards: [], possibleCards: [], identitiesComplete: false,
+      reasons: [...base.reasons, 'projected-zone-count-known-identities-not-known'],
+    };
+    if (uncertainZone || changedField) return {
+      cards: [], possibleCards: [...base.cards, ...base.possibleCards],
+      count: unknownPublicValue(uncertainZone ? 'zone-identities-changed-in-random-or-unmodeled-continuation' : 'filter-field-changed-in-unmodeled-continuation'),
+      identitiesComplete: false, reasons: ['public-projection-incomplete'],
+    };
+    const tokenTotal = createdTokens.reduce((sum, count) => sum + count, 0);
+    if (!tokenTotal || !zones.some((zone) => zone === 'battleline' || zone === 'play')) return base;
+    const supported = ['side', 'zone', 'kind', 'tokenCreature', 'house', 'notHouse', 'trait', 'notTrait', 'name', 'definition'];
+    if (Object.keys(filter).some((key) => !supported.includes(key))) return {
+      ...base, count: unknownPublicValue('anonymous-token-identities-required'), identitiesComplete: false,
+      reasons: [...base.reasons, 'anonymous-token-identities-required'],
+    };
+    let added = 0;
+    for (const seat of seats) {
+      const reference = o.tokenReferences?.[seat], relative = seat === o.you ? 0 : 1;
+      if (!reference || (filter.kind && filter.kind !== 'creature') || filter.tokenCreature === false ||
+        (filter.house && reference.house !== filter.house) || (filter.notHouse && reference.house === filter.notHouse) ||
+        (filter.trait && !reference.traits?.includes(filter.trait)) || (filter.notTrait && reference.traits?.includes(filter.notTrait)) ||
+        (filter.name && reference.name !== filter.name) || (filter.definition && reference.id !== filter.definition)) continue;
+      added += createdTokens[relative];
+    }
+    const count = base.count.kind === 'exact' ? exactPublicValue(base.count.value + added) :
+      base.count.kind === 'interval' ? intervalPublicValue(base.count.lower + added, base.count.upper + added, base.count.reasons) : base.count;
+    return { ...base, count, identitiesComplete: base.identitiesComplete && added === 0,
+      reasons: added ? [...base.reasons, 'anonymous-created-tokens-counted-without-fabricated-identities'] : base.reasons };
+  }
+  function noteChangedFields(card: CardView, operation: string, result: { affected: boolean; approximate: boolean }) {
+    const changes: Record<string, Partial<Pick<CardView, 'ready' | 'stunned'>>> = {
+      ready: { ready: true }, exhaust: { ready: false }, stun: { stunned: true },
+      stunExhaust: { ready: false, stunned: true },
+    };
+    if (result.affected && changes[operation]) {
+      projectedFields.set(card.id, { ...projectedFields.get(card.id), ...changes[operation] });
+      for (const field of Object.keys(changes[operation])) changedFormulaFields.get(card.id)?.delete(field);
+      return;
+    }
+    const affected: Record<string, string[]> = { damage: ['damage', 'armor'], heal: ['damage'],
+      power: ['power', 'powerCounters'], ready: ['ready'], exhaust: ['ready'], stun: ['stunned'],
+      stunExhaust: ['ready', 'stunned'] };
+    if (!affected[operation]) return;
+    const fields = changedFormulaFields.get(card.id) ?? new Set<string>();
+    const previouslyKnown = { ...projectedFields.get(card.id) };
+    for (const field of affected[operation]) {
+      fields.add(field);
+      if (field === 'ready' || field === 'stunned') delete previouslyKnown[field];
+    }
+    projectedFields.set(card.id, previouslyKnown);
+    changedFormulaFields.set(card.id, fields);
+  }
+
+  function projectedLocation(card: CardView): { seat: Seat; zone: ProjectedZone | 'battleline' | 'artifacts' | 'upgrades' } | undefined {
+    const moved = projectedLocations.get(card.id);
+    if (moved) return moved;
+    const view = preparedContext().observation;
+    for (const seat of [0, 1] as const)
+      for (const zone of ['hand', 'archives', 'discard', 'purged', 'battleline', 'artifacts', 'upgrades'] as const)
+        if (view.players[seat][zone]?.some((candidate) => candidate.id === card.id)) return { seat, zone };
+    return undefined;
+  }
+  function recordProjectedMove(card: CardView, operation: string) {
+    const destinations: Record<string, ProjectedZone> = { destroy: 'discard', sacrifice: 'discard',
+      discard: 'discard', purge: 'purged', returnHand: 'hand', deckTop: 'deck', deckBottom: 'deck',
+      shuffleDeck: 'deck', shuffleIntoDeck: 'deck', archive: 'archives' };
+    const zone = destinations[operation];
+    if (!zone) return;
+    const previous = projectedLocation(card);
+    const seat = card.owner;
+    if (previous?.zone === zone && previous.seat === seat) return;
+    const oldSide = previous?.seat === o.you ? 0 : 1, newSide = seat === o.you ? 0 : 1;
+    if (previous?.zone === 'hand') hands[oldSide] = Math.max(0, hands[oldSide] - 1);
+    if (previous?.zone === 'archives') archives[oldSide] = Math.max(0, archives[oldSide] - 1);
+    if (zone === 'hand') hands[newSide]++;
+    if (zone === 'archives') archives[newSide]++;
+    if (previous?.zone === 'discard' && zone !== 'deck') drawSupply[oldSide] = Math.max(0, drawSupply[oldSide] - 1);
+    if (zone === 'discard' || (zone === 'deck' && previous?.zone !== 'discard')) drawSupply[newSide]++;
+    const moved = { ...card, controller: card.owner };
+    const entry = (projectedEntries.get(card.id) ?? 0) + 1;
+    projectedEntries.set(card.id, entry);
+    publicCardEntries.set(moved, entry);
+    projectedLocations.set(card.id, { card: moved, seat, zone });
+    if (zone === 'deck') uncertainFormulaZones.add(`${seat}:deck`);
+    // Entry-specific modifiers are not a leave-play rules simulation.
+    projectedFields.delete(card.id);
+    changedFormulaFields.set(card.id, new Set(['power', 'armor', 'damage', 'powerCounters', 'ready', 'stunned']));
+  }
   const uncertainDepartures = new Set<string>();
   const uncertainStoredAmber = new Map<string, number>();
   let unboundCapture = 0,
     possibleIncomeRefund = 0;
   const captured = (c: CardView) =>
-    features.publicDestroyedRefunds ? (predictedCaptured.get(c.id) ?? c.captured) : c.captured;
+    features.contextualEffects ? (predictedCaptured.get(c.id) ?? c.captured) : c.captured;
   const publicBoard = (i: number) =>
     [...player(i).battleline, ...player(i).artifacts].filter(
       (c) => !features.netResources || !predictedRemoved.has(c.id),
@@ -576,6 +839,7 @@ function assessAlgorithmProjection(
     pool[i] += Math.max(0, n);
   }
   function steal(i: number, n: number) {
+    if (uncertainPools.has(1 - i)) { markUnknown(); return; }
     if (cannotSteal(1 - i)) return;
     const take = Math.min(pool[1 - i], Math.max(0, n));
     if (!fromSupply(1 - i)) pool[1 - i] -= take;
@@ -587,9 +851,15 @@ function assessAlgorithmProjection(
       return;
     }
     // Identities of draws stay hidden. Count only cards publicly available to draw.
+    if (uncertainSupplies.has(i)) { markUnknown(); return; }
     const take = Math.min(drawSupply[i], Math.max(0, n));
     drawSupply[i] -= take;
     hands[i] += take;
+    if (take > 0) {
+      uncertainFormulaZones.add(`${i === 0 ? o.you : opp}:hand`);
+      uncertainFormulaZones.add(`${i === 0 ? o.you : opp}:deck`);
+      if (take > player(i).deckCount) uncertainFormulaZones.add(`${i === 0 ? o.you : opp}:discard`);
+    }
     draws += (i === 0 ? 1 : -1) * take;
   }
   function snapshot() {
@@ -606,6 +876,16 @@ function assessAlgorithmProjection(
       unresolvedEffects,
       pool: [...pool],
       hands: [...hands],
+      archives: [...archives],
+      scalarBindings: [...scalarBindings],
+      projectedLocations: [...projectedLocations],
+      projectedEntries: [...projectedEntries],
+      uncertainLocations: [...uncertainLocations],
+      uncertainFormulaZones: [...uncertainFormulaZones],
+      changedFormulaFields: [...changedFormulaFields].map(([id, fields]) => [id, [...fields]] as const),
+      uncertainPools: [...uncertainPools],
+      uncertainCounts: [...uncertainCounts],
+      uncertainSupplies: [...uncertainSupplies],
       drawSupply: [...drawSupply],
       createdTokens: [...createdTokens],
       tokenUtility,
@@ -616,6 +896,7 @@ function assessAlgorithmProjection(
       removed: [...predictedRemoved],
       predictedWards: [...predictedWards],
       predictedCaptured: [...predictedCaptured],
+      projectedFields: [...projectedFields],
       uncertainDepartures: [...uncertainDepartures],
       unboundCapture,
       possibleIncomeRefund,
@@ -650,13 +931,34 @@ function assessAlgorithmProjection(
     for (let i = 0; i < 2; i++) {
       pool[i] = s.pool[i];
       hands[i] = s.hands[i];
+      archives[i] = s.archives[i];
       drawSupply[i] = s.drawSupply[i];
       createdTokens[i] = s.createdTokens[i];
     }
+    scalarBindings.clear();
+    for (const [key, n] of s.scalarBindings) scalarBindings.set(key, n);
+    projectedEntries.clear();
+    for (const [id, entry] of s.projectedEntries) projectedEntries.set(id, entry);
+    uncertainLocations.clear();
+    for (const id of s.uncertainLocations) uncertainLocations.add(id);
+    projectedLocations.clear();
+    for (const [id, move] of s.projectedLocations) projectedLocations.set(id, move);
+    uncertainFormulaZones.clear();
+    for (const zone of s.uncertainFormulaZones) uncertainFormulaZones.add(zone);
+    changedFormulaFields.clear();
+    for (const [id, fields] of s.changedFormulaFields) changedFormulaFields.set(id, new Set(fields));
+    uncertainSupplies.clear();
+    for (const side of s.uncertainSupplies) uncertainSupplies.add(side);
+    uncertainCounts.clear();
+    for (const zone of s.uncertainCounts) uncertainCounts.add(zone);
+    uncertainPools.clear();
+    for (const side of s.uncertainPools) uncertainPools.add(side);
     predictedRemoved.clear();
     for (const id of s.removed) predictedRemoved.add(id);
     predictedWards.clear();
     for (const [id, warded] of s.predictedWards) predictedWards.set(id, warded);
+    projectedFields.clear();
+    for (const [id, fields] of s.projectedFields) projectedFields.set(id, fields);
     predictedCaptured.clear();
     for (const [id, n] of s.predictedCaptured) predictedCaptured.set(id, n);
     uncertainDepartures.clear();
@@ -688,7 +990,7 @@ function assessAlgorithmProjection(
     );
   }
   function incomeFundsThirdKey(): boolean {
-    if (!features.publicThirdKeyFundingRisk) return false;
+    if (!features.publicThirdKeyFundingRisk || uncertainPools.has(1)) return false;
     const projectedAvailable = pool[1] + Math.max(0, foe.forgeAvailable - foe.amber);
     return (
       foe.keys.length === 2 &&
@@ -795,38 +1097,275 @@ function assessAlgorithmProjection(
     if (result.length >= limit) approximate = true;
     return result;
   }
+  /** A nested effect frame receives bindings and lastAmount by value. Its public
+   * board/resource changes persist, but temporary scalar/card bindings do not leak. */
+  function inLocalFrame(run: () => void) {
+    const oldLastAmount = lastAmount, oldHouse = chosenHouse;
+    const oldBindings = [...bindings], oldScalars = [...scalarBindings];
+    run();
+    lastAmount = oldLastAmount;
+    chosenHouse = oldHouse;
+    bindings.clear();
+    for (const [key, cards] of oldBindings) bindings.set(key, cards);
+    scalarBindings.clear();
+    for (const [key, n] of oldScalars) scalarBindings.set(key, n);
+  }
+  function randomSide(side?: Side): 0 | 1 | undefined {
+    if (side === undefined || side === 'self') return 0;
+    if (side === 'opponent') return 1;
+    if (side === 'active') return o.activePlayer === o.you ? 0 : 1;
+    markUnknown();
+    reasons.push('public-random: event/last-owner recipient has no public current-frame binding');
+    return undefined;
+  }
+  function randomCandidates(side: 0 | 1, zone: 'hand' | 'archives' | 'discard' | 'deck'): PublicCardSelection {
+    return selectPublicCards({ side: side === 0 ? 'friendly' : 'enemy', zone }, formulaContext());
+  }
+  function mayReactToRandomMove(candidates: readonly CardView[], operation: string) {
+    if (o.publicStateCoverage?.effectsComplete === false) return true;
+    if (operation === 'discard' && candidates.some((card) => card.spec.abilities?.scrap?.length ||
+      card.gainedTextBoxes?.some((box) => box.abilities?.scrap?.length))) return true;
+    const events = new Set(operation === 'discard' ? ['handDiscarded'] : []);
+    return cards.some((card) => evaluatedInPlay(card.id) &&
+      [card.spec, ...(card.gainedTextBoxes ?? [])].some((box) =>
+        (box.reactions ?? []).some((reaction) => events.has(reaction.event))));
+  }
+  function randomMove(e: Extract<Effect, { kind: 'randomDiscard' | 'randomArchive' }>) {
+    const side = randomSide(e.side);
+    if (side === undefined) return;
+    const zone = e.kind === 'randomArchive' ? 'hand' : e.zone ?? 'hand';
+    const selection = randomCandidates(side, zone);
+    if (selection.count.kind !== 'exact' || !Number.isSafeInteger(e.amount) || e.amount < 0) {
+      markUnknown(); return;
+    }
+    const amount = Math.min(selection.count.value, e.amount);
+    if (!amount) return;
+    const seat = side === 0 ? o.you : opp;
+    const operation = e.kind === 'randomArchive' ? 'archive' : e.operation ?? 'discard';
+    if (zone === 'archives' && selection.cards.some((card) => card.owner !== seat)) {
+      markUnknown(); reasons.push('public-random: foreign archive departure has an owner-return replacement'); return;
+    }
+    const complete = selection.identitiesComplete && selection.cards.length === selection.count.value;
+    const reactions = mayReactToRandomMove(selection.cards, operation) || !complete;
+    // n/N inclusion probability is exact for a fixed, uniformly sampled population.
+    // With reaction-dependent replacement it is only a direct-operation model.
+    if (complete) {
+      const utilities = selection.cards.map((card) => e.kind === 'randomArchive'
+        ? (side === 0 ? 1 : -1) * (card.effective.house === o.activeHouse ? -0.5 : 1.5)
+        : assessPublicOperation(o, card, operation, 0, { inPlay: false }).score);
+      const expected = expectedPublicValue(utilities.map((value) => ({ value, probability: 1 / utilities.length })),
+        reactions ? ['direct operation only; intervening reactions are not simulated'] : ['uniform visible population']);
+      if (expected.kind === 'exact' || expected.kind === 'expected')
+        score += amount * (expected.kind === 'exact' ? expected.value : expected.expected);
+    } else {
+      // Preserve the existing anonymous discard and archive utility, without
+      // inventing the opponent's card types, icons or probability distribution.
+      score += amount * (e.kind === 'randomArchive' ? (side === 0 ? 0.8 : -0.8) : side === 0 ? -1.5 : 1.2);
+    }
+    approximate = true;
+    forecastUncertain = true;
+    const changedZone = `${seat}:${zone}`;
+    uncertainFormulaZones.add(changedZone);
+    if (zone === 'hand') hands[side] = Math.max(0, hands[side] - amount);
+    if (zone === 'archives') archives[side] = Math.max(0, archives[side] - amount);
+    if (e.kind === 'randomArchive') {
+      archives[side] += amount;
+      uncertainFormulaZones.add(`${seat}:archives`);
+    } else {
+      uncertainFormulaZones.add(`${seat}:${operation === 'purge' ? 'purged' : 'discard'}`);
+      if (operation === 'discard' && zone !== 'discard') drawSupply[side] += amount;
+      if (operation === 'purge' && zone === 'discard') drawSupply[side] = Math.max(0, drawSupply[side] - amount);
+    }
+    if (reactions) {
+      markUnknown();
+      uncertainCounts.add(changedZone);
+      if (e.kind === 'randomArchive') uncertainCounts.add(`${seat}:archives`);
+      uncertainSupplies.add(side);
+      for (const index of [0, 1]) {
+        uncertainPools.add(index);
+        const affectedSeat = index === 0 ? o.you : opp;
+        uncertainFormulaZones.add(`${affectedSeat}:battleline`);
+        uncertainFormulaZones.add(`${affectedSeat}:artifacts`);
+      }
+    }
+    reasons.push(`public-random: ${operation} ${amount} from ${side === 0 ? 'self' : 'opponent'} ${zone}; ` +
+      (complete ? 'uniform public-card utility expectation' : 'anonymous count utility; hidden identities not inferred') +
+      (reactions ? '; intervening reactions/disclosures remain unknown' : '; no visible move reaction'));
+  }
+  function averageRandomBranches(runs: (() => void)[]) {
+    if (!runs.length || runs.length > 32 || effectBudget < runs.length) { markUnknown(); return; }
+    if (runs.length === 1) { inLocalFrame(runs[0]); return; }
+    const before = snapshot(), outcomes: ReturnType<typeof snapshot>[] = [];
+    for (const run of runs) {
+      restore(before);
+      inLocalFrame(run);
+      outcomes.push(snapshot());
+      if (effectBudget <= 0) { restore(before); markUnknown(); return; }
+    }
+    restore(before);
+    // Terminal/cost-changing random subtrees need a joint continuation model;
+    // never certify a forge by averaging a payable and an unpayable branch.
+    if (outcomes.some((s) => s.projectedKey !== before.projectedKey || s.skip !== before.skip ||
+      s.ownCost !== before.ownCost || s.otherCost !== before.otherCost)) {
+      markUnknown(); reasons.push('public-random: terminal or key-cost branch requires a full outcome continuation'); return;
+    }
+    const mean = (f: (s: ReturnType<typeof snapshot>) => number) => outcomes.reduce((n, s) => n + f(s), 0) / outcomes.length;
+    score = mean((s) => s.score); draws = mean((s) => s.draws); chainGain = mean((s) => s.chainGain);
+    tokenUtility = mean((s) => s.tokenUtility);
+    for (const side of [0, 1]) {
+      pool[side] = mean((s) => s.pool[side]);
+      if (outcomes.some((s) => s.pool[side] !== outcomes[0].pool[side])) uncertainPools.add(side);
+      hands[side] = mean((s) => s.hands[side]); archives[side] = mean((s) => s.archives[side]);
+      const seat = side === 0 ? o.you : opp;
+      if (outcomes.some((s) => s.hands[side] !== outcomes[0].hands[side])) uncertainCounts.add(`${seat}:hand`);
+      if (outcomes.some((s) => s.archives[side] !== outcomes[0].archives[side])) uncertainCounts.add(`${seat}:archives`);
+      drawSupply[side] = Math.min(...outcomes.map((s) => s.drawSupply[side]));
+      if (outcomes.some((s) => s.drawSupply[side] !== outcomes[0].drawSupply[side])) uncertainSupplies.add(side);
+      if (outcomes.every((s) => s.createdTokens[side] === outcomes[0].createdTokens[side]))
+        createdTokens[side] = outcomes[0].createdTokens[side];
+      else {
+        uncertainFormulaZones.add(`${seat}:battleline`);
+        uncertainCounts.add(`${seat}:battleline`);
+      }
+    }
+    for (const s of outcomes) {
+      for (const zone of s.uncertainFormulaZones) uncertainFormulaZones.add(zone);
+      for (const zone of s.uncertainCounts) uncertainCounts.add(zone);
+      for (const side of s.uncertainPools) uncertainPools.add(side);
+      for (const side of s.uncertainSupplies) uncertainSupplies.add(side);
+      for (const [id, fields] of s.changedFormulaFields) {
+        const union = changedFormulaFields.get(id) ?? new Set<string>();
+        for (const field of fields) union.add(field);
+        changedFormulaFields.set(id, union);
+      }
+      for (const id of s.uncertainLocations) uncertainLocations.add(id);
+      for (const reason of s.reasons) if (!reasons.includes(reason)) reasons.push(reason);
+    }
+    // This also covers a card which had already moved before the random step.
+    // Restoring its old location is not a proof that every outcome left it there.
+    for (const id of new Set(outcomes.flatMap((s) => s.projectedLocations.map(([id]) => id)))) {
+      const move = new Map(outcomes[0].projectedLocations).get(id);
+      const entry = new Map(outcomes[0].projectedEntries).get(id) ?? 0;
+      if (move && outcomes.every((s) => {
+        const other = new Map(s.projectedLocations).get(id);
+        return other?.zone === move.zone && other.seat === move.seat &&
+          (new Map(s.projectedEntries).get(id) ?? 0) === entry;
+      })) {
+        projectedLocations.set(id, move); projectedEntries.set(id, entry);
+      } else {
+        const possibilities = outcomes.flatMap((s) => {
+          const location = new Map(s.projectedLocations).get(id);
+          return location ? [location] : [];
+        });
+        const reference = possibilities[0]?.card ?? find(id);
+        const origin = reference ? projectedLocation(reference) : undefined;
+        if (origin) uncertainFormulaZones.add(`${origin.seat}:${origin.zone}`);
+        for (const location of possibilities) uncertainFormulaZones.add(`${location.seat}:${location.zone}`);
+        projectedLocations.delete(id); uncertainLocations.add(id);
+      }
+    }
+    for (const id of outcomes[0].removed) if (outcomes.every((s) => s.removed.includes(id))) predictedRemoved.add(id);
+    for (const id of new Set(outcomes.flatMap((s) => s.predictedCaptured.map(([id]) => id)))) {
+      const values = outcomes.map((s) => new Map(s.predictedCaptured).get(id) ?? predictedCaptured.get(id) ?? find(id)?.captured);
+      if (values[0] !== undefined && values.every((n) => n === values[0])) predictedCaptured.set(id, values[0]);
+      else { const fields = changedFormulaFields.get(id) ?? new Set<string>(); fields.add('captured'); changedFormulaFields.set(id, fields); }
+    }
+    for (const id of new Set(outcomes.flatMap((s) => s.predictedWards.map(([id]) => id)))) {
+      const values = outcomes.map((s) => new Map(s.predictedWards).get(id) ?? predictedWards.get(id) ?? find(id)?.warded ?? false);
+      if (values.every((ward) => ward === values[0])) predictedWards.set(id, values[0]);
+      else { const fields = changedFormulaFields.get(id) ?? new Set<string>(); fields.add('warded'); changedFormulaFields.set(id, fields); }
+    }
+    for (const id of new Set(outcomes.flatMap((s) => s.projectedFields.map(([id]) => id)))) {
+      for (const field of ['ready', 'stunned'] as const) {
+        const values = outcomes.map((s) => new Map(s.projectedFields).get(id)?.[field] ?? projectedFields.get(id)?.[field] ?? find(id)?.[field]);
+        if (values[0] !== undefined && values.every((value) => value === values[0]))
+          projectedFields.set(id, { ...projectedFields.get(id), [field]: values[0] });
+        else {
+          const fields = changedFormulaFields.get(id) ?? new Set<string>(); fields.add(field); changedFormulaFields.set(id, fields);
+          const known = { ...projectedFields.get(id) }; delete known[field]; projectedFields.set(id, known);
+        }
+      }
+    }
+    publicControlChanged ||= outcomes.some((s) => s.publicControlChanged);
+    approximate = forecastUncertain = true;
+    unresolvedEffects ||= outcomes.some((s) => s.unresolvedEffects);
+    unknownValues = Math.max(...outcomes.map((s) => s.unknownValues));
+    reasons.push(`public-random: mean utility of ${outcomes.length} equally likely public outcomes; caps and conditionals evaluated inside each outcome`);
+  }
+  function randomBinding(e: Extract<Effect, { kind: 'randomCard' | 'bindRandom' }>, depth: number) {
+    const side = randomSide(e.side);
+    if (side === undefined) return;
+    const selection = randomCandidates(side, e.zone);
+    if (selection.count.kind === 'exact' && selection.count.value === 0) {
+      inLocalFrame(() => { bindings.set(e.bind, []); evalEffects(e.then, depth + 1); }); return;
+    }
+    if (!selection.identitiesComplete || selection.count.kind !== 'exact' ||
+      selection.cards.length !== selection.count.value || selection.cards.length > 32) {
+      // An identity-independent immediate discard still has its anonymous count value.
+      const direct = e.then[0];
+      if (e.zone !== 'deck' && direct?.kind === 'bound' && direct.key === e.bind && ['discard', 'purge'].includes(direct.operation))
+        randomMove({ kind: 'randomDiscard', side: side === 0 ? 'self' : 'opponent', zone: e.zone,
+          amount: 1, operation: direct.operation as 'discard' | 'purge' });
+      markUnknown(); reasons.push('public-random: hidden or incomplete candidate identities; no fabricated probability over card properties'); return;
+    }
+    const discardsBinding = (value: unknown, level = 0): boolean => {
+      if (!value || typeof value !== 'object' || level > 12) return false;
+      if (Array.isArray(value)) return value.some((child) => discardsBinding(child, level + 1));
+      const row = value as Record<string, unknown>;
+      if (row.kind === 'bound' && row.key === e.bind && row.operation === 'discard') return true;
+      return ['then', 'effects', 'otherwise', 'after', 'options'].some((key) => discardsBinding(row[key], level + 1));
+    };
+    if (discardsBinding(e.then) && mayReactToRandomMove(selection.cards, 'discard')) {
+      const direct = e.then[0];
+      if (e.zone !== 'deck' && direct?.kind === 'bound' && direct.key === e.bind && direct.operation === 'discard')
+        randomMove({ kind: 'randomDiscard', side: side === 0 ? 'self' : 'opponent', zone: e.zone, amount: 1 });
+      markUnknown(); reasons.push('public-random: discard responses can change the dependent continuation; no static branch expectation is certified'); return;
+    }
+    averageRandomBranches(selection.cards.map((card) => () => {
+      bindings.set(e.bind, [card]);
+      evalEffects(e.then, depth + 1);
+    }));
+  }
   function applyTargets(
     targets: CardView[],
     e: import('../contracts/observation.js').ApplySpec,
     depth: number,
   ) {
+    targets = targets.map(projectedCard).filter((card) => {
+      if (uncertainLocations.has(card.id)) { markUnknown(); return false; }
+      return !features.contextualEffects || (publicCardEntries.get(card) ?? 0) === (projectedEntries.get(card.id) ?? 0);
+    });
     const n = value(e.amount);
+    const offBoard = features.contextualEffects ? targets.filter((card) => projectedLocations.has(card.id)) : [];
+    const battleTargets = targets.filter((card) => !offBoard.includes(card));
     const group = features.publicDestroyedRefunds
-      ? assessPublicOperationGroup(o, targets, e.operation, n, {
+      ? assessPublicOperationGroup(o, battleTargets, e.operation, n, {
           fullHeal: e.fullHeal,
           ignoreArmor: e.ignoreArmor,
           removed: predictedRemoved,
           warded: predictedWards,
           captured: predictedCaptured,
           additionalInPlay:
-            a.kind === 'play' && source && ['creature', 'artifact', 'upgrade'].includes(source.spec.kind)
-              ? [source]
+            a.kind === 'play' && physicalSource && ['creature', 'artifact', 'upgrade'].includes(physicalSource.spec.kind)
+              ? [preparedContext().source ?? physicalSource]
               : [],
         })
       : undefined;
     const rows = group
       ? group.rows.map((r) => ({
           t: r.card,
+          wasInPlay: evaluatedInPlay(r.card.id),
           result: r.result,
           operation: r.operation,
           direct: r.direct,
           destructionReceiptUnknown: group.expandedDestroyed || group.unresolved,
         }))
       : targets
-          .filter((t) => !predictedRemoved.has(t.id))
+          .filter((t) => !predictedRemoved.has(t.id) || projectedLocations.has(t.id))
           .map((t) => ({
             t,
-            result: assessPublicOperation(o, t, e.operation, n, {
+            wasInPlay: evaluatedInPlay(t.id),
+            result: assessPublicOperation(projectedLocations.has(t.id) ? formulaContext().observation : o, t, e.operation, n, {
               fullHeal: e.fullHeal,
               ignoreArmor: e.ignoreArmor,
               inPlay: evaluatedInPlay(t.id),
@@ -835,6 +1374,13 @@ function assessAlgorithmProjection(
             direct: true,
             destructionReceiptUnknown: false,
           }));
+    if (group && offBoard.length) {
+      const view = formulaContext().observation;
+      rows.push(...offBoard.map((t) => ({ t, wasInPlay: false,
+        result: assessPublicOperation(view, t, e.operation, n, { fullHeal: e.fullHeal, ignoreArmor: e.ignoreArmor, inPlay: false }),
+        operation: e.operation, direct: true, destructionReceiptUnknown: false,
+      })));
+    }
     const results = rows.filter((r) => r.direct);
     if (group) {
       for (const id of group.consumedWards) predictedWards.set(id, false);
@@ -860,12 +1406,12 @@ function assessAlgorithmProjection(
         predictedRemoved,
         ['reap', 'use', 'fight', 'unstun'].includes(a.kind) ? source?.id : undefined,
       );
-    for (const { t, result: r, operation } of rows) {
+    for (const { t, result: r, operation, wasInPlay } of rows) {
       score += r.score;
       if (features.tokenEconomy && r.removed)
         score += (t.controller === o.you ? -1 : 1) * tokenEngineValue(o, t);
       approximate ||= r.approximate;
-      if (r.approximate && evaluatedInPlay(t.id)) forecastUncertain = unresolvedEffects = true;
+      if (r.approximate && wasInPlay) forecastUncertain = unresolvedEffects = true;
       gain(0, r.released[0]);
       gain(1, r.released[1]);
       if (features.publicDestroyedRefunds && r.removed && uncertainStoredAmber.has(t.id)) {
@@ -876,7 +1422,10 @@ function assessAlgorithmProjection(
           'public-destroyed: earlier replaced income has an unresolved stored-amber refund; excluded from estimated pool',
         );
       }
-      if (operation === 'returnHand' && r.affected && (!evaluatedInPlay(t.id) || r.removed)) {
+      if (features.contextualEffects) {
+        if (r.removed || (r.affected && !evaluatedInPlay(t.id))) recordProjectedMove(t, operation);
+        if (r.affected || r.approximate) noteChangedFields(t, operation, r);
+      } else if (operation === 'returnHand' && r.affected && (!evaluatedInPlay(t.id) || r.removed)) {
         const owner = t.owner === o.you ? 0 : 1;
         hands[owner]++;
         if (player(owner).discard.some((c) => c.id === t.id))
@@ -885,24 +1434,25 @@ function assessAlgorithmProjection(
       if (evaluatedInPlay(t.id) && (e.operation === 'capture' || e.operation === 'captureOwn')) {
         const controller = t.controller === o.you ? 0 : 1,
           donor = e.operation === 'capture' ? 1 - controller : controller;
+        if (uncertainPools.has(donor)) { markUnknown(); continue; }
         const moved = Math.min(pool[donor], Math.max(0, n));
         if (!fromSupply(donor)) pool[donor] -= moved;
-        if (features.publicDestroyedRefunds) predictedCaptured.set(t.id, captured(t) + moved);
+        if (features.contextualEffects) predictedCaptured.set(t.id, captured(t) + moved);
       } else if (evaluatedInPlay(t.id) && e.operation === 'takeAmber') {
         const moved = Math.min(captured(t), Math.max(0, n));
         gain(0, moved);
-        if (features.publicDestroyedRefunds) predictedCaptured.set(t.id, captured(t) - moved);
+        if (features.contextualEffects) predictedCaptured.set(t.id, captured(t) - moved);
         approximate = true; // Multiple changes to the same stored amount are not a public-state simulation.
       }
-      if (features.publicDestroyedRefunds && r.affected && ['ward', 'unward'].includes(operation))
+      if (features.contextualEffects && r.affected && ['ward', 'unward'].includes(operation))
         predictedWards.set(t.id, operation === 'ward');
       if (
-        features.publicDestroyedRefunds &&
+        features.contextualEffects &&
         evaluatedInPlay(t.id) &&
         ['removeAmber', 'addAmber'].includes(e.operation)
       )
         predictedCaptured.set(t.id, Math.max(0, captured(t) + (e.operation === 'removeAmber' ? -n : n)));
-      if (r.removed && operation === 'destroy') drawSupply[t.owner === o.you ? 0 : 1]++;
+      if (!features.contextualEffects && r.removed && operation === 'destroy') drawSupply[t.owner === o.you ? 0 : 1]++;
 
       if (r.removed && t.spec.opponentKeyTax) {
         if (t.controller === o.you) otherCost = Math.max(0, otherCost - t.spec.opponentKeyTax);
@@ -956,13 +1506,12 @@ function assessAlgorithmProjection(
           ? qualifying.reduce((sum, { t }) => sum + t.effective.power, 0)
           : qualifying.length;
       if (count >= (e.after.atLeast ?? 1)) {
-        lastAmount = count;
-        if (e.after.bindAffected)
-          bindings.set(
-            e.after.bindAffected,
-            qualifying.map((x) => x.t),
-          );
-        evalEffects(e.after.effects, depth + 1);
+        inLocalFrame(() => {
+          lastAmount = count;
+          if (e.after!.bindAffected)
+            bindings.set(e.after!.bindAffected, qualifying.map((x) => x.t));
+          evalEffects(e.after!.effects, depth + 1);
+        });
       }
       if (key === 'healed') markUnknown();
     }
@@ -1408,9 +1957,9 @@ function assessAlgorithmProjection(
           break;
         }
         case 'orderedChild':
-          if (features.tokenEconomy && containsTokenCreation([...e.effects, ...e.then])) {
-            evalEffects(e.effects, depth + 1);
-            evalEffects(e.then, depth + 1);
+          if (features.contextualEffects || (features.tokenEconomy && containsTokenCreation([...e.effects, ...e.then]))) {
+            inLocalFrame(() => evalEffects(e.effects, depth + 1));
+            inLocalFrame(() => evalEffects(e.then, depth + 1));
           } else {
             approximate = true;
             if (features.contextualEffects) forecastUncertain = unresolvedEffects = true;
@@ -1426,14 +1975,16 @@ function assessAlgorithmProjection(
           gain(0, value(e.amount));
           break;
         case 'loseOpponent':
+          if (uncertainPools.has(1)) { markUnknown(); break; }
           pool[1] = Math.max(0, pool[1] - value(e.amount));
           break;
         case 'capture': {
+          if (uncertainPools.has(1)) { markUnknown(); break; }
           const amount = value(e.amount),
             moved = Math.min(pool[1], Math.max(0, amount));
           if (!fromSupply(1)) pool[1] = Math.max(0, pool[1] - amount);
-          if (features.publicDestroyedRefunds && source && evaluatedInPlay(source.id))
-            predictedCaptured.set(source.id, captured(source) + moved);
+          if (features.contextualEffects && physicalSource && evaluatedInPlay(physicalSource.id))
+            predictedCaptured.set(physicalSource.id, captured(physicalSource) + moved);
           break;
         }
         case 'steal':
@@ -1447,13 +1998,15 @@ function assessAlgorithmProjection(
           chainGain += Math.max(0, value(e.amount));
           break;
         case 'resource': {
-          const i = idx(e.side),
-            n = Math.max(0, value(e.amount));
+          const i = idx(e.side);
+          if (i === -1) { reasons.push('public-formula: resource recipient has no public event/last-owner binding'); break; }
+          const n = Math.max(0, value(e.amount));
           switch (e.operation) {
             case 'gain':
               gain(i, n);
               break;
             case 'lose':
+              if (uncertainPools.has(i)) { markUnknown(); break; }
               pool[i] = Math.max(0, pool[i] - n);
               break;
             case 'steal':
@@ -1488,11 +2041,12 @@ function assessAlgorithmProjection(
                     ? l < r
                     : l <= r
           )
-            evalEffects(e.then, depth + 1);
-          else evalEffects(e.otherwise ?? [], depth + 1);
+            inLocalFrame(() => evalEffects(e.then, depth + 1));
+          else inLocalFrame(() => evalEffects(e.otherwise ?? [], depth + 1));
           break;
         }
         case 'forgeEffect': {
+          if (uncertainPools.has(0)) { markUnknown(); break; }
           const cost = Math.max(0, e.fixedCost ?? ownCost + value(e.delta) - value(e.reduction));
           const storage = Math.max(0, me.forgeAvailable - me.amber);
           if (pool[0] + storage >= cost) {
@@ -1516,7 +2070,9 @@ function assessAlgorithmProjection(
           break;
         case 'lasting':
           if (e.rule === 'keyCost') {
-            if (idx(e.side) === 1) otherCost += e.amount ?? 0;
+            const side = idx(e.side);
+            if (side === -1) break;
+            if (side === 1) otherCost += e.amount ?? 0;
             else ownCost += e.amount ?? 0;
           } else if (e.rule === 'reapGain' || e.rule === 'creaturePlayGain' || e.rule === 'cardPlayDraw') {
             if (features.contextualEffects) {
@@ -1631,7 +2187,7 @@ function assessAlgorithmProjection(
           break;
         case 'self':
           if (features.contextualEffects) {
-            if (source) applyTargets([source], e, depth);
+            if (physicalSource) applyTargets([preparedContext().source ?? physicalSource], e, depth);
             else approximate = true;
             break;
           }
@@ -1643,7 +2199,7 @@ function assessAlgorithmProjection(
           break;
         case 'sacrificeSelf':
           if (features.contextualEffects) {
-            if (source) applyTargets([source], { operation: 'destroy' }, depth);
+            if (physicalSource) applyTargets([preparedContext().source ?? physicalSource], { operation: 'destroy' }, depth);
             else approximate = true;
             break;
           }
@@ -1655,8 +2211,27 @@ function assessAlgorithmProjection(
           approximate = true;
           break;
         case 'randomDiscard':
-          score += e.side === 'self' ? -1.5 : Math.min(foe.handCount, e.amount) * 1.2;
-          approximate = true;
+        case 'randomArchive':
+          if (features.contextualEffects) randomMove(e);
+          else if (e.kind === 'randomDiscard') {
+            const side = e.side === 'opponent' ? 1 : 0;
+            const zone = e.zone ?? 'hand';
+            const count = zone === 'hand' ? hands[side] : zone === 'archives' ? player(side).archiveCount : player(side).discard.length;
+            const n = Math.min(count, e.amount);
+            score += n * (side === 0 ? -1.5 : 1.2);
+            approximate = true;
+          } else markUnknown();
+          break;
+        case 'randomCard':
+        case 'bindRandom':
+          if (features.contextualEffects) randomBinding(e, depth);
+          else markUnknown();
+          break;
+        case 'randomDeckTop':
+          if (features.contextualEffects) {
+            applyTargets(filtered(e.filter), { operation: 'deckTop' }, depth);
+            reasons.push('public-random: every matched creature returns to its owner deck; only top order is random');
+          } else markUnknown();
           break;
         case 'storeAmber':
           score += pool[0] > 0 ? 0.2 : 0;
@@ -1671,7 +2246,7 @@ function assessAlgorithmProjection(
           break;
         case 'recur': {
           const n = Math.min(12, Math.max(0, value(e.count)));
-          for (let i = 0; i < n; i++) evalEffects(e.effects, depth + 1);
+          for (let i = 0; i < n; i++) inLocalFrame(() => evalEffects(e.effects, depth + 1));
           if (features.contextualEffects && n === 12) markUnknown();
           approximate = true;
           break;
@@ -1681,12 +2256,23 @@ function assessAlgorithmProjection(
             approximate = true;
             break;
           }
-          const i = idx(e.side),
-            n = e.amount === undefined ? pool[i] : Math.max(0, value(e.amount));
-          lastAmount = Math.min(pool[i], n);
-          pool[i] -= lastAmount;
-          evalEffects(e.then, depth + 1);
+          const i = idx(e.side);
+          if (i === -1) { reasons.push('public-formula: loss recipient has no public event/last-owner binding'); break; }
+          if (uncertainPools.has(i)) { markUnknown(); break; }
+          const n = e.amount === undefined ? pool[i] : Math.max(0, value(e.amount));
+          inLocalFrame(() => {
+            lastAmount = Math.min(pool[i], n);
+            pool[i] -= lastAmount;
+            evalEffects(e.then, depth + 1);
+          });
           reasons.push('card-aware: actual lost amber feeds continuation');
+          break;
+        }
+        case 'withValue': {
+          if (!features.contextualEffects) { markUnknown(); break; }
+          const before = unknownValues, n = value(e.value);
+          if (before !== unknownValues || !Number.isSafeInteger(n)) { markUnknown(); break; }
+          inLocalFrame(() => { scalarBindings.set(e.bind, n); evalEffects(e.then, depth + 1); });
           break;
         }
         case 'forEach': {
@@ -1697,11 +2283,8 @@ function assessAlgorithmProjection(
           const before = unknownValues,
             n = Math.min(24, Math.max(0, value(e.count)));
           if (before !== unknownValues) break;
-          const countInput = lastAmount;
-          for (let i = 0; i < n; i++) {
-            lastAmount = countInput;
-            evalEffects(e.effects, depth + 1);
-          }
+          if (!Number.isSafeInteger(n)) { markUnknown(); break; }
+          for (let i = 0; i < n; i++) inLocalFrame(() => evalEffects(e.effects, depth + 1));
           if (n === 24) markUnknown();
           break;
         }
@@ -1710,8 +2293,9 @@ function assessAlgorithmProjection(
             approximate = true;
             break;
           }
-          const candidates = filtered(e.filter),
+          const before = unknownValues, candidates = filtered(e.filter),
             max = Math.min(candidates.length, Math.max(0, e.max === undefined ? 1 : value(e.max)));
+          if (before !== unknownValues || !Number.isSafeInteger(max)) break;
           const min = Math.min(candidates.length, e.min ?? (e.optional ? 0 : max));
           if (e.distinctNames || e.distinctHouses || e.minimumPower || e.allOrNone || max > 3) {
             markUnknown();
@@ -1724,8 +2308,7 @@ function assessAlgorithmProjection(
               max,
               features.publicAmberIconBindings && publicBonusPurge(e) ? 4096 : 48,
             ).map((xs) => () => {
-              bindings.set(e.bind, xs);
-              evalEffects(e.then, depth + 1);
+              inLocalFrame(() => { bindings.set(e.bind, xs); evalEffects(e.then, depth + 1); });
             }),
           );
           reasons.push('card-aware: bounded public target continuation, including its costs');
@@ -1815,7 +2398,8 @@ function assessAlgorithmProjection(
           }
           // A hypothetical traversal already holds this exact public node.
           // Display labels and unrelated choices do not identify its branches.
-          bestBranch(e.options.slice(0, 12).map((option) => () => evalEffects(option.effects, depth + 1)));
+          bestBranch(e.options.slice(0, 12).map((option) => () =>
+            inLocalFrame(() => evalEffects(option.effects, depth + 1))));
           approximate = true;
           break;
         }
@@ -1828,8 +2412,7 @@ function assessAlgorithmProjection(
           const beforeHouse = chosenHouse;
           bestBranch(
             availableHouses(e).map((house) => () => {
-              chosenHouse = house;
-              evalEffects(e.then, depth + 1);
+              inLocalFrame(() => { chosenHouse = house; evalEffects(e.then, depth + 1); });
             }),
           );
           chosenHouse = beforeHouse;
@@ -2055,7 +2638,10 @@ function assessAlgorithmProjection(
             ((me.hand ?? []).some((h) => h.id === x.id) || (x.ready && !x.stunned))
           ) {
             const inHand = (me.hand ?? []).some((h) => h.id === x.id);
-            const semantic = cardSemanticFeatures(x.spec, inHand ? 'play' : 'use');
+            const semantic = cardSemanticFeatures(x.spec, inHand ? 'play' : 'use', {
+              observation: o, source: x, action: inHand ? { kind: 'play', card: x.id } : undefined,
+              phase: inHand ? 'after-play' : 'current',
+            });
             if (semantic.amberControl && !semantic.conditional) score += 25;
             approximate ||= semantic.unknown || semantic.conditional;
           }
@@ -2231,7 +2817,7 @@ function assessAlgorithmProjection(
       reasons.push('optional own-turn discard recovery; no play or use cost');
       break;
     case 'discard': {
-      const semantic = cardSemanticFeatures(c?.spec);
+      const semantic = cardSemanticFeatures(c?.spec, 'any', { observation: o, source: c });
       const useful =
         c?.spec.kind === 'creature' ||
         c?.spec.amber ||
