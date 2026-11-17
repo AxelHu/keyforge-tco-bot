@@ -1,9 +1,49 @@
 /** Public-information corrections for forging locks. A heuristic layer, never an engine-state oracle. */
 import { rankCompetitive, type CompetitiveProfile } from './competitive-policy.js';
 import type { ActionAssessment, AlgorithmFeatures } from './algorithm-policies.js';
-import type { CardView, Effect, Filter, House, Observation } from '../contracts/observation.js';
+import type { CardView, Effect, Filter, Observation } from '../contracts/observation.js';
 import type { Policy } from './policies.js';
 import { assessPublicOperation } from './public-card-value.js';
+
+/** Follow only an explicit current-step locator inside this already-visible source definition. */
+function currentHouseEffect(
+  o: Observation,
+  source: CardView,
+): Extract<Effect, { kind: 'chooseHouse' }> | undefined {
+  const intent = o.pending?.intent;
+  if (
+    (intent?.kind !== 'house-choice' && intent?.kind !== 'house-restriction') ||
+    !intent.selection
+  )
+    return;
+  const { ability, path } = intent.selection,
+    abilities = source.spec.abilities;
+  if (
+    !abilities ||
+    !Object.prototype.hasOwnProperty.call(abilities, ability) ||
+    !Array.isArray(path) ||
+    path.length < 1 ||
+    path.length > 24 ||
+    typeof path[0] !== 'number'
+  )
+    return;
+  let value: unknown = abilities[ability];
+  for (const key of path) {
+    if (
+      !value ||
+      typeof value !== 'object' ||
+      (typeof key === 'number'
+        ? !Array.isArray(value) || !Number.isSafeInteger(key) || key < 0
+        : Array.isArray(value) || ['__proto__', 'constructor', 'prototype'].includes(key)) ||
+      !Object.prototype.hasOwnProperty.call(value, key)
+    )
+      return;
+    value = (value as Record<string | number, unknown>)[key];
+  }
+  return value && typeof value === 'object' && (value as Effect).kind === 'chooseHouse'
+    ? (value as Extract<Effect, { kind: 'chooseHouse' }>)
+    : undefined;
+}
 
 export function rankForgeAware(
   o: Observation,
@@ -14,10 +54,9 @@ export function rankForgeAware(
     foe = o.players[1 - o.you];
   const board = o.players.flatMap((p) => [...p.battleline, ...p.artifacts]);
   const cards = new Map(
-    [...board, ...(me.hand ?? []), ...(me.archives ?? []), ...o.promptCards, ...o.resolving].map((c) => [
-      c.id,
-      c,
-    ]),
+    [...board, ...(me.hand ?? []), ...(me.archives ?? []), ...o.promptCards, ...o.resolving].map(
+      (c) => [c.id, c],
+    ),
   );
   const funded = (seat: number) => o.players[seat].forgeAvailable >= o.players[seat].keyCost;
   const hardStop = (c: CardView, seat: number) => {
@@ -64,11 +103,15 @@ export function rankForgeAware(
     'powerMax',
   ]);
   function matches(f: Filter, c: CardView, source: CardView): boolean {
-    if (Object.entries(f).some(([k, v]) => v !== undefined && !supportedFilters.has(k))) return false;
-    if (f.side && f.side !== 'any' && (f.side === 'friendly') !== (c.controller === o.you)) return false;
+    if (Object.entries(f).some(([k, v]) => v !== undefined && !supportedFilters.has(k)))
+      return false;
+    if (f.side && f.side !== 'any' && (f.side === 'friendly') !== (c.controller === o.you))
+      return false;
     if (f.kind && f.kind !== c.spec.kind) return false;
-    if (f.house && !(c.effective.houses ?? [c.effective.house]).includes(f.house as never)) return false;
-    if (f.notHouse && (c.effective.houses ?? [c.effective.house]).includes(f.notHouse as never)) return false;
+    if (f.house && !(c.effective.houses ?? [c.effective.house]).includes(f.house as never))
+      return false;
+    if (f.notHouse && (c.effective.houses ?? [c.effective.house]).includes(f.notHouse as never))
+      return false;
     if (f.other && c.id === source.id) return false;
     if (f.trait && !c.spec.traits?.includes(f.trait)) return false;
     if (f.notTrait && c.spec.traits?.includes(f.notTrait)) return false;
@@ -120,7 +163,9 @@ export function rankForgeAware(
   function combat(a: CardView, target: CardView): number {
     if (a.spec.noCombatDamage || target.spec.noCombatDamage) return 0;
     const elusive =
-      target.effective.keywords.includes('elusive') && !target.elusiveUsed && !a.spec.ignoreTauntElusive;
+      target.effective.keywords.includes('elusive') &&
+      !target.elusiveUsed &&
+      !a.spec.ignoreTauntElusive;
     let result = 0;
     if (
       !elusive &&
@@ -220,30 +265,48 @@ export function rankForgeAware(
           reasons.push('v3: deploy an explicit public third-key restriction');
         }
       } else if (a.kind === 'use' && source)
-        delta += effectsImpact(item.useDescription?.effects ?? source.spec.abilities?.action ?? [], source);
+        delta += effectsImpact(
+          item.useDescription?.effects ?? source.spec.abilities?.action ?? [],
+          source,
+        );
       else if (a.kind === 'fight' && source && cards.has(a.target))
         delta += combat(source, cards.get(a.target)!);
       else if (a.kind === 'select' && cards.has(a.target)) {
         const target = cards.get(a.target)!;
         if (o.pending?.intent?.kind === 'target-operation')
           delta += operationValue(target, o.pending.intent.operation, o.pending.amount);
-        else if (o.pending?.kind === 'damage') delta += operationValue(target, 'damage', o.pending.amount);
+        else if (o.pending?.kind === 'damage')
+          delta += operationValue(target, 'damage', o.pending.amount);
       } else if (
         corrections.publicHouseChoices &&
         a.kind === 'choose' &&
         source &&
-        o.pending?.kind === 'option' &&
-        o.pending.label === 'Choose a house' &&
-        o.pending.options?.some((x) => x.id === a.option)
+        o.pending?.kind === 'option'
       ) {
-        const choices = Object.values(source.spec.abilities ?? {})
-          .flat()
-          .filter((e): e is Extract<Effect, { kind: 'chooseHouse' }> => e.kind === 'chooseHouse');
-        if (choices.length === 1) {
-          const chosenHouse = o.pending.options.find((x) => x.id === a.option)?.house ?? (a.option as House);
+        const intent = o.pending.intent,
+          options = o.pending.options;
+        const houseIntent =
+          intent?.kind === 'house-choice' || intent?.kind === 'house-restriction'
+            ? intent
+            : undefined;
+        const choice = currentHouseEffect(o, source);
+        const matched =
+          houseIntent &&
+          options &&
+          options.length === houseIntent.options.length &&
+          new Set(options.map((x) => x.id)).size === options.length &&
+          options.every(
+            (x) =>
+              x.house &&
+              houseIntent.options.filter(
+                (meaning) => meaning.id === x.id && meaning.house === x.house,
+              ).length === 1,
+          );
+        const chosenHouse = matched ? options?.find((x) => x.id === a.option)?.house : undefined;
+        if (choice && chosenHouse) {
           // This is the currently legal house, not the best hypothetical future
           // branch. Reuse the existing Ward/lock removal correction unchanged.
-          const effects = choices[0].then.map(
+          const effects = choice.then.map(
             (e): Effect =>
               e.kind === 'all' || e.kind === 'target'
                 ? {
@@ -287,7 +350,8 @@ export function rankForgeAware(
             foe.keyCost -
               board.reduce(
                 (n, c) =>
-                  n + (c.controller === o.you && removed.has(c.id) ? (c.spec.opponentKeyTax ?? 0) : 0),
+                  n +
+                  (c.controller === o.you && removed.has(c.id) ? (c.spec.opponentKeyTax ?? 0) : 0),
                 0,
               ),
           );
@@ -303,13 +367,18 @@ export function rankForgeAware(
             // also include amber released by this very same house sweep.
             const alreadyCharged = funded(1 - o.you) ? (enemyLocks.length === 1 ? 160 : 7) : 0;
             delta += alreadyCharged - 160;
-            reasons.push('card-effects v3: this actual house sweep removes every remaining third-key lock');
+            reasons.push(
+              'card-effects v3: this actual house sweep removes every remaining third-key lock',
+            );
           }
         }
       } else if (a.kind === 'house' && useful) {
-        const inHouse = (c: CardView) => (c.effective.houses ?? [c.effective.house]).includes(a.house!);
+        const inHouse = (c: CardView) =>
+          (c.effective.houses ?? [c.effective.house]).includes(a.house!);
         const opportunities = [
-          ...(me.hand ?? []).filter(inHouse).map((c) => effectsImpact(c.spec.abilities?.play ?? [], c)),
+          ...(me.hand ?? [])
+            .filter(inHouse)
+            .map((c) => effectsImpact(c.spec.abilities?.play ?? [], c)),
           ...me.artifacts
             .filter((c) => c.ready && inHouse(c))
             .map((c) => effectsImpact(c.spec.abilities?.action ?? [], c)),
@@ -318,9 +387,11 @@ export function rankForgeAware(
             .flatMap((c) => foe.battleline.map((t) => combat(c, t))),
         ];
         delta += Math.max(0, ...opportunities) * 0.75;
-      } else if (a.kind === 'unstun' && source && useful) delta += Math.max(0, removalValue(source)) * 0.3;
+      } else if (a.kind === 'unstun' && source && useful)
+        delta += Math.max(0, removalValue(source)) * 0.3;
     }
-    if (delta) reasons.push('v3: public forge-lock opportunity cost, with opponent third-key protection');
+    if (delta)
+      reasons.push('v3: public forge-lock opportunity cost, with opponent third-key protection');
     return {
       ...original,
       score: score + delta,

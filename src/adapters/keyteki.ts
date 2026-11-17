@@ -4,6 +4,14 @@
  * choices: keyteki reveals their exact abilities only in the next player prompt.
  */
 import { createHash } from 'node:crypto';
+import {
+  keytekiPromptText as label,
+  keytekiPromptMatches,
+  keytekiButtonMatches,
+  keytekiSelectionMaximum as publicSelectionMaximum,
+  keytekiBonusSelection,
+  keytekiTargetMeaning,
+} from './keyteki-native-semantics.js';
 import { ALL_DEFINITIONS as CATALOG, cardKnowledgeIsPartial } from '../knowledge/catalog.js';
 import { canonical } from '../shared/canonical.js';
 import { upgradeForm } from '../knowledge/upgrade-form.js';
@@ -168,32 +176,6 @@ function administrativeBinding(
 }
 const nonnegative = (v: unknown, fallback = 0): number =>
   typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : fallback;
-const label = (v: unknown): string => {
-  if (typeof v === 'string') return v;
-  if (typeof v === 'number' && Number.isFinite(v)) return String(v);
-  const x = obj(v),
-    values = obj(x.values);
-  return str(x.text).replace(/\{\{([^}]+)\}\}/g, (whole, key: string) => {
-    const value = values[key];
-    return typeof value === 'string' || (typeof value === 'number' && Number.isFinite(value))
-      ? String(value)
-      : whole;
-  });
-};
-/** ExactlyX and UpToX publish this same title; both provide a maximum, but the
- * minimum is deliberately not inferred. XorMore has a distinct "or more" title.
- * The serialized selectable flag is not adjusted when SelectCardPrompt reaches its cap.
- */
-function publicSelectionMaximum(menuTitle: unknown): number | undefined {
-  const prompt = obj(menuTitle),
-    amount = obj(prompt.values).amount;
-  if (typeof amount !== 'number' || !Number.isSafeInteger(amount) || amount < 0) return undefined;
-  return /^Choose \{\{amount\}\} (cards|creatures|artifacts|upgrades|actions)( to discard)?$/i.test(
-    str(prompt.text),
-  )
-    ? amount
-    : undefined;
-}
 /** Unnatural Selection publishes literal titles instead of the usual amount template.
  * Its source-bound prompt still caps each side at three; the native Done button,
  * not the title, determines whether a smaller selection may be completed.
@@ -201,7 +183,7 @@ function publicSelectionMaximum(menuTitle: unknown): number | undefined {
 function unnaturalSelectionMaximum(me: ObjectValue): number | undefined {
   if (
     me.selectOrder === true ||
-    !['Choose 3 friendly creatures', 'Choose 3 enemy creatures'].includes(str(me.menuTitle))
+    (!keytekiPromptMatches(me.menuTitle, 'unnatural-friendly') && !keytekiPromptMatches(me.menuTitle, 'unnatural-enemy'))
   )
     return undefined;
   const controls = arr(me.controls).map(obj);
@@ -226,18 +208,8 @@ function publicRankedTargetSelection(
   locations: Map<string, string>,
   projectedSelected: string[],
 ): PublicRankedTargetSelection | undefined {
-  // Bonus selectors use the same physical source before its Play ability. Their
-  // four pinned titles identify ordinary one-icon choices, not MostStat.
-  if (
-    typeof me.menuTitle === 'string' &&
-    [
-      'Choose a creature to capture amber due to bonus icon',
-      'Choose a creature to damage due to bonus icon',
-      'Choose a card to discard due to bonus icon',
-      'Choose a creature to add a +1 power counter to due to bonus icon',
-    ].includes(me.menuTitle)
-  )
-    return undefined;
+  // A bonus icon is a distinct native choice even when the card also has a ranked Play.
+  if (keytekiBonusSelection(me.menuTitle)) return undefined;
   const controls = arr(me.controls).map(obj);
   const sources = controls.map((control) => resolveDefinition(obj(control.source)));
   const hasRankedMax = (definition: CardDefinition | undefined) =>
@@ -348,7 +320,7 @@ function publicRankedTargetSelection(
  * Bind the exact single-card search schema and its real Done control, not arbitrary prose.
  */
 function singleSearchMaximum(me: ObjectValue): number | undefined {
-  if (me.menuTitle !== 'Choose a card' || me.selectOrder === true) return undefined;
+  if (!keytekiPromptMatches(me.menuTitle, 'choose-card') || me.selectOrder === true) return undefined;
   const controls = arr(me.controls).map(obj),
     piles = arr(me.promptedPiles).map(obj);
   if (controls.length !== 1 || controls[0].type !== 'targeting') return undefined;
@@ -379,7 +351,7 @@ function singleSearchMaximum(me: ObjectValue): number | undefined {
  * Done with fewer than two selections keeps the current order; two commits the swap.
  */
 function isBattlelineSwapPrompt(me: ObjectValue): boolean {
-  if (me.selectCard !== true || me.selectOrder === true || me.menuTitle !== 'Select two creatures to swap')
+  if (me.selectCard !== true || me.selectOrder === true || !keytekiPromptMatches(me.menuTitle, 'battleline-swap'))
     return false;
   const controls = arr(me.controls).map(obj);
   if (controls.length !== 1 || controls[0].type !== 'targeting') return false;
@@ -395,13 +367,6 @@ function isBattlelineSwapPrompt(me: ObjectValue): boolean {
         b.uuid === binding.slice(0, -2) &&
         b.disabled !== true,
     );
-}
-/** This observed AllocateDamagePrompt title publishes one click's damage, not the total allocation. */
-function publicDamageStep(menuTitle: unknown): number | undefined {
-  const match = /^Choose a creature to deal ([1-9][0-9]*) damage to[.!]?$/i.exec(label(menuTitle));
-  if (!match) return undefined;
-  const amount = Number(match[1]);
-  return Number.isSafeInteger(amount) ? amount : undefined;
 }
 const normalize = (v: string): string =>
   v
@@ -451,12 +416,21 @@ function publicHouseChoices(me: ObjectValue): Map<string, House> {
   if (controls.length !== 1 || controls[0].type !== 'house-select') return new Map();
   const declared = arr(controls[0].houses).map(house);
   const buttons = arr(me.buttons).map(obj);
-  const offered = buttons.map((b, index) => ({ index, house: house(label(b.text)), button: b }));
+  // HandlerMenuPrompt binds a house-select choice by its numeric index into
+  // controls.houses. Some main-window menus use the canonical house argument.
+  // Display labels may be localized or misleading; they never supply a house.
+  const offered = buttons.map((b, index) => ({
+    index,
+    house: typeof b.arg === 'number' && Number.isSafeInteger(b.arg) && b.arg >= 0
+      ? declared[b.arg] : house(b.arg),
+    button: b,
+  }));
   if (
     !declared.length ||
     !declared.every((h): h is House => h !== undefined) ||
     new Set(declared).size !== declared.length ||
     offered.length !== declared.length ||
+    new Set(offered.map((x) => x.button.uuid)).size !== 1 ||
     new Set(offered.map((x) => x.house)).size !== offered.length ||
     !offered.every(
       (x) =>
@@ -472,7 +446,7 @@ function publicHouseChoices(me: ObjectValue): Map<string, House> {
   return new Map(offered.map((x) => [`keyteki-button-${x.index}`, x.house!]));
 }
 function cardAbilityMenu(me: ObjectValue): boolean {
-  return me.selectCard !== true && /^choose an ability:?\s*$/i.test(label(me.menuTitle));
+  return me.selectCard !== true && keytekiPromptMatches(me.menuTitle, 'choose-ability');
 }
 function sourceUuid(
   me: ObjectValue,
@@ -510,14 +484,14 @@ function sourceUuid(
 function phaseOf(me: ObjectValue, finished: boolean): Phase {
   if (finished) return 'finished';
   const title = `${label(me.promptTitle)} ${label(me.menuTitle)}`;
-  if (/mulligan|keep starting hand/i.test(title)) return 'mulligan';
-  if (/access archives|take.*cards.*archives.*hand/i.test(title)) return 'archives';
-  if (/choose active house|choose which house.*activate/i.test(title)) return 'house';
-  if (/forge.*key|choose.*key.*forge/i.test(title) || str(me.phase) === 'forge') return 'forge';
+  if (keytekiPromptMatches(title, 'mulligan')) return 'mulligan';
+  if (keytekiPromptMatches(title, 'archives')) return 'archives';
+  if (keytekiPromptMatches(title, 'active-house')) return 'house';
+  if (keytekiPromptMatches(title, 'forge') || str(me.phase) === 'forge') return 'forge';
   if (
     me.selectCard === true ||
     arr(me.controls).length ||
-    /choose an ability|^play /i.test(label(me.menuTitle))
+    keytekiPromptMatches(me.menuTitle, 'ability-or-play')
   )
     return 'choice';
   return str(me.phase) === 'main' ? 'main' : 'choice';
@@ -968,13 +942,13 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
     rememberedPlay?.definition === 'they-tell-no-tales' &&
     me.selectCard === false &&
     label(me.promptTitle) === 'They Tell No Tales' &&
-    label(me.menuTitle) === 'Choose a house' &&
+    keytekiPromptMatches(me.menuTitle, 'choose-house') &&
     publicHouseChoices(me).size > 0;
   const rememberedSealPrompt =
     rememberedPlay?.definition === 'divine-seal' &&
     me.selectCard === true &&
     label(me.promptTitle) === 'Divine Seal' &&
-    label(me.menuTitle) === 'Choose a creature' &&
+    keytekiPromptMatches(me.menuTitle, 'choose-creature') &&
     !arr(me.promptedPiles).length &&
     (() => {
       const controls = arr(me.controls).map(obj);
@@ -1102,7 +1076,7 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
   const winner = names.includes(str(raw.winner)) ? (names.indexOf(str(raw.winner)) as Seat) : null;
   const phase = administrativeRequest ? 'choice' : phaseOf(me, winner !== null);
   const title = `${label(me.promptTitle)} ${label(me.menuTitle)}`;
-  const fightTarget = me.selectCard === true && /choose a creature to attack/i.test(label(me.menuTitle));
+  const fightTarget = me.selectCard === true && keytekiPromptMatches(me.menuTitle, 'fight-target');
   // A fight has already begun when its target is requested: the attacker may now be exhausted.
   // Only currently visible creatures in play can supply this source; a purged/discarded namesake
   // must not make the in-play identity ambiguous or replace a remembered physical attacker.
@@ -1122,6 +1096,17 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
     ? undefined
     : (infurnace?.contract?.source ?? sourceUuid(me, options, sourceCandidates));
   const sourceCard = source ? cards.get(source) : undefined;
+  const sourceControls = arr(me.controls).map(obj).filter((c) => c.type === 'targeting');
+  const semanticSource = sourceControls.length === 1 ? obj(sourceControls[0].source) : undefined;
+  const boundSemanticSource =
+    source && sourceCard && semanticSource &&
+    semanticSource.id === sourceCard.definition &&
+    semanticSource.type === sourceCard.spec.kind &&
+    semanticSource.facedown !== true && semanticSource.copying !== true &&
+    rawById.get(source)?.copying !== true && !sourceCard.copiedDefinition &&
+    (str(semanticSource.uuid) ? semanticSource.uuid === source : options.sourceCardId === source)
+      ? sourceCard.definition : undefined;
+  const targetMeaning = keytekiTargetMeaning(me.menuTitle, boundSemanticSource);
   // A remembered navigation source alone is insufficient: the current public
   // title must bind that same card. These narrow Play prompts do not certify
   // arbitrary copied text, Fate, historical restrictions or complete effects.
@@ -1135,7 +1120,7 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
     normalize(label(me.promptTitle)) === normalize(sourceCard.spec.name);
   const upgradeTarget =
     me.selectCard === true &&
-    /choose a (creature|card) to attach(?:ed)? this upgrade to/i.test(label(me.menuTitle));
+    keytekiPromptMatches(me.menuTitle, 'upgrade-target');
   // A forced fight may expose a short source without UUID while two same-name
   // attackers are in play. The server still publishes exact selectable defenders.
   // Preserve those target clicks without inventing a physical attacker for scoring.
@@ -1150,7 +1135,7 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
             ? 'option'
             : me.selectOrder === true
               ? 'order'
-              : /archive/i.test(title)
+              : targetMeaning?.operation === 'archive'
                 ? 'archive'
                 : me.selectCard === true
                   ? 'target'
@@ -1225,41 +1210,17 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
     pending.intent = { kind: 'target-operation', operation: rankedSelection.operation };
   }
   if (pending && (me.selectCard === true || buttonCards.size > 0) && !fightTarget) {
-    const damageStep = me.selectCard === true ? publicDamageStep(me.menuTitle) : undefined;
-    const operation: Operation | undefined =
-      damageStep !== undefined
-        ? 'damage'
-        : /\bdestroy\b/i.test(title)
-          ? 'destroy'
-          : /\bpurge\b/i.test(title)
-            ? 'purge'
-            : /\bstun\b/i.test(title)
-              ? 'stun'
-              : /\bexhaust\b/i.test(title)
-                ? 'exhaust'
-                : /\bcapture\b/i.test(label(me.menuTitle))
-                  ? 'capture'
-                  : /\bdiscard\b/i.test(label(me.menuTitle))
-                    ? 'discard'
-                    : source &&
-                        cards.get(source)?.definition === 'reaver' &&
-                        /^Choose a captured amber to move to your pool\.$/i.test(label(me.menuTitle))
-                      ? 'takeAmber'
-                      : source &&
-                          cards.get(source)?.definition === 'reaver' &&
-                          /^Choose a card$/i.test(label(me.menuTitle)) &&
-                          arr(me.promptedPiles).some(
-                            (pile) => obj(pile).location === 'hand' && obj(pile).controller === 'self',
-                          )
-                        ? 'discard'
-                        : undefined;
+    const operation = targetMeaning?.operation ??
+      (boundSemanticSource === 'reaver' && keytekiPromptMatches(me.menuTitle, 'choose-card') &&
+        arr(me.promptedPiles).some((pile) => obj(pile).location === 'hand' && obj(pile).controller === 'self')
+          ? 'discard' : undefined);
     if (operation) pending.intent = { kind: 'target-operation', operation };
     else if (
       boundPlaySource &&
       sourceCard?.definition === 'divine-seal' &&
       me.selectCard === true &&
       me.selectOrder !== true &&
-      /^Choose a creature$/i.test(label(me.menuTitle).trim()) &&
+      keytekiPromptMatches(label(me.menuTitle).trim(), 'choose-creature') &&
       !arr(me.promptedPiles).length &&
       !pending.selected?.length
     ) {
@@ -1282,23 +1243,14 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
       )
         pending.intent = { kind: 'target-operation', operation: 'deckBottom' };
     }
-    if (damageStep !== undefined) pending.amount = damageStep;
+    if (targetMeaning?.amount !== undefined) pending.amount = targetMeaning.amount;
   }
   if (
-    pending &&
-    source &&
-    cards.get(source)?.definition === 'cauldron' &&
-    /^Choose a card to play$/i.test(label(me.menuTitle))
-  )
-    pending.label = `Cauldron: ${label(me.menuTitle)}`;
+    pending && boundSemanticSource === 'cauldron' &&
+    keytekiPromptMatches(me.menuTitle, 'play-card')
+  ) pending.intent = { kind: 'play-from-under' };
   const semanticHouses = new Map<string, House>();
-  if (
-    boundPlaySource &&
-    sourceCard?.definition === 'they-tell-no-tales' &&
-    me.selectCard !== true &&
-    pending?.kind === 'option' &&
-    pending.label === 'Choose a house'
-  ) {
+  if (!administrativeRequest && me.selectCard !== true && (pending?.kind === 'option' || phase === 'house')) {
     for (const [id, h] of publicHouseChoices(me)) semanticHouses.set(id, h);
   }
   if (pending && infurnace?.contract) {
@@ -1356,9 +1308,9 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
     }
   const buttons = arr(me.buttons).map(obj);
   const prophecyPrompt =
-    me.menuTitle === 'Activate prophecy?'
+    keytekiPromptMatches(me.menuTitle, 'prophecy-confirm')
       ? 'confirm'
-      : me.menuTitle === 'Choose a card from your hand to place under the prophecy'
+      : keytekiPromptMatches(me.menuTitle, 'prophecy-place')
         ? 'place'
         : undefined;
   let prophecyContinuation: KeytekiProphecyActivation | undefined;
@@ -1439,7 +1391,7 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
     const text = label(button.text);
     if (
       button.disabled === true ||
-      !(/^(action|omni)(\b|:)/i.test(text) || /^use this card's (action|omni) ability$/i.test(text))
+      !keytekiButtonMatches(text, 'use')
     )
       return undefined;
     const trigger = /\bomni\b/i.test(text) ? 'omni' : 'action';
@@ -1472,51 +1424,62 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
       useDescription: LegalAction['useDescription'];
     // Stale card prompt titles must not reinterpret the administrative Yes/No buttons.
     if (!administrativeRequest) {
-      if (prophecyContinuation?.stage === 'confirm') {
+      const declaredHouse = semanticHouses.get('keyteki-button-' + i);
+      if (declaredHouse) {
+        // The house-select control and native argument define the option even
+        // if its display text happens to look like another ordinary UI command.
+        if (phase === 'house') action = { kind: 'house', house: declaredHouse };
+      } else if (prophecyContinuation?.stage === 'confirm') {
         action = b.arg === 0 ? structuredClone(prophecyContinuation.action) : { kind: 'done' };
         navigation = b.arg === 0;
         intent = 'prophecy';
       } else if (phase === 'mulligan' && (b.arg === 'keep' || b.arg === 'mulligan')) action = { kind: b.arg };
-      else if (phase === 'house' && house(text)) action = { kind: 'house', house: house(text)! };
-      else if (phase === 'archives' && /^(yes|all cards)$/i.test(text)) action = { kind: 'takeArchives' };
-      else if (phase === 'archives' && /^no$/i.test(text)) action = { kind: 'leaveArchives' };
+      else if (phase === 'house' &&
+        (house(b.icon) ?? house(b.arg) ?? (b.icon === undefined ? house(text) : undefined))) {
+        // HousePhase publishes the canonical house as icon; arg is the native
+        // handler index and must still be transmitted unchanged. Older views
+        // without icon retain a narrow canonical-label compatibility fallback.
+        action = { kind: 'house', house: (house(b.icon) ?? house(b.arg) ?? house(text))! };
+      }
+      else if (phase === 'archives' && keytekiButtonMatches(text, 'archives-all')) action = { kind: 'takeArchives' };
+      else if (phase === 'archives' && keytekiButtonMatches(text, 'no')) action = { kind: 'leaveArchives' };
       else if (phase === 'forge' && colors.includes(lower as KeyColor))
         action = { kind: 'forge', color: lower as KeyColor };
-      else if (/raise the tide/i.test(title) && /^yes$/i.test(text)) action = { kind: 'raiseTide' };
-      else if (/raise the tide/i.test(title) && /^no$/i.test(text)) action = { kind: 'done' };
-      else if (/are you sure you want to end your turn/i.test(title) && /^yes$/i.test(text))
+      else if (keytekiPromptMatches(title, 'raise-tide') && keytekiButtonMatches(text, 'yes')) action = { kind: 'raiseTide' };
+      else if (keytekiPromptMatches(title, 'raise-tide') && keytekiButtonMatches(text, 'no')) action = { kind: 'done' };
+      else if (keytekiPromptMatches(title, 'end-turn-confirm') && keytekiButtonMatches(text, 'yes'))
         action = { kind: 'endTurn' };
-      else if (/are you sure you want to end your turn/i.test(title) && /^no$/i.test(text))
+      else if (keytekiPromptMatches(title, 'end-turn-confirm') && keytekiButtonMatches(text, 'no'))
         action = { kind: 'done' };
-      else if (b.arg === 'endturn' || /^end turn$/i.test(text)) action = { kind: 'endTurn' };
-      else if (/^(done|cancel|cancel prompt)$/i.test(text)) action = { kind: 'done' };
-      else if (source && /^reap with this creature$/i.test(text)) action = { kind: 'reap', card: source };
+      else if (b.arg === 'endturn' || keytekiButtonMatches(text, 'end-turn')) action = { kind: 'endTurn' };
+      else if (keytekiButtonMatches(text, 'done')) action = { kind: 'done' };
+      else if (source && keytekiButtonMatches(text, 'reap')) action = { kind: 'reap', card: source };
       else if (
         source &&
-        /^(remove stun|remove stun from this creature|remove this creature's stun)$/i.test(text)
+        keytekiButtonMatches(text, 'unstun')
       )
         action = { kind: 'unstun', card: source };
-      else if (source && /^return this card to hand$/i.test(text))
+      else if (source && keytekiButtonMatches(text, 'return-hand'))
         action = { kind: 'returnDiscard', card: source };
-      else if (source && /^discard (this )?card$/i.test(text)) {
+      else if (source && keytekiButtonMatches(text, 'discard')) {
         action = { kind: 'discard', card: source };
         intent = 'discard';
-      } else if (source && /^play (this )?(card|creature|artifact|action|upgrade)$/i.test(text)) {
+      } else if (source && keytekiButtonMatches(text, 'play')) {
         action = {
           kind: 'play',
           card: source,
-          ...(sourceCard && sourceCard.spec.kind !== 'upgrade' && /upgrade$/i.test(text)
+          ...(sourceCard && sourceCard.spec.kind !== 'upgrade' && keytekiButtonMatches(text, 'as-upgrade')
             ? { asUpgrade: true as const }
             : {}),
         };
         navigation = true;
         intent = 'play';
-      } else if (source && /^fight with this creature$/i.test(text)) {
+      } else if (source && keytekiButtonMatches(text, 'fight')) {
         navigation = true;
         intent = 'fight';
       } else if (
         source &&
-        (/^(action|omni)(\b|:)/i.test(text) || /^use this card's (action|omni) ability$/i.test(text))
+        keytekiButtonMatches(text, 'use')
       ) {
         const match = describedButtons[i];
         if (match && describedButtons.filter((candidate) => candidate?.index === match.index).length === 1) {
@@ -1524,7 +1487,7 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
           useDescription = match.description;
         } else unknown.add(`ability-description-unresolved:${source}:${i}`);
         intent = 'use';
-      } else if (source && /^(left|right)$/i.test(text) && /flank|play|place/i.test(title)) {
+      } else if (source && keytekiButtonMatches(text, 'flank') && keytekiPromptMatches(title, 'flank-placement')) {
         action = { kind: 'play', card: source, flank: lower as 'left' | 'right' };
         intent = 'play';
       } else if (buttonCards.has(i)) action = { kind: 'select', target: buttonCards.get(i)! };
@@ -1706,6 +1669,19 @@ export function projectKeytekiState(input: unknown, options: KeytekiProjectionOp
     }
     if (type && !['targeting', 'house-select', 'options-select'].includes(type))
       unsupported.add(`prompt-control:${type}`);
+  }
+  if (pending?.kind === 'option' && !pending.intent && semanticHouses.size) {
+    const choices = legalActions.filter((entry) => entry.action.kind === 'choose');
+    if (
+      choices.length === semanticHouses.size &&
+      choices.every((entry) => entry.action.kind === 'choose' && semanticHouses.has(entry.action.option))
+    ) pending.intent = {
+      kind: 'house-choice',
+      options: choices.map((entry) => ({
+        id: (entry.action as Extract<Action, { kind: 'choose' }>).option,
+        house: semanticHouses.get((entry.action as Extract<Action, { kind: 'choose' }>).option)!,
+      })),
+    };
   }
   if (swapPrompt && pending) {
     const candidates = [...rawById.entries()].filter(([, r]) => r.selectable === true || r.selected === true);

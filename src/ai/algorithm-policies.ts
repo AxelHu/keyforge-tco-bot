@@ -1,4 +1,4 @@
-import { summaryFeature } from '../knowledge/text-features.js';
+import { cardSemanticFeatures } from '../knowledge/semantic-features.js';
 import {
   HOUSES,
   type Action,
@@ -45,7 +45,7 @@ export interface PublicActionCorrections {
   /** Zone/timing-aware, bounded next-action opportunities at house choice. */
   publicHouseDefenseOpportunities?: boolean;
 }
-/** Opt-in corrections; historical v1 policies keep byte-for-byte scoring behavior. */
+/** Optional numeric refinements; all policies consume the current structured decision contract. */
 export interface AlgorithmFeatures extends PublicActionCorrections {
   physicalBonuses?: boolean;
   multipleHouses?: boolean;
@@ -795,7 +795,11 @@ function assessAlgorithmProjection(
     if (result.length >= limit) approximate = true;
     return result;
   }
-  function applyTargets(targets: CardView[], e: import('../contracts/observation.js').ApplySpec, depth: number) {
+  function applyTargets(
+    targets: CardView[],
+    e: import('../contracts/observation.js').ApplySpec,
+    depth: number,
+  ) {
     const n = value(e.amount);
     const group = features.publicDestroyedRefunds
       ? assessPublicOperationGroup(o, targets, e.operation, n, {
@@ -964,6 +968,34 @@ function assessAlgorithmProjection(
     }
     return results;
   }
+  type PublicLocator = { ability: string; path: readonly (string | number)[] };
+  function publicEffectAt<K extends Effect['kind']>(
+    locator: PublicLocator,
+    kind: K,
+  ): Extract<Effect, { kind: K }> | undefined {
+    if (!source || source.id !== o.pending?.source || locator.path.length < 1 || locator.path.length > 48)
+      return;
+    const abilities = source.spec.abilities;
+    if (!abilities || !Object.hasOwn(abilities, locator.ability)) return;
+    let node: unknown = abilities[locator.ability as keyof typeof abilities];
+    for (const part of locator.path) {
+      if (
+        node === null ||
+        typeof node !== 'object' ||
+        ['__proto__', 'prototype', 'constructor'].includes(String(part))
+      )
+        return;
+      if (Array.isArray(node)) {
+        if (typeof part !== 'number' || !Number.isSafeInteger(part) || part < 0 || part >= node.length)
+          return;
+      } else if (typeof part !== 'string') return;
+      if (!Object.hasOwn(node, part)) return;
+      node = (node as Record<string | number, unknown>)[part];
+    }
+    return node && typeof node === 'object' && 'kind' in node && node.kind === kind
+      ? (node as Extract<Effect, { kind: K }>)
+      : undefined;
+  }
   function publicChoices(): Extract<Effect, { kind: 'choose' }>[] {
     const choices: Extract<Effect, { kind: 'choose' }>[] = [];
     const visit = (effects: readonly Effect[], depth = 0) => {
@@ -981,15 +1013,40 @@ function assessAlgorithmProjection(
     visit(Object.values(source?.spec.abilities ?? {}).flat());
     return choices;
   }
-  function sameChoice(e: Extract<Effect, { kind: 'choose' }>, label: string | undefined, keys: string[]) {
+  function sameOptionIds(e: Extract<Effect, { kind: 'choose' }>, keys: string[]) {
     return (
-      e.label === label && e.options.length === keys.length && e.options.every((x) => keys.includes(x.key))
+      keys.length > 0 &&
+      new Set(keys).size === keys.length &&
+      new Set(e.options.map((option) => option.key)).size === e.options.length &&
+      e.options.length === keys.length &&
+      e.options.every((option) => keys.includes(option.key))
     );
   }
-  function publicHouseChoices(): Extract<Effect, { kind: 'chooseHouse' }>[] {
-    return Object.values(source?.spec.abilities ?? {})
-      .flat()
-      .filter((e): e is Extract<Effect, { kind: 'chooseHouse' }> => e.kind === 'chooseHouse');
+  function currentPublicChoice(): Extract<Effect, { kind: 'choose' }> | undefined {
+    if (!o.pending?.options || o.pending.source !== source?.id) return;
+    const keys = o.pending.options.map((option) => option.id),
+      intent = o.pending.intent;
+    const offered = o.legalActions.flatMap((entry) =>
+      entry.action.kind === 'choose' ? [entry.action.option] : [],
+    );
+    if (offered.length !== keys.length || offered.some((key) => !keys.includes(key))) return;
+    if (intent?.kind === 'effect-choice') {
+      const choice = publicEffectAt(intent, 'choose');
+      return choice && sameOptionIds(choice, keys) ? choice : undefined;
+    }
+    if (intent) return;
+    // Legacy external observations have no locator. Accept only one complete,
+    // unmodified printed ability consisting of this choice and the exact offer.
+    const roots = Object.values(source?.spec.abilities ?? {}).flat();
+    if (
+      roots.length !== 1 ||
+      source?.copiedDefinition ||
+      source?.copiedCharacteristics ||
+      source?.gainedTextBoxes?.length
+    )
+      return;
+    const choice = roots[0];
+    return choice.kind === 'choose' && sameOptionIds(choice, keys) ? choice : undefined;
   }
   function availableHouses(e: Extract<Effect, { kind: 'chooseHouse' }>): House[] {
     if (e.from === 'ownDeck') return me.houses;
@@ -1096,6 +1153,40 @@ function assessAlgorithmProjection(
   }
   function pendingContinuation(): Extract<Effect, { kind: 'chooseCards' }> | undefined {
     if (!features.contextualEffects || !o.pending || o.pending.kind !== 'target' || !source) return;
+    const intent = o.pending.intent;
+    const locator =
+      intent?.kind === 'effect-selection'
+        ? intent
+        : intent?.kind === 'target-operation'
+          ? intent.selection
+          : undefined;
+    if (locator) {
+      const effect = publicEffectAt(locator, 'chooseCards');
+      const selected = o.pending.selected ?? [];
+      const offered = [
+        ...selected,
+        ...o.legalActions.flatMap((entry) => (entry.action.kind === 'select' ? [entry.action.target] : [])),
+      ];
+      const operationMatches =
+        intent?.kind !== 'target-operation' ||
+        (effect?.then.length === 1 &&
+          effect.then[0].kind === 'bound' &&
+          effect.then[0].key === effect.bind &&
+          effect.then[0].operation === intent.operation);
+      if (
+        !effect ||
+        !operationMatches ||
+        new Set(selected).size !== selected.length ||
+        (o.pending.max !== undefined && selected.length > o.pending.max) ||
+        offered.some((id) => !find(id))
+      ) {
+        markUnknown();
+        return;
+      }
+      // The public locator certifies the current selection. The referee's actual
+      // offered/selected IDs supply the binding; no private filter or frame is read.
+      return effect;
+    }
     if (
       features.publicDestructionPayments &&
       o.pending.min === 0 &&
@@ -1166,7 +1257,7 @@ function assessAlgorithmProjection(
     }
     if (
       features.publicAmberIconBindings &&
-      o.pending.label === 'Choose cards' &&
+      !o.pending.intent &&
       o.pending.min === 0 &&
       (o.pending.max ?? 0) > 0 &&
       (o.pending.max ?? 0) <= 2
@@ -1190,7 +1281,7 @@ function assessAlgorithmProjection(
         });
       if (candidates.length === 1) return candidates[0];
     }
-    if (features.tokenEconomy && o.pending.label === 'Choose cards') {
+    if (features.tokenEconomy && !o.pending.intent) {
       const ids = new Set([
         ...(o.pending.selected ?? []),
         ...o.legalActions.flatMap((x) => (x.action.kind === 'select' ? [x.action.target] : [])),
@@ -1220,8 +1311,8 @@ function assessAlgorithmProjection(
       if (candidates.length === 1) return candidates[0];
     }
     const op = o.pending.intent?.kind === 'target-operation' ? o.pending.intent.operation : undefined;
-    // Match only a unique public top-level selection whose current intent is explicitly advertised.
-    // No engine frame/binding or private continuation is exposed or inferred.
+    // A locator-free external fallback needs both a unique simple operation and
+    // the complete public offer, including selections already made.
     const candidates = Object.values(source.spec.abilities ?? {})
       .flat()
       .filter(
@@ -1230,11 +1321,29 @@ function assessAlgorithmProjection(
           e.then.length === 1 &&
           ((!!op && e.then[0].kind === 'bound' && e.then[0].key === e.bind && e.then[0].operation === op) ||
             (!op &&
+              !o.pending?.intent &&
               e.then[0].kind === 'takeControl' &&
               e.then[0].key === e.bind &&
-              o.pending?.label === (e.label ?? 'Choose cards') &&
               Object.values(source.spec.abilities ?? {}).flat().length === 1)),
-      );
+      )
+      .filter((e) => {
+        const selected = o.pending?.selected ?? [];
+        const ids = new Set([
+          ...selected,
+          ...o.legalActions.flatMap((entry) => (entry.action.kind === 'select' ? [entry.action.target] : [])),
+        ]);
+        const before = unknownValues,
+          pile = filtered(e.filter);
+        return (
+          before === unknownValues &&
+          new Set(selected).size === selected.length &&
+          ids.size === pile.length &&
+          pile.every((card) => ids.has(card.id)) &&
+          typeof e.max === 'number' &&
+          o.pending?.max === Math.min(e.max, pile.length) &&
+          o.pending?.min === (e.optional ? 0 : Math.min(e.max, pile.length))
+        );
+      });
     if (candidates.length === 1) return candidates[0];
   }
   function containsTokenCreation(effects: readonly Effect[], depth = 0): boolean {
@@ -1704,18 +1813,8 @@ function assessAlgorithmProjection(
             approximate = true;
             break;
           }
-          const matches = publicChoices().filter((x) =>
-            sameChoice(
-              x,
-              e.label,
-              e.options.map((x) => x.key),
-            ),
-          );
-          if (matches.length !== 1) {
-            approximate = true;
-            forecastUncertain = unresolvedEffects = true;
-            break;
-          }
+          // A hypothetical traversal already holds this exact public node.
+          // Display labels and unrelated choices do not identify its branches.
           bestBranch(e.options.slice(0, 12).map((option) => () => evalEffects(option.effects, depth + 1)));
           approximate = true;
           break;
@@ -1772,7 +1871,10 @@ function assessAlgorithmProjection(
     if (operation === 'ready') return -sign * (t.ready ? 0 : 2.4);
     if (operation === 'stun' || operation === 'stunExhaust' || operation === 'exhaust')
       return sign * (t.stunned ? 0 : 2.2);
-    if (operation === 'capture') return -sign * Math.min(foe.amber, n) * 1.4;
+    if (operation === 'capture')
+      return -sign * Math.min(o.players[t.controller === 0 ? 1 : 0].amber, Math.max(0, n)) * 1.4;
+    if (operation === 'captureOwn')
+      return sign * Math.min(o.players[t.controller].amber, Math.max(0, n)) * 1.4;
     return 0;
   }
   function fightValue(attacker: CardView, defender: CardView): number {
@@ -1952,7 +2054,10 @@ function assessAlgorithmProjection(
             x.effective.house === a.house &&
             ((me.hand ?? []).some((h) => h.id === x.id) || (x.ready && !x.stunned))
           ) {
-            if (summaryFeature(x.spec, 0)) score += 25;
+            const inHand = (me.hand ?? []).some((h) => h.id === x.id);
+            const semantic = cardSemanticFeatures(x.spec, inHand ? 'play' : 'use');
+            if (semantic.amberControl && !semantic.conditional) score += 25;
+            approximate ||= semantic.unknown || semantic.conditional;
           }
       }
       break;
@@ -2126,10 +2231,21 @@ function assessAlgorithmProjection(
       reasons.push('optional own-turn discard recovery; no play or use cost');
       break;
     case 'discard': {
+      const semantic = cardSemanticFeatures(c?.spec);
       const useful =
         c?.spec.kind === 'creature' ||
         c?.spec.amber ||
-        summaryFeature(c?.spec, 1);
+        semantic.forge ||
+        semantic.gain ||
+        semantic.amberControl ||
+        semantic.draw ||
+        semantic.archive ||
+        semantic.recover ||
+        semantic.boardControl ||
+        semantic.heal ||
+        semantic.readyUse ||
+        semantic.unknown;
+      approximate ||= semantic.unknown;
       score = c?.spec.returnFromDiscardCondition && me.discard.length >= 9 ? -20 : useful ? -0.1 : 0.15;
       reasons.push('cycle low-immediate-value card; no bonus icons on discard');
       break;
@@ -2151,7 +2267,7 @@ function assessAlgorithmProjection(
         reasons.push('card-aware: public selected target plus its unique advertised continuation');
         break;
       }
-      if (features.targetIntent && o.pending?.intent?.kind === 'target-operation') {
+      if (o.pending?.intent?.kind === 'target-operation') {
         const op = o.pending.intent.operation;
         if (op === 'discard') {
           const worth =
@@ -2172,7 +2288,6 @@ function assessAlgorithmProjection(
         approximate = true;
         break;
       }
-      const src = find(o.pending?.source ?? '');
       if (o.pending?.kind === 'archive') {
         score = target.effective.house === o.activeHouse ? -0.5 : 1.5;
         break;
@@ -2181,26 +2296,12 @@ function assessAlgorithmProjection(
         score = targetValue(target, 'damage', o.pending.amount);
         break;
       }
-      if (!inPlay(target.id)) {
-        score =
-          2 +
-          target.spec.amber +
-          (target.effective.house === o.activeHouse ? 2 : 0) +
-          (target.spec.kind === 'creature' ? 1 : 0);
-        if (mode === 'tactical-v1' && me.keys.length === 2 && summaryFeature(target.spec, 2)) score += 15;
-      } else if (summaryFeature(src?.spec, 3))
-        score = targetValue(target, 'heal', o.pending?.amount ?? 3, summaryFeature(src?.spec, 4));
-      else if (summaryFeature(src?.spec, 5)) score = targetValue(target, 'ready', 1);
-      else if (summaryFeature(src?.spec, 6)) score = target.controller === o.you ? boardWorth(target) : -3;
-      else if (summaryFeature(src?.spec, 7))
-        score = targetValue(
-          target,
-          summaryFeature(src?.spec, 8) ? 'destroy' : 'damage',
-          o.pending?.amount ?? 3,
-        );
-      else score = target.controller === o.you ? 1 : 0;
+      // A card's complete rule tree can contain several unrelated target effects.
+      // Without the current public intent, neither prose nor a whole-card feature
+      // flag identifies this continuation. Keep the actual legal choice neutral.
+      score = 0;
       approximate = true;
-      reasons.push('target intent estimated from visible source');
+      reasons.push('current target operation is not publicly identified');
       break;
     }
     case 'choose': {
@@ -2232,26 +2333,36 @@ function assessAlgorithmProjection(
         }
       }
       if (features.contextualEffects && o.pending?.kind === 'option' && o.pending.options) {
-        if (features.publicHouseChoices && o.pending.label === 'Choose a house') {
-          const choices = publicHouseChoices();
-          if (choices.length === 1 && o.pending.options.some((x) => x.id === a.option)) {
-            chosenHouse = o.pending.options.find((x) => x.id === a.option)?.house ?? (a.option as House);
-            evalEffects(choices[0].then);
-            reasons.push('card-aware v3: evaluate this actual public house choice');
+        const intent = o.pending.intent;
+        if (
+          features.publicHouseChoices &&
+          (intent?.kind === 'house-choice' || intent?.kind === 'house-restriction')
+        ) {
+          const selected = intent.options.find((option) => option.id === a.option);
+          const contractMatches =
+            new Set(intent.options.map((option) => option.id)).size === intent.options.length &&
+            intent.options.length === o.pending.options.length &&
+            intent.options.every((option) =>
+              o.pending!.options!.some(
+                (offered) => offered.id === option.id && offered.house === option.house,
+              ),
+            );
+          const choice = intent.selection ? publicEffectAt(intent.selection, 'chooseHouse') : undefined;
+          if (selected && contractMatches && choice && availableHouses(choice).includes(selected.house)) {
+            chosenHouse = selected.house;
+            evalEffects(choice.then);
+            reasons.push('card-aware: evaluate the current public house continuation');
             break;
           }
+          // Typed options identify real houses without proving which source
+          // continuation is active. Keep that uncertainty instead of guessing.
+          markUnknown();
         }
-        const matches = publicChoices().filter((e) =>
-          sameChoice(
-            e,
-            o.pending!.label,
-            o.pending!.options!.map((x) => x.id),
-          ),
-        );
-        const option = matches.length === 1 ? matches[0].options.find((x) => x.key === a.option) : undefined;
+        const choice = currentPublicChoice();
+        const option = choice?.options.find((option) => option.key === a.option);
         if (option) {
           evalEffects(option.effects);
-          reasons.push('card-aware: evaluate the uniquely matching public option');
+          reasons.push('card-aware: evaluate the structurally identified public option');
           break;
         }
       }

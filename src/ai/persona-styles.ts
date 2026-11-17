@@ -1,4 +1,4 @@
-import { summaryFeature } from '../knowledge/text-features.js';
+import { cardSemanticFeatures } from '../knowledge/semantic-features.js';
 import { rankAlgorithm, type ActionAssessment } from './algorithm-policies.js';
 import type { Observation } from '../contracts/observation.js';
 export const STYLES = ['balanced', 'race', 'control', 'develop', 'combo'] as const;
@@ -135,11 +135,17 @@ export function rankStyled(o: Observation, style: Style, foundation?: ActionAsse
       if (style === 'control')
         return Math.min(
           2.8,
-          hand.filter((c) => summaryFeature(c.spec, 10)).length * 0.65,
+          hand.filter((c) => {
+            const semantic = cardSemanticFeatures(c.spec);
+            return semantic.amberControl || semantic.boardControl;
+          }).length * 0.65,
         );
       return Math.min(
         2.8,
-        hand.filter((c) => summaryFeature(c.spec, 11)).length * 0.65,
+        hand.filter((c) => {
+          const semantic = cardSemanticFeatures(c.spec);
+          return semantic.draw || semantic.archive || semantic.recover || semantic.forge;
+        }).length * 0.65,
       );
     }
     if (style === 'race')
@@ -159,14 +165,15 @@ export function rankStyled(o: Observation, style: Style, foundation?: ActionAsse
         : a.kind === 'discard'
           ? 0.25
           : 0;
-    return card &&
-      summaryFeature(card.spec, 11) &&
-      ['play', 'use', 'reap'].includes(a.kind)
-      ? 1.6
-      : 0;
+    if (!card || !['play', 'use', 'reap'].includes(a.kind)) return 0;
+    const semantic = cardSemanticFeatures(card.spec, a.kind === 'play' ? 'play' : 'use');
+    return semantic.draw || semantic.archive || semantic.recover || semantic.forge ? 1.6 : 0;
   }
   const ranked = candidates
-    .map((x) => ({ actionId: x.actionId, score: x.score + bonus(x), styleBonus: bonus(x) }))
+    .map((x) => {
+      const styleBonus = bonus(x);
+      return { actionId: x.actionId, score: x.score + styleBonus, styleBonus };
+    })
     .sort((a, b) => b.score - a.score); // Stable ties retain the tactical base ordering.
   const chosen = ranked[0];
   return {

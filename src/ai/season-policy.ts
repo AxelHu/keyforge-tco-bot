@@ -1,7 +1,7 @@
 /** Explicitly versioned seasonal decisions, layered on unchanged tempo/tactical/economy families. */
 import {rankLadder,type LadderFamily} from './ladder-policy.js';
 import type {ActionAssessment} from './algorithm-policies.js';
-import type {CardView,Effect,House,Observation} from '../contracts/observation.js';
+import type {CardView,Effect,Observation} from '../contracts/observation.js';
 import type {Policy} from './policies.js';
 import {effectUtility,normalizeSeasonObservation,other,publicCards,publicValue,operationUtility} from './season-utility.js';
 import {prophecyActivationScore,prophecyOpportunity,directlyTriggers,declaredHouseScore} from './prophecy-policy.js';
@@ -60,15 +60,18 @@ export function rankSeason(o:Observation,family:LadderFamily='tactical'):ActionA
    const target=cards.get(a.target);if(target){score=operationUtility(o,target,o.pending.intent.operation,o.pending.amount,o.you);why.push('season: resource/ward cost of the explicit target operation');}
   }
   if(a.kind==='choose'&&o.pending){
-   const option=o.pending.options?.find(x=>x.id===a.option),source=o.pending.source;
-   const slot=o.prophecies?.find(p=>p.id===source||p.cards?.some(c=>c.id===source));
-   if(o.pending.label==='Flip this same physical prophecy?'&&slot&&option){
-    const targetFace=option.label.startsWith('Flip')?slot.faces[slot.face===0?1:0]:slot.faces[slot.face];
+   const option=o.pending.options?.find(x=>x.id===a.option),source=o.pending.source,intent=o.pending.intent;
+   const slot=intent?.kind==='prophecy-face-choice'?o.prophecies?.find(p=>p.id===intent.slot):o.prophecies?.find(p=>p.id===source||p.cards?.some(c=>c.id===source));
+   const faceChoice=intent?.kind==='prophecy-face-choice'?intent.options.find(x=>x.id===a.option):undefined;
+   const houseChoice=intent?.kind==='house-choice'||intent?.kind==='house-restriction'?intent.options.find(x=>x.id===a.option)?.house:undefined;
+   const selectedHouse=houseChoice&&option?.house===houseChoice?houseChoice:undefined;
+   if(slot&&option&&faceChoice){
+    const targetFace=faceChoice.operation==='flip'?slot.faces[slot.face===0?1:0]:slot.faces[slot.face];
     score=prophecyOpportunity(o,targetFace,slot.owner).probability;why.push('season: choose the available physical face, not an invented third prophecy');
    }
    if(slot&&option&&slot.faces[slot.face]==='ask-again-later'&&slot.owner!==o.you){
-    const h=option.label.toLowerCase().replace(/\s/g,'') as House,p=o.players[slot.owner];
-    if(p.houses.includes(h)){
+    const h=selectedHouse,p=o.players[slot.owner];
+    if(h&&p.houses.includes(h)){
      const top=p.revealedTop,known=publicCards(o).filter(c=>c.owner===slot.owner&&!c.tokenCreature),
        original=p.deckList.filter(c=>c.house===h).reduce((n,c)=>n+c.count,0),
        exposed=known.filter(c=>(c.effective.houses??[c.effective.house]).includes(h)).length;
@@ -77,8 +80,8 @@ export function rankSeason(o:Observation,family:LadderFamily='tactical'):ActionA
     }
    }
    if(slot&&option&&slot.faces[slot.face]==='trust-your-feelings'&&slot.owner===o.you){
-    const h=option.label.toLowerCase().replace(/\s/g,'') as House;
-    if(foe.houses.includes(h)){score=declaredHouseScore(o,h,o.you);why.push('season: declare opponent house from public board work, not hidden hand');}
+    const h=selectedHouse;
+    if(h&&foe.houses.includes(h)){score=declaredHouseScore(o,h,o.you);why.push('season: declare opponent house from public board work, not hidden hand');}
    }
   }
   if(a.kind!=='activateProphecy')for(const p of o.prophecies??[]){

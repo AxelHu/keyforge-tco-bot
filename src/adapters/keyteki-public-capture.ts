@@ -1,3 +1,4 @@
+import { keytekiUseMessageMatches } from './keyteki-native-semantics.js';
 /** Narrow external compatibility for two audited real-deck pairs.
  * Public views, static configurations and observed transitions only. This never
  * changes core rules or reconstructs an unrestricted hidden effect engine.
@@ -561,16 +562,12 @@ export function derivePublicCaptureQuota(
       m = arr(row.message),
       src = obj(m[2]),
       inner = obj(m[4]);
-    // Fixed wire-message templates observed in the reference and closed public
-    // run. These are protocol delimiters, not card-effect prose or fuzzy text.
-    const discardTemplate =
-      (m[1] === ' uses ' && m[3] === ' to discard ') || (m[1] === ' 使用 ' && m[3] === ' 来弃置 ');
     check(
       row.activePlayer === name &&
         m.length === 5 &&
         obj(m[0]).argType === 'nonAvatarPlayer' &&
         obj(m[0]).name === name &&
-        discardTemplate &&
+        keytekiUseMessageMatches(m, 'discard') &&
         src.argType === 'card' &&
         src.id === 'fetchdrones' &&
         src.type === 'artifact' &&
