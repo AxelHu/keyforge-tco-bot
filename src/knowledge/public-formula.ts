@@ -498,8 +498,16 @@ export function projectPublicFormulaContext(context: PublicFormulaContext): Publ
     if (field === 'power' && current.spec.selfPower) {
       if (current.spec.selfPower === 'unforgedKeys')
         extra = 3 * (3 - prepared.observation.players[current.controller].keys.length);
-      else if (current.spec.selfPower === 'captured') extra = current.captured;
-      else {
+      else if (current.spec.selfPower === 'captured') {
+        // Pending public capture assignments can leave this dependency unresolved.
+        // An explicit exact projection may establish it; the old scalar alone cannot.
+        const captured: PublicValueResult = evaluatePublicValue(
+          { sourceAmber: true },
+          { ...prepared, actor: current.controller, action: undefined },
+        );
+        if (captured.kind !== 'exact') continue;
+        extra = captured.value;
+      } else {
         if (view.uncertain.get(current.id)?.has('position')) continue;
         const line = prepared.observation.players[current.controller].battleline,
           index = line.findIndex((card) => card.id === current.id);

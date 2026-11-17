@@ -770,3 +770,30 @@ test('binding scalar properties use current public faces while controller receip
   exact({ count: { side: 'friendly', sameKindBinding: 'x' } }, ctx, 1);
   exact({ count: { side: 'friendly', powerMatchesBinding: 'x' } }, ctx, 1);
 });
+
+test('pending capture assignment preserves captured-dependent power uncertainty until publicly determined', () => {
+  const o = observation(),
+    source = card('yxili', ALL_DEFINITIONS['yxili-marauder']);
+  source.bonusIcons = ['capture'];
+  o.players[0].hand = [source];
+  o.players[0].handCount = 1;
+  o.players[0].battleline = [card('other-recipient')];
+  o.players[1].amber = 1;
+  const ctx = context(o, source, {
+    phase: 'after-play',
+    action: { kind: 'play', card: source.id, flank: 'right' },
+  });
+  const unresolved = evaluatePublicValue({ sourcePower: true }, ctx);
+  assert.notEqual(
+    unresolved.kind,
+    'exact',
+    'the capture may be placed on either friendly recipient',
+  );
+  exact(
+    { sourcePower: true },
+    { ...ctx, resolveLeaf: (value) => ('sourceAmber' in value ? exactPublicValue(1) : undefined) },
+    3,
+  );
+  source.bonusIcons = [];
+  exact({ sourcePower: true }, ctx, 2);
+});

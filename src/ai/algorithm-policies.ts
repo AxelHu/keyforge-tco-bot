@@ -225,6 +225,9 @@ function assessAlgorithmProjection(
   const hands = [me.handCount - (me.hand ?? []).filter((card) => departingPhysicalIds.has(card.id)).length, foe.handCount];
   const archives = [me.archiveCount - (me.archives ?? []).filter((card) => departingPhysicalIds.has(card.id)).length, foe.archiveCount];
   const drawSupply = [me.deckCount + me.discard.length, foe.deckCount + foe.discard.length];
+  // Only proven shuffle arrivals change this ledger. Other unmodeled deck changes
+  // invalidate the count; a later arrival must never revive the original deck size.
+  const deckChanges = [0, 0];
   const bindings = new Map<string, CardView[]>();
   const scalarBindings = new Map<string, number>();
   // Scoped physical receipts; these are estimates from public destruction assessment,
@@ -617,6 +620,7 @@ function assessAlgorithmProjection(
         return [...kept, ...added].map(projectedCard);
       };
       return { ...p, amber: pool[relative], handCount: hands[relative], archiveCount: archives[relative],
+        deckCount: p.deckCount + deckChanges[relative],
         hand: pile('hand'), archives: pile('archives'), battleline: pile('battleline')!,
         artifacts: pile('artifacts')!, upgrades: pile('upgrades')!, discard: pile('discard')!, purged: pile('purged')! };
     }) as Observation['players'];
@@ -685,7 +689,9 @@ function assessAlgorithmProjection(
     const zones = filter.zone ? [filter.zone].flat() : ['battleline'];
     const actor = ctx.actor ?? o.you;
     const seats = filter.side === 'friendly' ? [actor] : filter.side === 'enemy' ? [actor === 0 ? 1 : 0] : [0, 1];
-    if (seats.some((seat) => zones.some((zone) => uncertainCounts.has(`${seat}:${zone}`)))) return {
+    if (seats.some((seat) => zones.some((zone) => uncertainCounts.has(`${seat}:${zone}`) ||
+      (zone === 'deck' && (uncertainSupplies.has(seat === o.you ? 0 : 1) ||
+        (seat === o.you && ctx.projection?.uncertainMetrics?.has('handSize'))))))) return {
       cards: [], possibleCards: [], count: unknownPublicValue('zone-count-depends-on-random-or-unmodeled-continuation'),
       identitiesComplete: false, reasons: ['public-projection-incomplete'],
     };
@@ -709,7 +715,7 @@ function assessAlgorithmProjection(
     for (const card of base.cards) if (projectedLocations.has(card.id) && !uncertainLocations.has(card.id))
       publicCardEntries.set(card, projectedEntries.get(card.id) ?? 0);
     if (uncertainZone && Object.keys(filter).every((key) => ['side', 'zone'].includes(key)) &&
-      zones.every((zone) => zone === 'hand' || zone === 'archives')) return {
+      zones.every((zone) => zone === 'hand' || zone === 'archives' || zone === 'deck')) return {
       ...base, cards: [], possibleCards: [], identitiesComplete: false,
       reasons: [...base.reasons, 'projected-zone-count-known-identities-not-known'],
     };
@@ -793,7 +799,13 @@ function assessAlgorithmProjection(
     projectedEntries.set(card.id, entry);
     publicCardEntries.set(moved, entry);
     projectedLocations.set(card.id, { card: moved, seat, zone });
-    if (zone === 'deck') uncertainFormulaZones.add(`${seat}:deck`);
+    if (zone === 'deck' || previous?.zone === 'deck') {
+      // This general leave-play path does not model all deck/leave responses.
+      for (const changedSeat of [seat, ...(previous?.zone === 'deck' ? [previous.seat] : [])]) {
+        uncertainFormulaZones.add(`${changedSeat}:deck`);
+        uncertainCounts.add(`${changedSeat}:deck`);
+      }
+    }
     // Entry-specific modifiers are not a leave-play rules simulation.
     projectedFields.delete(card.id);
     changedFormulaFields.set(card.id, new Set(['power', 'armor', 'damage', 'powerCounters', 'ready', 'stunned']));
@@ -858,6 +870,7 @@ function assessAlgorithmProjection(
     if (take > 0) {
       uncertainFormulaZones.add(`${i === 0 ? o.you : opp}:hand`);
       uncertainFormulaZones.add(`${i === 0 ? o.you : opp}:deck`);
+      uncertainCounts.add(`${i === 0 ? o.you : opp}:deck`);
       if (take > player(i).deckCount) uncertainFormulaZones.add(`${i === 0 ? o.you : opp}:discard`);
     }
     draws += (i === 0 ? 1 : -1) * take;
@@ -877,6 +890,7 @@ function assessAlgorithmProjection(
       pool: [...pool],
       hands: [...hands],
       archives: [...archives],
+      deckChanges: [...deckChanges],
       scalarBindings: [...scalarBindings],
       projectedLocations: [...projectedLocations],
       projectedEntries: [...projectedEntries],
@@ -932,6 +946,7 @@ function assessAlgorithmProjection(
       pool[i] = s.pool[i];
       hands[i] = s.hands[i];
       archives[i] = s.archives[i];
+      deckChanges[i] = s.deckChanges[i];
       drawSupply[i] = s.drawSupply[i];
       createdTokens[i] = s.createdTokens[i];
     }
@@ -1146,7 +1161,18 @@ function assessAlgorithmProjection(
       markUnknown(); reasons.push('public-random: foreign archive departure has an owner-return replacement'); return;
     }
     const complete = selection.identitiesComplete && selection.cards.length === selection.count.value;
-    const reactions = mayReactToRandomMove(selection.cards, operation) || !complete;
+    const shuffled = operation === 'shuffleDeck';
+    const shuffleResponse = shuffled && (
+      (o.prophecies ?? []).some((slot) => slot.active && !slot.revealed && slot.count > 0 &&
+        slot.faces[slot.face] === 'expect-the-unexpected' && slot.owner !== o.activePlayer && seat === o.activePlayer) ||
+      (zone === 'discard' && amount === selection.count.value && cards.some((card) =>
+        evaluatedInPlay(card.id) && card.controller === seat && [card.spec, ...(card.gainedTextBoxes ?? [])]
+          .some((box) => box.abilities?.discardPileShuffled?.length)))
+    );
+    // Legal hands contain their owner's cards. A hidden face shuffled from hand
+    // has no discard/Scrap event; only the public shuffle response can intervene.
+    const reactions = mayReactToRandomMove(selection.cards, operation) || shuffleResponse ||
+      (!complete && !(shuffled && zone === 'hand'));
     // n/N inclusion probability is exact for a fixed, uniformly sampled population.
     // With reaction-dependent replacement it is only a direct-operation model.
     if (complete) {
@@ -1171,6 +1197,10 @@ function assessAlgorithmProjection(
     if (e.kind === 'randomArchive') {
       archives[side] += amount;
       uncertainFormulaZones.add(`${seat}:archives`);
+    } else if (shuffled) {
+      deckChanges[side] += amount;
+      uncertainFormulaZones.add(`${seat}:deck`);
+      if (zone !== 'discard') drawSupply[side] += amount;
     } else {
       uncertainFormulaZones.add(`${seat}:${operation === 'purge' ? 'purged' : 'discard'}`);
       if (operation === 'discard' && zone !== 'discard') drawSupply[side] += amount;
@@ -1184,6 +1214,11 @@ function assessAlgorithmProjection(
       for (const index of [0, 1]) {
         uncertainPools.add(index);
         const affectedSeat = index === 0 ? o.you : opp;
+        if (shuffled) {
+          uncertainCounts.add(`${affectedSeat}:deck`);
+          uncertainFormulaZones.add(`${affectedSeat}:discard`);
+          uncertainSupplies.add(index);
+        }
         uncertainFormulaZones.add(`${affectedSeat}:battleline`);
         uncertainFormulaZones.add(`${affectedSeat}:artifacts`);
       }
@@ -1219,6 +1254,8 @@ function assessAlgorithmProjection(
       const seat = side === 0 ? o.you : opp;
       if (outcomes.some((s) => s.hands[side] !== outcomes[0].hands[side])) uncertainCounts.add(`${seat}:hand`);
       if (outcomes.some((s) => s.archives[side] !== outcomes[0].archives[side])) uncertainCounts.add(`${seat}:archives`);
+      deckChanges[side] = mean((s) => s.deckChanges[side]);
+      if (outcomes.some((s) => s.deckChanges[side] !== outcomes[0].deckChanges[side])) uncertainCounts.add(`${seat}:deck`);
       drawSupply[side] = Math.min(...outcomes.map((s) => s.drawSupply[side]));
       if (outcomes.some((s) => s.drawSupply[side] !== outcomes[0].drawSupply[side])) uncertainSupplies.add(side);
       if (outcomes.every((s) => s.createdTokens[side] === outcomes[0].createdTokens[side]))
@@ -1949,6 +1986,7 @@ function assessAlgorithmProjection(
           tokenUtility += utility;
           // Entry reactions/placement can alter outcomes. A body is not certified instant amber.
           if (count) {
+            uncertainCounts.add(`${seat}:deck`);
             approximate = true;
             forecastUncertain = unresolvedEffects = true;
             reasons.push('toc: public token reference and available supply; exhausted body minus cycle cost');

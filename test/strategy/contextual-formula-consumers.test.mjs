@@ -8,6 +8,7 @@ import { rankStyled } from '../../dist/src/ai/persona-styles.js';
 import { rankCardAwareV3 } from '../../dist/src/ai/card-aware-v3-policy.js';
 import { rankStyleUpgrade } from '../../dist/src/ai/style-policy-upgrades.js';
 import { cardSemanticFeatures } from '../../dist/src/knowledge/semantic-features.js';
+import { ALL_DEFINITIONS } from '../../dist/src/knowledge/catalog.js';
 
 const current = { contextualEffects: true, netResources: true, publicHouseChoices: true,
   publicAmberIconBindings: true, publicIntegerThirds: true };
@@ -276,4 +277,77 @@ test('a fresh random binding after return-to-hand uses the new zone and does not
     assert.equal(assessAlgorithm(unchanged, 'play', 'tactical-v1', { ...current, publicDestroyedRefunds }).estimatedAmber[0], 3,
       'random selection alone does not erase the identities of cards unchanged in every branch');
   }
+});
+
+
+test('shuffleDeck preserves public destination counts without reviving stale deck sizes or fabricating discard changes', () => {
+  const real = ALL_DEFINITIONS['techno-shade'], original = structuredClone(real);
+  const movement = real.abilities.reap[0];
+  assert.deepEqual(movement, { kind: 'randomDiscard', side: 'opponent', amount: 1, operation: 'shuffleDeck' });
+  assert.deepEqual(real.abilities.afterFight, [movement]);
+  assert.equal(real.abilities.reap.length, 1);
+  const count = (zone, side = 'enemy') => ({ count: { side, zone } });
+  // The following tails are synthetic legal Effect compositions, not the real
+  // Techno-Shade subtree. Opposing hand faces never enter this public fixture.
+  function setup(effects) {
+    const o = observation();
+    o.publicStateCoverage = { turnHistoryComplete: true, effectsComplete: true, turnOrdinalKnown: true };
+    o.activePlayer = 0; o.activeHouse = real.house;
+    const definition = effects === undefined ? real : { ...structuredClone(real), id: 'synthetic-shuffle-followup',
+      name: 'Synthetic public effect composition', abilities: { reap: effects } };
+    o.players[0].battleline = [card('source', definition)];
+    o.players[0].hand = []; o.players[0].handCount = 0; o.players[0].deckCount = 35;
+    delete o.players[1].hand;
+    o.players[1].handCount = 1; o.players[1].deckCount = 34;
+    o.players[1].discard = [card('public-discard', ALL_DEFINITIONS.troll, 1)];
+    o.legalActions = [{ id: 'reap', action: { kind: 'reap', card: 'source' } }];
+    return o;
+  }
+  for (const publicDestroyedRefunds of [false, true]) {
+    const features = { ...current, publicDestroyedRefunds };
+    const run = (o, actionId = 'reap', extra = {}) => {
+      const before = structuredClone(o);
+      const result = assessAlgorithm(o, actionId, 'tactical-v1', { ...features, ...extra });
+      assert.deepEqual(o, before, 'shuffle estimation must not mutate its shared observation');
+      return result;
+    };
+    assert.equal(run(setup()).estimatedAmber[0], 1, 'unchanged real-card reap control');
+    assert.equal(run(setup([movement, { kind: 'gain', amount: count('deck') }])).estimatedAmber[0], 36,
+      'one hidden hand card adds exactly one to its owner deck before the follow-up amount');
+    assert.equal(run(setup([movement, { kind: 'if',
+      condition: { left: count('deck'), comparison: 'eq', right: 34 },
+      then: [{ kind: 'gain', amount: 100 }], otherwise: [{ kind: 'gain', amount: 1 }],
+    }])).estimatedAmber[0], 2, 'the previous deck size must not select the 100-amber branch');
+    assert.equal(run(setup([movement, { kind: 'gain', amount: count('discard') }])).estimatedAmber[0], 2,
+      'shuffling from hand leaves the public discard pile unchanged');
+
+    const twice = setup([movement, movement, { kind: 'gain', amount: count('deck') }]);
+    twice.players[1].handCount = 2; twice.players[1].deckCount = 33;
+    assert.equal(run(twice).estimatedAmber[0], 36, 'two known arrivals accumulate exactly once each');
+    for (const prior of [
+      { kind: 'resource', side: 'opponent', operation: 'draw', amount: 1 },
+      { kind: 'all', filter: { side: 'enemy' }, operation: 'deckTop' },
+    ]) {
+      const o = setup([prior, movement, { kind: 'gain', amount: count('deck') }]);
+      if (prior.kind === 'all') o.players[1].battleline = [body('returned', 1)];
+      const result = run(o);
+      assert.equal(result.estimatedAmber[0], 1, 'an unmodeled earlier deck change must remain unknown');
+      assert.ok(result.reasons.some((reason) => reason.includes('zone-count-depends-on-random-or-unmodeled')));
+    }
+    const bonus = fixture([{ ...movement, side: 'self' }, { kind: 'gain', amount: count('deck', 'friendly') }],
+      { held: [body('held')] });
+    bonus.players[0].hand[0].bonusIcons = ['draw'];
+    assert.equal(run(bonus, 'play', { physicalBonuses: true }).estimatedAmber[0], 0,
+      'a draw icon not projected by this consumer cannot restore an exact old deck count');
+
+    const prophecy = setup([{ ...movement, side: 'self' }, { kind: 'gain', amount: count('deck', 'friendly') }]);
+    prophecy.players[0].hand = [body('held')]; prophecy.players[0].handCount = 1;
+    prophecy.players[0].deckCount = 34;
+    prophecy.prophecies = [{ id: 'public-prophecy', owner: 1,
+      faces: ['expect-the-unexpected', 'bad-omen'], face: 0, active: true, count: 1, revealed: false }];
+    const uncertain = run(prophecy);
+    assert.equal(uncertain.estimatedAmber[0], 1, 'a real deckShuffled Fate window keeps subsequent deck counts unknown');
+    assert.ok(uncertain.reasons.some((reason) => reason.includes('intervening reactions')));
+  }
+  assert.deepEqual(real, original, 'the actual catalog definition is never rewritten by the synthetic composition');
 });
