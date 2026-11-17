@@ -39,7 +39,6 @@ export type UninterpretedStaticRuleKind =
   | "collectBoundAmberToControllers"
   | "collectSearched"
   | "combatOpponent"
-  | "combineBindings"
   | "controlTransferSequence"
   | "convertCardsToTokens"
   | "copyFriendlyTokens"

@@ -5,6 +5,7 @@
  * Board score never includes the 3.5/3.2 pool weights, and never includes captured amber twice.
  */
 import type { CardView, Effect, Observation, Seat } from '../contracts/observation.js';
+import { assessCardLifecycle, type PublicCardLifecycleContext, type PublicCardMove } from './card-lifecycle-value.js';
 
 export interface PublicOperationAssessment {
   score: number;
@@ -16,11 +17,20 @@ export interface PublicOperationAssessment {
   affected: boolean;
   released: [number, number];
   approximate: boolean;
+  /** Known direct movement is independent of approximate opportunity utility. */
+  move?: PublicCardMove;
+  ruleUncertain?: boolean;
+  utilityApproximate?: boolean;
+  continuationUncertain?: boolean;
+  continuationKinds?: ('scrap' | 'hand-discard-reaction' | 'archive-after-discard' | 'leave-play')[];
+  lifecycleReasons?: string[];
 }
 export interface PublicOperationOptions {
   fullHeal?: boolean;
   ignoreArmor?: boolean;
   inPlay?: boolean;
+  /** Opt-in only; historical callers keep their original valuation and receipts. */
+  lifecycle?: PublicCardLifecycleContext;
 }
 type Row = Record<string, unknown>;
 const row = (x: unknown): Row | undefined =>
@@ -413,6 +423,16 @@ export function assessPublicOperation(
   const worth = contextualBoardWorth(o, c);
   if (!Number.isFinite(amount) || amount < 0) return empty(true);
   if (!present) {
+    if (options.lifecycle) {
+      const lifecycle = assessCardLifecycle(o, c, operation, options.lifecycle, recoveryValue(o, c));
+      if (lifecycle) return { ...r, score: lifecycle.score, affected: lifecycle.affected,
+        move: lifecycle.move, ruleUncertain: lifecycle.ruleUncertain,
+        utilityApproximate: lifecycle.utilityApproximate,
+        continuationUncertain: lifecycle.continuationUncertain,
+        continuationKinds: lifecycle.continuationKinds,
+        lifecycleReasons: lifecycle.reasons,
+        approximate: lifecycle.ruleUncertain || lifecycle.utilityApproximate || !!lifecycle.continuationUncertain };
+    }
     const inOwnHand = (o.players[o.you].hand ?? []).some((x) => x.id === c.id);
     if (operation === 'returnHand') {
       if (
@@ -457,6 +477,7 @@ export function assessPublicOperation(
     'deckBottom',
     'shuffleDeck',
     'shuffleIntoDeck',
+    ...(options.lifecycle ? ['discard'] : []),
   ].includes(operation);
   let destructive = operation === 'destroy' || operation === 'sacrifice';
   if (destructive) {
@@ -546,7 +567,24 @@ export function assessPublicOperation(
   r.approximate ||= d.approximate;
   r.score = sign * worth;
   r.approximate ||= (c.physicalParts?.length ?? 0) > 1;
-  if (operation === 'returnHand') {
+  const lifecycle = options.lifecycle && !destructive
+    ? assessCardLifecycle(o, c, operation, options.lifecycle, recoveryValue(o, c)) : undefined;
+  if (lifecycle) {
+    r.score += lifecycle.score;
+    r.affected = lifecycle.affected;
+    r.move = lifecycle.move;
+    r.ruleUncertain = lifecycle.ruleUncertain;
+    r.utilityApproximate = lifecycle.utilityApproximate;
+    r.continuationUncertain = lifecycle.continuationUncertain;
+    r.continuationKinds = lifecycle.continuationKinds;
+    r.lifecycleReasons = lifecycle.reasons;
+    r.approximate ||= lifecycle.ruleUncertain || lifecycle.utilityApproximate || !!lifecycle.continuationUncertain;
+    if (!lifecycle.move) {
+      r.removed = false;
+      r.score = lifecycle.score;
+      return r;
+    }
+  } else if (operation === 'returnHand') {
     r.score += (c.owner === o.you ? 1 : -1) * recoveryValue(o, c) * 0.45;
     r.approximate ||= c.owner !== c.controller;
   } else if (operation === 'deckTop' || operation === 'shuffleDeck' || operation === 'shuffleIntoDeck') {
@@ -641,6 +679,7 @@ export function assessPublicOperationGroup(
     'deckBottom',
     'shuffleDeck',
     'shuffleIntoDeck',
+    ...(options.lifecycle ? ['discard'] : []),
   ].includes(operation);
   for (const { card, result: r } of result.rows) {
     // Immunity is checked before Ward. Ward prevention has nonzero Ward value,

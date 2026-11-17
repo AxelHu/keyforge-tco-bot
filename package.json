@@ -1,6 +1,6 @@
 {
   "name": "keyforge-tco-bot",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "description": "面向 Keyteki/TCO 的代码策略、完整静态知识与浏览器自动打牌工具。",
   "type": "module",

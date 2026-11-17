@@ -38,9 +38,9 @@
     "cards": 2546,
     "sourceCardFields": 194,
     "staticEffectKinds": 267,
-    "typedEstimateEffectKinds": 51,
-    "typedEstimateKindsInStaticCatalog": 50,
-    "uninterpretedStaticEffectKinds": 217,
+    "typedEstimateEffectKinds": 52,
+    "typedEstimateKindsInStaticCatalog": 51,
+    "uninterpretedStaticEffectKinds": 216,
     "omittedCardFields": 0,
     "omittedEffectNodes": 0,
     "omittedEffectFields": 0,
@@ -58,11 +58,11 @@
     "summaryTextUsedForCodeFeatureClassification": false,
     "legacySummaryFeaturesUsedForCodeFeatureClassification": false
   },
-  "schema": "keyforge-tco-publication-v11",
-  "version": "0.6.1",
-  "date": "2026-11-17",
+  "schema": "keyforge-tco-publication-v12",
+  "version": "0.6.2",
+  "date": "2026-11-18",
   "publicationStatus": "validated-offline-and-local-paired-comparisons-no-new-online-games",
-  "codeCommit": "432abe7bf65a83b85297dbc1753c9ecf858b97c7",
+  "codeCommit": "ead39920ed04a344212e1b8f973cc82be8a51560",
   "validatedFiles": [
     {
       "path": "bin/kf-auto.mjs",
@@ -86,11 +86,11 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "254a8dd6232aaa3a15cca9637eb4ad0d80c4d19b24d67f30f42caff65f88a5f3"
+      "sha256": "b589bdf8799bc4b44704e214dc65e9754e58683a098b84b8afe5d89ec83030d5"
     },
     {
       "path": "package.json",
-      "sha256": "a1b769f533384b0ef25709c2371e97d01c47da444c67493a1bfc67bd357607d0"
+      "sha256": "2b0ad733b7aac798cb8c608eeab03f4cc1dbbcacb3d015765fbb6e7ccd67379f"
     },
     {
       "path": "scripts/browser-smoke.mjs",
@@ -146,7 +146,7 @@
     },
     {
       "path": "src/ai/algorithm-policies.ts",
-      "sha256": "aaadd76eb4ef290d44de3b0d48e8477a5f5ea4c3c3df9a697135ed4b8a05b2b3"
+      "sha256": "3ec1aedaa201bd1945e124824dd012c930043d5b285c3c76293f2ef434e8bb0a"
     },
     {
       "path": "src/ai/card-aware-policy.ts",
@@ -162,11 +162,15 @@
     },
     {
       "path": "src/ai/card-aware-v3-policy.ts",
-      "sha256": "bf52e3711f98d90e2c7b872d349ef4ff532c370f466832cddc91fe40b53f1de2"
+      "sha256": "8c360545b8571e5039b8ff4284cab49057dc1cb560524e25b39ae7fdc7716709"
     },
     {
       "path": "src/ai/card-aware-v3-sequence.ts",
       "sha256": "c5d1b707828afc6abd5c738b693b9c5f112411c5cb1311cf5424291da53d438e"
+    },
+    {
+      "path": "src/ai/card-lifecycle-value.ts",
+      "sha256": "b10d6f1d0959c0823848822d9500314913541123823663992d4ce2be47691db6"
     },
     {
       "path": "src/ai/code-strategies.ts",
@@ -237,8 +241,12 @@
       "sha256": "e00db161e44929d90c13eb6fc6cdb259a7d6228c499d31995996c84a7115d4bb"
     },
     {
+      "path": "src/ai/public-card-opportunity.ts",
+      "sha256": "f24743c44d8418acb2c9e6a7e45c49f845c77b42f08309111e8f811aa64f6b5c"
+    },
+    {
       "path": "src/ai/public-card-value.ts",
-      "sha256": "a4dc143cc9052fd9c961a99f2398efdc63054c4334e8382b6c4b2d219cbd1f1a"
+      "sha256": "baa38dcf58ee51d4a5ed95791b7da5732e4ddc9737abf188ebc24d37d45e917f"
     },
     {
       "path": "src/ai/public-guidance-guards.ts",
@@ -258,7 +266,7 @@
     },
     {
       "path": "src/ai/recovery-forge.ts",
-      "sha256": "e3133f51176b41c8e1e1e0225ae3f47a02775274b2a34cbec99b6091f70edb25"
+      "sha256": "55d26ef6b706aa45f3b90540ce44c5c6d89932bd82b2aba75a6a8de85088e2c9"
     },
     {
       "path": "src/ai/reorder-policy.ts",
@@ -338,7 +346,7 @@
     },
     {
       "path": "src/contracts/observation.ts",
-      "sha256": "029ff02e4457317f69059f852b8aa3114263e4c50006c6507686eca529401bb7"
+      "sha256": "8140a9da5683a41b6871bb01103f420dfb8afc80f3eed608f779b261859de395"
     },
     {
       "path": "src/index.ts",
@@ -386,7 +394,7 @@
     },
     {
       "path": "src/knowledge/static-rule-kinds.ts",
-      "sha256": "4e5b3af19926592bd0d282ee2df69d947a19507a7fd0a5051da452a0c4e96e2b"
+      "sha256": "1e24af143d4f761d99221e8a6d7d2a8ad4d0e2311143aa50f0795e742b2b901c"
     },
     {
       "path": "src/knowledge/token-facts.ts",
@@ -471,6 +479,18 @@
     {
       "path": "test/strategy/allocation-effect-localization.test.mjs",
       "sha256": "234944d1d626a0267222302cbae516bd04c54dd2850fe5cb4dc938c39a311427"
+    },
+    {
+      "path": "test/strategy/card-lifecycle-consumers.test.mjs",
+      "sha256": "e80ac3d7a0b7d4d794981c0a4400f91a774e06188cab595a8084fd81710c2dc9"
+    },
+    {
+      "path": "test/strategy/card-lifecycle-recovery.test.mjs",
+      "sha256": "a8aeb8f3988f2d546055a459b8be09fc70b4859cf6f43911039c0cdf0833287a"
+    },
+    {
+      "path": "test/strategy/card-lifecycle-value.test.mjs",
+      "sha256": "3c6d39e8f6ae276e16b38edf9febcca957bdb241b1ec1313cac70d679182e4ab"
     },
     {
       "path": "test/strategy/contextual-formula-consumers.test.mjs",
@@ -765,8 +785,8 @@
       "sha256": "941d61fa59858195473dd4c0e67e02e24c5e9e67629109b8a9cb153372dae552"
     }
   ],
-  "validatedSourceDigest": "fd87c38f6e9f0fe894fd1a5e2e69e3d925cfcdaaea7286553ce73241b334d709",
-  "validatedFilesScope": "Tracked code, tests, tools, examples, package manifests, TypeScript configuration and historical benchmark data match the named candidate03 commit. Generated dist, prose, current evidence and this publication record are excluded; comparison manifests separately bind compiled runtime and source inputs.",
+  "validatedSourceDigest": "33eaa450cc142db15788b06910be96e2ce831c90e0a3e66408bbaf0317041275",
+  "validatedFilesScope": "Tracked code, tests, tools, examples, package manifests, TypeScript configuration and historical benchmark data match the named candidate01 commit. Generated dist, prose, current evidence and this publication record are excluded; comparison manifests separately bind compiled runtime and source inputs.",
   "historicalValidation": [
     {
       "version": "0.4.0",
@@ -906,6 +926,24 @@
       "evidenceSha256": "c772490db7e220701fad214bf0d845be6e97d16c993758761798f8e4283d6640",
       "detailsRetainedInHistoricalPublication": true,
       "rerunForCurrentRelease": false
+    },
+    {
+      "version": "0.6.1",
+      "codeCommit": "432abe7bf65a83b85297dbc1753c9ecf858b97c7",
+      "publicationCommit": "9809b05bc5fadff573703ac01b6aa4316f0acbab",
+      "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/9809b05bc5fadff573703ac01b6aa4316f0acbab/PUBLICATION.json",
+      "publicationSha256": "f5154926726c57c9d87c88f67c8961ac6f92a86740c3b81a4e1e1ca37b08beec",
+      "validatedSourceDigest": "fd87c38f6e9f0fe894fd1a5e2e69e3d925cfcdaaea7286553ce73241b334d709",
+      "validatedInputCount": 175,
+      "offlineTests": 483,
+      "finalCandidateLocalGames": 672,
+      "separatePreliminaryLocalGames": 849,
+      "confirmationWins": 201,
+      "confirmationLosses": 183,
+      "evidence": "docs/evidence/contextual-formulas-2026-11-17.json",
+      "evidenceSha256": "4c8ba9b5ff0d0f9b6bad95b7fe9febc0b97841e70dd12e6400f46a7f9adbd0b1",
+      "detailsRetainedInHistoricalPublication": true,
+      "rerunForCurrentRelease": false
     }
   ],
   "operatingPolicy": {
@@ -923,231 +961,259 @@
   },
   "validation": {
     "implementation": {
-      "sourceCommit": "432abe7bf65a83b85297dbc1753c9ecf858b97c7",
-      "change": "Public contextual formulas and probability-weighted utilities, including captured-power and haunted dependency refresh.",
+      "sourceCommit": "ead39920ed04a344212e1b8f973cc82be8a51560",
+      "change": "Owner-relative public card-zone opportunity values; actual archive replacements, candidate-level refill settlement, Scrap source frames and bounded recovery-to-third-key windows.",
       "strategyAlgorithmSourceChanged": true,
       "dependencyVersionsChanged": false,
       "build": {
         "actualExitCode": 0,
         "inputsUnchanged": true,
-        "inputCount": 75,
-        "receiptSha256": "5b97c4eafb1be45e646a26adbc95b88282f6524a292d31eabd8dd8161cbe575b"
+        "inputCount": 77,
+        "compiledJsCount": 74,
+        "receiptSha256": "c941e1bef28dde6e390ac389df95879862a7b6d5c9b99e1ec54ab65ff139d5c6"
       },
       "fullOffline": {
-        "passed": 483,
+        "passed": 549,
         "failed": 0,
         "skipped": 0,
         "cancelled": 0,
         "actualExitCode": 0,
-        "previousTests": 426,
-        "newTests": 57,
+        "previousTests": 483,
+        "newTests": 66,
         "newTestGroupsIncludedInFullTotal": {
-          "公开数量与能力语义": 31,
-          "策略消费者": 26
+          "公开区域与机会差": 28,
+          "实际策略消费者": 19,
+          "严格回收铸钥窗口": 19
         },
-        "receiptSha256": "474b73142de07fa9f3d6d72e68e3e9b4a6cfd23fee8abe8e734932a7f02b1c37"
+        "receiptSha256": "6850e0690d8882388a32bdb345a3f324561938d969e3c10a74332881b37b3e9b"
       },
-      "independentChecks": {
-        "independentPublicFormula": {
-          "title": "独立公开公式对照",
-          "checks": 93,
-          "actualExitCode": 0,
-          "wholePublicInputImmutabilityChecks": 96,
-          "resultSha256": "d59d6c0532281ca3c4fc4a25164a2370ab75f30ed1abb2105b09827f47d8b2ba",
-          "executionReceiptSha256": "59683ad448dc10826f3298089443c60a81cb1b49b878f9b43cfc549bcc22b449",
-          "checkerSha256": "068e3904b097fd6493525ca4d946a548c6f8f7fb80ecc7806ff301789e074940",
-          "boundInputs": 6,
-          "rerunForFinalCandidate": true,
-          "newGameObjects": 0,
-          "commandsAdvanced": 0,
-          "categoryCounts": {
-            "strictCoreValueComparisons": 72,
-            "legalCopyComparisons": 3,
-            "unknownProbabilityAndSemanticChecks": 18
-          }
+      "publicReplayChecks": {
+        "actualDiagnostic": {
+          "fixtures": 7,
+          "legalCandidates": 110,
+          "leadersChanged": 5,
+          "allInputsImmutable": true
         },
-        "capturedPowerBoundary": {
-          "title": "捕获分配不确定性的依赖回归",
-          "checks": 1,
-          "actualExitCode": 0,
-          "wholePublicInputImmutabilityChecks": 1,
-          "resultSha256": "e10ac360d0ebc1c8ecdef988c89354feaee8c9f22cf2d8c937d0b00763ddc6d9",
-          "executionReceiptSha256": "eab7a8e8b709f5ef19622fbbc40c4d2c0bec2d32fd091d9abb715e314d2818c0",
-          "checkerSha256": "f24c179ac9498873589db2754839b05bfe1b7175fecd97a038c4c12b66b386d4",
-          "boundInputs": 3,
-          "rerunForFinalCandidate": true,
-          "newGameObjects": 0,
-          "commandsAdvanced": 0
-        }
+        "controlledWitness": {
+          "positions": 9,
+          "familyRankings": 18,
+          "allInputsImmutable": true,
+          "legalCandidates": 34
+        },
+        "allInputsImmutable": true,
+        "newGamesStarted": 0,
+        "newGameObjects": 0,
+        "reviewSha256": "e8fe11f5d71dba2056e228684a8cf32c9b0d2ef93a53cadd15ff953ccdd153f5",
+        "actualReplaySha256": "875dc8d8f0b1284c60b4142f19098161ca3a1ce5eb6c00f97fba457478a5271d",
+        "controlledReplaySha256": "055989831aa18d696dff6e78fa209d63985926e3db8678057cf40953a2efe4e8",
+        "notAdditionalOfflineTestCount": true
       },
-      "independentTotalChecks": 94,
-      "independentTotalWholeInputImmutabilityChecks": 97,
       "coreValidation": {
         "coreChangedThisRelease": false,
         "coreSuiteRerunThisRelease": false,
         "priorReleasePassed": 13,
         "priorPublicationSha256": "e9e378dfbecf51f45f1e44481163332084fa563e89fd6d68d5d3b34aa753f859",
         "priorRecord": "https://github.com/AxelHu/keyforge-tco-bot/blob/823adad7acce30cbd4c8622a6abca611041a6cbb/PUBLICATION.json",
-        "qualification": "Historical core suite; new independent public-formula checks are separately attributed."
+        "qualification": "Historical core suite; core is unchanged and was not rerun for this release. Current client tests and public replay checks are separately attributed."
       },
-      "finalSourceReviewSha256": "2e21800048d0df7187906bfa4437011be66b1db3a6097692671096717245bb73"
+      "finalSourceReviewSha256": "f4a50fda6b7ba65aaddaee48e2be8c5f4ba7f3116736a02c2e8065d621d027d5",
+      "sourceReviewScope": "Eight changed source files with explicit author-review boundary for recovery-forge; all 77 build sources separately match Git and final build."
     },
     "currentEvidence": {
-      "path": "docs/evidence/contextual-formulas-2026-11-17.json",
-      "sha256": "4c8ba9b5ff0d0f9b6bad95b7fe9febc0b97841e70dd12e6400f46a7f9adbd0b1",
-      "report": "docs/contextual-formula-evaluation.md"
+      "path": "docs/evidence/card-lifecycle-2026-11-18.json",
+      "sha256": "fe43676d68f59be88bf3b008a38ebbe2201f51ee6e352806f24bda49c76340ca",
+      "report": "docs/card-lifecycle-evaluation.md"
+    },
+    "localDiagnostics": {
+      "baselineSourceCommit": "432abe7bf65a83b85297dbc1753c9ecf858b97c7",
+      "games": 32,
+      "naturalGames": 32,
+      "decisions": 6564,
+      "legalCandidateRecords": 52046,
+      "exactNonBoardArchivePrompts": 25,
+      "archiveTargetCandidates": 415,
+      "notStrengthComparison": true,
+      "reviewSha256": "f954e07bf608602888631f427bea22aa78edef61e9e58a12cbd12e2a865b1606"
     },
     "localComparisons": {
-      "mainBaselineSourceCommit": "f827fce33cab297e57fd52500a4944b64b9097bc",
-      "anchorBaselineSourceCommit": "a14f6706e13c5dfbb43a481d796dcc17961f0f65",
-      "candidateSourceCommit": "432abe7bf65a83b85297dbc1753c9ecf858b97c7",
+      "mainBaselineSourceCommit": "432abe7bf65a83b85297dbc1753c9ecf858b97c7",
+      "candidateSourceCommit": "ead39920ed04a344212e1b8f973cc82be8a51560",
       "selfEngineSourceCommit": "8b92cc1cd25d2b617abce5cb9616fbc29ff4e501",
-      "mainRuntimeManifestSha256": "be0ce620aa9d4228d9e25e9b78bbbb9ce802264b10d165ed171405c6d5df698c",
-      "anchorRuntimeManifestSha256": "b18bdc22d05b4a966337a674e52e804b77d48df57eaeaf5a7c4133ef2595914b",
-      "runtimeInputsVerifiedBeforeAndAfterAllStages": true,
+      "mainRuntimeManifestSha256": "473ee4609e9f60edb45f1176c9f4d9e78887b284998a80638f47eda47b48f997",
+      "runtimeInputs": 742,
+      "runtimeInputsVerifiedBeforeAndAfterBothStages": true,
       "development": {
         "plannedGames": 96,
         "naturalGames": 96,
         "cleanUnits": 24,
         "primaryGames": 96,
-        "candidateWins": 51,
-        "baselineWins": 45,
-        "candidateWinRate": 0.53125,
+        "candidateWins": 46,
+        "baselineWins": 50,
+        "candidateWinRate": 0.4791666666666667,
         "actualExitCode": 0,
         "technicalGames": 0,
         "anomalousGames": 0,
-        "displayMutationChecks": 2327
+        "displayMutationChecks": 2078,
+        "executionReceiptSha256": "9d0d09cda1825205bf47a0682d45b4ab074cd6443442dab1d2b2ccddc7554b11",
+        "analysisSha256": "90625c72d53163683e27fee36d4fe25e85a05c03e5319db5a846ddc7ca9ca54e",
+        "families": {
+          "tactical-style-engine-v3": {
+            "units": 12,
+            "games": 48,
+            "candidateWins": 22,
+            "baselineWins": 26,
+            "candidateWinRate": 0.4583333333333333,
+            "bootstrap": {
+              "method": "four-game-unit percentile bootstrap",
+              "confidenceLevel": 0.95,
+              "replicates": 10000,
+              "masterSeed": 2026111719,
+              "derivedSeedHex": "133f5ea167ea4dfd",
+              "resamplingUnit": "complete clean unitId, all four games together",
+              "unitsPerReplicate": 12,
+              "computed": true,
+              "interval": [
+                0.3541666666666667,
+                0.5416666666666666
+              ],
+              "candidateWinRate": 0.4583333333333333,
+              "replicateTotalsSha256": "de586540523aebb54b83aae03a7fe109c45a1a242b9dc29f1e3ce45f6c42f0af",
+              "degenerate": false,
+              "interpretation": "Conditional uncertainty among these fixed deck-pair/seed units; not a population or independent-game interval",
+              "singleUnitCaution": null
+            }
+          },
+          "tactical-card-effects-v3": {
+            "units": 12,
+            "games": 48,
+            "candidateWins": 24,
+            "baselineWins": 24,
+            "candidateWinRate": 0.5,
+            "bootstrap": {
+              "method": "four-game-unit percentile bootstrap",
+              "confidenceLevel": 0.95,
+              "replicates": 10000,
+              "masterSeed": 2026111719,
+              "derivedSeedHex": "fc7dcf1404376707",
+              "resamplingUnit": "complete clean unitId, all four games together",
+              "unitsPerReplicate": 12,
+              "computed": true,
+              "interval": [
+                0.5,
+                0.5
+              ],
+              "candidateWinRate": 0.5,
+              "replicateTotalsSha256": "1e5ecf8833c41609d223a6f8d1e657a8b408d66c06da67dca274c03e8577bf84",
+              "degenerate": true,
+              "interpretation": "Conditional uncertainty among these fixed deck-pair/seed units; not a population or independent-game interval",
+              "singleUnitCaution": null
+            }
+          }
+        }
       },
       "confirmation": {
         "plannedGames": 384,
         "naturalGames": 384,
         "cleanUnits": 96,
         "primaryGames": 384,
-        "candidateWins": 201,
-        "baselineWins": 183,
-        "candidateWinRate": 0.5234375,
+        "candidateWins": 192,
+        "baselineWins": 192,
+        "candidateWinRate": 0.5,
         "actualExitCode": 0,
         "technicalGames": 0,
         "anomalousGames": 0,
-        "displayMutationChecks": 0
-      },
-      "anchorConfirmation": {
-        "plannedGames": 192,
-        "naturalGames": 192,
-        "cleanUnits": 48,
-        "primaryGames": 192,
-        "candidateWins": 102,
-        "baselineWins": 90,
-        "candidateWinRate": 0.53125,
-        "actualExitCode": 0,
-        "technicalGames": 0,
-        "anomalousGames": 0,
-        "displayMutationChecks": 0
-      },
-      "resultsPooled": false,
-      "finalCandidateGames": 672,
-      "separatePreliminaryCompletedGames": 849,
-      "completedPreliminaryByCandidate": {
-        "01": 177,
-        "02": 672
-      },
-      "totalNewCompletedLocalGames": 1521,
-      "exactTotalStartsUnavailableForInterruptedPreliminaryRun": true,
-      "claimedEntirelyUnseenFinalHoldout": false,
-      "allFinalStagesReuseSeedsFromCandidate02": true,
-      "analysisScopeMetadataDiscrepancies": {
-        "frozenPlansPreserved": true,
-        "differences": [
-          {
-            "comparison": "main",
-            "analysisPlanSha256": "e20aad741bd784c7349655c1fd070df5af13bc410b0629864b800f7fb1c6dcff",
-            "designSha256": "51fd0744dc08ba09e673137c105b9ea7d0b062c080bc3eff9e69adf9fef0065f",
-            "differences": {
-              "developmentSeeds": {
-                "frozenScopeMetadata": [
-                  2026111701
-                ],
-                "executedDesign": [
-                  2026111719
-                ]
-              },
-              "confirmationSeeds": {
-                "frozenScopeMetadata": [
-                  2026111707,
-                  2026111713
-                ],
-                "executedDesign": [
-                  2026111723,
-                  2026111729
-                ]
-              }
+        "displayMutationChecks": 0,
+        "executionReceiptSha256": "0754a18b2d2ae9895510a4ceec6fc18df8c91bfe188ad67ebfb44a3832bbb225",
+        "analysisSha256": "6392cd3cf91d0642935703a2462d7e060aea08f38711c3d5b342e41522f3eafd",
+        "families": {
+          "tactical-style-engine-v3": {
+            "units": 48,
+            "games": 192,
+            "candidateWins": 92,
+            "baselineWins": 100,
+            "candidateWinRate": 0.4791666666666667,
+            "bootstrap": {
+              "method": "four-game-unit percentile bootstrap",
+              "confidenceLevel": 0.95,
+              "replicates": 10000,
+              "masterSeed": 2026111719,
+              "derivedSeedHex": "2e0a7de10fc98c5c",
+              "resamplingUnit": "complete clean unitId, all four games together",
+              "unitsPerReplicate": 48,
+              "computed": true,
+              "interval": [
+                0.4270833333333333,
+                0.53125
+              ],
+              "candidateWinRate": 0.4791666666666667,
+              "replicateTotalsSha256": "0c51ca2bdcec8cb8bed4b33a7398223b3ef5aaec3c1adb7608eb4e7ca5efddec",
+              "degenerate": false,
+              "interpretation": "Conditional uncertainty among these fixed deck-pair/seed units; not a population or independent-game interval",
+              "singleUnitCaution": null
             }
           },
-          {
-            "comparison": "anchor",
-            "analysisPlanSha256": "eee4b604caf331db9a46251575071f70ece2cf97a6938e49f50149ce4709238f",
-            "designSha256": "02443039e7807087c4c2715b9a63e318077a6c2225dffd0680a031806d9d82fd",
-            "differences": {
-              "developmentGames": {
-                "frozenScopeMetadata": 96,
-                "executedDesign": 0
-              },
-              "developmentSeeds": {
-                "frozenScopeMetadata": [
-                  2026111701
-                ],
-                "executedDesign": []
-              },
-              "confirmationGames": {
-                "frozenScopeMetadata": 384,
-                "executedDesign": 192
-              },
-              "confirmationSeeds": {
-                "frozenScopeMetadata": [
-                  2026111707,
-                  2026111713
-                ],
-                "executedDesign": [
-                  2026111731,
-                  2026111737
-                ]
-              }
+          "tactical-card-effects-v3": {
+            "units": 48,
+            "games": 192,
+            "candidateWins": 100,
+            "baselineWins": 92,
+            "candidateWinRate": 0.5208333333333334,
+            "bootstrap": {
+              "method": "four-game-unit percentile bootstrap",
+              "confidenceLevel": 0.95,
+              "replicates": 10000,
+              "masterSeed": 2026111719,
+              "derivedSeedHex": "4dec7f45bbcd6083",
+              "resamplingUnit": "complete clean unitId, all four games together",
+              "unitsPerReplicate": 48,
+              "computed": true,
+              "interval": [
+                0.4791666666666667,
+                0.5625
+              ],
+              "candidateWinRate": 0.5208333333333334,
+              "replicateTotalsSha256": "092efbf5487ddca973d228eecc7d6de0da041c9c6afabe98e3e71c4b98364c07",
+              "degenerate": false,
+              "interpretation": "Conditional uncertainty among these fixed deck-pair/seed units; not a population or independent-game interval",
+              "singleUnitCaution": null
             }
           }
-        ],
-        "authority": "The precommitted design game specifications and result/spec hashes determine executed seeds and stage counts. The plan scope metadata is stale; it is retained and disclosed, not rewritten after results.",
-        "effectOnExecutedGameSelection": "No alteration: analysis verifies the design and bound result/spec hashes; this disclosure corrects descriptive scope metadata only."
-      },
-      "supersededCandidates": [
-        {
-          "candidateIndex": "01",
-          "sourceCommit": "b63f46ec28c15e29f18581507635741c8af7620b",
-          "completedGames": 177,
-          "includedInFinalCandidateResults": false
-        },
-        {
-          "candidateIndex": "02",
-          "sourceCommit": "678ed84d145e57c5e01dca588d96fbbc7c56fdf6",
-          "completedGames": 672,
-          "includedInFinalCandidateResults": false
         }
+      },
+      "resultsPooled": false,
+      "finalCandidateGames": 480,
+      "separateDiagnosticGames": 32,
+      "prespecifiedCompletedWholeGames": 512,
+      "controlledPositionConstructionIncludedInWholeGameCount": false,
+      "candidateWholeGamesBeforeRuntimeFreeze": 0,
+      "developmentSeeds": [
+        2026111805
       ],
+      "confirmationSeeds": [
+        2026111807,
+        2026111813
+      ],
+      "freshConfirmationShuffleSeeds": true,
+      "previouslySeenDeckCollection": true,
+      "analysisScopeMetadataMatchesDesign": true,
+      "scoreDependentEarlyStopOrAppend": false,
+      "weightsTunedAfterAnyComparisonStarted": false,
       "newEloRatingGames": 0,
       "newOnlineGames": 0,
-      "independentFinalReviewSha256": "d051ca74eea52047faadc450ba6c00a4d0a4b46060742e62c10b8e0c9c7d9803"
+      "independentFinalReviewSha256": "2d25d9f9b369abefe3d5fac17a6050e87d9f60bca9673f434bce160047c8d2d5"
     },
     "packageBoundary": {
       "status": "passed",
-      "files": 348,
-      "moduleEdges": 1033,
+      "files": 359,
+      "moduleEdges": 1068,
       "findings": 0,
       "actualExitCode": 0,
-      "receiptSha256": "3738acf7a76ea86815dd6ccc3b3f1d26379f8dd7c843e10362975df970916a10",
-      "inputSnapshotSha256": "f018064e36c9fd00e2af32c68ff534acfd88551ceea10ac1b600aabd57f0de4a",
-      "sourceCommit": "432abe7bf65a83b85297dbc1753c9ecf858b97c7",
-      "evidenceSha256": "4c8ba9b5ff0d0f9b6bad95b7fe9febc0b97841e70dd12e6400f46a7f9adbd0b1",
+      "receiptSha256": "ef8a4cbe9f3bff9033dad16f691402ce665b21db8345eb9048bfd253d9857f17",
+      "inputSnapshotSha256": "efab4075e57c5d6bac3339397158e00664266ca07c95fa1fcf7c2a789e5296b4",
+      "sourceCommit": "ead39920ed04a344212e1b8f973cc82be8a51560",
+      "evidenceSha256": "fe43676d68f59be88bf3b008a38ebbe2201f51ee6e352806f24bda49c76340ca",
       "oldReceiptReuseAllowed": false,
-      "scope": "Current candidate03 public files verified against a before-check snapshot; only packageBoundary metadata is excluded from the normalized PUBLICATION digest."
+      "scope": "Current 0.6.2 public files, compiled modules and final evidence verified against the complete before-check inventory. Only validation.packageBoundary is excluded from normalized PUBLICATION."
     },
     "newStrategyRatingGames": 0,
     "newOnlineGames": 0,
@@ -1167,7 +1233,7 @@
     ],
     "strategyAlgorithmSourceChanged": true,
     "guide": "docs/international-tco.md",
-    "currentRuntimeLiveStatus": "0.6.1-no-new-online-games",
+    "currentRuntimeLiveStatus": "0.6.2-no-new-online-games",
     "historicalAcceptanceEvidence": "docs/evidence/international-2026-11-16.json",
     "networkAndSoakEvidence": "docs/evidence/international-soak-2026-11-16.json",
     "networkGuide": "docs/international-network.md",
@@ -1199,5 +1265,5 @@
     "humanMatchmakingStatus": "paused"
   },
   "validatedDigestAlgorithm": "SHA-256 of UTF-8 compact JSON for the ordered validatedFiles array; no trailing newline.",
-  "candidateIndex": "03"
+  "candidateIndex": "01"
 }

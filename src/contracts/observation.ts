@@ -178,7 +178,7 @@ usesThisTurn: number;
 export interface CardRef { id: string; controller?: Seat; }
 
 /** Typed scoring shapes plus intact static rules that the bounded scorer may not interpret. */
-export type Effect = UninterpretedStaticEffect | {kind:"unmodeled";reason?:string} | { unmodeled?: true; kind: "payOpponent";
+export type Effect = UninterpretedStaticEffect | { kind: 'combineBindings'; keys: string[]; bind: string; then: Effect[] } | {kind:"unmodeled";reason?:string} | { unmodeled?: true; kind: "payOpponent";
 amount: Value;
 then?: Effect[]} | { unmodeled?: true; kind: "putSource";
 controller?: Side | 'owner'} | { unmodeled?: true; kind: "cauldronStart";} | { unmodeled?: true; kind: "eachPlayer";
@@ -674,4 +674,4 @@ export interface HouseRestriction {
 export const HOUSES: readonly LegacyHouse[] = ["brobnar","dis","logos","mars","sanctum","shadows","untamed"];
 
 /** Public target-operation estimate, not an execution receipt or queue item. */
-export interface ApplySpec { operation: Operation; amount?: Value; fullHeal?: boolean; ignoreArmor?: boolean; after?: { unmodeled?: true; when: "destroyed" | "affected" | "healed" | "notDestroyed" | "destroyedPower"; atLeast?: number; bindAffected?: string; effects: Effect[]; }; }
+export interface ApplySpec { archiveTo?: Side; archiveReturnToOwner?: true; operation: Operation; amount?: Value; fullHeal?: boolean; ignoreArmor?: boolean; after?: { unmodeled?: true; when: "destroyed" | "affected" | "healed" | "notDestroyed" | "destroyedPower"; atLeast?: number; bindAffected?: string; effects: Effect[]; }; }

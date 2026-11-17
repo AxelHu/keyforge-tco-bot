@@ -33,6 +33,9 @@ import {
 } from './public-card-value.js';
 import { assessPublicReapControl } from './public-reap-control.js';
 import { knownRecoveredForge } from './recovery-forge.js';
+import { assessPublicCardUse } from './public-card-opportunity.js';
+import { assessLifecycleRefillDelta, publicCardLocation, type PublicCardMove, type PublicCardLocation,
+  type PublicLifecycleCounts, type PublicCardLifecycleContext } from './card-lifecycle-value.js';
 import { publicPlayCapacity } from './public-guidance-guards.js';
 import { assessPublicHouseDefense } from './public-house-defense.js';
 import {
@@ -47,6 +50,8 @@ import {
 export type AlgorithmName = 'tempo-v1' | 'tactical-v1';
 /** Current-action corrections are explicitly enabled by a candidate, never by a historical baseline. */
 export interface PublicActionCorrections {
+  /** Public card opportunity, physical destination and once-per-candidate refill displacement. */
+  publicCardLifecycle?: boolean;
   publicReapControlRisk?: boolean;
   /** Scoped direct-destruction receipts, attributed to the destroyed public controller. */
   publicDestructionPayments?: boolean;
@@ -182,7 +187,9 @@ function assessAlgorithmProjection(
   actionId: string,
   mode: AlgorithmName,
   features: AlgorithmFeatures,
+  materialProbe = false,
 ): {
+  ordinaryScore: number;
   assessment: ActionAssessment;
   opponentKeyCost: number;
   skipsOpponentForge: boolean;
@@ -211,12 +218,13 @@ function assessAlgorithmProjection(
     unresolvedEffects = false;
   const reasons: string[] = [];
   const c = 'card' in a ? find(a.card) : undefined;
-  const physicalSource = c ?? (features.contextualEffects ? find(o.pending?.source ?? '') : undefined);
+  let physicalSource = c ?? (features.contextualEffects ? find(o.pending?.source ?? '') : undefined);
+  let scrapFrame = false;
   // A copy supplies the rule tree, while source quantities refer to the physical card.
-  const source = a.kind === 'play' && a.copy ? find(a.copy) : physicalSource;
+  let source = a.kind === 'play' && a.copy ? find(a.copy) : physicalSource;
   const evaluatedInPlay = (id: string) =>
     (!features.contextualEffects || (!projectedLocations.has(id) && !predictedRemoved.has(id) && !uncertainLocations.has(id))) &&
-    (inPlay(id) || !!(features.contextualEffects && a.kind === 'play' && physicalSource?.id === id &&
+    (inPlay(id) || !!(features.contextualEffects && !scrapFrame && a.kind === 'play' && physicalSource?.id === id &&
       ['creature', 'artifact', 'upgrade'].includes(physicalSource.spec.kind)));
   const boardWorth = (card: CardView) =>
     (features.contextualEffects ? contextualBoardWorth(o, card) : legacyBoardWorth(card)) +
@@ -229,6 +237,13 @@ function assessAlgorithmProjection(
   // Only proven shuffle arrivals change this ledger. Other unmodeled deck changes
   // invalidate the count; a later arrival must never revive the original deck size.
   const deckChanges = [0, 0];
+  // Count-only parallel bookkeeping: ordinary draws/moves are the common baseline;
+  // lifecycle deltas alone supply the counterfactual for a single refill settlement.
+  const lifecycleCounts: [PublicLifecycleCounts, PublicLifecycleCounts] = [me, foe].map((p, i) =>
+    ({ hand: hands[i], deck: p.deckCount, discard: p.discard.length })) as [PublicLifecycleCounts, PublicLifecycleCounts];
+  const lifecycleDeltas: [PublicLifecycleCounts, PublicLifecycleCounts] = [0, 1].map(() =>
+    ({ hand: 0, deck: 0, discard: 0 })) as [PublicLifecycleCounts, PublicLifecycleCounts];
+  let lifecycleRefillUnknown = false;
   const bindings = new Map<string, CardView[]>();
   const scalarBindings = new Map<string, number>();
   // Scoped physical receipts; these are estimates from public destruction assessment,
@@ -259,9 +274,16 @@ function assessAlgorithmProjection(
     return features.contextualEffects ? -1 : 0;
   };
   const player = (i: number) => (i === 0 ? me : foe);
-  const ability = (card: CardView | undefined, k: 'play' | 'reap' | 'action' | 'omni') =>
+  const ability = (card: CardView | undefined, k: 'play' | 'reap' | 'action' | 'omni' | 'scrap') =>
     card?.spec.abilities?.[k] ?? [];
   function filtered(filter: Filter, src = features.contextualEffects ? physicalSource : source): CardView[] {
+    if (features.publicCardLifecycle && filter.notKindBinding) {
+      const bound = bindings.get(filter.notKindBinding);
+      if (!bound) { markUnknown(); return []; }
+      const kinds = new Set(bound.map((card) => card.spec.kind));
+      const { notKindBinding, ...rest } = filter;
+      return filtered(rest, src).filter((card) => !kinds.has(card.spec.kind));
+    }
     if (features.contextualEffects && !filter.notTaggedForDestruction) {
       const ctx = formulaContext();
       const result = selectPublicCards(filter, { ...ctx,
@@ -576,7 +598,7 @@ function assessAlgorithmProjection(
   const predictedCaptured = new Map<string, number>();
   const projectedFields = new Map<string, Partial<Pick<CardView, 'ready' | 'stunned'>>>();
   type ProjectedZone = 'hand' | 'archives' | 'discard' | 'purged' | 'deck';
-  const projectedLocations = new Map<string, { card: CardView; seat: Seat; zone: ProjectedZone }>();
+  const projectedLocations = new Map<string, { card: CardView; seat: Seat; zone: ProjectedZone; position?: 'top' | 'bottom' | 'unknown' }>();
   const uncertainLocations = new Set<string>();
   // Local public-operation versions distinguish a fresh selection in a new zone
   // from an older binding. They are never referee entry counters.
@@ -593,7 +615,7 @@ function assessAlgorithmProjection(
       observation: o,
       source: physicalSource,
       action: a,
-      phase: a.kind === 'play' ? 'after-play' : ['use', 'reap', 'fight'].includes(a.kind) ? 'after-use' : 'current',
+      phase: scrapFrame ? 'current' : a.kind === 'play' ? 'after-play' : ['use', 'reap', 'fight'].includes(a.kind) ? 'after-use' : 'current',
     }));
   }
   function projectedCard(card: CardView): CardView {
@@ -814,23 +836,24 @@ function assessAlgorithmProjection(
     changedFormulaFields.set(card.id, fields);
   }
 
-  function projectedLocation(card: CardView): { seat: Seat; zone: ProjectedZone | 'battleline' | 'artifacts' | 'upgrades' } | undefined {
+  function projectedLocation(card: CardView): PublicCardLocation | undefined {
     const moved = projectedLocations.get(card.id);
     if (moved) return moved;
     const view = preparedContext().observation;
+    if (features.publicCardLifecycle) return publicCardLocation(view, card);
     for (const seat of [0, 1] as const)
       for (const zone of ['hand', 'archives', 'discard', 'purged', 'battleline', 'artifacts', 'upgrades'] as const)
         if (view.players[seat][zone]?.some((candidate) => candidate.id === card.id)) return { seat, zone };
     return undefined;
   }
-  function recordProjectedMove(card: CardView, operation: string) {
+  function recordProjectedMove(card: CardView, operation: string, knownMove?: PublicCardMove) {
     const destinations: Record<string, ProjectedZone> = { destroy: 'discard', sacrifice: 'discard',
       discard: 'discard', purge: 'purged', returnHand: 'hand', deckTop: 'deck', deckBottom: 'deck',
       shuffleDeck: 'deck', shuffleIntoDeck: 'deck', archive: 'archives' };
-    const zone = destinations[operation];
-    if (!zone) return;
-    const previous = projectedLocation(card);
-    const seat = card.owner;
+    const zone = (knownMove?.to.zone ?? destinations[operation]) as ProjectedZone | undefined;
+    if (!zone || !['hand', 'archives', 'discard', 'purged', 'deck'].includes(zone)) return;
+    const previous = knownMove?.from ?? projectedLocation(card);
+    const seat = knownMove?.to.seat ?? card.owner;
     if (previous?.zone === zone && previous.seat === seat) return;
     const oldSide = previous?.seat === o.you ? 0 : 1, newSide = seat === o.you ? 0 : 1;
     if (previous?.zone === 'hand') hands[oldSide] = Math.max(0, hands[oldSide] - 1);
@@ -838,22 +861,81 @@ function assessAlgorithmProjection(
     if (zone === 'hand') hands[newSide]++;
     if (zone === 'archives') archives[newSide]++;
     if (previous?.zone === 'discard' && zone !== 'deck') drawSupply[oldSide] = Math.max(0, drawSupply[oldSide] - 1);
-    if (zone === 'discard' || (zone === 'deck' && previous?.zone !== 'discard')) drawSupply[newSide]++;
-    const moved = { ...card, controller: card.owner };
+    if (features.publicCardLifecycle && previous?.zone === 'deck' && zone !== 'discard') drawSupply[oldSide] = Math.max(0, drawSupply[oldSide] - 1);
+    if (zone === 'discard' && (!features.publicCardLifecycle || previous?.zone !== 'deck') ||
+      zone === 'deck' && previous?.zone !== 'discard') drawSupply[newSide]++;
+    if (features.publicCardLifecycle) {
+      for (const [location, side, delta] of [[previous, oldSide, -1], [knownMove?.to ?? { seat, zone }, newSide, 1]] as const) {
+        if (!location) { lifecycleRefillUnknown = true; continue; }
+        const pile = location.zone;
+        if (pile !== 'hand' && pile !== 'deck' && pile !== 'discard') continue;
+        lifecycleCounts[side][pile] += delta;
+        if (knownMove) lifecycleDeltas[side][pile] += delta;
+      }
+    }
+    const moved = { ...card, controller: card.owner,
+      ...(knownMove ? { foreignArchiveHolder: knownMove.foreignArchiveHolder } : {}) };
     const entry = (projectedEntries.get(card.id) ?? 0) + 1;
     projectedEntries.set(card.id, entry);
     publicCardEntries.set(moved, entry);
-    projectedLocations.set(card.id, { card: moved, seat, zone });
+    projectedLocations.set(card.id, { card: moved, seat, zone, position: knownMove?.to.position });
     if (zone === 'deck' || previous?.zone === 'deck') {
-      // This general leave-play path does not model all deck/leave responses.
-      for (const changedSeat of [seat, ...(previous?.zone === 'deck' ? [previous.seat] : [])]) {
-        uncertainFormulaZones.add(`${changedSeat}:deck`);
-        uncertainCounts.add(`${changedSeat}:deck`);
+      if (knownMove && (card.physicalParts?.length ?? 0) <= 1) {
+        if (previous?.zone === 'deck') deckChanges[oldSide]--;
+        if (zone === 'deck') deckChanges[newSide]++;
+        uncertainFormulaZones.add(`${seat}:deck`); // The count is known; the hidden order is not.
+      } else {
+        for (const changedSeat of [seat, ...(previous?.zone === 'deck' ? [previous.seat] : [])]) {
+          uncertainFormulaZones.add(`${changedSeat}:deck`);
+          uncertainCounts.add(`${changedSeat}:deck`);
+        }
       }
     }
-    // Entry-specific modifiers are not a leave-play rules simulation.
     projectedFields.delete(card.id);
     changedFormulaFields.set(card.id, new Set(['power', 'armor', 'damage', 'powerCounters', 'ready', 'stunned']));
+  }
+  function lifecycleRefill() {
+    if (!features.publicCardLifecycle || lifecycleRefillUnknown || chainGain !== 0 || uncertainSupplies.size ||
+      uncertainCounts.has(`${o.you}:hand`) || uncertainCounts.has(`${opp}:hand`))
+      return { score: 0, approximate: !!features.publicCardLifecycle && (lifecycleRefillUnknown || chainGain !== 0) };
+    const before = lifecycleCounts.map((n, i) => ({ hand: n.hand - lifecycleDeltas[i].hand,
+      deck: n.deck - lifecycleDeltas[i].deck, discard: n.discard - lifecycleDeltas[i].discard })) as [PublicLifecycleCounts, PublicLifecycleCounts];
+    const absolute = <T,>(xs: [T, T]): [T, T] => o.you === 0 ? xs : [xs[1], xs[0]];
+    return assessLifecycleRefillDelta(formulaContext().observation, absolute(before), absolute(lifecycleCounts));
+  }
+  function cardUseValue(view: Observation, card: CardView, owner: Seat) {
+    return assessPublicCardUse(view, card, owner, (probe, id) => {
+      const result = assessAlgorithmProjection(probe, id, 'tempo-v1', { ...features,
+        publicCardLifecycle: false, publicHouseDefenseOpportunities: false }, true);
+      return { score: result.ordinaryScore, approximate: result.assessment.approximate,
+        unresolvedValues: result.unresolvedValues };
+    });
+  }
+  function lifecycleContext(view: Observation, e: import('../contracts/observation.js').ApplySpec): PublicCardLifecycleContext | undefined {
+    if (!features.publicCardLifecycle) return undefined;
+    const cache = new Map<string, ReturnType<typeof cardUseValue>>();
+    const holder = e.archiveTo === undefined ? 0 : idx(e.archiveTo);
+    if (holder === -1) markUnknown();
+    return { actor: o.you, archiveTo: holder === 1 ? opp : o.you,
+      archiveReturnToOwner: e.archiveReturnToOwner,
+      useValue: (card, owner) => {
+        if (!cache.has(card.id)) cache.set(card.id, cardUseValue(view, card, owner));
+        return cache.get(card.id);
+      } };
+  }
+  function evalScrap(card: CardView, depth: number) {
+    const parentContext = preparedContext();
+    const oldSource = source, oldPhysical = physicalSource, oldContext = preparedFormulaContext, oldScrap = scrapFrame;
+    source = physicalSource = projectedLocations.get(card.id)?.card ?? card;
+    scrapFrame = true;
+    const childContext = projectPublicFormulaContext({ observation: parentContext.observation,
+      source: physicalSource, phase: 'current' });
+    preparedFormulaContext = { ...childContext, projection: { ...parentContext.projection, ...childContext.projection,
+      uncertainCardFields: new Map([...(parentContext.projection?.uncertainCardFields ?? []),
+        ...(childContext.projection?.uncertainCardFields ?? [])]) } };
+    try { inLocalFrame(() => evalEffects([card.spec, ...(card.gainedTextBoxes ?? [])]
+      .flatMap((d) => d.abilities?.scrap ?? []), depth + 1)); }
+    finally { source = oldSource; physicalSource = oldPhysical; preparedFormulaContext = oldContext; scrapFrame = oldScrap; }
   }
   const uncertainDepartures = new Set<string>();
   const uncertainStoredAmber = new Map<string, number>();
@@ -912,6 +994,11 @@ function assessAlgorithmProjection(
     const take = Math.min(drawSupply[i], Math.max(0, n));
     drawSupply[i] -= take;
     hands[i] += take;
+    if (features.publicCardLifecycle) {
+      const count = lifecycleCounts[i]; count.hand += take;
+      if (take <= count.deck) count.deck -= take;
+      else { count.deck = Math.max(0, count.deck + count.discard - take); count.discard = 0; }
+    }
     if (take > 0) {
       uncertainFormulaZones.add(`${i === 0 ? o.you : opp}:hand`);
       uncertainFormulaZones.add(`${i === 0 ? o.you : opp}:deck`);
@@ -936,6 +1023,9 @@ function assessAlgorithmProjection(
       hands: [...hands],
       archives: [...archives],
       deckChanges: [...deckChanges],
+      lifecycleCounts: lifecycleCounts.map((x) => ({ ...x })),
+      lifecycleDeltas: lifecycleDeltas.map((x) => ({ ...x })),
+      lifecycleRefillUnknown,
       scalarBindings: [...scalarBindings],
       projectedLocations: [...projectedLocations],
       projectedEntries: [...projectedEntries],
@@ -986,12 +1076,15 @@ function assessAlgorithmProjection(
       tokenUtility,
       unboundCapture,
       possibleIncomeRefund,
+      lifecycleRefillUnknown,
     } = s);
     for (let i = 0; i < 2; i++) {
       pool[i] = s.pool[i];
       hands[i] = s.hands[i];
       archives[i] = s.archives[i];
       deckChanges[i] = s.deckChanges[i];
+      lifecycleCounts[i] = { ...s.lifecycleCounts[i] };
+      lifecycleDeltas[i] = { ...s.lifecycleDeltas[i] };
       drawSupply[i] = s.drawSupply[i];
       createdTokens[i] = s.createdTokens[i];
     }
@@ -1108,13 +1201,13 @@ function assessAlgorithmProjection(
       !forecastUncertain &&
       (skip || pool[1] + Math.max(0, foe.forgeAvailable - foe.amber) < otherCost);
     return (
-      score +
+      score + lifecycleRefill().score +
       (pool[0] - initial[0]) * 3.5 -
       (pool[1] - initial[1]) * 3.2 +
       draws * 1.2 -
       chainGain * 1.3 +
-      Number(denied) * 5000 +
-      Number(projectedKey) * (me.keys.length === 2 ? 100000 : 40) -
+      Number(!materialProbe && denied) * 5000 +
+      Number(projectedKey) * (!materialProbe && me.keys.length === 2 ? 100000 : 40) -
       // The same existing terminal-risk cost is applied once when comparing
       // optional target sets, before the final action row is selected.
       Number(
@@ -1235,6 +1328,7 @@ function assessAlgorithmProjection(
     }
     approximate = true;
     forecastUncertain = true;
+    if (features.publicCardLifecycle) lifecycleRefillUnknown = true;
     const changedZone = `${seat}:${zone}`;
     uncertainFormulaZones.add(changedZone);
     if (zone === 'hand') hands[side] = Math.max(0, hands[side] - amount);
@@ -1289,6 +1383,7 @@ function assessAlgorithmProjection(
       s.ownCost !== before.ownCost || s.otherCost !== before.otherCost)) {
       markUnknown(); reasons.push('public-random: terminal or key-cost branch requires a full outcome continuation'); return;
     }
+    if (features.publicCardLifecycle) lifecycleRefillUnknown = true;
     const mean = (f: (s: ReturnType<typeof snapshot>) => number) => outcomes.reduce((n, s) => n + f(s), 0) / outcomes.length;
     score = mean((s) => s.score); draws = mean((s) => s.draws); chainGain = mean((s) => s.chainGain);
     tokenUtility = mean((s) => s.tokenUtility);
@@ -1418,17 +1513,30 @@ function assessAlgorithmProjection(
       return !features.contextualEffects || (publicCardEntries.get(card) ?? 0) === (projectedEntries.get(card.id) ?? 0);
     });
     const n = value(e.amount);
+    if (features.publicCardLifecycle && e.operation === 'foreignArchive' && e.archiveTo !== undefined &&
+      !['self', 'opponent', 'active'].includes(e.archiveTo)) {
+      markUnknown(); lifecycleRefillUnknown = true;
+      for (const card of targets) uncertainLocations.add(card.id);
+      for (const seat of [0, 1]) { uncertainCounts.add(`${seat}:archives`); uncertainFormulaZones.add(`${seat}:archives`); }
+      reasons.push('card-lifecycle: archive holder needs an unavailable public event/last-owner binding');
+      return targets.map((t) => ({ t, wasInPlay: evaluatedInPlay(t.id), operation: e.operation, direct: true,
+        destructionReceiptUnknown: true, result: { score: 0, removed: false, destroyed: false, affected: false,
+          released: [0, 0] as [number, number], approximate: true } }));
+    }
+    const operationView = features.publicCardLifecycle ? formulaContext().observation : o;
+    const lifecycle = lifecycleContext(operationView, e);
     const offBoard = features.contextualEffects ? targets.filter((card) => projectedLocations.has(card.id)) : [];
     const battleTargets = targets.filter((card) => !offBoard.includes(card));
     const group = features.publicDestroyedRefunds
-      ? assessPublicOperationGroup(o, battleTargets, e.operation, n, {
+      ? assessPublicOperationGroup(operationView, battleTargets, e.operation, n, {
+          lifecycle,
           fullHeal: e.fullHeal,
           ignoreArmor: e.ignoreArmor,
           removed: predictedRemoved,
           warded: predictedWards,
           captured: predictedCaptured,
           additionalInPlay:
-            a.kind === 'play' && physicalSource && ['creature', 'artifact', 'upgrade'].includes(physicalSource.spec.kind)
+            !scrapFrame && a.kind === 'play' && physicalSource && ['creature', 'artifact', 'upgrade'].includes(physicalSource.spec.kind)
               ? [preparedContext().source ?? physicalSource]
               : [],
         })
@@ -1447,7 +1555,8 @@ function assessAlgorithmProjection(
           .map((t) => ({
             t,
             wasInPlay: evaluatedInPlay(t.id),
-            result: assessPublicOperation(projectedLocations.has(t.id) ? formulaContext().observation : o, t, e.operation, n, {
+            result: assessPublicOperation(features.publicCardLifecycle ? operationView : projectedLocations.has(t.id) ? formulaContext().observation : o, t, e.operation, n, {
+              lifecycle,
               fullHeal: e.fullHeal,
               ignoreArmor: e.ignoreArmor,
               inPlay: evaluatedInPlay(t.id),
@@ -1459,7 +1568,7 @@ function assessAlgorithmProjection(
     if (group && offBoard.length) {
       const view = formulaContext().observation;
       rows.push(...offBoard.map((t) => ({ t, wasInPlay: false,
-        result: assessPublicOperation(view, t, e.operation, n, { fullHeal: e.fullHeal, ignoreArmor: e.ignoreArmor, inPlay: false }),
+        result: assessPublicOperation(view, t, e.operation, n, { lifecycle, fullHeal: e.fullHeal, ignoreArmor: e.ignoreArmor, inPlay: false }),
         operation: e.operation, direct: true, destructionReceiptUnknown: false,
       })));
     }
@@ -1488,12 +1597,15 @@ function assessAlgorithmProjection(
         predictedRemoved,
         ['reap', 'use', 'fight', 'unstun'].includes(a.kind) ? source?.id : undefined,
       );
+    const scraps: CardView[] = [];
     for (const { t, result: r, operation, wasInPlay } of rows) {
       score += r.score;
       if (features.tokenEconomy && r.removed)
         score += (t.controller === o.you ? -1 : 1) * tokenEngineValue(o, t);
       approximate ||= r.approximate;
-      if (r.approximate && wasInPlay) forecastUncertain = unresolvedEffects = true;
+      if (r.lifecycleReasons) reasons.push(...r.lifecycleReasons.map((reason) => 'card-lifecycle: ' + reason));
+      if (r.ruleUncertain || r.approximate && wasInPlay && r.utilityApproximate === undefined)
+        forecastUncertain = unresolvedEffects = true;
       gain(0, r.released[0]);
       gain(1, r.released[1]);
       if (features.publicDestroyedRefunds && r.removed && uncertainStoredAmber.has(t.id)) {
@@ -1505,13 +1617,31 @@ function assessAlgorithmProjection(
         );
       }
       if (features.contextualEffects) {
-        if (r.removed || (r.affected && !evaluatedInPlay(t.id))) recordProjectedMove(t, operation);
+        if (r.move && r.ruleUncertain) {
+          uncertainLocations.add(t.id); lifecycleRefillUnknown = true;
+          for (const location of [r.move.from, r.move.to]) {
+            uncertainCounts.add(`${location.seat}:${location.zone}`);
+            uncertainFormulaZones.add(`${location.seat}:${location.zone}`);
+          }
+        } else if (r.move) recordProjectedMove(t, r.move.actualOperation, r.move);
+        else if (r.removed || (r.affected && !evaluatedInPlay(t.id))) recordProjectedMove(t, operation);
         if (r.affected || r.approximate) noteChangedFields(t, operation, r);
       } else if (operation === 'returnHand' && r.affected && (!evaluatedInPlay(t.id) || r.removed)) {
         const owner = t.owner === o.you ? 0 : 1;
         hands[owner]++;
         if (player(owner).discard.some((c) => c.id === t.id))
           drawSupply[owner] = Math.max(0, drawSupply[owner] - 1);
+      }
+      if (r.continuationUncertain) {
+        const kinds = r.continuationKinds ?? [];
+        if (kinds.includes('scrap') && r.move?.from.zone === 'hand' && r.move.to.zone === 'discard' &&
+          r.move.from.seat === o.activePlayer && r.move.from.seat === o.you) {
+          scraps.push(t);
+        }
+        if (!kinds.length || kinds.some((kind) => kind !== 'scrap') ||
+          kinds.includes('scrap') && r.move?.from.seat !== o.you) {
+          markUnknown(); lifecycleRefillUnknown = true;
+        }
       }
       if (evaluatedInPlay(t.id) && (e.operation === 'capture' || e.operation === 'captureOwn')) {
         const controller = t.controller === o.you ? 0 : 1,
@@ -1556,8 +1686,13 @@ function assessAlgorithmProjection(
         for (const c of receivers) uncertainDepartures.add(c.id);
       }
     }
+    // Direct group moves finish before their triggered children read the new public piles.
+    for (const card of scraps) {
+      evalScrap(card, depth);
+      reasons.push('card-lifecycle: actual active-player hand discard resolves its public Scrap text');
+    }
     if (e.after) {
-      if (results.some((r) => r.destructionReceiptUnknown)) {
+      if (results.some((r) => r.destructionReceiptUnknown || r.result.ruleUncertain)) {
         markUnknown();
         reasons.push(
           'public-destroyed: follow-up destruction receipts are unresolved; no payment or success guarantee',
@@ -1731,7 +1866,7 @@ function assessAlgorithmProjection(
       source.copiedDefinition ||
       source.copiedCharacteristics ||
       source.gainedTextBoxes?.length ||
-      !o.players[o.you].battleline.some((card) => card.id === source.id)
+      !o.players[o.you].battleline.some((card) => card.id === source!.id)
     )
       return;
     const effects = source.spec.abilities?.play ?? [];
@@ -1842,7 +1977,7 @@ function assessAlgorithmProjection(
       if (
         source.id === o.pending.source &&
         activeSources.length > 0 &&
-        activeSources.every((c) => c.definition === source.definition && c.spec.id === source.spec.id) &&
+        activeSources.every((c) => c.definition === source!.definition && c.spec.id === source!.spec.id) &&
         !source.copiedDefinition &&
         !source.copiedCharacteristics &&
         !source.gainedTextBoxes?.length &&
@@ -1955,7 +2090,7 @@ function assessAlgorithmProjection(
               !o.pending?.intent &&
               e.then[0].kind === 'takeControl' &&
               e.then[0].key === e.bind &&
-              Object.values(source.spec.abilities ?? {}).flat().length === 1)),
+              Object.values(source!.spec.abilities ?? {}).flat().length === 1)),
       )
       .filter((e) => {
         const selected = o.pending?.selected ?? [];
@@ -2129,6 +2264,14 @@ function assessAlgorithmProjection(
           break;
         }
         case 'forgeEffect': {
+          if (materialProbe && (me.forgeBlocked || [...publicBoard(0), ...publicBoard(1)].some((card) =>
+            [card.spec, ...(card.gainedTextBoxes ?? [])].some((d) => d.prohibitsForging ||
+              d.forbiddenKeyOrdinal === me.keys.length + 1 || d.forgeRestrictions?.length || d.forgeIntercept ||
+              d.maxControllerForgesPerTurn !== undefined || d.cannotForgeAhead && me.keys.length > foe.keys.length)))) {
+            approximate = true;
+            reasons.push('card-lifecycle: public forge restriction prevents claiming material forge utility');
+            break;
+          }
           if (uncertainPools.has(0)) { markUnknown(); break; }
           const cost = Math.max(0, e.fixedCost ?? ownCost + value(e.delta) - value(e.reduction));
           const storage = Math.max(0, me.forgeAvailable - me.amber);
@@ -2139,7 +2282,7 @@ function assessAlgorithmProjection(
               break;
             }
             projectedKey = true;
-            score += me.keys.length === 2 ? 10000 : 40;
+            score += !materialProbe && me.keys.length === 2 ? 10000 : 40;
             pool[0] = Math.max(0, pool[0] - cost);
             reasons.push('affordable off-step forge');
           } else {
@@ -2290,7 +2433,10 @@ function assessAlgorithmProjection(
           approximate = true;
           break;
         case 'archiveChoice':
-          score += 0.8;
+          if (features.publicCardLifecycle) {
+            const targets = filtered({ side: 'friendly', zone: 'hand' });
+            bestBranch(targets.map((target) => () => applyTargets([target], { operation: 'archive' }, depth)));
+          } else score += 0.8;
           approximate = true;
           break;
         case 'randomDiscard':
@@ -2460,6 +2606,13 @@ function assessAlgorithmProjection(
             if (features.publicDestructionPayments) markUnknown();
           }
           approximate = true;
+          break;
+        }
+        case 'combineBindings': {
+          if (!features.publicCardLifecycle || !Array.isArray(e.keys) || e.keys.length > 8 ||
+            e.keys.some((key) => !bindings.has(key))) { markUnknown(); break; }
+          const combined = [...new Map(e.keys.flatMap((key) => bindings.get(key)!).map((card) => [card.id, card])).values()];
+          inLocalFrame(() => { bindings.set(e.bind, combined); evalEffects(e.then, depth + 1); });
           break;
         }
         case 'bound': {
@@ -2731,6 +2884,11 @@ function assessAlgorithmProjection(
       }
       break;
     case 'takeArchives':
+      if (features.publicCardLifecycle) {
+        applyTargets(me.archives ?? [], { operation: 'returnHand' }, 0);
+        reasons.push('card-lifecycle: archive pickup values each owner destination and one aggregate hand cost');
+        break;
+      }
       score =
         (me.archives ?? []).reduce(
           (n, x) => n + (x.owner === o.you ? (x.effective.house === o.activeHouse ? 2.5 : 0.1) : -1),
@@ -2896,10 +3054,21 @@ function assessAlgorithmProjection(
       reasons.push('estimate combat rather than damage-as-goal');
       break;
     case 'returnDiscard':
+      if (features.publicCardLifecycle && c) {
+        applyTargets([c], { operation: 'returnHand' }, 0);
+        reasons.push('card-lifecycle: public discard recovery with current opportunity and refill displacement');
+        break;
+      }
       score = 2;
       reasons.push('optional own-turn discard recovery; no play or use cost');
       break;
     case 'discard': {
+      if (features.publicCardLifecycle && c) {
+        applyTargets([c], { operation: 'discard' }, 0);
+        if (c.spec.returnFromDiscardCondition && me.discard.length >= 9) score -= 20;
+        reasons.push('card-lifecycle: retain value versus actual discard, Scrap and one refill settlement');
+        break;
+      }
       const semantic = cardSemanticFeatures(c?.spec, 'any', { observation: o, source: c });
       const useful =
         c?.spec.kind === 'creature' ||
@@ -2938,7 +3107,7 @@ function assessAlgorithmProjection(
       }
       if (o.pending?.intent?.kind === 'target-operation') {
         const op = o.pending.intent.operation;
-        if (op === 'discard') {
+        if (op === 'discard' && !features.publicCardLifecycle) {
           const worth =
             target.spec.amber * 3 +
             (target.spec.kind === 'creature' ? 2 : 0) +
@@ -2946,7 +3115,7 @@ function assessAlgorithmProjection(
           score = target.controller === o.you ? -worth : worth;
         } else if (features.contextualEffects) {
           applyTargets([target], { operation: op, amount: o.pending.amount }, 0);
-          if (op === 'returnHand' && !forecastUncertain && knownRecoveredForge(o, target, pool[0])) {
+          if (op === 'returnHand' && !forecastUncertain && knownRecoveredForge(o, target, pool[0], { publicRecoveryWindow: features.publicCardLifecycle })) {
             score += 7000;
             reasons.push('card-aware: recover a publicly payable next-play third-key route');
           }
@@ -2958,7 +3127,8 @@ function assessAlgorithmProjection(
         break;
       }
       if (o.pending?.kind === 'archive') {
-        score = target.effective.house === o.activeHouse ? -0.5 : 1.5;
+        if (features.publicCardLifecycle) applyTargets([target], { operation: 'archive' }, 0);
+        else score = target.effective.house === o.activeHouse ? -0.5 : 1.5;
         break;
       }
       if (o.pending?.kind === 'damage') {
@@ -3059,9 +3229,15 @@ function assessAlgorithmProjection(
       reasons.push('end remains legal; do not force every card');
       break;
   }
+  const refill = lifecycleRefill();
+  score += refill.score; approximate ||= refill.approximate;
+  if (features.publicCardLifecycle && chainGain !== 0 && lifecycleDeltas.some((n) => n.hand || n.deck || n.discard))
+    reasons.push('card-lifecycle: changed chains leave the refill displacement outside this bounded count projection');
+  if (refill.score !== 0) reasons.push('card-lifecycle: normal refill displacement settled once for this complete candidate');
   const ownDelta = pool[0] - initial[0],
     otherDelta = pool[1] - initial[1];
   score += ownDelta * 3.5 - otherDelta * 3.2 + draws * 1.2 - chainGain * 1.3;
+  const ordinaryScore = score;
   const forgePrevented = foe.skipForgeTurn === o.turn + 1 || foe.artifacts.some((c) => c.spec.skipForgeStep);
   const threat = foe.keys.length === 2 && !forgePrevented && foe.forgeAvailable >= foe.keyCost;
   const deniesKey =
@@ -3117,6 +3293,7 @@ function assessAlgorithmProjection(
   if (projectedKey && me.keys.length === 2) score = Math.max(score, 100000);
   if (!Number.isFinite(score)) throw new Error('Nonfinite algorithm score');
   return {
+    ordinaryScore,
     assessment: { actionId, score, reasons, estimatedAmber: pool, projectedKey, deniesKey, approximate },
     opponentKeyCost: otherCost,
     skipsOpponentForge: skip,

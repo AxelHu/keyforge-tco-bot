@@ -14,10 +14,98 @@ function namedLock(value: unknown, depth = 0): boolean {
     Object.values(r).some((x) => namedLock(x, depth + 1))
   );
 }
+export interface RecoveredForgeOptions {
+  /** Candidate-only strict public window; the default retains the historical Play-source check. */
+  publicRecoveryWindow?: boolean;
+}
+
+const ordinaryIdentity = (c: CardView): boolean =>
+  c.spec.id === c.definition &&
+  !c.copiedDefinition && !c.copiedCharacteristics && !c.copiedAnimation && !c.temporaryAnimation &&
+  !c.animatedArtifact && !c.form && !c.copiedForm && !c.copiedHouse && !c.tokenCreature &&
+  !c.gainedTextBoxes?.length && !c.spec.conditionalAbilities?.length && !c.spec.grantsAbilities?.length &&
+  !c.spec.unmodeled;
+
+/** These nodes cannot dispatch another card's ability. Unknown nodes fail closed for
+ * this proof only; the ordinary lifecycle utility remains free to assess them. */
+const terminalEffectKinds = new Set([
+  'gain', 'loseOpponent', 'steal', 'capture', 'draw', 'healSelf', 'chains', 'resource',
+  'target', 'all', 'self', 'archiveChoice', 'randomDiscard', 'randomArchive', 'forgeEffect',
+  'if', 'damageChoice', 'storeAmber', 'reveal', 'sacrificeSelf', 'skipForge', 'finishAction', 'lasting',
+]);
+function mayDispatchAbility(input: unknown, depth = 0): boolean {
+  if (depth > 12) return true;
+  if (!input || typeof input !== 'object') return false;
+  if (Array.isArray(input)) return input.some((x) => mayDispatchAbility(x, depth + 1));
+  const r = input as Record<string, unknown>;
+  if (r.unmodeled === true || (typeof r.kind === 'string' && !terminalEffectKinds.has(r.kind))) return true;
+  return Object.values(r).some((x) => mayDispatchAbility(x, depth + 1));
+}
+
+/** No private frame is consulted. Certify only an unambiguous terminal public
+ * Play or Reap instruction, with no visible caller, grant or follow-up window. */
+function publicRecoveryWindow(o: Observation, source: CardView | undefined, card: CardView): boolean {
+  const q = o.pending;
+  if (
+    !source || !q || q.kind !== 'target' || q.min !== 1 || q.max !== 1 ||
+    (q.selectedCount ?? 0) !== 0 || (q.selected?.length ?? 0) !== 0 || q.amount !== 0 || q.reward !== 0 ||
+    !ordinaryIdentity(source) || !ordinaryIdentity(card) || source.controller !== o.you ||
+    source.spec.omega || source.spec.reactions?.length || source.foreignArchiveHolder !== null ||
+    card.foreignArchiveHolder !== null || o.permissions.length || o.leaveEffects.length ||
+    (o.prophecies ?? []).some((p) => p.active)
+  ) return false;
+  const abilities = Object.entries(source.spec.abilities ?? {}).filter(([, effects]) => effects?.length);
+  if (abilities.length !== 1) return false;
+  const [trigger, effects] = abilities[0];
+  if ((trigger !== 'play' && trigger !== 'reap') || effects.length !== 1) return false;
+  const effect = effects[0];
+  if (
+    effect.kind !== 'target' || effect.operation !== 'returnHand' || effect.after ||
+    (effect.max ?? 1) !== 1 || effect.optional || effect.unmodeled ||
+    effect.filter.side !== 'friendly' || effect.filter.zone !== 'discard' ||
+    Object.keys(effect.filter).some((key) => !['side', 'zone', 'kind'].includes(key)) ||
+    (effect.filter.kind !== undefined && effect.filter.kind !== card.spec.kind)
+  ) return false;
+  const selection = q.intent?.kind === 'target-operation' ? q.intent.selection : undefined;
+  if (selection && (selection.ability !== trigger || selection.path.length !== 1 || selection.path[0] !== 0))
+    return false;
+  if (trigger === 'reap') {
+    const lastUse = o.publicCounters.creaturesUsed.at(-1);
+    if (
+      source.spec.kind !== 'creature' ||
+      !o.players[o.you].battleline.some((c) => c.id === source.id) ||
+      source.ready || source.usesThisTurn < 1 || lastUse?.currentCard !== source.id || o.resolving.length
+    ) return false;
+  } else if (
+    source.spec.kind !== 'action' || o.resolving.length !== 1 || o.resolving[0].id !== source.id
+  ) return false;
+  // A public permanent may have called this Reap and still have an unadvertised
+  // after/use/copy continuation. Do not infer an empty parent queue from q.source.
+  // Only entitled visible zones are inspected, never an injected opposing hand.
+  const visible = [
+    ...(o.players[o.you].hand ?? []), ...(o.players[o.you].archives ?? []),
+    ...o.players.flatMap((p) => [...p.battleline, ...p.artifacts, ...p.upgrades, ...p.discard, ...p.purged]),
+    ...o.resolving, ...o.promptCards,
+  ];
+  for (const c of visible) {
+    if (!ordinaryIdentity(c)) return false;
+    if (
+      c.spec.reactions?.length || c.spec.upgrade?.abilities || c.spec.repeatFriendlyCreaturePlay ||
+      c.spec.friendlyPlayAsReap || mayDispatchAbility(c.spec.abilities) || mayDispatchAbility(c.spec.afterAttach)
+    ) return false;
+  }
+  return true;
+}
+
 /** A true result is a following-action opportunity, never an already projected key.
  * No stored amber, permissions, unknown card draws or copied/conditional text is assumed.
  */
-export function knownRecoveredForge(o: Observation, card: CardView, amberAfterRecovery: number): boolean {
+export function knownRecoveredForge(
+  o: Observation,
+  card: CardView,
+  amberAfterRecovery: number,
+  options: RecoveredForgeOptions = {},
+): boolean {
   const me = o.players[o.you],
     q = o.pending,
     d = card.spec;
@@ -58,8 +146,11 @@ export function knownRecoveredForge(o: Observation, card: CardView, amberAfterRe
   const visible = [...board, ...(me.hand ?? []), ...o.resolving, ...o.promptCards];
   const source = visible.find((c) => c.id === q.source);
   const recovery = source?.spec.abilities?.play;
-  // No unresolved parent continuation, Omega, or multi-target recovery is assumed.
-  if (
+  // The historical mode remains byte-for-byte equivalent in its source checks.
+  // New lifecycle callers opt into the stricter public window, including a Reap source.
+  if (options.publicRecoveryWindow) {
+    if (!publicRecoveryWindow(o, source, card)) return false;
+  } else if (
     !source ||
     source.controller !== o.you ||
     source.spec.omega ||
@@ -71,8 +162,7 @@ export function knownRecoveredForge(o: Observation, card: CardView, amberAfterRe
     recovery[0].after ||
     (recovery[0].max ?? 1) !== 1 ||
     (q.max ?? 1) !== 1
-  )
-    return false;
+  ) return false;
   const capacity = publicPlayCapacity(o);
   if (!capacity.known || capacity.blocked || (o.turn === 1 && o.handOperations >= 1)) return false;
   const boxes = board.flatMap((c) => [c.spec, ...(c.gainedTextBoxes ?? [])].map((spec) => ({ spec, c })));
