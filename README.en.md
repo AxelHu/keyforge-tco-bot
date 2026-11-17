@@ -33,10 +33,22 @@ engine, game server, game UI and historical match data are not included.
 
 ## Compatibility and current validation
 
-<!-- contextual-formulas-061:start -->
-### 0.6.1 contextual formulas
+<!-- card-lifecycle-062:start -->
+### 0.6.2 card lifecycle valuation
 
-Current public state now drives deterministic quantities and bounded sequential projections; supported random outcomes are valued before caps and averaging. The final candidate also refreshes captured-based power and haunted dependencies when their public inputs change, while propagating unresolved captured amounts. Missing public history remains explicit uncertainty.
+**0.6.2** values discarding, purging, recovery, archiving and return to hand through the change in a visible card's future use opportunity, using its actual destination. Normal refill displacement is settled once per complete candidate action. Ordinary card quality reuses the public effect evaluator and its fallback; timing discounts remain heuristic, without a complete deck-wide combo search. Source `ead3992` passed **549/549** offline tests: the existing 483 plus **66** new tests covering the region model (28), recovery windows (19) and consumer integration (19).
+
+A separate **32-game frozen-0.6.1 diagnostic** retained actual public decisions and complete candidate scores. The controlled Witch third-key example, Labwork window checks and pure public-input replays are recorded separately; they do not measure natural-game error frequency. The fixed comparison design is **96 development + 384 confirmation games** against frozen 0.6.1, comparing the new and old implementations of **Engine V3 and Card Effects V3** only. Derived callers can inherit the shared change, but the two-family comparison does not rerank all 89 policies or the five common menu entries.
+
+Both fixed stages completed: **46–50 in development**, **192–192 (50.00%) in confirmation**, all natural finishes with zero technical or anomalous games. Both family-specific confirmation intervals include 50%; this study does not establish a stable overall win-rate gain, and the added evaluation has a measurable decision-time cost.
+
+See the [Chinese method and evaluation report](docs/card-lifecycle-evaluation.md) and [public evidence summary](docs/evidence/card-lifecycle-2026-11-18.json) for scope and final comparison results. Local fixes and passing regressions do not establish a stable win-rate gain. No new online results or Elo ratings are claimed.
+<!-- card-lifecycle-062:end -->
+
+<!-- contextual-formulas-061:start -->
+### Historical 0.6.1 contextual-formula validation
+
+0.6.1 uses current public state for supported deterministic quantities and bounded sequential projections; supported random outcomes are valued before caps and averaging. The final candidate also refreshes captured-based power and haunted dependencies when their public inputs change, while propagating unresolved captured amounts. Missing public history remains explicit uncertainty.
 
 The full offline suite passed **483/483**, including **57** new tests. Separate independent checks passed **94** cases and **97** whole-input immutability assertions. Against 0.6.0, the fixed development primary estimate was **51–45** and confirmation was **201–183 (52.34%)**. The separate 0.5.3 reference was **102–90 (53.12%)**.
 
@@ -45,7 +57,7 @@ Results are not pooled. The 849 completed games from superseded candidates remai
 
 The bot supports the Fuzhou deployment and international TCO. Current maintenance tests focus on **Fuzhou and owned-account games**. International matchmaking against other people has been paused since 2026-11-17; the adapter and English chat configuration remain available.
 
-The new 0.6.1 validation covers public formulas and complete local comparison games. Existing server evidence includes 0.5.3 localized capture allocation and 0.5.2 preparation retirement and delivery recovery, each attributed to its actual source and scope. Current results, historical failures and server evidence are collected in the [validation record](docs/validation.md).
+The new 0.6.2 validation focuses on lifecycle valuation, public-input replay and the fixed local comparison. The 0.6.1 formula evidence retains its historical attribution. Existing server evidence includes 0.5.3 localized capture allocation and 0.5.2 preparation retirement and delivery recovery, each attributed to its actual source and scope. Current results, historical failures and server evidence are collected in the [validation record](docs/validation.md).
 
 Managed operation targets **Linux or Linux inside WSL**, with Node.js **22.12–24.x**, Python 3 and Chromium. Native Windows and macOS supervision has not been validated.
 
