@@ -33,6 +33,12 @@ const ORDINARY_BONUS_SELECT_TITLES = new Set([
   'Choose a card to discard due to bonus icon',
   'Choose a creature to add a +1 power counter to due to bonus icon',
 ]);
+// Native use-effect joiners are localized as an exact pair; the nested
+// effect payload, actor, source and fresh-message guards remain separate.
+const USE_EFFECT_MESSAGE_CONNECTORS = [
+  [' uses ', ' to '],
+  [' 使用 ', ' 来 '],
+] as const;
 const FESTIVAL_MESSAGE_TEMPLATES = [
   [' uses ', ' to capture ', ' amber onto friendly creatures'],
   [' 使用 ', ' 抢占 ', ' 琥珀放置到友方生物上'],
@@ -788,12 +794,11 @@ export class KeytekiAllocationTracker {
           m.length === 5 &&
           obj(m[0]).argType === 'nonAvatarPlayer' &&
           obj(m[0]).name === p.playerName &&
-          m[1] === ' uses ' &&
+          USE_EFFECT_MESSAGE_CONNECTORS.some(([use, to]) => m[1] === use && m[3] === to) &&
           obj(m[2]).argType === 'card' &&
           obj(m[2]).id === current.source &&
           obj(m[2]).type === (current.source === 'shard-of-hope' ? 'artifact' : 'action') &&
           obj(m[2]).facedown !== true &&
-          m[3] === ' to ' &&
           Object.keys(effect).length === 1 &&
           obj(parts[3]).argType === 'nonAvatarPlayer' &&
           obj(parts[3]).name === opponentName &&
@@ -884,12 +889,11 @@ export class KeytekiAllocationTracker {
           m.length === 5 &&
           obj(m[0]).argType === 'nonAvatarPlayer' &&
           obj(m[0]).name === p.playerName &&
-          m[1] === ' uses ' &&
+          USE_EFFECT_MESSAGE_CONNECTORS.some(([use, to]) => m[1] === use && m[3] === to) &&
           obj(m[2]).argType === 'card' &&
           obj(m[2]).id === 'hypnotic-command' &&
           obj(m[2]).type === 'action' &&
           obj(m[2]).facedown !== true &&
-          m[3] === ' to ' &&
           Object.keys(effect).length === 1 &&
           parts.length === 1 &&
           parts[0] === 'force an enemy creature to capture 1 amber for each mars creature they control'
