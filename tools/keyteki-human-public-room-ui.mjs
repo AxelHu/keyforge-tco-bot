@@ -2,6 +2,7 @@
 import { fuzhouSocketEvent, fuzhouDeckSpec, fuzhouSelectGameType } from './keyteki-fuzhou-ui.mjs';
 import { fail } from './keyteki-human-config.mjs';
 import { createJoinedPendingRoomTracker } from './keyteki-joined-pending-exit.mjs';
+import { observePageDocuments } from './keyteki-document-observer.mjs';
 import { keytekiUiButton, pendingLeaveFrameMatches } from './keyteki-ui-contract.mjs';
 const object = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 const same = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
@@ -114,10 +115,6 @@ export class PublicRoomObserver {
     this.joinedPending = config.createPublic ? null : createJoinedPendingRoomTracker(config);
     this.createdPending = config.createPublic ? createJoinedPendingRoomTracker(config, { created: true }) : null;
     this.pendingTracker = this.joinedPending ?? this.createdPending;
-    this.onFrameNavigated = (frame) => {
-      if (typeof page.mainFrame !== 'function' || frame !== page.mainFrame()) return;
-      this.pendingTracker?.documentChanged(++this.documentEpoch);
-    };
     this.onRequest = (request) => {
       const url = lobbyUrl(request.url(), config.origin);
       if (!url || url.searchParams.get('transport') !== 'polling') return;
@@ -180,12 +177,20 @@ export class PublicRoomObserver {
         /* The legacy preparation observer still waits for later native readiness. */
       }
     };
-    page.on('framenavigated', this.onFrameNavigated);
     page.on('request', this.onRequest);
     page.on('requestfailed', this.onRequestFailed);
     page.on('websocket', this.onSocket);
     page.on('response', this.onResponse);
+    this.documentMonitor = observePageDocuments(page, {
+      onDocument: () => this.pendingTracker?.documentChanged(++this.documentEpoch),
+      onUnavailable: code => this.pendingTracker?.documentObservationLost({ closed: code === 'PENDING_DOCUMENT_OBSERVER_CLOSED' }),
+      timeoutMs: config.setupTimeoutMs,
+    });
+    this.ready = this.documentMonitor.ready.then(() => this);
+    this.ready.catch(() => {});
   }
+  get documentReady() { return this.documentMonitor.snapshot().ready; }
+  get documentIdentity() { return this.documentMonitor.snapshot().identity; }
   ingest(payload, sent = false, metadata = {}) {
     this.pendingTracker?.ingest(payload, { ...metadata, sent, joinRequested: this.joinRequested,
       creationRequested: this.creationRequested });
@@ -326,6 +331,7 @@ export class PublicRoomObserver {
   }
   assertHealthy() {
     if (this.error) fail(this.error);
+    this.documentMonitor.assertReady();
   }
   assertJoinable() {
     this.assertHealthy();
@@ -346,7 +352,6 @@ export class PublicRoomObserver {
       fail('ONLY_UNJOINED_OWN_PENDING_ROOM_MAY_CLOSE');
   }
   dispose() {
-    this.page.off('framenavigated', this.onFrameNavigated);
     this.page.off('request', this.onRequest);
     this.page.off('requestfailed', this.onRequestFailed);
     this.page.off('websocket', this.onSocket);
@@ -357,6 +362,7 @@ export class PublicRoomObserver {
       socket.off('close', closed);
       socket.off('socketerror', errored);
     }
+    return this.documentMonitor.dispose();
   }
 }
 

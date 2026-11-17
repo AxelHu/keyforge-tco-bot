@@ -246,6 +246,7 @@ export async function runOneSeat(input, prepared = null, { onEvidence } = {}) {
     await page.setViewportSize({ width: 1440, height: 1100 });
     page.setDefaultTimeout(config.setupTimeoutMs);
     observer ??= new PublicRoomObserver(page, config);
+    await observer.ready;
     page.on('pageerror', () => {
       void hold('BROWSER_PAGE_ERROR');
     });

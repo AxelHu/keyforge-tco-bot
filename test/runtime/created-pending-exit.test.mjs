@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { EventEmitter } from 'node:events';
+import { mockPendingDocumentSession } from '../helpers/pending-document-session.mjs';
 import { createJoinedPendingRoomTracker } from '../../tools/keyteki-joined-pending-exit.mjs';
 import { createdPendingReadiness, createdPendingSeatReleased, retireCreatedPendingRoom } from '../../tools/keyteki-created-pending-exit.mjs';
 import { PublicRoomObserver, startOwnBoundRoomUi } from '../../tools/keyteki-human-public-room-ui.mjs';
@@ -155,11 +156,13 @@ test('the original bound opponent may depart without misclassifying our verified
   assert.equal(await f.retire(), true); assert.equal(f.classify().canContinue, true);
 });
 
-test('production observer tracks creation and selection before binding the immutable pair', () => {
+test('production observer tracks creation and selection before binding the immutable pair', async () => {
   const input = rawConfig(), config = normalizeHumanConfig(input, { createPublic: true });
   const page = new EventEmitter(), socket = new EventEmitter();
   page.url = () => origin + '/play'; socket.url = () => origin.replace('https:', 'wss:') + '/socket.io/?transport=websocket';
+  mockPendingDocumentSession(page);
   const observer = new PublicRoomObserver(page, config);
+  await observer.ready;
   try {
     page.emit('websocket', socket); observer.creationRequested = true;
     const receive = payload => socket.emit('framereceived', { payload });
@@ -292,7 +295,8 @@ test('a retired preparation failure clears the real campaign active attempt but 
 test('polling POST selection updates the same production observer and immutable created-pair evidence', async () => {
   const input = rawConfig(), config = normalizeHumanConfig(input, { createPublic: true });
   const page = new EventEmitter(); page.url = () => origin + '/play';
-  const observer = new PublicRoomObserver(page, config); observer.creationRequested = true;
+  mockPendingDocumentSession(page);
+  const observer = new PublicRoomObserver(page, config); await observer.ready; observer.creationRequested = true;
   const exchange = async (method, payload, sid = 'poll-engine') => {
     const url = origin + '/socket.io/?transport=polling' + (sid ? '&sid=' + sid : '');
     const request = { url: () => url, method: () => method, postData: () => payload };

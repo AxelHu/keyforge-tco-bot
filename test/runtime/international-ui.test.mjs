@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
+import { mockPendingDocumentSession } from '../helpers/pending-document-session.mjs';
 import {
   KEYTEKI_UI_NAMES,
   keytekiUiName,
@@ -100,7 +101,7 @@ test('pending leave wire matching accepts old or exactly bound new shape only', 
   assert.equal(pendingLeaveFrameMatches(frame('leavegame'), ''), false);
 });
 
-function publicFixture({ sentFrame, acknowledge = true, caption = 'Leave', names = [own], pageOrigin = origin } = {}) {
+async function publicFixture({ sentFrame, acknowledge = true, caption = 'Leave', names = [own], pageOrigin = origin } = {}) {
   const config = { ...base, createPublic: true, room: { ...base.room, gameId: null } };
   const page = new EventEmitter();
   page.url = () => pageOrigin + '/play';
@@ -118,7 +119,9 @@ function publicFixture({ sentFrame, acknowledge = true, caption = 'Leave', names
       },
     };
   };
+  mockPendingDocumentSession(page);
   observer = new PublicRoomObserver(page, config);
+  await observer.ready;
   observer.creationRequested = true;
   observer.ingest('40{"sid":"fixture-own-socket"}');
   observer.ingest(frame('gamestate', native(names)));
@@ -130,7 +133,7 @@ for (const [label, sentFrame, caption] of [
   ['legacy no-argument form', frame('leavegame'), '离开'],
 ]) {
   test('own empty-room leave accepts ' + label + ' only after native acknowledgement', async () => {
-    const fixture = publicFixture({ sentFrame, caption });
+    const fixture = await publicFixture({ sentFrame, caption });
     try {
       const result = await leaveUnjoinedOwnRoomUi(fixture.page, fixture.observer, fixture.config);
       assert.equal(fixture.calls.clicks, 1);
@@ -147,7 +150,7 @@ for (const [label, options] of [
   ['missing native acknowledgement', { acknowledge: false }],
 ]) {
   test('own empty-room leave keeps unknown outcome for ' + label, async () => {
-    const fixture = publicFixture(options);
+    const fixture = await publicFixture(options);
     try {
       await assert.rejects(
         leaveUnjoinedOwnRoomUi(fixture.page, fixture.observer, fixture.config),
@@ -164,7 +167,7 @@ test('own empty-room leave keeps the opponent and origin guards before any click
     [{ names: [own, other] }, 'ONLY_UNJOINED_OWN_PENDING_ROOM_MAY_CLOSE'],
     [{ pageOrigin: 'https://other.invalid' }, 'UI_ORIGIN_CHANGED'],
   ]) {
-    const fixture = publicFixture(options);
+    const fixture = await publicFixture(options);
     try {
       await assert.rejects(leaveUnjoinedOwnRoomUi(fixture.page, fixture.observer, fixture.config), { code });
       assert.equal(fixture.calls.clicks, 0);

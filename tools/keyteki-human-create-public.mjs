@@ -132,6 +132,7 @@ export async function runCreatePublic(input, { onEvidence } = {}) {
     });
     await instance.page.addInitScript({ content: pendingGameSocketBootstrap(config.origin) });
     observer = new PublicRoomObserver(instance.page, config);
+    await observer.ready;
     state.phase = 'login-own-account';
     save();
     setup = ui.createFuzhouUiSetup({

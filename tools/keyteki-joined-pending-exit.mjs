@@ -219,6 +219,12 @@ export function createJoinedPendingRoomTracker(config, { now = Date.now, created
       checkContinuity();
       expectedBrowserClose = true;
     },
+    documentObservationLost({ closed = false } = {}) {
+      // Only an actual monitor close at the existing owned-browser boundary is expected.
+      if (expectedBrowserClose && closed) return false;
+      block('JOINED_PENDING_DOCUMENT_OBSERVATION_LOST');
+      return true;
+    },
     documentChanged(nextEpoch) {
       if (nextEpoch === epoch) return;
       if (state.joined) block('JOINED_PENDING_DOCUMENT_CHANGED');
