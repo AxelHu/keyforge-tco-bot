@@ -1,4 +1,4 @@
-import { summaryFeature } from '../knowledge/text-features.js';
+import { cardSemanticFeatures } from '../knowledge/semantic-features.js';
 /** Observation-only candidate agents. No simulator state, shuffle seed, deck rating or model calls. */
 import {
   assessAlgorithm,
@@ -48,11 +48,11 @@ export function rankCompetitive(
           ).length * 0.45;
       if (profile === 'control')
         delta =
-          (me.hand ?? []).filter(
-            (c) =>
-              (c.effective.houses ?? [c.effective.house]).includes(a.house!) &&
-              summaryFeature(c.spec, 9),
-          ).length * 0.4;
+          (me.hand ?? []).filter((c) => {
+            if (!(c.effective.houses ?? [c.effective.house]).includes(a.house!)) return false;
+            const semantic = cardSemanticFeatures(c.spec);
+            return semantic.amberControl || semantic.boardControl;
+          }).length * 0.4;
     }
     if (a.kind === 'play') {
       const c = cards.get(a.copy ?? a.card);

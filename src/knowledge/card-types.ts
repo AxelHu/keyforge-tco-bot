@@ -349,7 +349,7 @@ export interface RuleInterpretationNote {
 export interface CardDefinition extends CardFacts {
   /** Explicitly incomplete user-supplied knowledge; never inferred from an omitted projection. */
   unmodeled?: true;
-  /** Optional compatibility override; built-in definitions use their original summary text. */
+  /** Legacy import compatibility field; ignored by structured strategy features. */
   summaryFeatures?: number;
   removesCreatureArmor?: boolean;
   preventsReadyCapturedFriendlyDamage?: boolean;

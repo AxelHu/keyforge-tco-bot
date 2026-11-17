@@ -7,7 +7,7 @@ import { guidedDeckRunway } from '../../dist/src/ai/tullibint-guided-policy.js';
 import { TULLIBINT_CARDS } from '../../dist/src/ai/tullibint-policy.js';
 import { assessPublicHouseDefense } from '../../dist/src/ai/public-house-defense.js';
 import { buildJevInput } from '../../dist/src/ai/jev-input.js';
-import { summaryFeature } from '../../dist/src/knowledge/text-features.js';
+import { cardSemanticFeatures } from '../../dist/src/knowledge/semantic-features.js';
 import { canonical } from '../../dist/src/shared/canonical.js';
 import { projectKeytekiState, compileKeytekiCommand } from '../../dist/src/adapters/keyteki.js';
 import { createCodePolicy, CODE_POLICY_IDS } from '../../dist/src/ai/code-strategies.js';
@@ -73,15 +73,13 @@ test('knowledge extensions reject runtime continuation state, extra root fields,
   assert.throws(() => registerCardKnowledge([base]), /Duplicate card knowledge/);
 });
 
-test('legacy summary predicates read original text and retain an explicit custom-mask override', () => {
-  assert.equal(ALL_DEFINITIONS.troll.summaryFeatures, undefined);
-  assert.equal(summaryFeature(ALL_DEFINITIONS.troll, 3), true);
-  assert.equal(summaryFeature(ALL_DEFINITIONS.troll, 4), false);
-  const c = { ...ALL_DEFINITIONS.troll, summary: 'Deliberately irrelevant authored description', summaryFeatures: (1 << 3) | (1 << 4) };
-  assert.equal(summaryFeature(c, 3), true);
-  assert.equal(summaryFeature(c, 4), true);
-  assert.equal(summaryFeature(c, 6), false);
-  assert.equal(summaryFeature(undefined, 3), false);
+test('structured card features ignore original summary and retired custom masks', () => {
+  const expected = cardSemanticFeatures(ALL_DEFINITIONS.troll);
+  assert.equal(expected.heal, true);
+  assert.equal(expected.fullHeal, false);
+  const edited = { ...ALL_DEFINITIONS.troll, summary: 'forge steal capture draw heal fully', summaryFeatures: 4095 };
+  assert.deepEqual(cardSemanticFeatures(edited), expected);
+  assert.equal(cardSemanticFeatures(undefined).unknown, true);
 });
 
 test('canonical serialization preserves explicit undefined and stable key order', () => {

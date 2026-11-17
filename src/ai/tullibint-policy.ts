@@ -67,6 +67,15 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
       ...o.underCards.flatMap((r) => r.cards ?? []),
     ].map((c) => [c.id, c]),
   );
+  const cauldronChoice =
+    o.pending?.intent?.kind === 'play-from-under' &&
+    view.get(o.pending.source)?.definition === 'cauldron';
+  const currentUnderCards = new Set(
+    cauldronChoice
+      ? (o.underCards.find((row) => row.source === o.pending!.source)?.cards?.map((c) => c.id) ??
+        [])
+      : [],
+  );
   const own = (c: CardView) => c.controller === o.you;
   const active = (c: CardView, h: House | null = o.activeHouse) =>
     !!h && (c.effective.houses ?? [c.effective.house]).includes(h);
@@ -75,9 +84,13 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
     (c) => c.definition === 'dimo-elderghast' && !!c.spec.grantsAbilities?.length,
   );
   const witches = me.battleline.filter(
-    (c) => c.definition === 'haunting-witch' && c.spec.reactions?.some((r) => r.event === 'creaturePlayed'),
+    (c) =>
+      c.definition === 'haunting-witch' &&
+      c.spec.reactions?.some((r) => r.event === 'creaturePlayed'),
   );
-  const intercepted = [...foe.battleline, ...foe.artifacts].some((c) => c.spec.capturesIncomingAmber);
+  const intercepted = [...foe.battleline, ...foe.artifacts].some(
+    (c) => c.spec.capturesIncomingAmber,
+  );
   const dimoMultiplier = haunted && !intercepted ? dimos.length : 0;
   const payoff = (c: CardView) => dimoMultiplier * c.captured;
   const ecto = hand.find((c) => c.definition === 'ecto-charge');
@@ -132,14 +145,17 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
   };
   const fragile = (c: CardView) => Math.max(1, c.effective.power - c.damage);
   const protectedCard = (c: CardView) =>
-    ['dimo-elderghast', 'haunting-witch', 'chief-engineer-walls', 'loyal-packmate'].includes(c.definition);
+    ['dimo-elderghast', 'haunting-witch', 'chief-engineer-walls', 'loyal-packmate'].includes(
+      c.definition,
+    );
   const rawDamage = (c: CardView, n: number) =>
     !c.warded && !c.spec.invulnerable && !c.spec.cannotBeDamagedCondition
       ? Math.max(0, n - Math.max(0, c.effective.armor - c.armorUsed))
       : 0;
   function combat(a: CardView, t: CardView) {
     const noCombat = a.spec.noCombatDamage || t.spec.noCombatDamage;
-    const elusive = t.effective.keywords.includes('elusive') && !t.elusiveUsed && !a.spec.ignoreTauntElusive;
+    const elusive =
+      t.effective.keywords.includes('elusive') && !t.elusiveUsed && !a.spec.ignoreTauntElusive;
     const hit = !noCombat && !elusive ? rawDamage(t, a.effective.power) : 0;
     const back =
       !noCombat && !elusive && !a.effective.keywords.includes('skirmish') && !t.spec.noDefenseDamage
@@ -179,7 +195,9 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
     return score;
   }
   const playValue = (c: CardView) =>
-    coreValue(c) + (active(c) ? 4 : 0) + (c.spec.kind === 'creature' && haunted ? witches.length * 3 : 0);
+    coreValue(c) +
+    (active(c) ? 4 : 0) +
+    (c.spec.kind === 'creature' && haunted ? witches.length * 3 : 0);
   const rows = rankLadder(o, 'tactical', 'balanced');
   return rows
     .map((row) => {
@@ -208,8 +226,13 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
         if (h === 'geistoid') {
           if (ownHand.some((x) => x.definition === 'hallowed-eve-festival') && !haunted) gain += 14;
           if (ectoSoon) gain += 10000;
-          gain += ownHand.filter((x) => x.definition === 'dimo-elderghast').length * (haunted ? 6 : 3);
-          if (haunted && dimos.length && me.battleline.some((x) => x.captured && x.ready && active(x, h)))
+          gain +=
+            ownHand.filter((x) => x.definition === 'dimo-elderghast').length * (haunted ? 6 : 3);
+          if (
+            haunted &&
+            dimos.length &&
+            me.battleline.some((x) => x.captured && x.ready && active(x, h))
+          )
             gain += 6;
           if (
             me.discard.filter((x) => active(x, 'geistoid')).length >= 3 &&
@@ -259,11 +282,15 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
           if (c.definition === 'haunting-witch')
             add(
               haunted
-                ? 11 + 3 * hand.filter((x) => x.id !== c.id && x.spec.kind === 'creature' && active(x)).length
+                ? 11 +
+                    3 *
+                      hand.filter((x) => x.id !== c.id && x.spec.kind === 'creature' && active(x))
+                        .length
                 : 4,
               'Witches before subsequent creatures',
             );
-          if (c.definition === 'dimo-elderghast') add(haunted ? 9 : 5, 'two independent Dimo source boxes');
+          if (c.definition === 'dimo-elderghast')
+            add(haunted ? 9 : 5, 'two independent Dimo source boxes');
           if (c.definition === 'loyal-packmate' && (dimos.length || witches.length))
             add(5, 'protect critical non-Taunt engines');
         }
@@ -271,7 +298,8 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
         if (c.definition === 'cauldron')
           add(o.turn < 10 ? 12 : 7, 'cross-house plays, not just artifact board value');
         if (c.definition === 'haunted-house') add(haunted ? 12 : 8, 'repeatable any-house income');
-        if (c.definition === 'hallowed-eve-festival') add(!haunted ? 15 : 3, 'fuel haunted before payoff');
+        if (c.definition === 'hallowed-eve-festival')
+          add(!haunted ? 15 : 3, 'fuel haunted before payoff');
         if (c.definition === 'ecto-charge' && !row.projectedKey)
           add(-25, 'retain unaffordable key cheat, do not spend it as one amber');
         if (c.definition === 'well-of-memory') {
@@ -293,7 +321,8 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
           );
         if (c.definition === 'be-our-geist')
           add(
-            haunted && me.discard.some((x) => ['dimo-elderghast', 'haunting-witch'].includes(x.definition))
+            haunted &&
+              me.discard.some((x) => ['dimo-elderghast', 'haunting-witch'].includes(x.definition))
               ? 10
               : 0,
             'actual replay activates Witch income',
@@ -314,7 +343,10 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
             0,
             ...fights.map((f) => combat(view.get(f.card)!, view.get(f.target)!).damaged),
           );
-          add(best >= 2 ? 10 + best * 2 : -3, 'Rotfeast before splash/damage, not after creatures exhaust');
+          add(
+            best >= 2 ? 10 + best * 2 : -3,
+            'Rotfeast before splash/damage, not after creatures exhaust',
+          );
         }
         if (c.definition === 'lost-in-the-wild') {
           const lost = haunted
@@ -327,7 +359,10 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
         }
         if (c.definition === 'into-the-warp')
           add(
-            me.battleline.reduce((n, x) => n + (payoff(x) * 2 - x.captured - coreValue(x) * 0.3) * 0.5, 0),
+            me.battleline.reduce(
+              (n, x) => n + (payoff(x) * 2 - x.captured - coreValue(x) * 0.3) * 0.5,
+              0,
+            ),
             'account for friendly wipe and Dimo payoff',
           );
         if (c.spec.kind === 'upgrade' && target) {
@@ -343,13 +378,17 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
               );
             else
               add(
-                target.captured >= fragile(target) ? target.captured * 2 + 3 : target.captured * 0.7,
+                target.captured >= fragile(target)
+                  ? target.captured * 2 + 3
+                  : target.captured * 0.7,
                 'enemy captured amber released only on actual removal',
               );
           } else if (!own(target)) add(-25, 'keep value upgrades on own creatures');
           else if (c.definition === 'proton-siphon')
             add(
-              (target.effective.splashAttack ?? 0) > 0 ? -4 : Math.min(target.effective.power, 6) * 0.5 + 2,
+              (target.effective.splashAttack ?? 0) > 0
+                ? -4
+                : Math.min(target.effective.power, 6) * 0.5 + 2,
               'spread splash instead of redundant stacking',
             );
           else if (c.definition === 'prototype-harness')
@@ -367,7 +406,8 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
         }
         if (c.spec.kind === 'creature' && a.flank) {
           const adjacent = a.flank === 'left' ? me.battleline[0] : me.battleline.at(-1);
-          if (adjacent && protectedCard(adjacent)) add(0.5, 'bury engine creature away from exposed flanks');
+          if (adjacent && protectedCard(adjacent))
+            add(0.5, 'bury engine creature away from exposed flanks');
         }
         if (
           c.definition !== 'haunting-witch' &&
@@ -382,7 +422,10 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
           add(haunted ? 10 : -5, 'activate haunted Omni for actual income');
         if (c.definition === 'cauldron') {
           const held = o.underCards.find((x) => x.source === c.id);
-          add(held && held.count >= 2 ? 13 : 7, 'advance known Cauldron counter without assuming hidden top');
+          add(
+            held && held.count >= 2 ? 13 : 7,
+            'advance known Cauldron counter without assuming hidden top',
+          );
           if (haunted && hand.some((x) => x.definition === 'haunting-witch' && active(x)))
             add(-18, 'deploy Witch before Cauldron creature plays');
           if (
@@ -428,19 +471,32 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
           add(7, 'Walls retrieves Dimo robot');
         if (c.definition === 'tangler' && foe.battleline.some((x) => x.ready))
           add(2, 'stun engine and neighbors');
-        if (rotfeasts && o.legalActions.some((x) => x.action.kind === 'fight' && x.action.card === c.id))
+        if (
+          rotfeasts &&
+          o.legalActions.some((x) => x.action.kind === 'fight' && x.action.card === c.id)
+        )
           add(-4, 'do not reap away a valuable Rotfeast fight');
       }
       if (a.kind === 'fight' && c && target) {
         const f = combat(c, target);
         if (f.dead) {
-          add(payoff(c) * 4 - c.captured * 2, 'friendly Destroyed payoff minus opponent returned amber');
+          add(
+            payoff(c) * 4 - c.captured * 2,
+            'friendly Destroyed payoff minus opponent returned amber',
+          );
           if (protectedCard(c))
             add(-coreValue(c) * 0.7, 'preserve remaining engine unless cash-out is worth it');
         }
         if (rotfeasts)
-          add(rotfeasts * f.damaged * 3.5, 'Rotfeast counts actually damaged creatures, not damage points');
-        if (!rotfeasts && hand.some((x) => x.definition === 'rotfeast' && active(x)) && f.damaged >= 2)
+          add(
+            rotfeasts * f.damaged * 3.5,
+            'Rotfeast counts actually damaged creatures, not damage points',
+          );
+        if (
+          !rotfeasts &&
+          hand.some((x) => x.definition === 'rotfeast' && active(x)) &&
+          f.damaged >= 2
+        )
           add(-13, 'cast Rotfeast before fighting');
       }
       if (a.kind === 'discard' && c) {
@@ -450,14 +506,16 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
           add(3, 'reach haunted with expendable card');
       }
       if (a.kind === 'select' && target) {
-        const op = o.pending?.intent?.kind === 'target-operation' ? o.pending.intent.operation : null;
+        const op =
+          o.pending?.intent?.kind === 'target-operation' ? o.pending.intent.operation : null;
         if (op === 'capture') score = captureScore(target);
         else if (op === 'takeAmber' && own(target))
           score = target.captured > 0 ? 5 + (protectedCard(target) ? 1 : 0) : -10;
         else if (op === 'returnHand' || op === 'deckTop') {
           if (me.discard.some((x) => x.id === target.id)) {
             score = playValue(target);
-            if (haunted && me.discard.length === 10 && target.definition !== 'haunting-witch') score -= 4;
+            if (haunted && me.discard.length === 10 && target.definition !== 'haunting-witch')
+              score -= 4;
           }
         } else if (op === 'discard' && own(target)) {
           score = -coreValue(target) - (active(target) ? 3 : 0);
@@ -479,19 +537,28 @@ export function rankTullibint(o: Observation, mode: TullibintMode = 'engine'): A
         } else if (src?.definition === 'be-our-geist' && target.spec.kind === 'creature')
           score =
             playValue(target) +
-            (target.definition === 'haunting-witch' ? 8 : target.definition === 'dimo-elderghast' ? 6 : 0);
-        else if (src?.definition === 'chief-engineer-walls' && me.discard.some((x) => x.id === target.id))
+            (target.definition === 'haunting-witch'
+              ? 8
+              : target.definition === 'dimo-elderghast'
+                ? 6
+                : 0);
+        else if (
+          src?.definition === 'chief-engineer-walls' &&
+          me.discard.some((x) => x.id === target.id)
+        )
           score = playValue(target);
-        else if (o.pending?.label?.startsWith('Cauldron:'))
+        else if (cauldronChoice && currentUnderCards.has(target.id))
           score = playValue(target) + (target.definition === 'haunting-witch' ? 10 : 0);
         // Prevent a selected optional card from being toggled repeatedly by equal-value ranking.
         if (o.pending?.selected?.includes(target.id) && o.pending.kind !== 'damage') score = -100;
       }
       if (a.kind === 'done' && src?.definition === 'well-of-memory') score = 0;
-      if (a.kind === 'choose' && o.pending?.label?.startsWith('Cauldron:')) {
-        const option = o.pending.options?.find((x) => x.id === a.option);
-        const selected = option?.source ? view.get(option.source) : undefined;
-        if (selected) score = playValue(selected) + (selected.definition === 'haunting-witch' ? 10 : 0);
+      if (a.kind === 'choose' && cauldronChoice) {
+        const option = o.pending?.options?.find((x) => x.id === a.option);
+        const id = option?.source ?? a.option;
+        const selected = currentUnderCards.has(id) ? view.get(id) : undefined;
+        if (selected)
+          score = playValue(selected) + (selected.definition === 'haunting-witch' ? 10 : 0);
       }
       if (mode === 'conservative' && score < 5000 && row.score < 5000)
         score = row.score + (score - row.score) * 0.65;

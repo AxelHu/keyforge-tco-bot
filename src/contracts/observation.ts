@@ -1,5 +1,5 @@
 /** 独立玩家观测；完整静态知识类型与游戏执行状态分离。 */
-import type { BonusIcon, CardDefinition, CardKind, CardMarker, Condition, Filter, House, KeyColor, Keyword, LegacyHouse, Side, Value } from '../knowledge/card-types.js';
+import type { BonusIcon, CardDefinition, CardKind, CardMarker, Condition, Filter, House, KeyColor, Keyword, LegacyHouse, Side, Trigger, Value } from '../knowledge/card-types.js';
 export type { Aura, BonusIcon, CardDefinition, CardFacts, CardKind, CardMarker, Condition, Filter, House, KeyColor, Keyword, LegacyHouse, Reaction, RuleInterpretationNote, Side, Trigger, Value, Zone } from '../knowledge/card-types.js';
 import type { UninterpretedStaticEffect } from '../knowledge/static-rule-kinds.js';
 
@@ -502,8 +502,15 @@ export type DecisionIntent =
       rule: 'mustHouse' | 'cannotHouse';
       duration: 'nextTurn' | 'source';
       options: { id: string; house: House }[];
+      selection?: { ability: Trigger; path: (string | number)[] };
     }
-  | { kind: 'target-operation'; operation: Operation }
+  | { kind: 'house-choice'; options: { id: string; house: House }[]; selection?: { ability: Trigger; path: (string | number)[] } }
+  /** A uniquely matched current choice in the visible source's public ability tree. */
+  | { kind: 'effect-choice'; ability: Trigger; path: (string | number)[] }
+  | { kind: 'effect-selection'; ability: Trigger; path: (string | number)[] }
+  | { kind: 'prophecy-face-choice'; slot: string; options: { id: string; operation: 'flip' | 'keep' }[] }
+  | { kind: 'play-from-under' }
+  | { kind: 'target-operation'; operation: Operation; selection?: { ability: Trigger; path: (string | number)[] } }
   /** Exact native Infurnace menus, preserving their actual option IDs and one public pile. */
   | { kind: 'infurnace-pile'; options: { id: string; owner: Seat }[] }
   | { kind: 'infurnace-targets'; owner: Seat }

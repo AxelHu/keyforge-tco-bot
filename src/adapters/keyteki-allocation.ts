@@ -5,6 +5,12 @@ import { getVerifiedVeilConfiguration } from './keyteki-public-capture-facts.js'
  */
 import { createHash } from 'node:crypto';
 import { canonical } from '../shared/canonical.js';
+import {
+  KEYTEKI_CAPTURE_BATCH_TITLES as CAPTURE_BATCH_TITLES,
+  keytekiCaptureCandidateTitle,
+  keytekiUseMessageMatches,
+  keytekiCaptureEffectPayloadMatches,
+} from './keyteki-native-semantics.js';
 import type { StrategyController, StrategyDecision, StrategyFrame } from '../ai/strategy-controller.js';
 import { compileKeytekiCommand, type KeytekiCommand, type KeytekiProjection } from './keyteki.js';
 import {
@@ -27,42 +33,6 @@ const normalizedHouse = (v: unknown): string =>
 
 const VEIL_PIN = '361c085bcd401c20976ee9bcc4e4e5b8c061d56c';
 const ORDINARY_ENHANCEMENTS = new Set(['amber', 'capture', 'damage', 'draw', 'discard', 'power']);
-const ORDINARY_BONUS_SELECT_TITLES = new Set([
-  'Choose a creature to capture amber due to bonus icon',
-  'Choose a creature to damage due to bonus icon',
-  'Choose a card to discard due to bonus icon',
-  'Choose a creature to add a +1 power counter to due to bonus icon',
-]);
-// Native use-effect joiners are localized as an exact pair; the nested
-// effect payload, actor, source and fresh-message guards remain separate.
-const USE_EFFECT_MESSAGE_CONNECTORS = [
-  [' uses ', ' to '],
-  [' 使用 ', ' 来 '],
-] as const;
-const FESTIVAL_MESSAGE_TEMPLATES = [
-  [' uses ', ' to capture ', ' amber onto friendly creatures'],
-  [' 使用 ', ' 抢占 ', ' 琥珀放置到友方生物上'],
-] as const;
-/** Static AllocateCaptureAction callers in the pinned upstream. Recognizing a
- * batch is separate from proving its quota: unsupported callers must not fall
- * through to a single click whose accepted prefix has no visible settlement.
- * These are UI protocol labels, never live card effect text.
- */
-const CAPTURE_BATCH_TITLES: Readonly<Record<string, string>> = {
-  'veil-of-ectoplasm': 'Choose a creature to capture 1 amber',
-  'hallowed-eve-festival': 'Choose a creature to capture 1 amber',
-  'bring-low': 'Choose a creature to capture 1 amber',
-  fathomshare: 'Choose a friendly creature to capture 1 amber on',
-  xenotraining: 'Choose a creature to capture 1 amber',
-  'shard-of-hope': 'Choose a creature to capture 1 amber',
-  'sirs-colossus': 'Choose a creature to capture 1 amber',
-  'hypnotic-command': 'Choose a creature to capture 1 amber from its controller',
-  fetchdrones: 'Choose a creature to capture 2 amber',
-  'cryptic-collapse': 'Choose a creature to capture 1 amber',
-  'gilded-burden': 'Choose an enemy creature to capture 2 amber on',
-  'productive-trash': 'Choose a creature to capture 1 amber',
-  gargantodon: 'Choose a creature to capture amber',
-};
 /** This is an explicit local-fixture capability, not evidence about a public server.
  * The fixed selected rules have no house-changing effect on cards in the discard.
  * House enhancements are excluded separately, including from public discard views.
@@ -431,17 +401,10 @@ function capturePromptCandidate(
   const controls = arr(me.controls).map(obj),
     source = str(
       obj(controls.find((c) => Object.hasOwn(CAPTURE_BATCH_TITLES, str(obj(c.source).id)))?.source).id,
-    ),
-    title = str(me.menuTitle);
-  // These exact ResolveBonusIconsAction titles belong to ordinary SelectCardPrompts,
-  // even when their short source has the ID of a card with a later batch ability.
-  if (
-    !source ||
-    ORDINARY_BONUS_SELECT_TITLES.has(title) ||
-    (!['bring-low', 'fathomshare', 'shard-of-hope', 'xenotraining'].includes(source) &&
-      !/^Choose\b.*\bcapture\b.*\bamber\b/.test(title))
-  )
-    return null;
+    );
+  // Bonus selectors are distinct from the source's later batch ability. A
+  // candidate only prevents an unsupported batch from falling through to one click.
+  if (!source || !keytekiCaptureCandidateTitle(me.menuTitle, source)) return null;
   return { me, controls, source };
 }
 function recognizedPrompt(raw: unknown, name: string): { key: string; source: string } | null {
@@ -749,9 +712,7 @@ export class KeytekiAllocationTracker {
             obj(m[0]).argType === 'nonAvatarPlayer' &&
             obj(m[2]).argType === 'card' &&
             obj(m[2]).id === 'hallowed-eve-festival' &&
-            FESTIVAL_MESSAGE_TEMPLATES.some(
-              ([use, capture, onto]) => m[1] === use && m[3] === capture && m[5] === onto,
-            ) &&
+            keytekiUseMessageMatches(m, 'festival') &&
             typeof m[4] === 'number' &&
             Number.isSafeInteger(m[4])
           );
@@ -786,30 +747,18 @@ export class KeytekiAllocationTracker {
       const fresh = newMessagesAfterWindow(previousWindow, this.messageWindow);
       if (!fresh) return fail('allocation-public-quota-message-window-incomplete');
       const matches = fresh.filter((entry) => {
-        const m = arr(entry.message),
-          effect = obj(m[4]),
-          parts = arr(effect.message);
+        const m = arr(entry.message);
         return (
           entry.activePlayer === p.playerName &&
           m.length === 5 &&
           obj(m[0]).argType === 'nonAvatarPlayer' &&
           obj(m[0]).name === p.playerName &&
-          USE_EFFECT_MESSAGE_CONNECTORS.some(([use, to]) => m[1] === use && m[3] === to) &&
+          keytekiUseMessageMatches(m, 'effect') &&
           obj(m[2]).argType === 'card' &&
           obj(m[2]).id === current.source &&
           obj(m[2]).type === (current.source === 'shard-of-hope' ? 'artifact' : 'action') &&
           obj(m[2]).facedown !== true &&
-          Object.keys(effect).length === 1 &&
-          obj(parts[3]).argType === 'nonAvatarPlayer' &&
-          obj(parts[3]).name === opponentName &&
-          parts[2] === ' amber from ' &&
-          (current.source === 'bring-low'
-            ? parts.length === 4 && parts[0] === 'have friendly creatures capture '
-            : current.source === 'fathomshare'
-              ? parts.length === 5 &&
-                parts[0] === 'capture ' &&
-                parts[4] === ', distributed among friendly creatures'
-              : parts.length === 4 && parts[0] === 'capture ')
+          keytekiCaptureEffectPayloadMatches(current.source, m[4], opponentName)
         );
       });
       if (matches.length !== 1) return fail('allocation-new-public-amount-message-missing-or-ambiguous');
@@ -883,20 +832,18 @@ export class KeytekiAllocationTracker {
       const fresh = newMessagesAfterWindow(previousWindow, this.messageWindow);
       if (!fresh) return fail('allocation-public-quota-message-window-incomplete');
       const matches = fresh.filter((entry) => {
-        const m = arr(entry.message), effect = obj(m[4]), parts = arr(effect.message);
+        const m = arr(entry.message);
         return (
           entry.activePlayer === p.playerName &&
           m.length === 5 &&
           obj(m[0]).argType === 'nonAvatarPlayer' &&
           obj(m[0]).name === p.playerName &&
-          USE_EFFECT_MESSAGE_CONNECTORS.some(([use, to]) => m[1] === use && m[3] === to) &&
+          keytekiUseMessageMatches(m, 'effect') &&
           obj(m[2]).argType === 'card' &&
           obj(m[2]).id === 'hypnotic-command' &&
           obj(m[2]).type === 'action' &&
           obj(m[2]).facedown !== true &&
-          Object.keys(effect).length === 1 &&
-          parts.length === 1 &&
-          parts[0] === 'force an enemy creature to capture 1 amber for each mars creature they control'
+          keytekiCaptureEffectPayloadMatches('hypnotic-command', m[4])
         );
       });
       if (matches.length !== 1) return fail('allocation-hypnotic-new-public-effect-missing-or-ambiguous');
@@ -1077,10 +1024,7 @@ function veilCaptureAggregation(
       recipient.argType !== 'card' ||
       recipient.type !== 'creature' ||
       recipient.facedown === true ||
-      m[1] !== ' uses ' ||
-      m[3] !== ' to have ' ||
-      m[5] !== ' capture ' ||
-      m[7] !== ' amber' ||
+      !keytekiUseMessageMatches(m, 'settlement') ||
       !targetId ||
       seen.has(targetId) ||
       m[6] !== expected.get(targetId)
@@ -1304,10 +1248,7 @@ function uniqueDewEntanglerSettlement(
       obj(m[4]).type !== 'creature' ||
       !recipient ||
       logged.has(recipient) ||
-      m[1] !== ' uses ' ||
-      m[3] !== ' to have ' ||
-      m[5] !== ' capture ' ||
-      m[7] !== ' amber' ||
+      !keytekiUseMessageMatches(m, 'settlement') ||
       m[6] !== expected.get(recipient)
     )
       return null;
