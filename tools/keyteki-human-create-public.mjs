@@ -37,6 +37,7 @@ export function lockCreatedPublicPair(input, observer) {
     fail('CREATED_PAIR_NOT_READY_TO_LOCK');
   const boundInput = { ...input, room: { ...input.room, gameId: pending.gameId, opponentName } };
   const config = normalizeHumanConfig(boundInput);
+  observer.createdPending?.bindCreatedPair(config);
   // Retain the existing observer/listeners on the one lobby connection. From here, names
   // are immutable for this game; a departure/replacement never silently chooses a new opponent.
   observer.config = config;

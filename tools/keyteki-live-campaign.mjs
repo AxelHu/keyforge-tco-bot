@@ -558,6 +558,12 @@ export async function runLiveCampaign(input, dependencies = {}) {
               reasonCode: handoff.disconnectedOpponentExit.reasonCode ?? null,
               leaveUiAttempts: handoff.disconnectedOpponentExit.leaveUiAttempts,
             } : null,
+            createdPendingExit: handoff.createdPendingExit
+              ? { phase: handoff.createdPendingExit.phase, reason: handoff.createdPendingExit.reason ?? null,
+                  readiness: handoff.createdPendingExit.readiness ?? null,
+                  uiLeaveAttempts: handoff.createdPendingExit.uiLeaveAttempts,
+                  nativeLeaveSends: handoff.createdPendingExit.nativeLeaveSends }
+              : null,
             joinedPendingExit: handoff.joinedPendingExit
               ? {
                   phase: handoff.joinedPendingExit.phase,
@@ -571,6 +577,8 @@ export async function runLiveCampaign(input, dependencies = {}) {
             setPause('opponent-disconnect-retirement-unconfirmed');
           if (handoff.joinedPendingExit?.phase === 'blocked-preserved')
             setPause('joined-pending-retirement-unconfirmed');
+          if (handoff.createdPendingExit?.phase === 'blocked-preserved')
+            setPause('created-pending-retirement-unconfirmed');
           if (handoff.evidenceWriteFailures > 0) setPause('evidence-write-failure');
           if (handoff.operatorPaused) setPause('operator-paused-current-game');
           if (handoff.held && !handoff.finished) holdSince ??= Date.now();
@@ -617,14 +625,15 @@ export async function runLiveCampaign(input, dependencies = {}) {
       });
       atomicCampaignJson(path.join(config.output, attemptId + '-result.json'), record);
       state.records.push(record);
-      if (record.canContinue) state.activeAttempt = null;
-      else setPause(record.continuationBlock ?? 'attempt-not-retired');
+      if (record.canContinue || (record.preparationFailure && record.finalized && record.seatReleased &&
+          record.runtimeRetired && exitCode === 0)) state.activeAttempt = null;
+      if (!record.canContinue) setPause(record.continuationBlock ?? 'attempt-not-retired');
       const nextHealth = campaignHealth(state.records);
       if (nextHealth.pause) for (const reason of nextHealth.reasons) setPause(reason);
       save();
       if (!state.paused && !completeBudget() && !focusedCampaignProgress(state.records, config)?.targetReached)
         await poll(
-          ['no-opponent', 'joined-pending-departure'].includes(record.outcome)
+          ['no-opponent', 'joined-pending-departure', 'created-pending-departure'].includes(record.outcome)
             ? config.emptyRetryMs
             : config.betweenGamesMs,
         );

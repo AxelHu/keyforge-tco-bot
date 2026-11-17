@@ -112,9 +112,11 @@ export class PublicRoomObserver {
     this.nativeRequestNumber = 0;
     this.requestEpochs = new WeakMap();
     this.joinedPending = config.createPublic ? null : createJoinedPendingRoomTracker(config);
+    this.createdPending = config.createPublic ? createJoinedPendingRoomTracker(config, { created: true }) : null;
+    this.pendingTracker = this.joinedPending ?? this.createdPending;
     this.onFrameNavigated = (frame) => {
       if (typeof page.mainFrame !== 'function' || frame !== page.mainFrame()) return;
-      this.joinedPending?.documentChanged(++this.documentEpoch);
+      this.pendingTracker?.documentChanged(++this.documentEpoch);
     };
     this.onRequest = (request) => {
       const url = lobbyUrl(request.url(), config.origin);
@@ -127,17 +129,13 @@ export class PublicRoomObserver {
         method: request.method(),
       };
       this.requestEpochs.set(request, metadata);
-      this.joinedPending?.observeTransport('request-start', metadata);
+      this.pendingTracker?.observeTransport('request-start', metadata);
       if (request.method() === 'POST')
-        this.joinedPending?.ingest(request.postData() ?? '', {
-          ...metadata,
-          sent: true,
-          joinRequested: this.joinRequested,
-        });
+        this.ingest(request.postData() ?? '', true, metadata);
     };
     this.onRequestFailed = (request) => {
       const metadata = this.requestEpochs.get(request);
-      if (metadata) this.joinedPending?.observeTransport('request-failed', metadata);
+      if (metadata) this.pendingTracker?.observeTransport('request-failed', metadata);
     };
     this.onSocket = (socket) => {
       const url = lobbyUrl(socket.url(), config.origin);
@@ -149,11 +147,11 @@ export class PublicRoomObserver {
         transportKind: 'websocket',
         channelId,
       };
-      this.joinedPending?.observeTransport('socket-open', metadata);
+      this.pendingTracker?.observeTransport('socket-open', metadata);
       const received = ({ payload }) => this.ingest(payload, false, metadata);
       const sent = ({ payload }) => this.ingest(payload, true, metadata);
-      const closed = () => this.joinedPending?.observeTransport('socket-close', metadata);
-      const errored = () => this.joinedPending?.observeTransport('socket-error', metadata);
+      const closed = () => this.pendingTracker?.observeTransport('socket-close', metadata);
+      const errored = () => this.pendingTracker?.observeTransport('socket-error', metadata);
       socket.on('framereceived', received);
       socket.on('framesent', sent);
       socket.on('close', closed);
@@ -174,11 +172,11 @@ export class PublicRoomObserver {
       try {
         const status = response.status?.();
         if (Number.isInteger(status) && (status < 200 || status >= 400))
-          this.joinedPending?.observeTransport('request-failed', metadata);
+          this.pendingTracker?.observeTransport('request-failed', metadata);
         if (request.method() === 'GET') this.ingest(await response.text(), false, metadata);
-        this.joinedPending?.observeTransport('request-complete', metadata);
+        this.pendingTracker?.observeTransport('request-complete', metadata);
       } catch {
-        this.joinedPending?.observeTransport('request-failed', metadata);
+        this.pendingTracker?.observeTransport('request-failed', metadata);
         /* The legacy preparation observer still waits for later native readiness. */
       }
     };
@@ -189,7 +187,8 @@ export class PublicRoomObserver {
     page.on('response', this.onResponse);
   }
   ingest(payload, sent = false, metadata = {}) {
-    this.joinedPending?.ingest(payload, { ...metadata, sent, joinRequested: this.joinRequested });
+    this.pendingTracker?.ingest(payload, { ...metadata, sent, joinRequested: this.joinRequested,
+      creationRequested: this.creationRequested });
     const text =
       typeof payload === 'string' ? payload : Buffer.isBuffer(payload) ? payload.toString('utf8') : '';
     if (!text || text.length > 4 * 1024 * 1024) return;
