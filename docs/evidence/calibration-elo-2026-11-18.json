@@ -1,0 +1,1340 @@
+{
+  "schema": "kf-calibration-elo-public-evidence-v1",
+  "version": "0.6.5",
+  "date": "2026-11-18",
+  "source": {
+    "candidate": "aa718bb10a7d7002fd4591cddda6ac5865d30d93",
+    "baseline": "751bfb5616f9612c75fd782b5571a07d92b56619",
+    "referee": "8b92cc1cd25d2b617abce5cb9616fbc29ff4e501",
+    "parentRuntimeSha256": "c5007f705cf8697e3f1afe06e7794722e0bdc60bdb15627716757fbb0a418fd2",
+    "validationReceiptSha256": "3b565ca38c0379a4348b103a29ee321ff1dd3d9f025d9fc0bdd4a08f0fa29546",
+    "buildLogSha256": "ba3bc679a688a734bf37a92c4ca91d01fe5b91a0c46864fa07b03e73304ce70b",
+    "testLogSha256": "838abbac8f36a908b2408cbadc127352a63887c30008cf603982a9443b3fd0ff",
+    "buildInputs": 194,
+    "compiledModules": 80,
+    "buildExitCode": 0,
+    "testExitCode": 0,
+    "testCounts": {
+      "tests": 636,
+      "pass": 636,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "prospectiveFixtureRuns": [
+      {
+        "stage": "working-targeted-01",
+        "actualExitCode": 1,
+        "counts": {
+          "tests": 71,
+          "pass": 68,
+          "fail": 3,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "receiptSha256": "5f01f63acab4a1d290dc06a9a78cded2574a117f3de6085115b72bc6f5ee7247",
+        "logSha256": "7cb94347be9d3f63c45da7bc9cfea773346224f606edb0c39e11c09dff52fc9d"
+      },
+      {
+        "stage": "working-targeted-02",
+        "actualExitCode": 0,
+        "counts": {
+          "tests": 73,
+          "pass": 73,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "receiptSha256": "b192872d012a867465220d3e5678a5b184c701e6b5a8587e8456b3b9cecde78f",
+        "logSha256": "279ef711732d0437776d8bf495a788a46be5a3eea4e0b40ba24fa1d369bf137a"
+      }
+    ],
+    "earlierFullSuiteAttempts": []
+  },
+  "confirmation": {
+    "postHocSeatSwaps": {
+      "families": {
+        "tactical-style-engine-v3": {
+          "pairs": 48,
+          "differentCommandSequences": 3,
+          "differentCommandsSameWinningSeat": 1,
+          "changedWinningSeat": 2,
+          "candidateSweeps": 1,
+          "baselineSweeps": 1,
+          "unitsWithOpposingSweeps": 1,
+          "identicalCommandSequences": 45
+        },
+        "tactical-card-effects-v3": {
+          "pairs": 48,
+          "differentCommandSequences": 1,
+          "differentCommandsSameWinningSeat": 1,
+          "changedWinningSeat": 0,
+          "candidateSweeps": 0,
+          "baselineSweeps": 0,
+          "unitsWithOpposingSweeps": 0,
+          "identicalCommandSequences": 47
+        }
+      },
+      "totals": {
+        "pairs": 96,
+        "differentCommandSequences": 4,
+        "differentCommandsSameWinningSeat": 2,
+        "changedWinningSeat": 2,
+        "candidateSweeps": 1,
+        "baselineSweeps": 1,
+        "unitsWithOpposingSweeps": 1,
+        "identicalCommandSequences": 92
+      },
+      "receiptSha256": "7b4e580ed1153786ef7e7478aa0ff398a819618f4b506ed7ab20dc93ce41aa6c",
+      "newGames": 0
+    },
+    "families": {
+      "tactical-style-engine-v3": {
+        "planned": 96,
+        "observed": 96,
+        "clean": {
+          "units": 24,
+          "games": 96,
+          "candidateWins": 48,
+          "baselineWins": 48,
+          "candidateWinRate": 0.5,
+          "interval": [
+            0.5,
+            0.5
+          ],
+          "bootstrapComputed": true,
+          "degenerate": true,
+          "unitsByCandidateWins": {
+            "0": 0,
+            "1": 0,
+            "2": 24,
+            "3": 0,
+            "4": 0
+          }
+        },
+        "allNatural": {
+          "games": 96,
+          "candidateWins": 48,
+          "baselineWins": 48,
+          "candidateWinRate": 0.5,
+          "anomalousNaturalGames": 0,
+          "naturalGamesExcludedFromCleanAnalysis": 0
+        },
+        "exceptions": {
+          "nonVictoryGames": 0,
+          "anomalousGames": 0,
+          "technicalOrAnomalousUniqueGames": 0,
+          "anomalyReasonCounts": {}
+        },
+        "allObservedMetrics": {
+          "candidate": {
+            "acceptedDecisions": 10272,
+            "completedOwnTurns": 811,
+            "selected": {
+              "discardFromHand": 33,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 29,
+              "directDiscardOwnHandSelect": 113,
+              "directDiscardSelectActiveHouse": 29,
+              "directDiscardSelectMixedHouseMenu": 80,
+              "unclassifiedEffectSelectionOwnHandSelect": 18
+            },
+            "calls": 10272,
+            "meanMs": 22.279223627725578,
+            "p95Bucket": {
+              "lowerBoundMs": 64,
+              "upperInclusiveMs": 128
+            }
+          },
+          "baseline": {
+            "acceptedDecisions": 10252,
+            "completedOwnTurns": 811,
+            "selected": {
+              "discardFromHand": 32,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 28,
+              "directDiscardOwnHandSelect": 113,
+              "directDiscardSelectActiveHouse": 29,
+              "directDiscardSelectMixedHouseMenu": 80,
+              "unclassifiedEffectSelectionOwnHandSelect": 18
+            },
+            "calls": 10252,
+            "meanMs": 21.387663249902204,
+            "p95Bucket": {
+              "lowerBoundMs": 64,
+              "upperInclusiveMs": 128
+            }
+          }
+        }
+      },
+      "tactical-card-effects-v3": {
+        "planned": 96,
+        "observed": 96,
+        "clean": {
+          "units": 24,
+          "games": 96,
+          "candidateWins": 48,
+          "baselineWins": 48,
+          "candidateWinRate": 0.5,
+          "interval": [
+            0.5,
+            0.5
+          ],
+          "bootstrapComputed": true,
+          "degenerate": true,
+          "unitsByCandidateWins": {
+            "0": 0,
+            "1": 0,
+            "2": 24,
+            "3": 0,
+            "4": 0
+          }
+        },
+        "allNatural": {
+          "games": 96,
+          "candidateWins": 48,
+          "baselineWins": 48,
+          "candidateWinRate": 0.5,
+          "anomalousNaturalGames": 0,
+          "naturalGamesExcludedFromCleanAnalysis": 0
+        },
+        "exceptions": {
+          "nonVictoryGames": 0,
+          "anomalousGames": 0,
+          "technicalOrAnomalousUniqueGames": 0,
+          "anomalyReasonCounts": {}
+        },
+        "allObservedMetrics": {
+          "candidate": {
+            "acceptedDecisions": 10139,
+            "completedOwnTurns": 813,
+            "selected": {
+              "discardFromHand": 19,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 14,
+              "directDiscardOwnHandSelect": 127,
+              "directDiscardSelectActiveHouse": 30,
+              "directDiscardSelectMixedHouseMenu": 91,
+              "unclassifiedEffectSelectionOwnHandSelect": 29
+            },
+            "calls": 10139,
+            "meanMs": 16.529436097740724,
+            "p95Bucket": {
+              "lowerBoundMs": 32,
+              "upperInclusiveMs": 64
+            }
+          },
+          "baseline": {
+            "acceptedDecisions": 10128,
+            "completedOwnTurns": 813,
+            "selected": {
+              "discardFromHand": 19,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 14,
+              "directDiscardOwnHandSelect": 126,
+              "directDiscardSelectActiveHouse": 30,
+              "directDiscardSelectMixedHouseMenu": 92,
+              "unclassifiedEffectSelectionOwnHandSelect": 29
+            },
+            "calls": 10128,
+            "meanMs": 15.882127737065193,
+            "p95Bucket": {
+              "lowerBoundMs": 32,
+              "upperInclusiveMs": 64
+            }
+          }
+        }
+      }
+    },
+    "aggregate": {
+      "planned": 192,
+      "observed": 192,
+      "clean": {
+        "units": 48,
+        "games": 192,
+        "candidateWins": 96,
+        "baselineWins": 96,
+        "candidateWinRate": 0.5,
+        "interval": null,
+        "bootstrapComputed": false,
+        "degenerate": null,
+        "unitsByCandidateWins": {
+          "0": 0,
+          "1": 0,
+          "2": 48,
+          "3": 0,
+          "4": 0
+        }
+      },
+      "allNatural": {
+        "games": 192,
+        "candidateWins": 96,
+        "baselineWins": 96,
+        "candidateWinRate": 0.5,
+        "anomalousNaturalGames": 0,
+        "naturalGamesExcludedFromCleanAnalysis": 0
+      },
+      "exceptions": {
+        "nonVictoryGames": 0,
+        "anomalousGames": 0,
+        "technicalOrAnomalousUniqueGames": 0,
+        "anomalyReasonCounts": {}
+      },
+      "allObservedMetrics": {
+        "candidate": {
+          "acceptedDecisions": 20411,
+          "completedOwnTurns": 1624,
+          "selected": {
+            "discardFromHand": 52,
+            "discardWhenSameCardPlayableWithoutPublicScrapText": 43,
+            "directDiscardOwnHandSelect": 240,
+            "directDiscardSelectActiveHouse": 59,
+            "directDiscardSelectMixedHouseMenu": 171,
+            "unclassifiedEffectSelectionOwnHandSelect": 47
+          },
+          "calls": 20411,
+          "meanMs": 19.423062941501655,
+          "p95Bucket": {
+            "lowerBoundMs": 32,
+            "upperInclusiveMs": 64
+          }
+        },
+        "baseline": {
+          "acceptedDecisions": 20380,
+          "completedOwnTurns": 1624,
+          "selected": {
+            "discardFromHand": 51,
+            "discardWhenSameCardPlayableWithoutPublicScrapText": 42,
+            "directDiscardOwnHandSelect": 239,
+            "directDiscardSelectActiveHouse": 59,
+            "directDiscardSelectMixedHouseMenu": 172,
+            "unclassifiedEffectSelectionOwnHandSelect": 47
+          },
+          "calls": 20380,
+          "meanMs": 18.651644423895668,
+          "p95Bucket": {
+            "lowerBoundMs": 32,
+            "upperInclusiveMs": 64
+          }
+        }
+      }
+    },
+    "bootstrapReplicates": 10000,
+    "seeds": [
+      606329872,
+      1110277754
+    ],
+    "plannedFourGameUnits": 48,
+    "privateSourceDigests": {
+      "design": "aa89c2b8af7f132e45582edb82103b11384ac8e73fa37da3c4ae590719ea81cc",
+      "analysisPlan": "2bed29ab90327f6514c38a5890ba4fe15a249233d77a823a1ca06648b01c6cc2",
+      "execution": "d512909843742b38556c76124f1fb592bff515518ca58038690fa1e752fa5be6",
+      "acceptedRows": "ec88d618d3143d2d83c3de909a305f2dfcb3b59e4ec507507489797945d950c5",
+      "analysis": "c921fe1ecbe01b592aba093fe49516cf9d960d10aa56da15641310a1546ab37a",
+      "analysisExecution": "08a03a5d9dd617c47fde2eada16435f9043bbf97b3910ff909d659d97d86f409",
+      "independentReview": "e1be5af12064488b3b37aca0577722b349953e41a9c0ba6e5b9378102fbe1010"
+    },
+    "checks": {
+      "privacyChecks": 7,
+      "immutabilityChecks": 861,
+      "replays": 2,
+      "commandTracesByteHashesVerified": [
+        {
+          "gameId": 0,
+          "sha256": "600910d61fba17cb13f9414d171c8d3111584da5d034afcecf3222e3d3962331"
+        },
+        {
+          "gameId": 97,
+          "sha256": "5c6a7d833a9ba58ce7a0cf79bd39a33ee68afdc11d77f9b63db1c677cbd8f6f7"
+        }
+      ]
+    }
+  },
+  "league": {
+    "primary": {
+      "ratingGames": 1008,
+      "rows": [
+        {
+          "rank": 1,
+          "policyId": "tactical-toc-v2",
+          "label": "ToC 牌效 V2",
+          "elo": 1533.2930659709275,
+          "low95": 1493.7830138228067,
+          "high95": 1586.3611712519742,
+          "wins": 160,
+          "losses": 128,
+          "games": 288
+        },
+        {
+          "rank": 2,
+          "policyId": "tactical-style-cycle-v2",
+          "label": "快周转 V2",
+          "elo": 1522.8572213447758,
+          "low95": 1493.7929131900887,
+          "high95": 1550.6372861217992,
+          "wins": 155,
+          "losses": 133,
+          "games": 288
+        },
+        {
+          "rank": 3,
+          "policyId": "tactical-card-effects-v4",
+          "label": "牌效战术 V4",
+          "elo": 1512.4616161079202,
+          "low95": 1474.9814677762213,
+          "high95": 1559.9111056585407,
+          "wins": 150,
+          "losses": 138,
+          "games": 288
+        },
+        {
+          "rank": 4,
+          "policyId": "tactical-card-effects-v3",
+          "label": "公开效果 V3",
+          "elo": 1504.1616885052554,
+          "low95": 1481.2124374925245,
+          "high95": 1525.5960830044703,
+          "wins": 146,
+          "losses": 142,
+          "games": 288
+        },
+        {
+          "rank": 5,
+          "policyId": "tactical-style-engine-v3",
+          "label": "场面引擎 V3",
+          "elo": 1495.8663626800162,
+          "low95": 1464.3720832772403,
+          "high95": 1532.03618050922,
+          "wins": 142,
+          "losses": 146,
+          "games": 288
+        },
+        {
+          "rank": 6,
+          "policyId": "tactical-ladder-balanced-v2",
+          "label": "均衡阶梯 V2",
+          "elo": 1470.9147799235009,
+          "low95": 1399.2367888907313,
+          "high95": 1535.7307542401093,
+          "wins": 130,
+          "losses": 158,
+          "games": 288
+        },
+        {
+          "rank": 7,
+          "policyId": "tactical-style-control-v2",
+          "label": "干扰控制 V2",
+          "elo": 1460.445265467604,
+          "low95": 1412.998085567745,
+          "high95": 1504.3573339021611,
+          "wins": 125,
+          "losses": 163,
+          "games": 288
+        }
+      ],
+      "pairs": [
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-style-cycle-v2",
+          "winsA": 23,
+          "winsB": 25,
+          "games": 48,
+          "winRateA": 0.4791666666666667,
+          "low95": 0.375,
+          "high95": 0.6041666666666666,
+          "eloDifference": 10.43584462615172,
+          "differenceLow95": -43.94417183907398,
+          "differenceHigh95": 84.80341660071053
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-card-effects-v4",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.5,
+          "high95": 0.6041666666666666,
+          "eloDifference": 20.831449863007265,
+          "differenceLow95": -1.7814336501942307e-06,
+          "differenceHigh95": 50.25579658655518
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-style-engine-v3",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4791666666666667,
+          "high95": 0.6671874999999995,
+          "eloDifference": 37.42670329091129,
+          "differenceLow95": -22.8418584192082,
+          "differenceHigh95": 109.19065704809388
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-style-control-v2",
+          "winsA": 30,
+          "winsB": 18,
+          "games": 48,
+          "winRateA": 0.625,
+          "low95": 0.5208333333333334,
+          "high95": 0.75,
+          "eloDifference": 72.84780050332347,
+          "differenceLow95": -2.079455158480306,
+          "differenceHigh95": 169.25374859529083
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4166666666666667,
+          "high95": 0.7083333333333334,
+          "eloDifference": 62.37828604742663,
+          "differenceLow95": -19.003072816147913,
+          "differenceHigh95": 164.52291313282916
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-card-effects-v3",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4791666666666667,
+          "high95": 0.6458333333333334,
+          "eloDifference": 29.13137746567213,
+          "differenceLow95": -10.353432563538906,
+          "differenceHigh95": 75.7222501773626
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-card-effects-v4",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4166666666666667,
+          "high95": 0.6458333333333334,
+          "eloDifference": 10.395605236855545,
+          "differenceLow95": -63.36374224605501,
+          "differenceHigh95": 68.52843754687139
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-style-engine-v3",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4791666666666667,
+          "high95": 0.6458333333333334,
+          "eloDifference": 26.99085866475957,
+          "differenceLow95": -20.763100371867715,
+          "differenceHigh95": 73.6590794821948
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-style-control-v2",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4791666666666667,
+          "high95": 0.6458333333333334,
+          "eloDifference": 62.41195587717175,
+          "differenceLow95": 23.05856649887041,
+          "differenceHigh95": 102.98735125020023
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4375,
+          "high95": 0.625,
+          "eloDifference": 51.94244142127491,
+          "differenceLow95": -8.363993702003546,
+          "differenceHigh95": 128.55796906999697
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-card-effects-v3",
+          "winsA": 24,
+          "winsB": 24,
+          "games": 48,
+          "winRateA": 0.5,
+          "low95": 0.4375,
+          "high95": 0.5625,
+          "eloDifference": 18.69553283952041,
+          "differenceLow95": -23.10735735575065,
+          "differenceHigh95": 62.44732026430991
+        },
+        {
+          "policyA": "tactical-card-effects-v4",
+          "policyB": "tactical-style-engine-v3",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4583333333333333,
+          "high95": 0.6458333333333334,
+          "eloDifference": 16.595253427904026,
+          "differenceLow95": -41.75937053025339,
+          "differenceHigh95": 85.10004975261552
+        },
+        {
+          "policyA": "tactical-card-effects-v4",
+          "policyB": "tactical-style-control-v2",
+          "winsA": 29,
+          "winsB": 19,
+          "games": 48,
+          "winRateA": 0.6041666666666666,
+          "low95": 0.5,
+          "high95": 0.7291666666666666,
+          "eloDifference": 52.016350640316205,
+          "differenceLow95": -18.720328444377692,
+          "differenceHigh95": 143.49596880927913
+        },
+        {
+          "policyA": "tactical-card-effects-v4",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.3958333333333333,
+          "high95": 0.6875,
+          "eloDifference": 41.54683618441936,
+          "differenceLow95": -52.18894968667669,
+          "differenceHigh95": 146.56239971988666
+        },
+        {
+          "policyA": "tactical-card-effects-v4",
+          "policyB": "tactical-card-effects-v3",
+          "winsA": 25,
+          "winsB": 23,
+          "games": 48,
+          "winRateA": 0.5208333333333334,
+          "low95": 0.4583333333333333,
+          "high95": 0.5833333333333334,
+          "eloDifference": 8.299927602664866,
+          "differenceLow95": -22.812612344148857,
+          "differenceHigh95": 46.792078018318776
+        },
+        {
+          "policyA": "tactical-style-engine-v3",
+          "policyB": "tactical-style-control-v2",
+          "winsA": 28,
+          "winsB": 20,
+          "games": 48,
+          "winRateA": 0.5833333333333334,
+          "low95": 0.5208333333333334,
+          "high95": 0.6458333333333334,
+          "eloDifference": 35.42109721241218,
+          "differenceLow95": -2.1109963739002637,
+          "differenceHigh95": 79.16212355621532
+        },
+        {
+          "policyA": "tactical-style-engine-v3",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 24,
+          "winsB": 24,
+          "games": 48,
+          "winRateA": 0.5,
+          "low95": 0.3541666666666667,
+          "high95": 0.6666666666666666,
+          "eloDifference": 24.951582756515336,
+          "differenceLow95": -60.570294971480614,
+          "differenceHigh95": 115.73255043743076
+        },
+        {
+          "policyA": "tactical-style-engine-v3",
+          "policyB": "tactical-card-effects-v3",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4375,
+          "high95": 0.6666666666666666,
+          "eloDifference": -8.29532582523916,
+          "differenceLow95": -51.23043570990155,
+          "differenceHigh95": 33.2474347484216
+        },
+        {
+          "policyA": "tactical-style-control-v2",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4375,
+          "high95": 0.6463541666666662,
+          "eloDifference": -10.469514455896842,
+          "differenceLow95": -102.60743926157771,
+          "differenceHigh95": 85.51697217423799
+        },
+        {
+          "policyA": "tactical-style-control-v2",
+          "policyB": "tactical-card-effects-v3",
+          "winsA": 21,
+          "winsB": 27,
+          "games": 48,
+          "winRateA": 0.4375,
+          "low95": 0.3541666666666667,
+          "high95": 0.5208333333333334,
+          "eloDifference": -43.71642303765134,
+          "differenceLow95": -99.08204093375161,
+          "differenceHigh95": 2.06992828541039
+        },
+        {
+          "policyA": "tactical-ladder-balanced-v2",
+          "policyB": "tactical-card-effects-v3",
+          "winsA": 19,
+          "winsB": 29,
+          "games": 48,
+          "winRateA": 0.3958333333333333,
+          "low95": 0.2708333333333333,
+          "high95": 0.5416666666666666,
+          "eloDifference": -33.2469085817545,
+          "differenceLow95": -119.0235609279462,
+          "differenceHigh95": 52.20714324841345
+        }
+      ]
+    },
+    "sameSix": {
+      "ratingGames": 720,
+      "rows": [
+        {
+          "rank": 1,
+          "policyId": "tactical-toc-v2",
+          "label": "ToC 牌效 V2",
+          "elo": 1531.5457880514853,
+          "low95": 1492.3258650722669,
+          "high95": 1585.9198203409887,
+          "wins": 133,
+          "losses": 107,
+          "games": 240
+        },
+        {
+          "rank": 2,
+          "policyId": "tactical-style-cycle-v2",
+          "label": "快周转 V2",
+          "elo": 1526.6734353861814,
+          "low95": 1497.6227300825049,
+          "high95": 1556.2692704686403,
+          "wins": 131,
+          "losses": 109,
+          "games": 240
+        },
+        {
+          "rank": 3,
+          "policyId": "tactical-card-effects-v4",
+          "label": "牌效战术 V4",
+          "elo": 1512.110266935672,
+          "low95": 1473.1280858916714,
+          "high95": 1562.4013320405504,
+          "wins": 125,
+          "losses": 115,
+          "games": 240
+        },
+        {
+          "rank": 4,
+          "policyId": "tactical-style-engine-v3",
+          "label": "场面引擎 V3",
+          "elo": 1490.327784780679,
+          "low95": 1458.7661864917743,
+          "high95": 1524.1401291825723,
+          "wins": 116,
+          "losses": 124,
+          "games": 240
+        },
+        {
+          "rank": 5,
+          "policyId": "tactical-ladder-balanced-v2",
+          "label": "均衡阶梯 V2",
+          "elo": 1478.2047703501348,
+          "low95": 1409.1665946366086,
+          "high95": 1541.3860602050581,
+          "wins": 111,
+          "losses": 129,
+          "games": 240
+        },
+        {
+          "rank": 6,
+          "policyId": "tactical-style-control-v2",
+          "label": "干扰控制 V2",
+          "elo": 1461.1379544958477,
+          "low95": 1414.6833311631963,
+          "high95": 1504.8309079006392,
+          "wins": 104,
+          "losses": 136,
+          "games": 240
+        }
+      ],
+      "pairs": [
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-style-cycle-v2",
+          "winsA": 23,
+          "winsB": 25,
+          "games": 48,
+          "winRateA": 0.4791666666666667,
+          "low95": 0.375,
+          "high95": 0.6041666666666666,
+          "eloDifference": 4.872352665303879,
+          "differenceLow95": -51.25985879677657,
+          "differenceHigh95": 79.39970159092825
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-card-effects-v4",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.5,
+          "high95": 0.6041666666666666,
+          "eloDifference": 19.435521115813344,
+          "differenceLow95": -1.4238870733151999e-06,
+          "differenceHigh95": 47.869893291989506
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-style-engine-v3",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4791666666666667,
+          "high95": 0.6671874999999995,
+          "eloDifference": 41.21800327080632,
+          "differenceLow95": -14.571510023851733,
+          "differenceHigh95": 111.55331109584469
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-style-control-v2",
+          "winsA": 30,
+          "winsB": 18,
+          "games": 48,
+          "winRateA": 0.625,
+          "low95": 0.5208333333333334,
+          "high95": 0.75,
+          "eloDifference": 70.40783355563758,
+          "differenceLow95": -2.4200384802704265,
+          "differenceHigh95": 166.38288951074836
+        },
+        {
+          "policyA": "tactical-toc-v2",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4166666666666667,
+          "high95": 0.7083333333333334,
+          "eloDifference": 53.34101770135044,
+          "differenceLow95": -31.6163450284533,
+          "differenceHigh95": 157.82474108712486
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-card-effects-v4",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4166666666666667,
+          "high95": 0.6458333333333334,
+          "eloDifference": 14.563168450509465,
+          "differenceLow95": -59.605805058382145,
+          "differenceHigh95": 70.68172378166874
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-style-engine-v3",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4791666666666667,
+          "high95": 0.6458333333333334,
+          "eloDifference": 36.34565060550244,
+          "differenceLow95": -9.73916331032196,
+          "differenceHigh95": 85.54339632220656
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-style-control-v2",
+          "winsA": 27,
+          "winsB": 21,
+          "games": 48,
+          "winRateA": 0.5625,
+          "low95": 0.4791666666666667,
+          "high95": 0.6458333333333334,
+          "eloDifference": 65.5354808903337,
+          "differenceLow95": 26.62702498877611,
+          "differenceHigh95": 107.76974787286372
+        },
+        {
+          "policyA": "tactical-style-cycle-v2",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4375,
+          "high95": 0.625,
+          "eloDifference": 48.46866503604656,
+          "differenceLow95": -12.18697043157287,
+          "differenceHigh95": 125.02840979488217
+        },
+        {
+          "policyA": "tactical-card-effects-v4",
+          "policyB": "tactical-style-engine-v3",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4583333333333333,
+          "high95": 0.6458333333333334,
+          "eloDifference": 21.782482154992977,
+          "differenceLow95": -36.23110326961035,
+          "differenceHigh95": 84.5253496177735
+        },
+        {
+          "policyA": "tactical-card-effects-v4",
+          "policyB": "tactical-style-control-v2",
+          "winsA": 29,
+          "winsB": 19,
+          "games": 48,
+          "winRateA": 0.6041666666666666,
+          "low95": 0.5,
+          "high95": 0.7291666666666666,
+          "eloDifference": 50.972312439824236,
+          "differenceLow95": -14.625656529826848,
+          "differenceHigh95": 143.14031454774525
+        },
+        {
+          "policyA": "tactical-card-effects-v4",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.3958333333333333,
+          "high95": 0.6875,
+          "eloDifference": 33.905496585537094,
+          "differenceLow95": -58.94812206835039,
+          "differenceHigh95": 142.1215588695862
+        },
+        {
+          "policyA": "tactical-style-engine-v3",
+          "policyB": "tactical-style-control-v2",
+          "winsA": 28,
+          "winsB": 20,
+          "games": 48,
+          "winRateA": 0.5833333333333334,
+          "low95": 0.5208333333333334,
+          "high95": 0.6458333333333334,
+          "eloDifference": 29.18983028483126,
+          "differenceLow95": -14.545947978633956,
+          "differenceHigh95": 78.77244664132242
+        },
+        {
+          "policyA": "tactical-style-engine-v3",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 24,
+          "winsB": 24,
+          "games": 48,
+          "winRateA": 0.5,
+          "low95": 0.3541666666666667,
+          "high95": 0.6666666666666666,
+          "eloDifference": 12.123014430544117,
+          "differenceLow95": -68.44907989787222,
+          "differenceHigh95": 97.70379576311885
+        },
+        {
+          "policyA": "tactical-style-control-v2",
+          "policyB": "tactical-ladder-balanced-v2",
+          "winsA": 26,
+          "winsB": 22,
+          "games": 48,
+          "winRateA": 0.5416666666666666,
+          "low95": 0.4375,
+          "high95": 0.6463541666666662,
+          "eloDifference": -17.066815854287142,
+          "differenceLow95": -105.90575398045021,
+          "differenceHigh95": 74.58314421309873
+        }
+      ]
+    },
+    "completed": 1008,
+    "natural": 1008,
+    "anomalous": 0,
+    "stops": {
+      "victory": 1008
+    },
+    "traces": 11,
+    "replays": 11,
+    "privacyChecks": 36,
+    "immutabilityChecks": 4652,
+    "plannedPolicies": [
+      "tactical-toc-v2",
+      "tactical-style-cycle-v2",
+      "tactical-card-effects-v4",
+      "tactical-style-engine-v3",
+      "tactical-style-control-v2",
+      "tactical-ladder-balanced-v2",
+      "tactical-card-effects-v3"
+    ],
+    "completeBlocks": 12,
+    "plannedBlocks": 12,
+    "cleanBlockNumbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "excludedBlocks": [],
+    "allNaturalEqualsPrimary": true,
+    "allNaturalRows": null,
+    "allPlannedWinFractionBounds": [
+      {
+        "policyId": "tactical-toc-v2",
+        "planned": 288,
+        "knownCleanWins": 160,
+        "unknown": 0,
+        "low": 0.5555555555555556,
+        "high": 0.5555555555555556
+      },
+      {
+        "policyId": "tactical-style-cycle-v2",
+        "planned": 288,
+        "knownCleanWins": 155,
+        "unknown": 0,
+        "low": 0.5381944444444444,
+        "high": 0.5381944444444444
+      },
+      {
+        "policyId": "tactical-card-effects-v4",
+        "planned": 288,
+        "knownCleanWins": 150,
+        "unknown": 0,
+        "low": 0.5208333333333334,
+        "high": 0.5208333333333334
+      },
+      {
+        "policyId": "tactical-style-engine-v3",
+        "planned": 288,
+        "knownCleanWins": 142,
+        "unknown": 0,
+        "low": 0.4930555555555556,
+        "high": 0.4930555555555556
+      },
+      {
+        "policyId": "tactical-style-control-v2",
+        "planned": 288,
+        "knownCleanWins": 125,
+        "unknown": 0,
+        "low": 0.4340277777777778,
+        "high": 0.4340277777777778
+      },
+      {
+        "policyId": "tactical-ladder-balanced-v2",
+        "planned": 288,
+        "knownCleanWins": 130,
+        "unknown": 0,
+        "low": 0.4513888888888889,
+        "high": 0.4513888888888889
+      },
+      {
+        "policyId": "tactical-card-effects-v3",
+        "planned": 288,
+        "knownCleanWins": 146,
+        "unknown": 0,
+        "low": 0.5069444444444444,
+        "high": 0.5069444444444444
+      }
+    ],
+    "seeds": [
+      1120590238,
+      1488876881,
+      2061570571,
+      1616223194,
+      1080154539,
+      1214805827,
+      2102785814,
+      704286853,
+      1795215889,
+      1731470612,
+      1337699070,
+      1927601646
+    ],
+    "bootstrapReplicates": 1000,
+    "bootstrapSeed": 619052627,
+    "bootstrapCountsSha256": "1fcf49e27cc492082622ac9e2b7b448c7fffa12f2cd24bc728782a549dec4fc8",
+    "maximumIndependentDifference": 3.599533994247395e-05,
+    "deckCount": 12,
+    "expansions": [
+      "496",
+      "600",
+      "700",
+      "800",
+      "886",
+      "928"
+    ],
+    "privateSourceDigests": {
+      "design": "859ec3621a9758e1cfc47dedebf3658214c9187bf508160337e331d4b8d4aac1",
+      "planSeal": "1cf3f948779fbe7af5b1cc71228e1111672ad4a79aead10c4e11ad33898eb389",
+      "runtime": "9eab5b2b9cef17221fb05fb701d9528c30c5ea00421c2eb9a69bb64d32b1bfcd",
+      "seedScreen": "cbd9ecae664b10c5d34476da703c45111248a6c9b25bf6cb1418b02f93451151",
+      "execution": "9b2abbb7cb1d6584addd43293c187f3c10ccd2281dc08ad1b9e7014adf7fbddb",
+      "acceptedRows": "280a0349dd9b161f460f90a1b245a3d93b4d10947603397a3185a6bbe9f14aeb",
+      "report": "f03ea10d6f2337a7a410926cd583f7c6bbb43acdb80f4146aff8ffc49b89418d",
+      "independentReview": "e47171c601a180e6e232372c256ec51fb43839bcd9c9eee10fe254fcd447c48b"
+    }
+  },
+  "traceDiagnostics": {
+    "traces": [
+      {
+        "stage": "confirmation",
+        "id": 0,
+        "family": "tactical-style-engine-v3",
+        "status": "verified",
+        "commands": 238,
+        "scoredActorMenus": 108,
+        "singletonCandidateMenus": 10,
+        "traceSha256": "600910d61fba17cb13f9414d171c8d3111584da5d034afcecf3222e3d3962331"
+      },
+      {
+        "stage": "confirmation",
+        "id": 97,
+        "family": "tactical-style-engine-v3",
+        "status": "verified",
+        "commands": 214,
+        "scoredActorMenus": 104,
+        "singletonCandidateMenus": 4,
+        "traceSha256": "5c6a7d833a9ba58ce7a0cf79bd39a33ee68afdc11d77f9b63db1c677cbd8f6f7"
+      }
+    ],
+    "counts": {
+      "nativeDiscard": {
+        "menus": 0,
+        "anyActionScoreChanged": 0,
+        "acceptedScoreChanged": 0,
+        "leaderChanged": 0,
+        "safeMenus": 0
+      },
+      "directOwnHandDiscardSelect": {
+        "menus": 1,
+        "anyActionScoreChanged": 0,
+        "acceptedScoreChanged": 0,
+        "leaderChanged": 0,
+        "safeMenus": 1
+      },
+      "recoveryOrArchive": {
+        "menus": 13,
+        "anyActionScoreChanged": 0,
+        "acceptedScoreChanged": 0,
+        "leaderChanged": 0,
+        "safeMenus": 13
+      },
+      "playPermission": {
+        "menus": 0,
+        "anyActionScoreChanged": 0,
+        "acceptedScoreChanged": 0,
+        "leaderChanged": 0,
+        "safeMenus": 0
+      },
+      "other": {
+        "menus": 198,
+        "anyActionScoreChanged": 1,
+        "acceptedScoreChanged": 0,
+        "leaderChanged": 0,
+        "safeMenus": 140
+      }
+    },
+    "totals": {
+      "menus": 212,
+      "anyActionScoreChanged": 1,
+      "acceptedScoreChanged": 0,
+      "leaderChanged": 0,
+      "safeMenus": 154
+    },
+    "cases": [
+      {
+        "selection": "earliest exact-score control",
+        "category": "directOwnHandDiscardSelect",
+        "gameId": 97,
+        "family": "tactical-style-engine-v3",
+        "turn": 10,
+        "revision": 76,
+        "phase": "choice",
+        "activeHouse": "geistoid",
+        "legalCount": 5,
+        "changedLegalScores": 0,
+        "leaderChanged": false,
+        "acceptedScoreDelta": 0,
+        "accepted": {
+          "kind": "select",
+          "cardName": "Burn the Stockpile"
+        },
+        "baseline": {
+          "acceptedScore": 0.5960000000000001,
+          "acceptedRank": 1,
+          "leaderScore": 0.5960000000000001,
+          "leader": {
+            "kind": "select",
+            "cardName": "Burn the Stockpile"
+          }
+        },
+        "candidate": {
+          "acceptedScore": 0.5960000000000001,
+          "acceptedRank": 1,
+          "leaderScore": 0.5960000000000001,
+          "leader": {
+            "kind": "select",
+            "cardName": "Burn the Stockpile"
+          }
+        }
+      },
+      {
+        "selection": "earliest exact-score control",
+        "category": "recoveryOrArchive",
+        "gameId": 97,
+        "family": "tactical-style-engine-v3",
+        "turn": 10,
+        "revision": 77,
+        "phase": "main",
+        "activeHouse": "geistoid",
+        "legalCount": 11,
+        "changedLegalScores": 0,
+        "leaderChanged": false,
+        "acceptedScoreDelta": 0,
+        "accepted": {
+          "kind": "play",
+          "cardName": "Memette"
+        },
+        "baseline": {
+          "acceptedScore": 5.98,
+          "acceptedRank": 1,
+          "leaderScore": 5.98,
+          "leader": {
+            "kind": "play",
+            "cardName": "Memette"
+          }
+        },
+        "candidate": {
+          "acceptedScore": 5.98,
+          "acceptedRank": 1,
+          "leaderScore": 5.98,
+          "leader": {
+            "kind": "play",
+            "cardName": "Memette"
+          }
+        }
+      },
+      {
+        "selection": "largest absolute accepted-score change among changed menus",
+        "category": "other",
+        "gameId": 97,
+        "family": "tactical-style-engine-v3",
+        "turn": 2,
+        "revision": 6,
+        "phase": "main",
+        "activeHouse": "untamed",
+        "legalCount": 10,
+        "changedLegalScores": 2,
+        "leaderChanged": false,
+        "acceptedScoreDelta": 0,
+        "accepted": {
+          "kind": "play",
+          "cardName": "Floomf"
+        },
+        "baseline": {
+          "acceptedScore": 6.89,
+          "acceptedRank": 1,
+          "leaderScore": 6.89,
+          "leader": {
+            "kind": "play",
+            "cardName": "Floomf"
+          }
+        },
+        "candidate": {
+          "acceptedScore": 6.89,
+          "acceptedRank": 1,
+          "leaderScore": 6.89,
+          "leader": {
+            "kind": "play",
+            "cardName": "Floomf"
+          }
+        }
+      },
+      {
+        "selection": "earliest exact-score control",
+        "category": "other",
+        "gameId": 0,
+        "family": "tactical-style-engine-v3",
+        "turn": 1,
+        "revision": 2,
+        "phase": "house",
+        "activeHouse": null,
+        "legalCount": 3,
+        "changedLegalScores": 0,
+        "leaderChanged": false,
+        "acceptedScoreDelta": 0,
+        "accepted": {
+          "kind": "house",
+          "house": "saurian"
+        },
+        "baseline": {
+          "acceptedScore": 10.52,
+          "acceptedRank": 1,
+          "leaderScore": 10.52,
+          "leader": {
+            "kind": "house",
+            "house": "saurian"
+          }
+        },
+        "candidate": {
+          "acceptedScore": 10.52,
+          "acceptedRank": 1,
+          "leaderScore": 10.52,
+          "leader": {
+            "kind": "house",
+            "house": "saurian"
+          }
+        }
+      }
+    ],
+    "actualExitCode": 0,
+    "newGames": 0,
+    "selectionPlanSha256": "291114f83e5c0bbd395e20f3f9bedc4d77aba8421a2e33aa6b17e3557b7b8003",
+    "scriptSha256": "1ee0b17ae26d788f33c72f22ae100ca4106225540003f6f1b6696cba50d0c3fb",
+    "replayReceiptSha256": "fd7ea201f63747ec0260cd887c2f933bd2113edc9493c6a85579120f3ee68e41",
+    "publicDiagnosticsSha256": "66595ab39c3a23c2d4b4fd1992e1ca40d6d4bd2ee923b01a2abc65a80d25ddfd"
+  },
+  "mechanismReviewSha256": "7de90f11a83d6e62dd421fb228f7dcb1b9e7d64f1f7d9a0594ccab6c183c3819",
+  "historicalEloSourceSha256": "71ef1e3fb685f80808c5b97574dfb6d743b6cf8d0f31749f1e4c277c6c12cc08",
+  "priorPublicationCommit": "1f3c09609e98c0ea2e8e51629841d81f0053561a",
+  "beforeGamePlanReviewSha256": "917f6b87e50be22c55ce0268ead32a2ac8506a47052e07fee4bd0f410828ffbc",
+  "additionalOnlineGames": 0,
+  "plannedExtraGames": 0,
+  "defaultPolicy": "tactical-style-engine-v3",
+  "experimentSequenceSha256": "2c79d501f17dba354cc08564e64cf90fdcaf4cfb13b4f74fda4c211b4463facd"
+}

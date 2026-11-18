@@ -35,7 +35,7 @@ import { assessPublicReapControl } from './public-reap-control.js';
 import { knownRecoveredForge } from './recovery-forge.js';
 import { assessPublicCardUse } from './public-card-opportunity.js';
 import { assessPublicHandWindow, publicArtifactPlayTax, projectPublicPlaySequenceOpener, publicHandWindowAvailable } from './public-hand-window.js';
-import { assessPublicCardRetention } from './public-card-retention.js';
+import { assessPublicCardRetention, publicHandWaitingAdjustment } from './public-card-retention.js';
 import { assessHandOpportunityGroup, type HandOpportunityMove } from './hand-opportunity-group.js';
 import { assessLifecycleRefillDelta, publicCardLocation, type PublicCardMove, type PublicCardLocation,
   type PublicLifecycleCounts, type PublicCardLifecycleContext } from './card-lifecycle-value.js';
@@ -979,7 +979,7 @@ function assessAlgorithmProjection(
           !probe.players[owner === 0 ? 1 : 0].forgeBlocked && result.assessment.deniesKey) ||
           probe.players[owner].keys.length === 2 && result.assessment.projectedKey) };
     }, features.publicHandOpportunityGroups ? { projected: true,
-      terminalDiscard: features.publicCardRetention, keyTiming } : undefined);
+      terminalDiscard: features.publicCardRetention, requireFundedMaterial: features.publicCardRetention, keyTiming } : undefined);
   }
   function lifecycleContext(view: Observation, e: import('../contracts/observation.js').ApplySpec): PublicCardLifecycleContext | undefined {
     if (!features.publicCardLifecycle) return undefined;
@@ -1079,6 +1079,7 @@ function assessAlgorithmProjection(
     const window = (view: Observation, use: ReturnType<typeof valueIn>) =>
       assessPublicHandWindow(view, view.players[o.you].hand ?? [], use, {
         projected: true, terminalDiscard: features.publicCardRetention,
+        waitingAdjustment: features.publicCardRetention ? publicHandWaitingAdjustment(view, use) : undefined,
         ...(features.publicPlaySequences ? { reprice: (next: Observation, card: CardView) =>
           cardUseValue(next, card, o.you), playPermissionEstimate: 1.5 } : {}),
       });
@@ -1153,11 +1154,18 @@ function assessAlgorithmProjection(
         forgeAvailable: o.players[seat].forgeAvailable, forgeSources: o.players[seat].forgeSources })) as Observation['players'],
       permissions: after.permissions.filter((p) => existing.has(p.id)),
     };
-    const window = (view: Observation) => assessPublicHandWindow(view, view.players[o.you].hand ?? [],
-      (card) => cardUseValue(view, card, o.you), { projected: true, playPermissionEstimate: 1.5 });
+    const window = (view: Observation) => {
+      const values = new Map<string, ReturnType<typeof cardUseValue>>();
+      const use = (card: CardView) => {
+        if (!values.has(card.id)) values.set(card.id, cardUseValue(view, card, o.you));
+        return values.get(card.id);
+      };
+      return assessPublicHandWindow(view, view.players[o.you].hand ?? [], use, { projected: true, playPermissionEstimate: 1.5,
+        waitingAdjustment: features.publicCardRetention ? publicHandWaitingAdjustment(view, use) : undefined });
+    };
     const oldWindow = window(before), nextWindow = window(after);
     const limit = 12 + Number(nextWindow.keyPriorityUsed && !oldWindow.keyPriorityUsed) * 160;
-    const opened = Math.max(0, Math.min(limit, nextWindow.score - oldWindow.score));
+    const opened = Math.max(0, Math.min(limit, nextWindow.gainOverWaiting - oldWindow.gainOverWaiting));
     // The generic estimate is replaced by the same allowance's concrete use.
     const score = opened - grants.length * 1.5;
     return score ? { score, reasons: ['remaining hand route repriced after a public funding or permission opener'] } : empty;

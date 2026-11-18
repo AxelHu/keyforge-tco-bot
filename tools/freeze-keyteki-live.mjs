@@ -7,6 +7,8 @@ import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { resolveRuntimeExecutables } from './runtime-executables.mjs';
 
+import { CURRENT_RATING_FILE } from './current-strategy-rating.mjs';
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const fail = (code) => {
@@ -46,6 +48,15 @@ export function collectRuntimeFiles(root, { includeDependencies = true } = {}) {
   }
   if (fs.existsSync(path.join(root, 'LICENSE'))) files.add('LICENSE');
   if (fs.existsSync(path.join(root, 'bin/kf-auto.mjs'))) files.add('bin/kf-auto.mjs');
+  // Include the optional public aggregate without traversing other documentation.
+  let component = root;
+  for (const segment of CURRENT_RATING_FILE.split('/')) {
+    component = path.join(component, segment);
+    const stat = fs.lstatSync(component, { throwIfNoEntry: false });
+    if (!stat) break;
+    if (stat.isSymbolicLink()) fail('RUNTIME_SYMLINK_UNSUPPORTED');
+    if (component === path.join(root, CURRENT_RATING_FILE)) files.add(CURRENT_RATING_FILE);
+  }
   const dependencyRoots = new Set();
   const visitDependency = (name, from, optional = false) => {
     const require = createRequire(path.join(from, 'package.json'));

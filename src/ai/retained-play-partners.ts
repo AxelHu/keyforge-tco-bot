@@ -1,5 +1,7 @@
 import type { CardKind, CardView, House, Observation } from '../contracts/observation.js';
 import { publicPlayEndsStep } from './public-card-value.js';
+import { publicFutureEffectActive, publicFuturePlayLimit, publicFuturePlayRestriction, publicNextHouseChoices,
+  publicNextHouseTurn } from './future-house-play-rules.js';
 
 const playEvents = new Set(['actionBeforePlay', 'bonusResolved', 'bonusDamage', 'cardPlayed',
   'creatureEntered', 'creaturePlayed', 'artifactPlayed', 'upgradeEntered']);
@@ -60,17 +62,10 @@ export function retainedPlayPartnerCount(o: Observation, h: House, cards: readon
 
   const table = o.players.flatMap((p) => [...p.battleline, ...p.artifacts, ...p.upgrades]);
   const me = o.players[o.you], enemy = o.players[o.you === 0 ? 1 : 0];
-  const future = o.turn + (o.activePlayer === o.you ? 2 : 1);
-  const restrictions = [...(o.houseRestrictions ?? []), ...(o.futureHouseRestrictions ?? [])].filter((r) =>
-    r.player === o.you && (r.turn === null || r.turn === future));
-  const previousHouse = o.activePlayer === o.you ? o.activeHouse : o.previousChosenHouses?.[o.you];
-  if (restrictions.some((r) => r.rule === 'cannotHouse' && r.house === h ||
-    r.rule === 'mustHouse' && r.house !== h) ||
-    me.battleline.some((c) => c.spec.mustHouse && c.spec.mustHouse !== h) ||
-    table.some((c) => c.spec.forbidsPreviousHouse) && (!previousHouse || h === previousHouse) ||
-    (o.lasting ?? []).some((e) => e.appliesTo === o.you && e.turn >= future &&
-      (e.begins ?? o.turn) <= future && ['noPlay', 'noActions', 'noCreatures', 'noNamedPlayUse',
-        'noMatchingPlay', 'onlyPlayHouse', 'poolIncomeBecomesTokens', 'blankCreatures', 'playLimit'].includes(e.rule))) return 0;
+  const future = publicNextHouseTurn(o);
+  if (future === undefined || !publicNextHouseChoices(o, future)?.has(h)) return 0;
+  const effects = (o.lasting ?? []).filter((e) => e.appliesTo === o.you && publicFutureEffectActive(o,e,future));
+  if (effects.some((e) => e.rule === 'poolIncomeBecomesTokens')) return 0;
   // These already-visible sources interfere with routing, gain, or the pair's ordering.
   if (table.some((c) => c.spec.unmodeled || c.gainedTextBoxes?.length || c.spec.onePlayPerType ||
     c.spec.creaturePlayLimits?.length || c.spec.forbidMorePowerfulCreaturePlay ||
@@ -81,11 +76,15 @@ export function retainedPlayPartnerCount(o: Observation, h: House, cards: readon
   const creatureBlocked = table.some((c) => c.controller === o.you && c.spec.prohibitOwnCreatures ||
       c.controller !== o.you && c.spec.forbidsEnemyRightFlankPlay && !me.battleline.length);
   const artifactTax = enemy.artifacts.concat(enemy.battleline, enemy.upgrades).some((c) => c.spec.opponentArtifactPlayTax);
-  const cap = Math.min(3, ...table.filter((c) => c.controller !== o.you).map((c) => c.spec.playLimitOpponent ?? 3));
-  const usable = (c: CardView) => !(c.spec.kind === 'creature' && creatureBlocked || c.spec.kind === 'artifact' && artifactTax);
+  const cap = Math.min(3, publicFuturePlayLimit(o, future));
+  if (cap < 2) return 0;
+  const usable = (c: CardView) => !(c.spec.kind === 'creature' && creatureBlocked || c.spec.kind === 'artifact' && artifactTax) &&
+    publicFuturePlayRestriction(o,c,future,h) === 'allowed';
   let best = 0;
   for (const source of possible) {
-    if (!usable(source) || publicPlayEndsStep(o, source)) continue;
+    if (!usable(source) || publicPlayEndsStep(o, source) || effects.some((e) =>
+      source.spec.kind === 'creature' && e.rule === 'blankCreatures' ||
+      e.rule === 'blankBoostNamed' && e.affectedName === source.spec.name && source.spec.kind !== 'action')) continue;
     const kind = rewardKind(source);
     let ordinary = 0, final = 0;
     for (const follow of cards) {

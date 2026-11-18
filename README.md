@@ -6,7 +6,7 @@
 
 [English](README.en.md) · [架构](docs/architecture.md) ·
 [卡牌知识](docs/card-knowledge.md) · [使用与恢复](docs/operations.md) ·
-[策略选单与历史 Elo](docs/strategy-guide.md) · [国际服与英文聊天](docs/international-tco.md) · [线路实测与后续对局](docs/international-network.md) · [验证记录](docs/validation.md)
+[策略选单与当前、历史 Elo](docs/strategy-guide.md) · [国际服与英文聊天](docs/international-tco.md) · [线路实测与后续对局](docs/international-network.md) · [验证记录](docs/validation.md)
 
 ## 包含哪些能力
 
@@ -20,6 +20,10 @@
 - 包内 Chromium 管理与显式本地配置。运行不依赖 OpenClaw、订阅凭据或原研究仓库；可选的牌桌聊天功能默认关闭。
 
 ## 兼容范围与当前验证
+
+### 0.6.5 手牌估值校准与七策略 Elo
+
+冻结 0.6.5 对 0.6.4 的 192 局确认在完整单位内为 96 胜 96 负（50.00%）。两个家族的每个四局单位都打成 2 胜 2 负，本样本没有显示胜率提升。另用独立种子完成 1,008 局七策略联赛，1,008 局进入主评级。 完整离线回归 636/636。 [方法、排名与直接交手](docs/calibration-and-strategy-elo.md) · [评级数据](docs/data/strategy-elo-20261118.json)
 
 <!-- retention-sequence-064:start -->
 ### 0.6.4 的手牌等待与短出牌顺序
@@ -115,7 +119,7 @@ node bin/kf-auto.mjs strategies show tactical-style-engine-v3
 
 默认常用菜单包含 **Engine V3（默认）、ToC V2、Cycle V2、Effects V4、Control V2**。原项目注册的 **89 个代码策略全部保留**，专项、实验和历史版本可在完整列表中查看。
 
-选单不连接服务器、不打开浏览器、不改已有配置。初始化时可用 `--policy ID`，或在交互终端用 `--choose-policy` 按编号选择；两者互斥。尚未启动的席位配置也可以修改 `self.codePolicy`。各策略用途、局限与 **2026-11-13 历史 Elo 表**见[策略指南](docs/strategy-guide.md)；历史分数绑定当时的冻结实现，不代表当前代码的新评级。
+选单不连接服务器、不打开浏览器、不改已有配置。初始化时可用 `--policy ID`，或在交互终端用 `--choose-policy` 按编号选择；两者互斥。尚未启动的席位配置也可以修改 `self.codePolicy`。各策略用途、2026-11-18 七策略当前榜及 2026-11-13 六策略历史榜见[策略指南](docs/strategy-guide.md)。
 
 ## 策略与卡牌知识
 
