@@ -1,5 +1,11 @@
 # 策略选单与历史 Elo
 
+<!-- hand-opportunity-063:start -->
+## 0.6.3 的同势力搭档与本回合机会
+
+评估一组回收目标时，先在公开约束下估计本回合可共同使用的出牌机会，再对剩余手牌的有效势力比较搭档增减。不同势力牌可通过公开许可获得即时价值，同一实体进手又离手不会留下重复收益。出牌与弃牌腾出的补牌位按同样口径计算。[完整报告](hand-opportunity-evaluation.md) · [公开数据](evidence/hand-opportunity-2026-11-18.json)
+<!-- hand-opportunity-063:end -->
+
 <!-- card-lifecycle-062:start -->
 ## 0.6.2 的生命周期估值
 
