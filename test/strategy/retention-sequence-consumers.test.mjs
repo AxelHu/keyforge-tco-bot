@@ -200,3 +200,19 @@ test('pool-changing Scrap does not create an asymmetric critical hand reservatio
     assert.equal(next.deniesKey,scrap.kind==='steal');
   }
 });
+
+
+test('spending stored forge amber cannot leave a stale critical recovery bonus',()=>{
+  const forge=card('forge',{abilities:{play:[{kind:'forgeEffect'}]}});
+  const o=play([]),p=o.players[0];
+  p.keys=['red','blue'];p.amber=5;p.forgeAvailable=6;p.forgeSources={pool:5,bank:1};
+  const bank=card('bank',{kind:'artifact',spendAmberForKeys:true});bank.captured=1;
+  p.artifacts=[bank];p.discard=[forge];
+  const recover=target('returnHand','forge','discard');
+  const remove={kind:'all',filter:{side:'friendly',zone:'artifacts',kind:'artifact'},operation:'removeAmber',amount:1};
+  p.hand[0].spec.abilities.scrap=[recover];
+  assert.ok(assess(o,'discard').score-assess(o,'discard',{publicCardRetention:false}).score>150);
+  p.hand[0].spec.abilities.scrap=[remove,recover];
+  assert.ok(Math.abs(assess(o,'discard').score-assess(o,'discard',{publicCardRetention:false}).score)<20);
+  assert.equal(assess(o,'discard').projectedKey,false);
+});

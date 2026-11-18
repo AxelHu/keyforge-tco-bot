@@ -960,7 +960,8 @@ function assessAlgorithmProjection(
       view.publicStateCoverage?.effectsComplete !== false && view.publicStateCoverage?.turnHistoryComplete !== false &&
       !forecastUncertain && (me.keys.length === 2 || foe.keys.length === 2) &&
       pool[0] === initial[0] && pool[1] === initial[1] && ownCost === me.keyCost && otherCost === foe.keyCost &&
-      !predictedRemoved.size && !projectedFields.size && !publicControlChanged && !createdTokens.some(Boolean) &&
+      !predictedRemoved.size && !projectedFields.size && !predictedCaptured.size &&
+      !publicControlChanged && !createdTokens.some(Boolean) &&
       ![...projectedLocations.keys()].some((id) => inPlay(id)) &&
       view.players.every((p, seat) => {
         const original = o.players[seat];
