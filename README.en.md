@@ -33,6 +33,12 @@ engine, game server, game UI and historical match data are not included.
 
 ## Compatibility and current validation
 
+<!-- retention-sequence-064:start -->
+### 0.6.4 hand retention and short play sequences
+
+The candidate discounts cards that must wait for a house call and reprices remaining plays after a supported public resource or permission change. Across complete four-game units in the fixed local confirmation set, the candidate went 196–188 (51.04%). Both family intervals include 50%. This comparison does not establish a win-rate improvement. The offline suite passed 619/619. [Method and results in Chinese](docs/retention-sequence-evaluation.md) · [Public evidence](docs/evidence/retention-sequence-2026-11-18.json)
+<!-- retention-sequence-064:end -->
+
 <!-- hand-opportunity-063:start -->
 ### 0.6.3 hand recovery and discard decisions
 

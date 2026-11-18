@@ -1,5 +1,11 @@
 # 策略选单与历史 Elo
 
+<!-- retention-sequence-064:start -->
+## 0.6.4 的等待折价与短出牌顺序
+
+本轮评估牌尚需等多久才有常规使用机会。已分配的即时机会、按数量结算的正常补牌，以及剩余手牌的同势力搭档分别计分。支持的公开起手动作可以通过收入或许可打开后续出牌机会。[本轮报告](retention-sequence-evaluation.md) · [公开证据](evidence/retention-sequence-2026-11-18.json)
+<!-- retention-sequence-064:end -->
+
 <!-- hand-opportunity-063:start -->
 ## 0.6.3 的同势力搭档与本回合机会
 

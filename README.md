@@ -21,6 +21,12 @@
 
 ## 兼容范围与当前验证
 
+<!-- retention-sequence-064:start -->
+### 0.6.4 的手牌等待与短出牌顺序
+
+候选按势力时机比较保留手牌和弃牌的价值，并在公开的琥珀或许可变化后重估后续出牌。本地固定牌组确认集的完整四局单位中，新版合计 196 胜 188 负（51.04%）。两个家族的确认区间都覆盖 50%，这批对照未能证明新版提高了胜率。离线测试通过 619/619。 [本轮报告](docs/retention-sequence-evaluation.md) · [公开证据](docs/evidence/retention-sequence-2026-11-18.json)
+<!-- retention-sequence-064:end -->
+
 <!-- hand-opportunity-063:start -->
 ### 0.6.3 的回收搭档与弃牌选择
 
