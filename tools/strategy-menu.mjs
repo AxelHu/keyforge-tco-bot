@@ -1,6 +1,8 @@
 /** 用户策略入口。注册快照由真实 CODE_POLICY_IDS 导出；离线回归核对完整顺序，不能独立增删。 */
 import { STRATEGY_ELO_BENCHMARK } from './strategy-benchmark.mjs';
 
+import { currentStrategyBenchmark } from './current-strategy-rating.mjs';
+
 export const DEFAULT_CODE_POLICY = 'tactical-style-engine-v3';
 export const REGISTERED_CODE_POLICY_IDS = Object.freeze([
   "tactical-card-aware-v3",
@@ -112,6 +114,8 @@ export function strategyDetails(id) {
   assertRegisteredCodePolicy(id);
   const preferred = common.get(id);
   const row = STRATEGY_ELO_BENCHMARK.rows.find((entry) => entry.policyId === id);
+  const current = currentStrategyBenchmark();
+  const rated = current?.rows.find((entry) => entry.policyId === id);
   let group = 'advanced';
   let description = '历史基线、实验版本或高级扩展；注册存在不代表与常用项同等推荐。';
   if (id.startsWith('tullibint-')) {
@@ -129,10 +133,16 @@ export function strategyDetails(id) {
   }
   return {
     policyId: id,
-    label: preferred?.label ?? row?.label ?? id,
+    label: preferred?.label ?? rated?.label ?? row?.label ?? id,
     group: preferred ? 'common' : group,
     default: id === DEFAULT_CODE_POLICY,
     description: preferred?.description ?? description,
+    ratedSourceCommit: rated ? current.sourceCommit : null,
+    ratedVersion: rated ? current.ratedVersion : null,
+    currentRating: rated ? {
+      datasetId: current.id, date: current.date, elo: rated.elo, low95: rated.low95, high95: rated.high95,
+      wins: rated.wins, losses: rated.losses, games: rated.games,
+    } : null,
     historicalRating: row ? {
       datasetId: STRATEGY_ELO_BENCHMARK.id,
       date: STRATEGY_ELO_BENCHMARK.date,
@@ -147,11 +157,14 @@ export function strategyMenu({ all = false } = {}) {
   const ids = all
     ? [...COMMON_STRATEGIES.map((row) => row.policyId), ...REGISTERED_CODE_POLICY_IDS.filter((id) => !common.has(id))]
     : COMMON_STRATEGIES.map((row) => row.policyId);
+  const current = currentStrategyBenchmark();
   return {
     schema: 'kf-strategy-menu-v1', view: all ? 'all' : 'common',
     defaultPolicy: DEFAULT_CODE_POLICY, registeredCount: REGISTERED_CODE_POLICY_IDS.length,
     shownCount: ids.length,
-    benchmarkNote: 'Elo 为 2026-11-13 冻结实现的历史本地同池测试；当前实现有修补，非当前公开包或 TCO 新测评级。',
+    benchmarkNote: current
+      ? `当前 Elo 来自 ${current.date} 冻结的 v${current.ratedVersion} 七策略本地同池测试。2026-11-13 历史本地同池测试使用独立的六策略面板。`
+      : 'Elo 为 2026-11-13 冻结实现的历史本地同池测试；当前实现有修补，非当前公开包或 TCO 新测评级。',
     strategies: ids.map(strategyDetails),
   };
 }
@@ -168,7 +181,7 @@ export function renderStrategyMenu(menu) {
     `启动默认：${menu.defaultPolicy}`, menu.benchmarkNote, '',
   ];
   menu.strategies.forEach((row, i) => {
-    const score = row.historicalRating ? `；历史 Elo ${row.historicalRating.elo.toFixed(1)}` : '';
+    const score = row.currentRating ? `；当前 Elo ${row.currentRating.elo.toFixed(1)}` : row.historicalRating ? `；历史 Elo ${row.historicalRating.elo.toFixed(1)}` : '';
     lines.push(`${i + 1}. ${row.label}${row.default ? '（默认）' : ''} [${groups[row.group]}${score}]`);
     lines.push(`   ${row.policyId}`);
     lines.push(`   ${row.description}`);
@@ -180,6 +193,13 @@ export function renderStrategyMenu(menu) {
 }
 export function renderStrategyDetails(row) {
   const lines = [row.label + (row.default ? '（当前启动默认）' : ''), `策略 ID：${row.policyId}`, row.description];
+  if (row.currentRating) {
+    const c = row.currentRating;
+    const interval = c.low95 === null ? '完整块不足，区间未估计' : `名义 95% 完整块区间 ${c.low95.toFixed(1)}–${c.high95.toFixed(1)}`;
+    lines.push(`当前同池 Elo：${c.elo.toFixed(1)}；${interval}`,
+      `当前跨策略结果：${c.wins} 胜 ${c.losses} 负 / ${c.games} 局`,
+      `冻结版本：v${row.ratedVersion}（${c.date}） 源码 ${row.ratedSourceCommit}`);
+  } else if (currentStrategyBenchmark()) lines.push('未列入 2026-11-18 七策略同池榜。');
   if (row.historicalRating) {
     const h = row.historicalRating;
     lines.push(`历史同池 Elo：${h.elo.toFixed(1)}；名义 95% 完整块区间 ${h.low95.toFixed(1)}–${h.high95.toFixed(1)}`,

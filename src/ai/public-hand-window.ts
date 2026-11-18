@@ -4,6 +4,7 @@ import type { PublicCardUseValue } from './card-lifecycle-value.js';
 import { publicPlayEndsStep } from './public-card-value.js';
 import { projectSequenceResources } from './public-play-sequence.js';
 import { publicPlayCapacity } from './public-guidance-guards.js';
+import { publicFutureEffectActive } from './future-house-play-rules.js';
 
 export interface HandWindowOptions {
   projected?: boolean;
@@ -11,6 +12,8 @@ export interface HandWindowOptions {
   terminalDiscard?: boolean;
   /** Generic material value already included for each unbound play allowance. */
   playPermissionEstimate?: number;
+  /** Difference between waiting and the already credited Q/2 for this entering hand. */
+  waitingAdjustment?: (card: CardView) => number;
   /** Enables one visible opener, followed by a fresh joint allocation in its projected state. */
   reprice?: (view: Observation, card: CardView) => PublicCardUseValue | undefined;
 }
@@ -19,8 +22,8 @@ const houses = (c: CardView) => c.effective.houses ?? [c.effective.house];
 export function publicArtifactPlayTax(o: Observation, owner: Seat): number {
   return board(o).filter((c) => c.controller !== owner).reduce((n, c) => n + (c.spec.opponentArtifactPlayTax ?? 0), 0);
 }
-const playCost = (o: Observation, c: CardView) =>
-  (c.spec.playAmberCost ?? 0) + (c.spec.kind === 'artifact' ? publicArtifactPlayTax(o, o.you) : 0);
+export const publicPlayCost = (o: Observation, c: CardView, owner: Seat = o.you) =>
+  (c.spec.playAmberCost ?? 0) + (c.spec.kind === 'artifact' ? publicArtifactPlayTax(o, owner) : 0);
 
 // Unknown instructions might dispatch another ability and leave an unobserved parent frame.
 const ordinaryInstructions = new Set(['gain','loseOpponent','steal','capture','draw','healSelf','chains','resource',
@@ -95,7 +98,7 @@ function terminalChoice(o: Observation, terminalDiscard = false): boolean {
 // the final priced card without repricing the remainder in its new state.
 function changesFollowingPlay(card: CardView): boolean {
   const d = card.spec;
-  if (d.onePlayPerType || d.prohibitOwnCreatures || d.noPlayCreaturesWhileAhead ||
+  if ((card.resolvedBonusIcons ?? card.bonusIcons ?? []).includes('damage') || d.onePlayPerType || d.prohibitOwnCreatures || d.noPlayCreaturesWhileAhead ||
     d.creaturePlayLimits?.length || d.forbidMorePowerfulCreaturePlay || d.grantsEnemyOmega ||
     d.entersOpponentControl && (d.playLimitOpponent !== undefined || d.opponentArtifactPlayTax)) return true;
   const changes = (value: unknown, depth = 0): boolean => {
@@ -105,6 +108,8 @@ function changesFollowingPlay(card: CardView): boolean {
     const row = value as Record<string,unknown>;
     if (row.kind === 'lasting' && row.side !== 'opponent' &&
       ['noPlay','noActions','noCreatures','noMatchingPlay','onlyPlayHouse','noNamedPlayUse','playLimit'].includes(String(row.rule))) return true;
+    // Two damage plays cannot each claim a casualty priced against the same board.
+    if (row.kind === 'damageChoice' || row.operation === 'damage') return true;
     if (row.kind === 'steal' || row.kind === 'capture' || row.kind === 'loseOpponent' ||
       row.kind === 'payOpponent' || row.kind === 'loseThen' || row.kind === 'forgeEffect' ||
       row.kind === 'resource' && (row.operation === 'lose' || row.operation === 'steal')) return true;
@@ -132,7 +137,7 @@ function routes(o: Observation, c: CardView, projected: boolean): (number | unde
     c.animatedArtifact || c.form || c.copiedForm || c.tokenCreature || c.definition !== d.id || c.gainedTextBoxes?.length ||
     c.giganticBonusIcons || (c.physicalParts?.length ?? 0) > 1 ||
     d.alpha && (o.turnStep?.performed[o.you] ?? o.handOperations) > 0 ||
-    me.amber < Math.max(d.minAmberToPlay ?? 0, playCost(o, c)) || (o.turnUsage[d.name] ?? 0) >= 6) return [];
+    me.amber < Math.max(d.minAmberToPlay ?? 0, publicPlayCost(o, c)) || (o.turnUsage[d.name] ?? 0) >= 6) return [];
   if (d.kind === 'upgrade' && !table.some((x) => x.spec.kind === (d.upgrade?.attachToArtifact ? 'artifact' : 'creature'))) return [];
   if (table.some((x) => x.spec.unmodeled || x.spec.onePlayPerType || x.gainedTextBoxes?.length ||
     d.kind === 'creature' && (x.spec.creaturePlayLimits?.length || x.spec.forbidMorePowerfulCreaturePlay ||
@@ -140,8 +145,9 @@ function routes(o: Observation, c: CardView, projected: boolean): (number | unde
       x.spec.noPlayCreaturesWhileAhead && me.battleline.length > enemy.battleline.length ||
       x.controller !== o.you && x.spec.forbidsEnemyRightFlankPlay && !d.entersOpponentControl && !me.battleline.length))) return [];
   for (const e of o.lasting) {
-    if (e.rule === 'noNamedPlayUse' && e.turn >= o.turn && e.affectedName === d.name) return [];
-    if (e.appliesTo !== o.you || (e.begins ?? o.turn) > o.turn || e.turn < o.turn) continue;
+    if (!publicFutureEffectActive(o, e, o.turn)) continue;
+    if (e.rule === 'noNamedPlayUse' && e.affectedName === d.name) return [];
+    if (e.appliesTo !== o.you) continue;
     if (e.rule === 'noPlay' || e.rule === 'noActions' && d.kind === 'action' ||
       e.rule === 'noCreatures' && d.kind === 'creature' || e.rule === 'onlyPlayHouse' && e.house !== d.house ||
       e.rule === 'noMatchingPlay' && e.countFilter?.kind === d.kind && (!e.house || houses(c).includes(e.house))) return [];
@@ -182,8 +188,9 @@ export function publicHandCardPlayable(o: Observation, c: CardView, options: Han
 
 function allocateWindow(o: Observation, cards: readonly CardView[],
   useValue: (card: CardView) => PublicCardUseValue | undefined, options: HandWindowOptions = {},
-  onAllocation?: (permissions: ReadonlyMap<number,number>) => void, priorKeyPriority = false) {
-  const empty = { score: 0, selectedIds: [] as string[], keyPriorityUsed: false, approximate: true, reasons: [] as string[] };
+  onAllocation?: (permissions: ReadonlyMap<number,number>) => void, priorKeyPriority = false,
+  initialUse?: (card: CardView) => PublicCardUseValue | undefined) {
+  const empty = { score: 0, gainOverWaiting: 0, selectedIds: [] as string[], keyPriorityUsed: false, approximate: true, reasons: [] as string[] };
   const cap = publicPlayCapacity(o);
   if (!windowOpen(o, options.terminalDiscard) || !cap.known || cap.blocked) return empty;
   const unique = new Map(cards.map((c) => [c.id, c]));
@@ -203,11 +210,15 @@ function allocateWindow(o: Observation, cards: readonly CardView[],
         projectPublicPlaySequenceOpener(o,card,id,'left',!!options.projected,true)))
         current -= grants.length * options.playPermissionEstimate;
     }
-    const premium = Math.max(0, current - Math.max(0, use.score) / 2);
-    const cost = playCost(o, card);
+    const retained = initialUse ? initialUse(card) : use;
+    if (!retained || !Number.isFinite(retained.score) || Math.abs(retained.score) >= 5000) return [];
+    const delta = current - Math.max(0, retained.score) / 2;
+    const settled = options.waitingAdjustment ? delta : Math.max(0, delta);
+    const gain = settled - (options.waitingAdjustment?.(card) ?? 0);
+    const cost = publicPlayCost(o, card);
     const last = publicPlayEndsStep(o, card) || changesFollowingPlay(card);
     const keyPriority = !!use.currentKeyPriority && !priorKeyPriority;
-    return premium > 0 || keyPriority ? [{ card, ways, premium, cost, last, keyPriority }] : [];
+    return gain > 0 || keyPriority ? [{ card, ways, gain, settled, cost, last, keyPriority }] : [];
   });
   // Alpha first, Omega last; among ordinary cards pay stricter pre-payment thresholds first.
   rows.sort((a,b) => Number(!!b.card.spec.alpha) - Number(!!a.card.spec.alpha) ||
@@ -215,19 +226,19 @@ function allocateWindow(o: Observation, cards: readonly CardView[],
     (o.turn === 1 ? Number(b.ways.includes(undefined)) - Number(a.ways.includes(undefined)) : 0) ||
     Math.max(0,(b.card.spec.minAmberToPlay ?? 0)-b.cost) - Math.max(0,(a.card.spec.minAmberToPlay ?? 0)-a.cost) ||
     Number(houses(a.card).includes(o.activeHouse!)) - Number(houses(b.card).includes(o.activeHouse!)) ||
-    b.premium - a.premium || a.card.id.localeCompare(b.card.id));
-  const initial = { score: 0, ids: [] as string[], keyPriorityUsed:false, amber: o.players[o.you].amber, closed: false,
+    b.gain - a.gain || a.card.id.localeCompare(b.card.id));
+  const initial = { score: 0, gain: 0, ids: [] as string[], keyPriorityUsed:false, amber: o.players[o.you].amber, closed: false,
     names: new Map<string,number>(), permissions: new Map<number,number>(), uniques: new Map<number,number>() };
   let states = [initial];
   let prioritiesRemaining = rows.filter((row) => row.keyPriority).length;
-  for (const { card, ways, premium, cost, last, keyPriority } of rows) {
+  for (const { card, ways, gain, settled, cost, last, keyPriority } of rows) {
     if (keyPriority) prioritiesRemaining--;
     const next = [...states];
     for (const s of states) {
       // The proof belongs to this priced observation, before any unmodeled earlier play.
       // A modeled funding/permission opener reprices a separate tail in its resulting state.
       const freshPriority = keyPriority && !s.ids.length;
-      if (!premium && !freshPriority || s.closed || s.ids.length >= (cap.remaining ?? Infinity) || card.spec.alpha && s.ids.length ||
+      if (gain <= 0 && !freshPriority || s.closed || s.ids.length >= (cap.remaining ?? Infinity) || card.spec.alpha && s.ids.length ||
         s.amber < Math.max(cost, card.spec.minAmberToPlay ?? 0)) continue;
       const name = card.spec.name, count = s.names.get(name) ?? o.turnUsage[name] ?? 0;
       if (count >= 6) continue;
@@ -248,7 +259,8 @@ function allocateWindow(o: Observation, cards: readonly CardView[],
         const uniques = id === undefined ? 0 : s.uniques.get(id) ?? 0;
         const newUnique = !!permit && !permit.used.includes(card.id);
         if (permit && (uses >= (permit.remaining ?? Infinity) || newUnique && uniques >= (permit.uniqueRemaining ?? Infinity))) continue;
-        const successor = { score: s.score + premium + (freshPriority ? keyPriorityValue : 0),
+        const priority = freshPriority ? keyPriorityValue : 0;
+        const successor = { score: s.score + settled + priority, gain: s.gain + gain + priority,
           keyPriorityUsed: s.keyPriorityUsed || freshPriority, ids: [...s.ids,card.id], amber: s.amber - cost, closed: last,
           names: new Map(s.names).set(name,count+1), permissions: new Map(s.permissions), uniques: new Map(s.uniques) };
         if (id !== undefined) {
@@ -259,14 +271,14 @@ function allocateWindow(o: Observation, cards: readonly CardView[],
       }
     }
     // Beam size bounds work even for exceptionally large public hands.
-    states = next.sort((a,b) => b.score-a.score || b.amber-a.amber || a.ids.length-b.ids.length).slice(0,48);
+    states = next.sort((a,b) => b.gain-a.gain || b.amber-a.amber || a.ids.length-b.ids.length).slice(0,48);
     // Keep the option to spend the entire remaining budget on a later key response,
     // even if 48 earlier ordinary combinations all used the only permitted play.
     if (prioritiesRemaining && states.length === 48 && !states.includes(initial)) states[47] = initial;
   }
   const best = states[0];
   onAllocation?.(best.permissions);
-  return { ...empty, score: best.score, selectedIds: best.ids, keyPriorityUsed: best.keyPriorityUsed, reasons: best.ids.length ?
+  return { ...empty, score: best.score, gainOverWaiting: best.gain, selectedIds: best.ids, keyPriorityUsed: best.keyPriorityUsed, reasons: best.ids.length ?
     ['shared current play opportunity for ' + best.ids.join(', ')] : [] };
 }
 
@@ -358,16 +370,17 @@ export function assessPublicHandWindow(o: Observation, cards: readonly CardView[
       const pure = granted.every((p) => p.mode === 'play');
       let grantCount = 0;
       const tail = allocateWindow(next, remaining, (c) => reprice(next,c),
-        { projected:true, playPermissionEstimate:options.playPermissionEstimate }, (used) => {
+        { projected:true, playPermissionEstimate:options.playPermissionEstimate, waitingAdjustment:options.waitingAdjustment }, (used) => {
           // An unused play-or-use allowance can still be spent on the board. Consuming
           // it for a priced hand play removes its generic estimate just once per grant.
           grantCount = granted.filter((p) => pure || used.has(p.id)).length;
-        }, !!use.currentKeyPriority);
+        }, !!use.currentKeyPriority, options.waitingAdjustment ? useValue : undefined);
       const score = use.currentScore! - Math.max(0,use.score) / 2 + tail.score -
         grantCount * (options.playPermissionEstimate ?? 0) + (use.currentKeyPriority ? keyPriorityValue : 0);
-      if (tail.selectedIds.length && score > best.score) {
+      const gainOverWaiting = score + (tail.gainOverWaiting - tail.score) - (options.waitingAdjustment?.(card) ?? 0);
+      if (tail.selectedIds.length && gainOverWaiting > best.gainOverWaiting) {
         const ids = [card.id,...tail.selectedIds];
-        best = { score, selectedIds: ids, keyPriorityUsed: !!use.currentKeyPriority || tail.keyPriorityUsed, approximate: true,
+        best = { score, gainOverWaiting, selectedIds: ids, keyPriorityUsed: !!use.currentKeyPriority || tail.keyPriorityUsed, approximate: true,
           reasons: ['shared current play opportunity after ' + card.id + ' funds or permits ' + tail.selectedIds.join(', ')] };
       }
     }

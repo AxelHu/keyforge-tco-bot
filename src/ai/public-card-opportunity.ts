@@ -4,7 +4,7 @@ import { publicCardLocation, type PublicCardUseValue } from './card-lifecycle-va
 import { contextualBoardWorth } from './public-card-value.js';
 import { publicPlayCapacity } from './public-guidance-guards.js';
 
-import { publicHandCardPlayable, type HandWindowOptions } from './public-hand-window.js';
+import { publicHandCardPlayable, publicPlayCost, type HandWindowOptions } from './public-hand-window.js';
 
 export interface PublicMaterialEstimate { score: number; approximate: boolean; unresolvedValues: boolean; currentKeyPriority?: boolean; }
 export type PublicMaterialEvaluator = (observation: Observation, actionId: string) => PublicMaterialEstimate;
@@ -91,21 +91,28 @@ function publicProbe(o: Observation, c: CardView, owner: Seat, action: Action): 
 }
 
 export function assessPublicCardUse(
-  o: Observation, c: CardView, owner: Seat, evaluate: PublicMaterialEvaluator, options?: HandWindowOptions & { keyTiming?: boolean },
+  o: Observation, c: CardView, owner: Seat, evaluate: PublicMaterialEvaluator, options?: HandWindowOptions & { keyTiming?: boolean; requireFundedMaterial?: boolean },
 ): PublicCardUseValue | undefined {
   if (c.tokenCreature || c.copiedDefinition || c.definition !== c.spec.id ||
     (c.physicalParts?.length ?? 0) > 1) return undefined;
-  const fallback = 1 + Math.max(0, contextualBoardWorth(o, c)) * (c.spec.kind === 'creature' ? 0.45 : 0.2) +
-    Math.min(2, c.spec.amber) * 0.5;
+  const cost = options?.requireFundedMaterial ? publicPlayCost(o, c, owner) : 0;
+  const funded = !options?.requireFundedMaterial || o.players[owner].amber >= Math.max(cost, c.spec.minAmberToPlay ?? 0);
+  // Preserve the existing one-point physical option floor. The fallback is not an
+  // executed Play: its board/icon component must also bear the full known pool cost.
+  const fallback = 1 + Math.max(0, Math.max(0, contextualBoardWorth(o, c)) * (c.spec.kind === 'creature' ? 0.45 : 0.2) +
+    Math.min(2, c.spec.amber) * 0.5 - 3.5 * cost);
   const actual = owner === o.you && !options?.projected ? o.legalActions.filter((x) => x.action.kind === 'play' &&
     x.action.card === c.id && !x.action.copy) : [];
-  const current = actual.slice(0, 16).map((x) => evaluate(o, x.id));
+  const current = (funded ? actual.slice(0, 16) : []).map((x) => evaluate(o, x.id));
   const currentScore = current.length ? Math.max(...current.map((x) => x.score)) : undefined;
   const actions: Action[] = c.spec.kind === 'upgrade'
     ? board(o).filter((x) => x.spec.kind === (options && c.spec.upgrade?.attachToArtifact ? 'artifact' : 'creature')).slice(0, 12)
         .map((x) => ({ kind: 'play', card: c.id, target: x.id }))
     : [{ kind: 'play', card: c.id, ...(c.spec.kind === 'creature' ? { flank: 'left' as const } : {}) }];
-  const probes = actions.map((action) => {
+  // A material probe cannot debit an amount the payer does not have. An unfunded
+  // hypothetical play would otherwise keep its full printed payoff for a partial price.
+  // Keep the existing physical-card fallback until a public projection can pay in full.
+  const probes = (funded ? actions : []).map((action) => {
     const view = publicProbe(o, c, owner, action);
     return evaluate(view, 'public-material-probe');
   });
@@ -118,7 +125,7 @@ export function assessPublicCardUse(
   // House-dependent effects in a future material probe may therefore have a different payoff.
   let usableMaterial = material;
   let currentEstimates = current;
-  if (options && playableNow && currentScore === undefined) {
+  if (options && funded && playableNow && currentScore === undefined) {
     const currentProbes = o.activeHouse === c.effective.house ? probes : actions.map((action) =>
       evaluate({ ...publicProbe(o, c, owner, action), activeHouse: o.activeHouse }, 'public-material-probe'));
     currentEstimates = currentProbes;

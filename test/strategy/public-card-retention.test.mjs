@@ -104,7 +104,7 @@ test('only next-own-call public restrictions delay future access, with one best 
   o.houseRestrictions = [restriction(o, 'dis', null)];
   close(score(o, [a]), -2);
   o.houseRestrictions = [restriction(o, 'dis', null), restriction(o, 'dis', 5, 'mustHouse')];
-  close(score(o, [a]), 0);
+  close(score(o, [a]), -2); // The impossible must-house falls back to the remaining permitted houses.
 });
 
 test('actual own house menu, preceding house and lasting play bans are scoped to the coming call', () => {
@@ -119,6 +119,8 @@ test('actual own house menu, preceding house and lasting play bans are scoped to
   lock.spec.forbidsPreviousHouse = true;
   o.players[1].artifacts = [lock];
   o.previousChosenHouses = ['mars', 'logos'];
+  close(score(o), -1.2); // The previous call was Mars even though the current house is Dis.
+  o.previousChosenHouses = ['dis', 'logos'];
   close(score(o), -2);
   o.players[1].artifacts = [];
   o.activePlayer = 1;
