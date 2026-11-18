@@ -1,0 +1,107 @@
+{
+  "schema": "kf-strategy-elo-benchmark-v2",
+  "id": "strategy-elo-20261118",
+  "date": "2026-11-18",
+  "kind": "frozen-seven-policy-local-simulation",
+  "ratedVersion": "0.6.5",
+  "sourceCommit": "aa718bb10a7d7002fd4591cddda6ac5865d30d93",
+  "totalGames": 1008,
+  "ratingGames": 1008,
+  "mirrorGames": 0,
+  "ratedPolicies": 7,
+  "registeredPolicies": 89,
+  "deckCount": 12,
+  "completeBlocks": 12,
+  "plannedBlocks": 12,
+  "method": {
+    "name": "regularized-Bradley-Terry",
+    "eloMean": 1500,
+    "eloScale": 400,
+    "priorSdElo": 400,
+    "intervalConfidence": 0.95,
+    "bootstrapReplicates": 1000,
+    "resamplingUnit": "complete 84-game ordered-deck-pair/seed block"
+  },
+  "rows": [
+    {
+      "rank": 1,
+      "policyId": "tactical-toc-v2",
+      "label": "ToC 牌效 V2",
+      "elo": 1533.2930659709275,
+      "low95": 1493.7830138228067,
+      "high95": 1586.3611712519742,
+      "wins": 160,
+      "losses": 128,
+      "games": 288
+    },
+    {
+      "rank": 2,
+      "policyId": "tactical-style-cycle-v2",
+      "label": "快周转 V2",
+      "elo": 1522.8572213447758,
+      "low95": 1493.7929131900887,
+      "high95": 1550.6372861217992,
+      "wins": 155,
+      "losses": 133,
+      "games": 288
+    },
+    {
+      "rank": 3,
+      "policyId": "tactical-card-effects-v4",
+      "label": "牌效战术 V4",
+      "elo": 1512.4616161079202,
+      "low95": 1474.9814677762213,
+      "high95": 1559.9111056585407,
+      "wins": 150,
+      "losses": 138,
+      "games": 288
+    },
+    {
+      "rank": 4,
+      "policyId": "tactical-card-effects-v3",
+      "label": "公开效果 V3",
+      "elo": 1504.1616885052554,
+      "low95": 1481.2124374925245,
+      "high95": 1525.5960830044703,
+      "wins": 146,
+      "losses": 142,
+      "games": 288
+    },
+    {
+      "rank": 5,
+      "policyId": "tactical-style-engine-v3",
+      "label": "场面引擎 V3",
+      "elo": 1495.8663626800162,
+      "low95": 1464.3720832772403,
+      "high95": 1532.03618050922,
+      "wins": 142,
+      "losses": 146,
+      "games": 288
+    },
+    {
+      "rank": 6,
+      "policyId": "tactical-ladder-balanced-v2",
+      "label": "均衡阶梯 V2",
+      "elo": 1470.9147799235009,
+      "low95": 1399.2367888907313,
+      "high95": 1535.7307542401093,
+      "wins": 130,
+      "losses": 158,
+      "games": 288
+    },
+    {
+      "rank": 7,
+      "policyId": "tactical-style-control-v2",
+      "label": "干扰控制 V2",
+      "elo": 1460.445265467604,
+      "low95": 1412.998085567745,
+      "high95": 1504.3573339021611,
+      "wins": 125,
+      "losses": 163,
+      "games": 288
+    }
+  ],
+  "report": "docs/calibration-and-strategy-elo.md",
+  "evidence": "docs/evidence/calibration-elo-2026-11-18.json",
+  "resultsSha256": "280a0349dd9b161f460f90a1b245a3d93b4d10947603397a3185a6bbe9f14aeb"
+}

@@ -10,7 +10,7 @@ engine, game server, game UI and historical match data are not included.
 
 [中文说明](README.md) · [Architecture](docs/architecture.md) ·
 [Card knowledge](docs/card-knowledge.md) · [Operations](docs/operations.md) ·
-[Strategies and historical Elo](docs/strategy-guide.md) · [International TCO and chat language](docs/international-tco.md) · [Network measurements and subsequent games](docs/international-network.md) · [Validation](docs/validation.md)
+[Strategies and Elo ratings](docs/strategy-guide.md) · [International TCO and chat language](docs/international-tco.md) · [Network measurements and subsequent games](docs/international-network.md) · [Validation](docs/validation.md)
 
 ## What is included
 
@@ -32,6 +32,10 @@ engine, game server, game UI and historical match data are not included.
   dependencies. Optional social chat is disabled by default.
 
 ## Compatibility and current validation
+
+### 0.6.5 hand valuation and seven-policy Elo
+
+In the 192-game version comparison, 0.6.5 recorded 96 wins and 96 losses (50.00%) in complete four-game units. Every four-game unit split 2–2. The resulting [50%, 50%] intervals carry no sampling variation across these units and do not establish a population win rate of 50% or a win-rate gain. A separate seven-policy round robin completed 1,008 games and contributed 1,008 games to the Elo fit. The full offline suite passed 636/636. [Method, ratings and all head-to-head records](docs/calibration-and-strategy-elo.md) · [Rating data](docs/data/strategy-elo-20261118.json)
 
 <!-- retention-sequence-064:start -->
 ### 0.6.4 hand retention and short play sequences
@@ -148,9 +152,7 @@ configuration. Use `init --policy ID`, or the optional `--choose-policy`
 numbered menu in an interactive TTY; these options are mutually exclusive.
 An unstarted seat configuration can also set `self.codePolicy` directly.
 The [strategy guide](docs/strategy-guide.md), maintained in Chinese, explains
-the policies and the **2026-11-13 historical Elo table**. Those ratings bind
-the recorded frozen implementation and are not new measurements of the
-current public code.
+the policies, the current seven-policy ratings dated 2026-11-18 and the historical six-policy ratings dated 2026-11-13.
 
 ## Strategy and knowledge boundary
 
