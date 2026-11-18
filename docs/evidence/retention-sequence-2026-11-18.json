@@ -1,0 +1,4677 @@
+{
+  "schema": "keyforge-retention-sequence-evidence-v1",
+  "version": "0.6.4",
+  "date": "2026-11-18",
+  "source": {
+    "baseline": "9d3947632a5575a39a792124113b4a6d8154ea18",
+    "candidate": "751bfb5616f9612c75fd782b5571a07d92b56619",
+    "selfEngine": "8b92cc1cd25d2b617abce5cb9616fbc29ff4e501",
+    "comparisonRuntimeManifestSha256": "5f0c7ff6c3cc377772896f4e96f3b17f3f84aab067eaac9741185bdfe038264f",
+    "runtimeFreezeReceiptSha256": "b3d9dbb9dd3f809e4bad47d322e084f155cc50bd6510e8b0961136286252f7aa",
+    "runtimeAndSourceInputs": 546,
+    "candidateCompiledJavaScriptFiles": 79
+  },
+  "testResults": {
+    "offline": {
+      "tests": 619,
+      "pass": 619,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "buildActualExitCode": 0,
+    "offlineActualExitCode": 0,
+    "verificationHistory": {
+      "supersededBeforeCompletion": {
+        "sourceCommit": "d385d1f9e7d963028a7607d0ceb0673a5a9b2a61",
+        "reason": "Critical key-priority estimate was revised after a public stored-resource change.",
+        "interruptionReceiptSha256": "c2d78a6b6fbb7ab50c4f13b476f8bac51f0b811ed5a2e371212611a3487d8666",
+        "partialValidationReceiptSha256": "fd542d335e6e2ccee2b360eb8d9de13886750d40a69763f846fd50cd80d72c63"
+      },
+      "failedAttempts": [
+        {
+          "sourceCommit": "751bfb5616f9612c75fd782b5571a07d92b56619",
+          "counts": {
+            "tests": 619,
+            "pass": 618,
+            "fail": 1,
+            "cancelled": 0,
+            "skipped": 0,
+            "todo": 0
+          },
+          "actualExitCode": 1,
+          "logSha256": "b8da9989af79b7f2c248f341123fcefe38973aac68d63cc1c1d39965ba84c944",
+          "receiptSha256": "7a4b8f4f597fb6b304cf5222e82913557ab16f379c509a093258420965ba9b2a",
+          "sameInputsAsFinal": true,
+          "category": "Existing wrong-ticket transport watchdog fixture, two-second recovery wait",
+          "failureSummarySha256": "ec901ff7fb481b1d7e04527fe3a8ed31a95f62ae701f840fe826a3ff8e9af038"
+        }
+      ],
+      "focusedUnchangedTransportFixture": {
+        "file": "test/transport/keyteki-observed-receipt.test.mjs",
+        "counts": {
+          "tests": 10,
+          "pass": 10,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "logSha256": "ae271087073b276d97c28d55f55acf6f3c77920dcbbe26abe65d5619b90adeec"
+      },
+      "onlyFinalFullRunCountedInOfflineCoverage": true
+    },
+    "validationReceiptSha256": "0fa8a0e5473d42db4937adb284b5f66e0d7a6a15b9896a00bcf9c04d4625c253",
+    "buildLogSha256": "a3a839632ad62bf9d00c99786ca0c1e988c64a85049dcf0b5bec22272973faf9",
+    "offlineLogSha256": "fc7c4bf31432f68139d6503f7ae13efa792660d370f553cc5497a225a3a72024",
+    "validationInputCount": 130
+  },
+  "design": {
+    "fixedDecks": 12,
+    "families": [
+      "tactical-style-engine-v3",
+      "tactical-card-effects-v3"
+    ],
+    "comparisonDesignSha256": "075f085e0b84265239bcda62aca9bfc0d09be982cd8b80e48474447ce32de07d",
+    "analysisPlanSha256": "f6a8c5c702d8f37b6354264532e4925f2367ae1321681dfae8bcf241ab8ebfbe",
+    "planPreparationSha256": "fa880315a355256913b9eaf243430986957776c7c0d7c355f1c67e44c6ba1fa5",
+    "behaviorFixtureSha256": "643accb07626ddf061d35f0168da41b8c8d0615c723243910731a3433f1352b1",
+    "bootstrapReplicates": 10000,
+    "confidenceLevel": 0.95,
+    "unit": "One family, ordered deck pair and seed crossed with both seats and first players. Family bootstrap uses complete clean units. Aggregate point estimate only.",
+    "developmentSeeds": [
+      2123234953
+    ],
+    "developmentGames": 96,
+    "confirmationSeeds": [
+      1647524705,
+      51616434
+    ],
+    "confirmationGames": 384
+  },
+  "independentReviewSha256": "391fed8b41260c72b548c15724f92a195cd31a438083fca71019a05f29792129",
+  "scope": {
+    "newOnlineGames": 0,
+    "newEloRatingGames": 0,
+    "resultsPooledAcrossStages": false,
+    "directDiscardSelection": "Accepted Select of a physical card in the observer’s own visible hand at an own direct target-operation/discard prompt. Intermediate selections count. Active-house membership and public Scrap presence partition the events. Effect-selection is reported separately without inferring the continuation.",
+    "refillSlot": "A 0.9 slot is a marginally available draw capped by public deck plus discard supply. A reshuffle can return the just-discarded physical card; no probability of a different identity is estimated.",
+    "limitations": [
+      "Previously seen fixed deck collection and two held-out confirmation seeds. Decks recur across units.",
+      "Selections are descriptive. Optional and mandatory prompts are both eligible. An accepted selection does not demonstrate movement, current playability or Scrap resolution.",
+      "The bundled comparison cannot attribute a win-rate change to one helper; no online strength estimate."
+    ],
+    "localGames": {
+      "primaryComparison": 480,
+      "separateCoverageDiagnostic": 8,
+      "totalDistinct": 488,
+      "additionalGamesForReplayingExistingTraces": 0,
+      "sameConfigurationPolicyReconstructions": 4
+    }
+  },
+  "development": {
+    "plannedGames": 96,
+    "actualExitCode": 0,
+    "executionReceiptSha256": "6e685500c75842b853a10d0f2f91df5d3f843103b05166c6df3c58459d2c162f",
+    "analysisSha256": "1a76c59b99b1ed167d6663c6afced40ed850ab6728063d7f49a9bc43dc32f756",
+    "wallSeconds": 906.825668,
+    "bindings": {
+      "executionBinding": "e1d3a4e65a7b52a79d4b7a4286436d1514eec90475244f60d12b8b3d5d9aaf67",
+      "executionReceiptSha256": "6e685500c75842b853a10d0f2f91df5d3f843103b05166c6df3c58459d2c162f",
+      "analysisExecutionReceiptSha256": "3a46f91ce9643bfa7e735964b8e591202209880b7ed5952b283e980f120ee4d5",
+      "analysisSha256": "1a76c59b99b1ed167d6663c6afced40ed850ab6728063d7f49a9bc43dc32f756",
+      "manifestSha256": "24bb94ed4b402e5f25a31099c1fdedf0888937ca6e10798463e8daabf0c3559e",
+      "summarySha256": "61550e747ff14a510715bc2c4083289200a655724c551165f16fa9b3c268999f",
+      "resultsSha256": "125f92b9b24b071bcca0cac18eeb76300b435926ca8941574d90712d5addb843",
+      "statusSha256": "6e79ad5ed005d0f666c0779baaa29f15f9e9469e6309cf700daa5d5f63e78437"
+    },
+    "instrumentation": {
+      "replays": 1,
+      "immutabilityChecks": 429,
+      "privacyChecks": 3
+    },
+    "aggregate": {
+      "selectedGames": 96,
+      "observedGames": 96,
+      "allNatural": {
+        "games": 96,
+        "candidateWins": 47,
+        "baselineWins": 49,
+        "candidateWinRate": 0.4895833333333333,
+        "anomalousNaturalGames": 0,
+        "naturalGamesExcludedFromCleanAnalysis": 0
+      },
+      "cleanUnits": {
+        "units": 24,
+        "games": 96,
+        "candidateWins": 47,
+        "baselineWins": 49,
+        "candidateWinRate": 0.4895833333333333,
+        "bootstrap": {
+          "computed": false
+        }
+      },
+      "technicalAndAnomalous": {
+        "nonVictoryGames": 0,
+        "anomalousGames": 0,
+        "anomalousVictoryGames": 0,
+        "technicalOrAnomalousUniqueGames": 0
+      },
+      "incompleteUnits": 0,
+      "excludedUnits": 0,
+      "displayMutation": {
+        "checks": 2510,
+        "mismatchedGames": 0,
+        "missingProbeGames": 0
+      },
+      "actionAndTiming": {
+        "versions": {
+          "candidate": {
+            "acceptedDecisions": 9958,
+            "completedOwnTurns": 849,
+            "selected": {
+              "playFromHand": 2111,
+              "discardFromHand": 41,
+              "fightWhenSameCardCanReap": 105,
+              "reapWhenSameCardCanFight": 1002,
+              "playWhenSameCardDiscardable": 2111,
+              "discardWhenSameCardPlayable": 36,
+              "discardWithPublicScrapText": 2,
+              "discardWithoutPublicScrapText": 39,
+              "discardWhenSameCardPlayableWithPublicScrapText": 2,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 34,
+              "directDiscardOwnHandSelect": 109,
+              "directDiscardSelectActiveHouse": 29,
+              "directDiscardSelectOtherHouse": 80,
+              "directDiscardSelectUndeclaredHouse": 0,
+              "directDiscardSelectMixedHouseMenu": 62,
+              "directDiscardSelectPublicScrap": 25,
+              "directDiscardSelectNoPublicScrap": 84,
+              "unclassifiedEffectSelectionOwnHandSelect": 12
+            },
+            "opportunities": {
+              "play": 2681,
+              "discard": 2706,
+              "reap": 1789,
+              "fight": 1783,
+              "use": 708,
+              "house": 849,
+              "fightAndReapSameCard": 1725,
+              "playAndDiscardSameCard": 2662
+            },
+            "actionsPerCompletedOwnTurn": {
+              "play": 2.4935217903415783,
+              "discard": 0.048292108362779744,
+              "reap": 1.2355712603062425,
+              "fight": 0.1790341578327444,
+              "use": 0.1625441696113074
+            },
+            "policyDecisionTiming": {
+              "calls": 9958,
+              "elapsedMs": 258659.50450199947,
+              "meanMs": 25.97504564189591,
+              "maximumMs": 4202.14896000002,
+              "medianBucket": {
+                "lowerBoundMs": 8,
+                "upperInclusiveMs": 16
+              },
+              "p95Bucket": {
+                "lowerBoundMs": 64,
+                "upperInclusiveMs": 128
+              }
+            }
+          },
+          "baseline": {
+            "acceptedDecisions": 9940,
+            "completedOwnTurns": 848,
+            "selected": {
+              "playFromHand": 2099,
+              "discardFromHand": 28,
+              "fightWhenSameCardCanReap": 97,
+              "reapWhenSameCardCanFight": 1005,
+              "playWhenSameCardDiscardable": 2099,
+              "discardWhenSameCardPlayable": 27,
+              "discardWithPublicScrapText": 0,
+              "discardWithoutPublicScrapText": 28,
+              "discardWhenSameCardPlayableWithPublicScrapText": 0,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 27,
+              "directDiscardOwnHandSelect": 110,
+              "directDiscardSelectActiveHouse": 42,
+              "directDiscardSelectOtherHouse": 68,
+              "directDiscardSelectUndeclaredHouse": 0,
+              "directDiscardSelectMixedHouseMenu": 67,
+              "directDiscardSelectPublicScrap": 24,
+              "directDiscardSelectNoPublicScrap": 86,
+              "unclassifiedEffectSelectionOwnHandSelect": 14
+            },
+            "opportunities": {
+              "play": 2674,
+              "discard": 2704,
+              "reap": 1786,
+              "fight": 1774,
+              "use": 729,
+              "house": 848,
+              "fightAndReapSameCard": 1717,
+              "playAndDiscardSameCard": 2659
+            },
+            "actionsPerCompletedOwnTurn": {
+              "play": 2.483490566037736,
+              "discard": 0.0330188679245283,
+              "reap": 1.2488207547169812,
+              "fight": 0.1650943396226415,
+              "use": 0.16273584905660377
+            },
+            "policyDecisionTiming": {
+              "calls": 9940,
+              "elapsedMs": 240623.94866600176,
+              "meanMs": 24.207640710865366,
+              "maximumMs": 3070.385910000012,
+              "medianBucket": {
+                "lowerBoundMs": 8,
+                "upperInclusiveMs": 16
+              },
+              "p95Bucket": {
+                "lowerBoundMs": 64,
+                "upperInclusiveMs": 128
+              }
+            }
+          }
+        },
+        "games": 96,
+        "commands": {
+          "count": 96,
+          "sum": 19898,
+          "mean": 207.27083333333334,
+          "minimum": 139,
+          "median": 190.0,
+          "p90": 272.5,
+          "p95": 308.0,
+          "maximum": 372
+        },
+        "turns": {
+          "count": 96,
+          "sum": 1793,
+          "mean": 18.677083333333332,
+          "minimum": 13,
+          "median": 18.0,
+          "p90": 24.0,
+          "p95": 26.0,
+          "maximum": 29
+        },
+        "workerElapsedMs": {
+          "count": 96,
+          "sum": 1634859.2104670005,
+          "mean": 17029.783442364587,
+          "minimum": 4733.03879999998,
+          "median": 14631.091740000003,
+          "p90": 28832.421481000027,
+          "p95": 39249.8142155,
+          "maximum": 56551.82374999998
+        }
+      },
+      "allObservedBehavior": {
+        "versions": {
+          "candidate": {
+            "acceptedDecisions": 9958,
+            "completedOwnTurns": 849,
+            "selected": {
+              "playFromHand": 2111,
+              "discardFromHand": 41,
+              "fightWhenSameCardCanReap": 105,
+              "reapWhenSameCardCanFight": 1002,
+              "playWhenSameCardDiscardable": 2111,
+              "discardWhenSameCardPlayable": 36,
+              "discardWithPublicScrapText": 2,
+              "discardWithoutPublicScrapText": 39,
+              "discardWhenSameCardPlayableWithPublicScrapText": 2,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 34,
+              "directDiscardOwnHandSelect": 109,
+              "directDiscardSelectActiveHouse": 29,
+              "directDiscardSelectOtherHouse": 80,
+              "directDiscardSelectUndeclaredHouse": 0,
+              "directDiscardSelectMixedHouseMenu": 62,
+              "directDiscardSelectPublicScrap": 25,
+              "directDiscardSelectNoPublicScrap": 84,
+              "unclassifiedEffectSelectionOwnHandSelect": 12
+            },
+            "opportunities": {
+              "play": 2681,
+              "discard": 2706,
+              "reap": 1789,
+              "fight": 1783,
+              "use": 708,
+              "house": 849,
+              "fightAndReapSameCard": 1725,
+              "playAndDiscardSameCard": 2662
+            },
+            "actionsPerCompletedOwnTurn": {
+              "play": 2.4935217903415783,
+              "discard": 0.048292108362779744,
+              "reap": 1.2355712603062425,
+              "fight": 0.1790341578327444,
+              "use": 0.1625441696113074
+            },
+            "policyDecisionTiming": {
+              "calls": 9958,
+              "elapsedMs": 258659.50450199947,
+              "meanMs": 25.97504564189591,
+              "maximumMs": 4202.14896000002,
+              "medianBucket": {
+                "lowerBoundMs": 8,
+                "upperInclusiveMs": 16
+              },
+              "p95Bucket": {
+                "lowerBoundMs": 64,
+                "upperInclusiveMs": 128
+              }
+            }
+          },
+          "baseline": {
+            "acceptedDecisions": 9940,
+            "completedOwnTurns": 848,
+            "selected": {
+              "playFromHand": 2099,
+              "discardFromHand": 28,
+              "fightWhenSameCardCanReap": 97,
+              "reapWhenSameCardCanFight": 1005,
+              "playWhenSameCardDiscardable": 2099,
+              "discardWhenSameCardPlayable": 27,
+              "discardWithPublicScrapText": 0,
+              "discardWithoutPublicScrapText": 28,
+              "discardWhenSameCardPlayableWithPublicScrapText": 0,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 27,
+              "directDiscardOwnHandSelect": 110,
+              "directDiscardSelectActiveHouse": 42,
+              "directDiscardSelectOtherHouse": 68,
+              "directDiscardSelectUndeclaredHouse": 0,
+              "directDiscardSelectMixedHouseMenu": 67,
+              "directDiscardSelectPublicScrap": 24,
+              "directDiscardSelectNoPublicScrap": 86,
+              "unclassifiedEffectSelectionOwnHandSelect": 14
+            },
+            "opportunities": {
+              "play": 2674,
+              "discard": 2704,
+              "reap": 1786,
+              "fight": 1774,
+              "use": 729,
+              "house": 848,
+              "fightAndReapSameCard": 1717,
+              "playAndDiscardSameCard": 2659
+            },
+            "actionsPerCompletedOwnTurn": {
+              "play": 2.483490566037736,
+              "discard": 0.0330188679245283,
+              "reap": 1.2488207547169812,
+              "fight": 0.1650943396226415,
+              "use": 0.16273584905660377
+            },
+            "policyDecisionTiming": {
+              "calls": 9940,
+              "elapsedMs": 240623.94866600176,
+              "meanMs": 24.207640710865366,
+              "maximumMs": 3070.385910000012,
+              "medianBucket": {
+                "lowerBoundMs": 8,
+                "upperInclusiveMs": 16
+              },
+              "p95Bucket": {
+                "lowerBoundMs": 64,
+                "upperInclusiveMs": 128
+              }
+            }
+          }
+        },
+        "games": 96,
+        "commands": {
+          "count": 96,
+          "sum": 19898,
+          "mean": 207.27083333333334,
+          "minimum": 139,
+          "median": 190.0,
+          "p90": 272.5,
+          "p95": 308.0,
+          "maximum": 372
+        },
+        "turns": {
+          "count": 96,
+          "sum": 1793,
+          "mean": 18.677083333333332,
+          "minimum": 13,
+          "median": 18.0,
+          "p90": 24.0,
+          "p95": 26.0,
+          "maximum": 29
+        },
+        "workerElapsedMs": {
+          "count": 96,
+          "sum": 1634859.2104670005,
+          "mean": 17029.783442364587,
+          "minimum": 4733.03879999998,
+          "median": 14631.091740000003,
+          "p90": 28832.421481000027,
+          "p95": 39249.8142155,
+          "maximum": 56551.82374999998
+        }
+      }
+    },
+    "families": {
+      "tactical-style-engine-v3": {
+        "selectedGames": 48,
+        "observedGames": 48,
+        "allNatural": {
+          "games": 48,
+          "candidateWins": 25,
+          "baselineWins": 23,
+          "candidateWinRate": 0.5208333333333334,
+          "anomalousNaturalGames": 0,
+          "naturalGamesExcludedFromCleanAnalysis": 0
+        },
+        "cleanUnits": {
+          "units": 12,
+          "games": 48,
+          "candidateWins": 25,
+          "baselineWins": 23,
+          "candidateWinRate": 0.5208333333333334,
+          "bootstrap": {
+            "computed": true,
+            "masterSeed": 2026111719,
+            "confidenceLevel": 0.95,
+            "replicates": 10000,
+            "unitsPerReplicate": 12,
+            "method": "four-game-unit percentile bootstrap",
+            "derivedSeedHex": "133f5ea167ea4dfd",
+            "replicateTotalsSha256": "a4a393c288ccfddcd552efbcb90c82d4275cd38798fa9abac84fe6bae953b45a",
+            "degenerate": false,
+            "interval": [
+              0.4583333333333333,
+              0.5833333333333334
+            ]
+          },
+          "unitOutcomes": [
+            {
+              "unitId": 0,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 2,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 4,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 6,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 8,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 10,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 12,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 14,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 16,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 18,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 20,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 22,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            }
+          ]
+        },
+        "technicalAndAnomalous": {
+          "nonVictoryGames": 0,
+          "anomalousGames": 0,
+          "anomalousVictoryGames": 0,
+          "technicalOrAnomalousUniqueGames": 0
+        },
+        "incompleteUnits": 0,
+        "excludedUnits": 0,
+        "displayMutation": {
+          "checks": 1273,
+          "mismatchedGames": 0,
+          "missingProbeGames": 0
+        },
+        "actionAndTiming": {
+          "versions": {
+            "candidate": {
+              "acceptedDecisions": 5105,
+              "completedOwnTurns": 431,
+              "selected": {
+                "playFromHand": 1103,
+                "discardFromHand": 22,
+                "fightWhenSameCardCanReap": 50,
+                "reapWhenSameCardCanFight": 482,
+                "playWhenSameCardDiscardable": 1103,
+                "discardWhenSameCardPlayable": 20,
+                "discardWithPublicScrapText": 1,
+                "discardWithoutPublicScrapText": 21,
+                "discardWhenSameCardPlayableWithPublicScrapText": 1,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 19,
+                "directDiscardOwnHandSelect": 53,
+                "directDiscardSelectActiveHouse": 13,
+                "directDiscardSelectOtherHouse": 40,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 29,
+                "directDiscardSelectPublicScrap": 14,
+                "directDiscardSelectNoPublicScrap": 39,
+                "unclassifiedEffectSelectionOwnHandSelect": 7
+              },
+              "opportunities": {
+                "play": 1422,
+                "discard": 1431,
+                "reap": 861,
+                "fight": 869,
+                "use": 359,
+                "house": 431,
+                "fightAndReapSameCard": 837,
+                "playAndDiscardSameCard": 1406
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.566125290023202,
+                "discard": 0.05104408352668213,
+                "reap": 1.1647331786542923,
+                "fight": 0.17633410672853828,
+                "use": 0.16241299303944315
+              },
+              "policyDecisionTiming": {
+                "calls": 5105,
+                "elapsedMs": 149345.52510599841,
+                "meanMs": 29.254755162781276,
+                "maximumMs": 2769.766830000037,
+                "medianBucket": {
+                  "lowerBoundMs": 8,
+                  "upperInclusiveMs": 16
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 64,
+                  "upperInclusiveMs": 128
+                }
+              }
+            },
+            "baseline": {
+              "acceptedDecisions": 5087,
+              "completedOwnTurns": 432,
+              "selected": {
+                "playFromHand": 1085,
+                "discardFromHand": 15,
+                "fightWhenSameCardCanReap": 45,
+                "reapWhenSameCardCanFight": 478,
+                "playWhenSameCardDiscardable": 1085,
+                "discardWhenSameCardPlayable": 15,
+                "discardWithPublicScrapText": 0,
+                "discardWithoutPublicScrapText": 15,
+                "discardWhenSameCardPlayableWithPublicScrapText": 0,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 15,
+                "directDiscardOwnHandSelect": 56,
+                "directDiscardSelectActiveHouse": 20,
+                "directDiscardSelectOtherHouse": 36,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 32,
+                "directDiscardSelectPublicScrap": 12,
+                "directDiscardSelectNoPublicScrap": 44,
+                "unclassifiedEffectSelectionOwnHandSelect": 9
+              },
+              "opportunities": {
+                "play": 1393,
+                "discard": 1404,
+                "reap": 857,
+                "fight": 854,
+                "use": 347,
+                "house": 432,
+                "fightAndReapSameCard": 823,
+                "playAndDiscardSameCard": 1383
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.5185185185185186,
+                "discard": 0.034722222222222224,
+                "reap": 1.1689814814814814,
+                "fight": 0.1574074074074074,
+                "use": 0.16435185185185186
+              },
+              "policyDecisionTiming": {
+                "calls": 5087,
+                "elapsedMs": 140714.42738500252,
+                "meanMs": 27.66157408787154,
+                "maximumMs": 3070.385910000012,
+                "medianBucket": {
+                  "lowerBoundMs": 8,
+                  "upperInclusiveMs": 16
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 64,
+                  "upperInclusiveMs": 128
+                }
+              }
+            }
+          },
+          "games": 48,
+          "commands": {
+            "count": 48,
+            "sum": 10192,
+            "mean": 212.33333333333334,
+            "minimum": 140,
+            "median": 196.0,
+            "p90": 271.8,
+            "p95": 310.9,
+            "maximum": 372
+          },
+          "turns": {
+            "count": 48,
+            "sum": 911,
+            "mean": 18.979166666666668,
+            "minimum": 13,
+            "median": 18.0,
+            "p90": 23.300000000000004,
+            "p95": 26.65,
+            "maximum": 29
+          },
+          "workerElapsedMs": {
+            "count": 48,
+            "sum": 878423.5730530001,
+            "mean": 18300.491105270838,
+            "minimum": 6992.926919999998,
+            "median": 15703.902810000003,
+            "p90": 27949.67939810002,
+            "p95": 40854.77760255003,
+            "maximum": 56551.82374999998
+          }
+        },
+        "allObservedBehavior": {
+          "versions": {
+            "candidate": {
+              "acceptedDecisions": 5105,
+              "completedOwnTurns": 431,
+              "selected": {
+                "playFromHand": 1103,
+                "discardFromHand": 22,
+                "fightWhenSameCardCanReap": 50,
+                "reapWhenSameCardCanFight": 482,
+                "playWhenSameCardDiscardable": 1103,
+                "discardWhenSameCardPlayable": 20,
+                "discardWithPublicScrapText": 1,
+                "discardWithoutPublicScrapText": 21,
+                "discardWhenSameCardPlayableWithPublicScrapText": 1,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 19,
+                "directDiscardOwnHandSelect": 53,
+                "directDiscardSelectActiveHouse": 13,
+                "directDiscardSelectOtherHouse": 40,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 29,
+                "directDiscardSelectPublicScrap": 14,
+                "directDiscardSelectNoPublicScrap": 39,
+                "unclassifiedEffectSelectionOwnHandSelect": 7
+              },
+              "opportunities": {
+                "play": 1422,
+                "discard": 1431,
+                "reap": 861,
+                "fight": 869,
+                "use": 359,
+                "house": 431,
+                "fightAndReapSameCard": 837,
+                "playAndDiscardSameCard": 1406
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.566125290023202,
+                "discard": 0.05104408352668213,
+                "reap": 1.1647331786542923,
+                "fight": 0.17633410672853828,
+                "use": 0.16241299303944315
+              },
+              "policyDecisionTiming": {
+                "calls": 5105,
+                "elapsedMs": 149345.52510599841,
+                "meanMs": 29.254755162781276,
+                "maximumMs": 2769.766830000037,
+                "medianBucket": {
+                  "lowerBoundMs": 8,
+                  "upperInclusiveMs": 16
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 64,
+                  "upperInclusiveMs": 128
+                }
+              }
+            },
+            "baseline": {
+              "acceptedDecisions": 5087,
+              "completedOwnTurns": 432,
+              "selected": {
+                "playFromHand": 1085,
+                "discardFromHand": 15,
+                "fightWhenSameCardCanReap": 45,
+                "reapWhenSameCardCanFight": 478,
+                "playWhenSameCardDiscardable": 1085,
+                "discardWhenSameCardPlayable": 15,
+                "discardWithPublicScrapText": 0,
+                "discardWithoutPublicScrapText": 15,
+                "discardWhenSameCardPlayableWithPublicScrapText": 0,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 15,
+                "directDiscardOwnHandSelect": 56,
+                "directDiscardSelectActiveHouse": 20,
+                "directDiscardSelectOtherHouse": 36,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 32,
+                "directDiscardSelectPublicScrap": 12,
+                "directDiscardSelectNoPublicScrap": 44,
+                "unclassifiedEffectSelectionOwnHandSelect": 9
+              },
+              "opportunities": {
+                "play": 1393,
+                "discard": 1404,
+                "reap": 857,
+                "fight": 854,
+                "use": 347,
+                "house": 432,
+                "fightAndReapSameCard": 823,
+                "playAndDiscardSameCard": 1383
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.5185185185185186,
+                "discard": 0.034722222222222224,
+                "reap": 1.1689814814814814,
+                "fight": 0.1574074074074074,
+                "use": 0.16435185185185186
+              },
+              "policyDecisionTiming": {
+                "calls": 5087,
+                "elapsedMs": 140714.42738500252,
+                "meanMs": 27.66157408787154,
+                "maximumMs": 3070.385910000012,
+                "medianBucket": {
+                  "lowerBoundMs": 8,
+                  "upperInclusiveMs": 16
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 64,
+                  "upperInclusiveMs": 128
+                }
+              }
+            }
+          },
+          "games": 48,
+          "commands": {
+            "count": 48,
+            "sum": 10192,
+            "mean": 212.33333333333334,
+            "minimum": 140,
+            "median": 196.0,
+            "p90": 271.8,
+            "p95": 310.9,
+            "maximum": 372
+          },
+          "turns": {
+            "count": 48,
+            "sum": 911,
+            "mean": 18.979166666666668,
+            "minimum": 13,
+            "median": 18.0,
+            "p90": 23.300000000000004,
+            "p95": 26.65,
+            "maximum": 29
+          },
+          "workerElapsedMs": {
+            "count": 48,
+            "sum": 878423.5730530001,
+            "mean": 18300.491105270838,
+            "minimum": 6992.926919999998,
+            "median": 15703.902810000003,
+            "p90": 27949.67939810002,
+            "p95": 40854.77760255003,
+            "maximum": 56551.82374999998
+          }
+        }
+      },
+      "tactical-card-effects-v3": {
+        "selectedGames": 48,
+        "observedGames": 48,
+        "allNatural": {
+          "games": 48,
+          "candidateWins": 22,
+          "baselineWins": 26,
+          "candidateWinRate": 0.4583333333333333,
+          "anomalousNaturalGames": 0,
+          "naturalGamesExcludedFromCleanAnalysis": 0
+        },
+        "cleanUnits": {
+          "units": 12,
+          "games": 48,
+          "candidateWins": 22,
+          "baselineWins": 26,
+          "candidateWinRate": 0.4583333333333333,
+          "bootstrap": {
+            "computed": true,
+            "masterSeed": 2026111719,
+            "confidenceLevel": 0.95,
+            "replicates": 10000,
+            "unitsPerReplicate": 12,
+            "method": "four-game-unit percentile bootstrap",
+            "derivedSeedHex": "fc7dcf1404376707",
+            "replicateTotalsSha256": "042d7291b4edc15e401e64b8aafff055dd1b2d89265fa98222df79bd35fdde77",
+            "degenerate": false,
+            "interval": [
+              0.3958333333333333,
+              0.5
+            ]
+          },
+          "unitOutcomes": [
+            {
+              "unitId": 1,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 3,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 5,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 7,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 9,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 11,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 13,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 15,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 17,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 19,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 21,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 23,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            }
+          ]
+        },
+        "technicalAndAnomalous": {
+          "nonVictoryGames": 0,
+          "anomalousGames": 0,
+          "anomalousVictoryGames": 0,
+          "technicalOrAnomalousUniqueGames": 0
+        },
+        "incompleteUnits": 0,
+        "excludedUnits": 0,
+        "displayMutation": {
+          "checks": 1237,
+          "mismatchedGames": 0,
+          "missingProbeGames": 0
+        },
+        "actionAndTiming": {
+          "versions": {
+            "candidate": {
+              "acceptedDecisions": 4853,
+              "completedOwnTurns": 418,
+              "selected": {
+                "playFromHand": 1008,
+                "discardFromHand": 19,
+                "fightWhenSameCardCanReap": 55,
+                "reapWhenSameCardCanFight": 520,
+                "playWhenSameCardDiscardable": 1008,
+                "discardWhenSameCardPlayable": 16,
+                "discardWithPublicScrapText": 1,
+                "discardWithoutPublicScrapText": 18,
+                "discardWhenSameCardPlayableWithPublicScrapText": 1,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 15,
+                "directDiscardOwnHandSelect": 56,
+                "directDiscardSelectActiveHouse": 16,
+                "directDiscardSelectOtherHouse": 40,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 33,
+                "directDiscardSelectPublicScrap": 11,
+                "directDiscardSelectNoPublicScrap": 45,
+                "unclassifiedEffectSelectionOwnHandSelect": 5
+              },
+              "opportunities": {
+                "play": 1259,
+                "discard": 1275,
+                "reap": 928,
+                "fight": 914,
+                "use": 349,
+                "house": 418,
+                "fightAndReapSameCard": 888,
+                "playAndDiscardSameCard": 1256
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.4186602870813396,
+                "discard": 0.045454545454545456,
+                "reap": 1.3086124401913874,
+                "fight": 0.18181818181818182,
+                "use": 0.16267942583732056
+              },
+              "policyDecisionTiming": {
+                "calls": 4853,
+                "elapsedMs": 109313.97939600106,
+                "meanMs": 22.52503181454792,
+                "maximumMs": 4202.14896000002,
+                "medianBucket": {
+                  "lowerBoundMs": 8,
+                  "upperInclusiveMs": 16
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 64,
+                  "upperInclusiveMs": 128
+                }
+              }
+            },
+            "baseline": {
+              "acceptedDecisions": 4853,
+              "completedOwnTurns": 416,
+              "selected": {
+                "playFromHand": 1014,
+                "discardFromHand": 13,
+                "fightWhenSameCardCanReap": 52,
+                "reapWhenSameCardCanFight": 527,
+                "playWhenSameCardDiscardable": 1014,
+                "discardWhenSameCardPlayable": 12,
+                "discardWithPublicScrapText": 0,
+                "discardWithoutPublicScrapText": 13,
+                "discardWhenSameCardPlayableWithPublicScrapText": 0,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 12,
+                "directDiscardOwnHandSelect": 54,
+                "directDiscardSelectActiveHouse": 22,
+                "directDiscardSelectOtherHouse": 32,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 35,
+                "directDiscardSelectPublicScrap": 12,
+                "directDiscardSelectNoPublicScrap": 42,
+                "unclassifiedEffectSelectionOwnHandSelect": 5
+              },
+              "opportunities": {
+                "play": 1281,
+                "discard": 1300,
+                "reap": 929,
+                "fight": 920,
+                "use": 382,
+                "house": 416,
+                "fightAndReapSameCard": 894,
+                "playAndDiscardSameCard": 1276
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.4471153846153846,
+                "discard": 0.03125,
+                "reap": 1.3317307692307692,
+                "fight": 0.17307692307692307,
+                "use": 0.16105769230769232
+              },
+              "policyDecisionTiming": {
+                "calls": 4853,
+                "elapsedMs": 99909.52128099924,
+                "meanMs": 20.587166964969963,
+                "maximumMs": 2671.3690199999837,
+                "medianBucket": {
+                  "lowerBoundMs": 8,
+                  "upperInclusiveMs": 16
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 64,
+                  "upperInclusiveMs": 128
+                }
+              }
+            }
+          },
+          "games": 48,
+          "commands": {
+            "count": 48,
+            "sum": 9706,
+            "mean": 202.20833333333334,
+            "minimum": 139,
+            "median": 189.0,
+            "p90": 270.1,
+            "p95": 298.54999999999995,
+            "maximum": 311
+          },
+          "turns": {
+            "count": 48,
+            "sum": 882,
+            "mean": 18.375,
+            "minimum": 13,
+            "median": 17.0,
+            "p90": 24.0,
+            "p95": 24.0,
+            "maximum": 26
+          },
+          "workerElapsedMs": {
+            "count": 48,
+            "sum": 756435.6374140003,
+            "mean": 15759.07577945834,
+            "minimum": 4733.03879999998,
+            "median": 12609.433755000005,
+            "p90": 28813.542696600034,
+            "p95": 38056.54662900002,
+            "maximum": 48469.18805999996
+          }
+        },
+        "allObservedBehavior": {
+          "versions": {
+            "candidate": {
+              "acceptedDecisions": 4853,
+              "completedOwnTurns": 418,
+              "selected": {
+                "playFromHand": 1008,
+                "discardFromHand": 19,
+                "fightWhenSameCardCanReap": 55,
+                "reapWhenSameCardCanFight": 520,
+                "playWhenSameCardDiscardable": 1008,
+                "discardWhenSameCardPlayable": 16,
+                "discardWithPublicScrapText": 1,
+                "discardWithoutPublicScrapText": 18,
+                "discardWhenSameCardPlayableWithPublicScrapText": 1,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 15,
+                "directDiscardOwnHandSelect": 56,
+                "directDiscardSelectActiveHouse": 16,
+                "directDiscardSelectOtherHouse": 40,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 33,
+                "directDiscardSelectPublicScrap": 11,
+                "directDiscardSelectNoPublicScrap": 45,
+                "unclassifiedEffectSelectionOwnHandSelect": 5
+              },
+              "opportunities": {
+                "play": 1259,
+                "discard": 1275,
+                "reap": 928,
+                "fight": 914,
+                "use": 349,
+                "house": 418,
+                "fightAndReapSameCard": 888,
+                "playAndDiscardSameCard": 1256
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.4186602870813396,
+                "discard": 0.045454545454545456,
+                "reap": 1.3086124401913874,
+                "fight": 0.18181818181818182,
+                "use": 0.16267942583732056
+              },
+              "policyDecisionTiming": {
+                "calls": 4853,
+                "elapsedMs": 109313.97939600106,
+                "meanMs": 22.52503181454792,
+                "maximumMs": 4202.14896000002,
+                "medianBucket": {
+                  "lowerBoundMs": 8,
+                  "upperInclusiveMs": 16
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 64,
+                  "upperInclusiveMs": 128
+                }
+              }
+            },
+            "baseline": {
+              "acceptedDecisions": 4853,
+              "completedOwnTurns": 416,
+              "selected": {
+                "playFromHand": 1014,
+                "discardFromHand": 13,
+                "fightWhenSameCardCanReap": 52,
+                "reapWhenSameCardCanFight": 527,
+                "playWhenSameCardDiscardable": 1014,
+                "discardWhenSameCardPlayable": 12,
+                "discardWithPublicScrapText": 0,
+                "discardWithoutPublicScrapText": 13,
+                "discardWhenSameCardPlayableWithPublicScrapText": 0,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 12,
+                "directDiscardOwnHandSelect": 54,
+                "directDiscardSelectActiveHouse": 22,
+                "directDiscardSelectOtherHouse": 32,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 35,
+                "directDiscardSelectPublicScrap": 12,
+                "directDiscardSelectNoPublicScrap": 42,
+                "unclassifiedEffectSelectionOwnHandSelect": 5
+              },
+              "opportunities": {
+                "play": 1281,
+                "discard": 1300,
+                "reap": 929,
+                "fight": 920,
+                "use": 382,
+                "house": 416,
+                "fightAndReapSameCard": 894,
+                "playAndDiscardSameCard": 1276
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.4471153846153846,
+                "discard": 0.03125,
+                "reap": 1.3317307692307692,
+                "fight": 0.17307692307692307,
+                "use": 0.16105769230769232
+              },
+              "policyDecisionTiming": {
+                "calls": 4853,
+                "elapsedMs": 99909.52128099924,
+                "meanMs": 20.587166964969963,
+                "maximumMs": 2671.3690199999837,
+                "medianBucket": {
+                  "lowerBoundMs": 8,
+                  "upperInclusiveMs": 16
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 64,
+                  "upperInclusiveMs": 128
+                }
+              }
+            }
+          },
+          "games": 48,
+          "commands": {
+            "count": 48,
+            "sum": 9706,
+            "mean": 202.20833333333334,
+            "minimum": 139,
+            "median": 189.0,
+            "p90": 270.1,
+            "p95": 298.54999999999995,
+            "maximum": 311
+          },
+          "turns": {
+            "count": 48,
+            "sum": 882,
+            "mean": 18.375,
+            "minimum": 13,
+            "median": 17.0,
+            "p90": 24.0,
+            "p95": 24.0,
+            "maximum": 26
+          },
+          "workerElapsedMs": {
+            "count": 48,
+            "sum": 756435.6374140003,
+            "mean": 15759.07577945834,
+            "minimum": 4733.03879999998,
+            "median": 12609.433755000005,
+            "p90": 28813.542696600034,
+            "p95": 38056.54662900002,
+            "maximum": 48469.18805999996
+          }
+        }
+      }
+    }
+  },
+  "confirmation": {
+    "plannedGames": 384,
+    "actualExitCode": 0,
+    "executionReceiptSha256": "7aaa537ccbd157c1f0b4cf80a34a4de30adc9134fa4aa409f4de2a01dca187fd",
+    "analysisSha256": "7028d4fb592ea70c95eec82e381d481074c94cefa217748450954fb820ea5250",
+    "wallSeconds": 2808.107268,
+    "bindings": {
+      "executionBinding": "38ac7357a69a3aae8dc90de6089abddc3e6125e726c4455dc27d82839efad8e6",
+      "executionReceiptSha256": "7aaa537ccbd157c1f0b4cf80a34a4de30adc9134fa4aa409f4de2a01dca187fd",
+      "analysisExecutionReceiptSha256": "0ca954de19bda2d53749d6e93f2a372ff42b3026d6a8b5ac0ba2b262830281fb",
+      "analysisSha256": "7028d4fb592ea70c95eec82e381d481074c94cefa217748450954fb820ea5250",
+      "manifestSha256": "f5de88b81e05f2d9b2bb86b97f3485abc8c620381a320fad459ab5ccaa19ea5b",
+      "summarySha256": "f671c8ad863b8bed539c6dcd22d56f5f8b12a1cd8eac38204d58603b69e05109",
+      "resultsSha256": "adadeb65ebba4db372689340f8e676a47ae0fd08d91dd197784b617e0c63d098",
+      "statusSha256": "7a6cc58a9df4bb727997e33ce239f28edbe15d3487077568f1f51cd504788c3f"
+    },
+    "instrumentation": {
+      "replays": 6,
+      "immutabilityChecks": 1669,
+      "privacyChecks": 13
+    },
+    "aggregate": {
+      "selectedGames": 384,
+      "observedGames": 384,
+      "allNatural": {
+        "games": 384,
+        "candidateWins": 196,
+        "baselineWins": 188,
+        "candidateWinRate": 0.5104166666666666,
+        "anomalousNaturalGames": 0,
+        "naturalGamesExcludedFromCleanAnalysis": 0
+      },
+      "cleanUnits": {
+        "units": 96,
+        "games": 384,
+        "candidateWins": 196,
+        "baselineWins": 188,
+        "candidateWinRate": 0.5104166666666666,
+        "bootstrap": {
+          "computed": false
+        }
+      },
+      "technicalAndAnomalous": {
+        "nonVictoryGames": 0,
+        "anomalousGames": 0,
+        "anomalousVictoryGames": 0,
+        "technicalOrAnomalousUniqueGames": 0
+      },
+      "incompleteUnits": 0,
+      "excludedUnits": 0,
+      "displayMutation": {
+        "checks": 0,
+        "mismatchedGames": 0,
+        "missingProbeGames": 0
+      },
+      "actionAndTiming": {
+        "versions": {
+          "candidate": {
+            "acceptedDecisions": 39371,
+            "completedOwnTurns": 3301,
+            "selected": {
+              "playFromHand": 7880,
+              "discardFromHand": 118,
+              "fightWhenSameCardCanReap": 449,
+              "reapWhenSameCardCanFight": 4298,
+              "playWhenSameCardDiscardable": 7880,
+              "discardWhenSameCardPlayable": 107,
+              "discardWithPublicScrapText": 3,
+              "discardWithoutPublicScrapText": 115,
+              "discardWhenSameCardPlayableWithPublicScrapText": 3,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 104,
+              "directDiscardOwnHandSelect": 384,
+              "directDiscardSelectActiveHouse": 121,
+              "directDiscardSelectOtherHouse": 263,
+              "directDiscardSelectUndeclaredHouse": 0,
+              "directDiscardSelectMixedHouseMenu": 285,
+              "directDiscardSelectPublicScrap": 97,
+              "directDiscardSelectNoPublicScrap": 287,
+              "unclassifiedEffectSelectionOwnHandSelect": 59
+            },
+            "opportunities": {
+              "play": 10109,
+              "discard": 10105,
+              "reap": 7249,
+              "fight": 7282,
+              "use": 3125,
+              "house": 3302,
+              "fightAndReapSameCard": 7009,
+              "playAndDiscardSameCard": 9953
+            },
+            "actionsPerCompletedOwnTurn": {
+              "play": 2.404422902150863,
+              "discard": 0.03574674341108755,
+              "reap": 1.3535292335655862,
+              "fight": 0.20357467434110876,
+              "use": 0.17540139351711603
+            },
+            "policyDecisionTiming": {
+              "calls": 39371,
+              "elapsedMs": 685827.3677260105,
+              "meanMs": 17.419607521424666,
+              "maximumMs": 3530.477969999891,
+              "medianBucket": {
+                "lowerBoundMs": 4,
+                "upperInclusiveMs": 8
+              },
+              "p95Bucket": {
+                "lowerBoundMs": 32,
+                "upperInclusiveMs": 64
+              }
+            }
+          },
+          "baseline": {
+            "acceptedDecisions": 39273,
+            "completedOwnTurns": 3303,
+            "selected": {
+              "playFromHand": 7869,
+              "discardFromHand": 92,
+              "fightWhenSameCardCanReap": 443,
+              "reapWhenSameCardCanFight": 4288,
+              "playWhenSameCardDiscardable": 7869,
+              "discardWhenSameCardPlayable": 87,
+              "discardWithPublicScrapText": 3,
+              "discardWithoutPublicScrapText": 89,
+              "discardWhenSameCardPlayableWithPublicScrapText": 3,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 84,
+              "directDiscardOwnHandSelect": 386,
+              "directDiscardSelectActiveHouse": 173,
+              "directDiscardSelectOtherHouse": 213,
+              "directDiscardSelectUndeclaredHouse": 0,
+              "directDiscardSelectMixedHouseMenu": 285,
+              "directDiscardSelectPublicScrap": 101,
+              "directDiscardSelectNoPublicScrap": 285,
+              "unclassifiedEffectSelectionOwnHandSelect": 42
+            },
+            "opportunities": {
+              "play": 10108,
+              "discard": 10074,
+              "reap": 7208,
+              "fight": 7246,
+              "use": 3197,
+              "house": 3304,
+              "fightAndReapSameCard": 6968,
+              "playAndDiscardSameCard": 9927
+            },
+            "actionsPerCompletedOwnTurn": {
+              "play": 2.4005449591280654,
+              "discard": 0.02785346654556464,
+              "reap": 1.350893127459885,
+              "fight": 0.2025431425976385,
+              "use": 0.1807447774750227
+            },
+            "policyDecisionTiming": {
+              "calls": 39273,
+              "elapsedMs": 662783.2138199927,
+              "meanMs": 16.876307229394055,
+              "maximumMs": 3430.863359999843,
+              "medianBucket": {
+                "lowerBoundMs": 4,
+                "upperInclusiveMs": 8
+              },
+              "p95Bucket": {
+                "lowerBoundMs": 32,
+                "upperInclusiveMs": 64
+              }
+            }
+          }
+        },
+        "games": 384,
+        "commands": {
+          "count": 384,
+          "sum": 78644,
+          "mean": 204.80208333333334,
+          "minimum": 104,
+          "median": 196.5,
+          "p90": 275.0,
+          "p95": 313.5499999999999,
+          "maximum": 415
+        },
+        "turns": {
+          "count": 384,
+          "sum": 6988,
+          "mean": 18.197916666666668,
+          "minimum": 10,
+          "median": 18.0,
+          "p90": 23.0,
+          "p95": 24.0,
+          "maximum": 27
+        },
+        "workerElapsedMs": {
+          "count": 384,
+          "sum": 5094986.16361,
+          "mean": 13268.193134401043,
+          "minimum": 2020.6072799998801,
+          "median": 10399.115426500037,
+          "p90": 24116.695449000083,
+          "p95": 35103.56012999993,
+          "maximum": 77959.41453000007
+        }
+      },
+      "allObservedBehavior": {
+        "versions": {
+          "candidate": {
+            "acceptedDecisions": 39371,
+            "completedOwnTurns": 3301,
+            "selected": {
+              "playFromHand": 7880,
+              "discardFromHand": 118,
+              "fightWhenSameCardCanReap": 449,
+              "reapWhenSameCardCanFight": 4298,
+              "playWhenSameCardDiscardable": 7880,
+              "discardWhenSameCardPlayable": 107,
+              "discardWithPublicScrapText": 3,
+              "discardWithoutPublicScrapText": 115,
+              "discardWhenSameCardPlayableWithPublicScrapText": 3,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 104,
+              "directDiscardOwnHandSelect": 384,
+              "directDiscardSelectActiveHouse": 121,
+              "directDiscardSelectOtherHouse": 263,
+              "directDiscardSelectUndeclaredHouse": 0,
+              "directDiscardSelectMixedHouseMenu": 285,
+              "directDiscardSelectPublicScrap": 97,
+              "directDiscardSelectNoPublicScrap": 287,
+              "unclassifiedEffectSelectionOwnHandSelect": 59
+            },
+            "opportunities": {
+              "play": 10109,
+              "discard": 10105,
+              "reap": 7249,
+              "fight": 7282,
+              "use": 3125,
+              "house": 3302,
+              "fightAndReapSameCard": 7009,
+              "playAndDiscardSameCard": 9953
+            },
+            "actionsPerCompletedOwnTurn": {
+              "play": 2.404422902150863,
+              "discard": 0.03574674341108755,
+              "reap": 1.3535292335655862,
+              "fight": 0.20357467434110876,
+              "use": 0.17540139351711603
+            },
+            "policyDecisionTiming": {
+              "calls": 39371,
+              "elapsedMs": 685827.3677260105,
+              "meanMs": 17.419607521424666,
+              "maximumMs": 3530.477969999891,
+              "medianBucket": {
+                "lowerBoundMs": 4,
+                "upperInclusiveMs": 8
+              },
+              "p95Bucket": {
+                "lowerBoundMs": 32,
+                "upperInclusiveMs": 64
+              }
+            }
+          },
+          "baseline": {
+            "acceptedDecisions": 39273,
+            "completedOwnTurns": 3303,
+            "selected": {
+              "playFromHand": 7869,
+              "discardFromHand": 92,
+              "fightWhenSameCardCanReap": 443,
+              "reapWhenSameCardCanFight": 4288,
+              "playWhenSameCardDiscardable": 7869,
+              "discardWhenSameCardPlayable": 87,
+              "discardWithPublicScrapText": 3,
+              "discardWithoutPublicScrapText": 89,
+              "discardWhenSameCardPlayableWithPublicScrapText": 3,
+              "discardWhenSameCardPlayableWithoutPublicScrapText": 84,
+              "directDiscardOwnHandSelect": 386,
+              "directDiscardSelectActiveHouse": 173,
+              "directDiscardSelectOtherHouse": 213,
+              "directDiscardSelectUndeclaredHouse": 0,
+              "directDiscardSelectMixedHouseMenu": 285,
+              "directDiscardSelectPublicScrap": 101,
+              "directDiscardSelectNoPublicScrap": 285,
+              "unclassifiedEffectSelectionOwnHandSelect": 42
+            },
+            "opportunities": {
+              "play": 10108,
+              "discard": 10074,
+              "reap": 7208,
+              "fight": 7246,
+              "use": 3197,
+              "house": 3304,
+              "fightAndReapSameCard": 6968,
+              "playAndDiscardSameCard": 9927
+            },
+            "actionsPerCompletedOwnTurn": {
+              "play": 2.4005449591280654,
+              "discard": 0.02785346654556464,
+              "reap": 1.350893127459885,
+              "fight": 0.2025431425976385,
+              "use": 0.1807447774750227
+            },
+            "policyDecisionTiming": {
+              "calls": 39273,
+              "elapsedMs": 662783.2138199927,
+              "meanMs": 16.876307229394055,
+              "maximumMs": 3430.863359999843,
+              "medianBucket": {
+                "lowerBoundMs": 4,
+                "upperInclusiveMs": 8
+              },
+              "p95Bucket": {
+                "lowerBoundMs": 32,
+                "upperInclusiveMs": 64
+              }
+            }
+          }
+        },
+        "games": 384,
+        "commands": {
+          "count": 384,
+          "sum": 78644,
+          "mean": 204.80208333333334,
+          "minimum": 104,
+          "median": 196.5,
+          "p90": 275.0,
+          "p95": 313.5499999999999,
+          "maximum": 415
+        },
+        "turns": {
+          "count": 384,
+          "sum": 6988,
+          "mean": 18.197916666666668,
+          "minimum": 10,
+          "median": 18.0,
+          "p90": 23.0,
+          "p95": 24.0,
+          "maximum": 27
+        },
+        "workerElapsedMs": {
+          "count": 384,
+          "sum": 5094986.16361,
+          "mean": 13268.193134401043,
+          "minimum": 2020.6072799998801,
+          "median": 10399.115426500037,
+          "p90": 24116.695449000083,
+          "p95": 35103.56012999993,
+          "maximum": 77959.41453000007
+        }
+      }
+    },
+    "families": {
+      "tactical-style-engine-v3": {
+        "selectedGames": 192,
+        "observedGames": 192,
+        "allNatural": {
+          "games": 192,
+          "candidateWins": 95,
+          "baselineWins": 97,
+          "candidateWinRate": 0.4947916666666667,
+          "anomalousNaturalGames": 0,
+          "naturalGamesExcludedFromCleanAnalysis": 0
+        },
+        "cleanUnits": {
+          "units": 48,
+          "games": 192,
+          "candidateWins": 95,
+          "baselineWins": 97,
+          "candidateWinRate": 0.4947916666666667,
+          "bootstrap": {
+            "computed": true,
+            "masterSeed": 2026111719,
+            "confidenceLevel": 0.95,
+            "replicates": 10000,
+            "unitsPerReplicate": 48,
+            "method": "four-game-unit percentile bootstrap",
+            "derivedSeedHex": "2e0a7de10fc98c5c",
+            "replicateTotalsSha256": "aeb01a0e7f2615809a3d7beed1751537c0b29407ac5857dfe92fbb6f8cac3f1b",
+            "degenerate": false,
+            "interval": [
+              0.4635416666666667,
+              0.5260416666666666
+            ]
+          },
+          "unitOutcomes": [
+            {
+              "unitId": 0,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 2,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 4,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 6,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 8,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 10,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 12,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 14,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 16,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 18,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 20,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 22,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 24,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 26,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 28,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 30,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 32,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 34,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 36,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 38,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 40,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 42,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 44,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 46,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 48,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 50,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 52,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 54,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 56,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 58,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 60,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 62,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 64,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 66,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 68,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 70,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 72,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 74,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 76,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 78,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 80,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 82,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 84,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 86,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 88,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 90,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 92,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 94,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            }
+          ]
+        },
+        "technicalAndAnomalous": {
+          "nonVictoryGames": 0,
+          "anomalousGames": 0,
+          "anomalousVictoryGames": 0,
+          "technicalOrAnomalousUniqueGames": 0
+        },
+        "incompleteUnits": 0,
+        "excludedUnits": 0,
+        "displayMutation": {
+          "checks": 0,
+          "mismatchedGames": 0,
+          "missingProbeGames": 0
+        },
+        "actionAndTiming": {
+          "versions": {
+            "candidate": {
+              "acceptedDecisions": 19809,
+              "completedOwnTurns": 1636,
+              "selected": {
+                "playFromHand": 3935,
+                "discardFromHand": 69,
+                "fightWhenSameCardCanReap": 216,
+                "reapWhenSameCardCanFight": 2154,
+                "playWhenSameCardDiscardable": 3935,
+                "discardWhenSameCardPlayable": 63,
+                "discardWithPublicScrapText": 1,
+                "discardWithoutPublicScrapText": 68,
+                "discardWhenSameCardPlayableWithPublicScrapText": 1,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 62,
+                "directDiscardOwnHandSelect": 191,
+                "directDiscardSelectActiveHouse": 60,
+                "directDiscardSelectOtherHouse": 131,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 140,
+                "directDiscardSelectPublicScrap": 46,
+                "directDiscardSelectNoPublicScrap": 145,
+                "unclassifiedEffectSelectionOwnHandSelect": 25
+              },
+              "opportunities": {
+                "play": 5080,
+                "discard": 5079,
+                "reap": 3664,
+                "fight": 3684,
+                "use": 1663,
+                "house": 1636,
+                "fightAndReapSameCard": 3549,
+                "playAndDiscardSameCard": 5002
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.4229828850855744,
+                "discard": 0.0421760391198044,
+                "reap": 1.3667481662591687,
+                "fight": 0.20232273838630807,
+                "use": 0.18276283618581907
+              },
+              "policyDecisionTiming": {
+                "calls": 19809,
+                "elapsedMs": 388528.3320179997,
+                "meanMs": 19.61372770043918,
+                "maximumMs": 3530.477969999891,
+                "medianBucket": {
+                  "lowerBoundMs": 4,
+                  "upperInclusiveMs": 8
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 32,
+                  "upperInclusiveMs": 64
+                }
+              }
+            },
+            "baseline": {
+              "acceptedDecisions": 19781,
+              "completedOwnTurns": 1634,
+              "selected": {
+                "playFromHand": 3916,
+                "discardFromHand": 49,
+                "fightWhenSameCardCanReap": 213,
+                "reapWhenSameCardCanFight": 2187,
+                "playWhenSameCardDiscardable": 3916,
+                "discardWhenSameCardPlayable": 47,
+                "discardWithPublicScrapText": 2,
+                "discardWithoutPublicScrapText": 47,
+                "discardWhenSameCardPlayableWithPublicScrapText": 2,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 45,
+                "directDiscardOwnHandSelect": 196,
+                "directDiscardSelectActiveHouse": 84,
+                "directDiscardSelectOtherHouse": 112,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 138,
+                "directDiscardSelectPublicScrap": 50,
+                "directDiscardSelectNoPublicScrap": 146,
+                "unclassifiedEffectSelectionOwnHandSelect": 19
+              },
+              "opportunities": {
+                "play": 5084,
+                "discard": 5063,
+                "reap": 3676,
+                "fight": 3697,
+                "use": 1659,
+                "house": 1634,
+                "fightAndReapSameCard": 3563,
+                "playAndDiscardSameCard": 4991
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.4143206854345167,
+                "discard": 0.029987760097919217,
+                "reap": 1.3880048959608322,
+                "fight": 0.20195838433292534,
+                "use": 0.18604651162790697
+              },
+              "policyDecisionTiming": {
+                "calls": 19781,
+                "elapsedMs": 373958.95682598907,
+                "meanMs": 18.904957121782978,
+                "maximumMs": 3430.863359999843,
+                "medianBucket": {
+                  "lowerBoundMs": 4,
+                  "upperInclusiveMs": 8
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 32,
+                  "upperInclusiveMs": 64
+                }
+              }
+            }
+          },
+          "games": 192,
+          "commands": {
+            "count": 192,
+            "sum": 39590,
+            "mean": 206.19791666666666,
+            "minimum": 104,
+            "median": 193.5,
+            "p90": 299.9,
+            "p95": 319.45,
+            "maximum": 415
+          },
+          "turns": {
+            "count": 192,
+            "sum": 3462,
+            "mean": 18.03125,
+            "minimum": 10,
+            "median": 18.0,
+            "p90": 23.0,
+            "p95": 24.0,
+            "maximum": 27
+          },
+          "workerElapsedMs": {
+            "count": 192,
+            "sum": 2773020.0630930006,
+            "mean": 14442.812828609378,
+            "minimum": 2930.872500000056,
+            "median": 11127.159675000039,
+            "p90": 25629.57893430007,
+            "p95": 39049.410645000055,
+            "maximum": 77959.41453000007
+          }
+        },
+        "allObservedBehavior": {
+          "versions": {
+            "candidate": {
+              "acceptedDecisions": 19809,
+              "completedOwnTurns": 1636,
+              "selected": {
+                "playFromHand": 3935,
+                "discardFromHand": 69,
+                "fightWhenSameCardCanReap": 216,
+                "reapWhenSameCardCanFight": 2154,
+                "playWhenSameCardDiscardable": 3935,
+                "discardWhenSameCardPlayable": 63,
+                "discardWithPublicScrapText": 1,
+                "discardWithoutPublicScrapText": 68,
+                "discardWhenSameCardPlayableWithPublicScrapText": 1,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 62,
+                "directDiscardOwnHandSelect": 191,
+                "directDiscardSelectActiveHouse": 60,
+                "directDiscardSelectOtherHouse": 131,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 140,
+                "directDiscardSelectPublicScrap": 46,
+                "directDiscardSelectNoPublicScrap": 145,
+                "unclassifiedEffectSelectionOwnHandSelect": 25
+              },
+              "opportunities": {
+                "play": 5080,
+                "discard": 5079,
+                "reap": 3664,
+                "fight": 3684,
+                "use": 1663,
+                "house": 1636,
+                "fightAndReapSameCard": 3549,
+                "playAndDiscardSameCard": 5002
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.4229828850855744,
+                "discard": 0.0421760391198044,
+                "reap": 1.3667481662591687,
+                "fight": 0.20232273838630807,
+                "use": 0.18276283618581907
+              },
+              "policyDecisionTiming": {
+                "calls": 19809,
+                "elapsedMs": 388528.3320179997,
+                "meanMs": 19.61372770043918,
+                "maximumMs": 3530.477969999891,
+                "medianBucket": {
+                  "lowerBoundMs": 4,
+                  "upperInclusiveMs": 8
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 32,
+                  "upperInclusiveMs": 64
+                }
+              }
+            },
+            "baseline": {
+              "acceptedDecisions": 19781,
+              "completedOwnTurns": 1634,
+              "selected": {
+                "playFromHand": 3916,
+                "discardFromHand": 49,
+                "fightWhenSameCardCanReap": 213,
+                "reapWhenSameCardCanFight": 2187,
+                "playWhenSameCardDiscardable": 3916,
+                "discardWhenSameCardPlayable": 47,
+                "discardWithPublicScrapText": 2,
+                "discardWithoutPublicScrapText": 47,
+                "discardWhenSameCardPlayableWithPublicScrapText": 2,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 45,
+                "directDiscardOwnHandSelect": 196,
+                "directDiscardSelectActiveHouse": 84,
+                "directDiscardSelectOtherHouse": 112,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 138,
+                "directDiscardSelectPublicScrap": 50,
+                "directDiscardSelectNoPublicScrap": 146,
+                "unclassifiedEffectSelectionOwnHandSelect": 19
+              },
+              "opportunities": {
+                "play": 5084,
+                "discard": 5063,
+                "reap": 3676,
+                "fight": 3697,
+                "use": 1659,
+                "house": 1634,
+                "fightAndReapSameCard": 3563,
+                "playAndDiscardSameCard": 4991
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.4143206854345167,
+                "discard": 0.029987760097919217,
+                "reap": 1.3880048959608322,
+                "fight": 0.20195838433292534,
+                "use": 0.18604651162790697
+              },
+              "policyDecisionTiming": {
+                "calls": 19781,
+                "elapsedMs": 373958.95682598907,
+                "meanMs": 18.904957121782978,
+                "maximumMs": 3430.863359999843,
+                "medianBucket": {
+                  "lowerBoundMs": 4,
+                  "upperInclusiveMs": 8
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 32,
+                  "upperInclusiveMs": 64
+                }
+              }
+            }
+          },
+          "games": 192,
+          "commands": {
+            "count": 192,
+            "sum": 39590,
+            "mean": 206.19791666666666,
+            "minimum": 104,
+            "median": 193.5,
+            "p90": 299.9,
+            "p95": 319.45,
+            "maximum": 415
+          },
+          "turns": {
+            "count": 192,
+            "sum": 3462,
+            "mean": 18.03125,
+            "minimum": 10,
+            "median": 18.0,
+            "p90": 23.0,
+            "p95": 24.0,
+            "maximum": 27
+          },
+          "workerElapsedMs": {
+            "count": 192,
+            "sum": 2773020.0630930006,
+            "mean": 14442.812828609378,
+            "minimum": 2930.872500000056,
+            "median": 11127.159675000039,
+            "p90": 25629.57893430007,
+            "p95": 39049.410645000055,
+            "maximum": 77959.41453000007
+          }
+        }
+      },
+      "tactical-card-effects-v3": {
+        "selectedGames": 192,
+        "observedGames": 192,
+        "allNatural": {
+          "games": 192,
+          "candidateWins": 101,
+          "baselineWins": 91,
+          "candidateWinRate": 0.5260416666666666,
+          "anomalousNaturalGames": 0,
+          "naturalGamesExcludedFromCleanAnalysis": 0
+        },
+        "cleanUnits": {
+          "units": 48,
+          "games": 192,
+          "candidateWins": 101,
+          "baselineWins": 91,
+          "candidateWinRate": 0.5260416666666666,
+          "bootstrap": {
+            "computed": true,
+            "masterSeed": 2026111719,
+            "confidenceLevel": 0.95,
+            "replicates": 10000,
+            "unitsPerReplicate": 48,
+            "method": "four-game-unit percentile bootstrap",
+            "derivedSeedHex": "4dec7f45bbcd6083",
+            "replicateTotalsSha256": "7a170d110fc8cd7c741304af24f6e38f2d5b82082ccdd5cb9b464d4d2e11020a",
+            "degenerate": false,
+            "interval": [
+              0.4947916666666667,
+              0.5572916666666666
+            ]
+          },
+          "unitOutcomes": [
+            {
+              "unitId": 1,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 3,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 5,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 7,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 9,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 11,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 13,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 15,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 17,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 19,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 21,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 23,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 25,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 27,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 29,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 31,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 33,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 35,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 37,
+              "games": 4,
+              "candidateWins": 1,
+              "baselineWins": 3
+            },
+            {
+              "unitId": 39,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 41,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 43,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 45,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 47,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 49,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 51,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 53,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 55,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 57,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 59,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 61,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 63,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 65,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 67,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 69,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 71,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 73,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 75,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 77,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 79,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 81,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 83,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 85,
+              "games": 4,
+              "candidateWins": 3,
+              "baselineWins": 1
+            },
+            {
+              "unitId": 87,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 89,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 91,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 93,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            },
+            {
+              "unitId": 95,
+              "games": 4,
+              "candidateWins": 2,
+              "baselineWins": 2
+            }
+          ]
+        },
+        "technicalAndAnomalous": {
+          "nonVictoryGames": 0,
+          "anomalousGames": 0,
+          "anomalousVictoryGames": 0,
+          "technicalOrAnomalousUniqueGames": 0
+        },
+        "incompleteUnits": 0,
+        "excludedUnits": 0,
+        "displayMutation": {
+          "checks": 0,
+          "mismatchedGames": 0,
+          "missingProbeGames": 0
+        },
+        "actionAndTiming": {
+          "versions": {
+            "candidate": {
+              "acceptedDecisions": 19562,
+              "completedOwnTurns": 1665,
+              "selected": {
+                "playFromHand": 3945,
+                "discardFromHand": 49,
+                "fightWhenSameCardCanReap": 233,
+                "reapWhenSameCardCanFight": 2144,
+                "playWhenSameCardDiscardable": 3945,
+                "discardWhenSameCardPlayable": 44,
+                "discardWithPublicScrapText": 2,
+                "discardWithoutPublicScrapText": 47,
+                "discardWhenSameCardPlayableWithPublicScrapText": 2,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 42,
+                "directDiscardOwnHandSelect": 193,
+                "directDiscardSelectActiveHouse": 61,
+                "directDiscardSelectOtherHouse": 132,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 145,
+                "directDiscardSelectPublicScrap": 51,
+                "directDiscardSelectNoPublicScrap": 142,
+                "unclassifiedEffectSelectionOwnHandSelect": 34
+              },
+              "opportunities": {
+                "play": 5029,
+                "discard": 5026,
+                "reap": 3585,
+                "fight": 3598,
+                "use": 1462,
+                "house": 1666,
+                "fightAndReapSameCard": 3460,
+                "playAndDiscardSameCard": 4951
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.3861861861861864,
+                "discard": 0.02942942942942943,
+                "reap": 1.3405405405405406,
+                "fight": 0.2048048048048048,
+                "use": 0.16816816816816818
+              },
+              "policyDecisionTiming": {
+                "calls": 19562,
+                "elapsedMs": 297299.0357080108,
+                "meanMs": 15.197783238319742,
+                "maximumMs": 2242.363409999991,
+                "medianBucket": {
+                  "lowerBoundMs": 4,
+                  "upperInclusiveMs": 8
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 32,
+                  "upperInclusiveMs": 64
+                }
+              }
+            },
+            "baseline": {
+              "acceptedDecisions": 19492,
+              "completedOwnTurns": 1669,
+              "selected": {
+                "playFromHand": 3953,
+                "discardFromHand": 43,
+                "fightWhenSameCardCanReap": 230,
+                "reapWhenSameCardCanFight": 2101,
+                "playWhenSameCardDiscardable": 3953,
+                "discardWhenSameCardPlayable": 40,
+                "discardWithPublicScrapText": 1,
+                "discardWithoutPublicScrapText": 42,
+                "discardWhenSameCardPlayableWithPublicScrapText": 1,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 39,
+                "directDiscardOwnHandSelect": 190,
+                "directDiscardSelectActiveHouse": 89,
+                "directDiscardSelectOtherHouse": 101,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 147,
+                "directDiscardSelectPublicScrap": 51,
+                "directDiscardSelectNoPublicScrap": 139,
+                "unclassifiedEffectSelectionOwnHandSelect": 23
+              },
+              "opportunities": {
+                "play": 5024,
+                "discard": 5011,
+                "reap": 3532,
+                "fight": 3549,
+                "use": 1538,
+                "house": 1670,
+                "fightAndReapSameCard": 3405,
+                "playAndDiscardSameCard": 4936
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.3870581186339126,
+                "discard": 0.025763930497303775,
+                "reap": 1.3145596165368485,
+                "fight": 0.20311563810665068,
+                "use": 0.17555422408627921
+              },
+              "policyDecisionTiming": {
+                "calls": 19492,
+                "elapsedMs": 288824.2569940038,
+                "meanMs": 14.817579365586075,
+                "maximumMs": 2207.5875000000233,
+                "medianBucket": {
+                  "lowerBoundMs": 4,
+                  "upperInclusiveMs": 8
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 32,
+                  "upperInclusiveMs": 64
+                }
+              }
+            }
+          },
+          "games": 192,
+          "commands": {
+            "count": 192,
+            "sum": 39054,
+            "mean": 203.40625,
+            "minimum": 104,
+            "median": 198.5,
+            "p90": 262.8,
+            "p95": 285.39999999999986,
+            "maximum": 408
+          },
+          "turns": {
+            "count": 192,
+            "sum": 3526,
+            "mean": 18.364583333333332,
+            "minimum": 10,
+            "median": 18.0,
+            "p90": 23.0,
+            "p95": 24.0,
+            "maximum": 27
+          },
+          "workerElapsedMs": {
+            "count": 192,
+            "sum": 2321966.100516999,
+            "mean": 12093.573440192704,
+            "minimum": 2020.6072799998801,
+            "median": 9710.308305000013,
+            "p90": 20444.04622460002,
+            "p95": 27204.372927000124,
+            "maximum": 62433.81305999996
+          }
+        },
+        "allObservedBehavior": {
+          "versions": {
+            "candidate": {
+              "acceptedDecisions": 19562,
+              "completedOwnTurns": 1665,
+              "selected": {
+                "playFromHand": 3945,
+                "discardFromHand": 49,
+                "fightWhenSameCardCanReap": 233,
+                "reapWhenSameCardCanFight": 2144,
+                "playWhenSameCardDiscardable": 3945,
+                "discardWhenSameCardPlayable": 44,
+                "discardWithPublicScrapText": 2,
+                "discardWithoutPublicScrapText": 47,
+                "discardWhenSameCardPlayableWithPublicScrapText": 2,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 42,
+                "directDiscardOwnHandSelect": 193,
+                "directDiscardSelectActiveHouse": 61,
+                "directDiscardSelectOtherHouse": 132,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 145,
+                "directDiscardSelectPublicScrap": 51,
+                "directDiscardSelectNoPublicScrap": 142,
+                "unclassifiedEffectSelectionOwnHandSelect": 34
+              },
+              "opportunities": {
+                "play": 5029,
+                "discard": 5026,
+                "reap": 3585,
+                "fight": 3598,
+                "use": 1462,
+                "house": 1666,
+                "fightAndReapSameCard": 3460,
+                "playAndDiscardSameCard": 4951
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.3861861861861864,
+                "discard": 0.02942942942942943,
+                "reap": 1.3405405405405406,
+                "fight": 0.2048048048048048,
+                "use": 0.16816816816816818
+              },
+              "policyDecisionTiming": {
+                "calls": 19562,
+                "elapsedMs": 297299.0357080108,
+                "meanMs": 15.197783238319742,
+                "maximumMs": 2242.363409999991,
+                "medianBucket": {
+                  "lowerBoundMs": 4,
+                  "upperInclusiveMs": 8
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 32,
+                  "upperInclusiveMs": 64
+                }
+              }
+            },
+            "baseline": {
+              "acceptedDecisions": 19492,
+              "completedOwnTurns": 1669,
+              "selected": {
+                "playFromHand": 3953,
+                "discardFromHand": 43,
+                "fightWhenSameCardCanReap": 230,
+                "reapWhenSameCardCanFight": 2101,
+                "playWhenSameCardDiscardable": 3953,
+                "discardWhenSameCardPlayable": 40,
+                "discardWithPublicScrapText": 1,
+                "discardWithoutPublicScrapText": 42,
+                "discardWhenSameCardPlayableWithPublicScrapText": 1,
+                "discardWhenSameCardPlayableWithoutPublicScrapText": 39,
+                "directDiscardOwnHandSelect": 190,
+                "directDiscardSelectActiveHouse": 89,
+                "directDiscardSelectOtherHouse": 101,
+                "directDiscardSelectUndeclaredHouse": 0,
+                "directDiscardSelectMixedHouseMenu": 147,
+                "directDiscardSelectPublicScrap": 51,
+                "directDiscardSelectNoPublicScrap": 139,
+                "unclassifiedEffectSelectionOwnHandSelect": 23
+              },
+              "opportunities": {
+                "play": 5024,
+                "discard": 5011,
+                "reap": 3532,
+                "fight": 3549,
+                "use": 1538,
+                "house": 1670,
+                "fightAndReapSameCard": 3405,
+                "playAndDiscardSameCard": 4936
+              },
+              "actionsPerCompletedOwnTurn": {
+                "play": 2.3870581186339126,
+                "discard": 0.025763930497303775,
+                "reap": 1.3145596165368485,
+                "fight": 0.20311563810665068,
+                "use": 0.17555422408627921
+              },
+              "policyDecisionTiming": {
+                "calls": 19492,
+                "elapsedMs": 288824.2569940038,
+                "meanMs": 14.817579365586075,
+                "maximumMs": 2207.5875000000233,
+                "medianBucket": {
+                  "lowerBoundMs": 4,
+                  "upperInclusiveMs": 8
+                },
+                "p95Bucket": {
+                  "lowerBoundMs": 32,
+                  "upperInclusiveMs": 64
+                }
+              }
+            }
+          },
+          "games": 192,
+          "commands": {
+            "count": 192,
+            "sum": 39054,
+            "mean": 203.40625,
+            "minimum": 104,
+            "median": 198.5,
+            "p90": 262.8,
+            "p95": 285.39999999999986,
+            "maximum": 408
+          },
+          "turns": {
+            "count": 192,
+            "sum": 3526,
+            "mean": 18.364583333333332,
+            "minimum": 10,
+            "median": 18.0,
+            "p90": 23.0,
+            "p95": 24.0,
+            "maximum": 27
+          },
+          "workerElapsedMs": {
+            "count": 192,
+            "sum": 2321966.100516999,
+            "mean": 12093.573440192704,
+            "minimum": 2020.6072799998801,
+            "median": 9710.308305000013,
+            "p90": 20444.04622460002,
+            "p95": 27204.372927000124,
+            "maximum": 62433.81305999996
+          }
+        }
+      }
+    }
+  },
+  "staticDeckCoverage": {
+    "receiptSha256": "6c5d7ce749d2e82ee87e98466034409ac75939f59bfd6fa5f311e898d35ff03e",
+    "studyScriptSha256": "54888933356ebc061f5ad8b3b766039716558a0d60061f3af62297dcbdfaaf60",
+    "sourceCommit": "751bfb5616f9612c75fd782b5571a07d92b56619",
+    "designSha256": "075f085e0b84265239bcda62aca9bfc0d09be982cd8b80e48474447ce32de07d",
+    "runtimeSha256": "5f0c7ff6c3cc377772896f4e96f3b17f3f84aab067eaac9741185bdfe038264f",
+    "catalogInputs": [
+      {
+        "compiledModule": "src/knowledge/catalog.js",
+        "sha256": "b871989baedda9ff420ca672f7ac06ddeb9d64b30601e51d05628e1a51018500"
+      },
+      {
+        "compiledModule": "src/knowledge/builtin-data.js",
+        "sha256": "a9a57bff2c5c56b333e31fce05fc54adb29d2464e6e8cc085ea91dc93740f0d8"
+      },
+      {
+        "compiledModule": "src/knowledge/printed-text.js",
+        "sha256": "a72fa9e88b4870262cfca5856f68f8969840c360d261ab9f32aebf7f340b4ca3"
+      },
+      {
+        "compiledModule": "src/knowledge/schema.js",
+        "sha256": "292edd54cdf9e06c7a1152b652a43a40366573f80da28d495711ca30dade7dd0"
+      },
+      {
+        "compiledModule": "src/knowledge/coverage.js",
+        "sha256": "7213307df1182e7f4b3366bf325408d91e64f1f75418f00d22a628842b594742"
+      },
+      {
+        "compiledModule": "src/ai/public-play-sequence.js",
+        "sha256": "6e12378c3ff5a40fe9ad6907a5d59677f27c677f9b225de692fa150641817da8"
+      },
+      {
+        "compiledModule": "src/ai/retained-play-partners.js",
+        "sha256": "1f4dc7c486cbe7db5ba39d24a5da98c38e8bd15b5de51681c3a18418a2094657"
+      },
+      {
+        "compiledModule": "src/ai/public-card-value.js",
+        "sha256": "98287928a7bac4e0273b9b2db4e7077e28fdd42b83b2eb38c8639b215ed94ed2"
+      },
+      {
+        "compiledModule": "src/ai/card-lifecycle-value.js",
+        "sha256": "9b034b6f7528b58cb802e0a235d07c2e70454767e2281a3fc26802d8e10ecf5f"
+      },
+      {
+        "compiledModule": "src/ai/public-guidance-guards.js",
+        "sha256": "9ef3c20179189b7b6e83919e2d3b6e5de736549b693637d985eed6ecd1c8ae7b"
+      },
+      {
+        "compiledModule": "src/ai/public-refill-planning.js",
+        "sha256": "cb8fae232b0a6a69afb8e246adf8f87a78900beeac6685639eae742c236945d5"
+      }
+    ],
+    "deckCount": 12,
+    "totalSlots": 432,
+    "distinctDefinitions": 338,
+    "features": {
+      "purePlayPermission": {
+        "slots": 0,
+        "definitions": 0,
+        "decks": 0
+      },
+      "playAmberCost": {
+        "slots": 0,
+        "definitions": 0,
+        "decks": 0
+      },
+      "minAmberToPlay": {
+        "slots": 0,
+        "definitions": 0,
+        "decks": 0
+      },
+      "opponentArtifactPlayTax": {
+        "slots": 0,
+        "definitions": 0,
+        "decks": 0
+      },
+      "fundingOpenerShape": {
+        "slots": 6,
+        "definitions": 6,
+        "decks": 4
+      },
+      "returnHand": {
+        "slots": 12,
+        "definitions": 12,
+        "decks": 8
+      },
+      "archive": {
+        "slots": 32,
+        "definitions": 24,
+        "decks": 10
+      },
+      "discard": {
+        "slots": 46,
+        "definitions": 38,
+        "decks": 10
+      },
+      "purge": {
+        "slots": 13,
+        "definitions": 12,
+        "decks": 6
+      },
+      "directOwnHandDiscardTarget": {
+        "slots": 2,
+        "definitions": 2,
+        "decks": 2
+      },
+      "ownHandBoundDiscardMenu": {
+        "slots": 1,
+        "definitions": 1,
+        "decks": 1
+      },
+      "soleTerminalOwnHandDiscardText": {
+        "slots": 0,
+        "definitions": 0,
+        "decks": 0
+      },
+      "typedEnablerShape": {
+        "slots": 2,
+        "definitions": 1,
+        "decks": 1
+      },
+      "typedEnablerWithPartner": {
+        "slots": 1,
+        "definitions": 1,
+        "decks": 1
+      },
+      "publicScrap": {
+        "slots": 20,
+        "definitions": 13,
+        "decks": 6
+      },
+      "physicalDiscardIcon": {
+        "slots": 16,
+        "definitions": 16,
+        "decks": 3
+      }
+    },
+    "typedPartnerOccurrenceSummary": [
+      {
+        "sourceName": "Science!",
+        "assignedIcons": [],
+        "compatibleFollowerSlots": 4,
+        "sourceSlots": 1
+      },
+      {
+        "sourceName": "Science!",
+        "assignedIcons": [
+          "draw"
+        ],
+        "compatibleFollowerSlots": 0,
+        "sourceSlots": 1
+      }
+    ],
+    "scope": "Literal static shapes in deck definitions and composition. A counted slot or plausible partner does not establish an in-game trigger, payable move, granted play or realized score."
+  },
+  "coverageDiagnostic": {
+    "plannedGames": 8,
+    "completedGames": 8,
+    "naturalGames": 8,
+    "technicalGames": 0,
+    "anomalousGames": 0,
+    "verifiedExistingTraces": 8,
+    "seed": 1086621246,
+    "deckChecks": [
+      {
+        "physicalSlotsVerified": 36,
+        "compatibleFollowerSlots": 7,
+        "typedSource": "Hunting Witch",
+        "grantSource": "Phase Shift"
+      },
+      {
+        "physicalSlotsVerified": 36,
+        "compatibleFollowerSlots": 6,
+        "typedSource": "Full Moon",
+        "grantSource": "Helper Bot"
+      }
+    ],
+    "exposuresByFamily": {
+      "tactical-style-engine-v3": {
+        "costInHandMenus": 17,
+        "costLegalPlayMenus": 0,
+        "costPlayed": 0,
+        "visibleFundingOpenerMenus": 0,
+        "fundingOpenerPlayed": 0,
+        "costPlayedAfterVisibleFunding": 0,
+        "permissionSourceInHandMenus": 34,
+        "permissionSourceLegalMenus": 7,
+        "permissionSourcePlayed": 2,
+        "permissionFollowupLegalMenus": 2,
+        "permissionFollowupPlayed": 2,
+        "typedSourceInHandMenus": 8,
+        "typedSourceLegalMenus": 3,
+        "typedSourcePlayed": 3,
+        "typedPairVisibleMenus": 8,
+        "typedFollowupLegalMenus": 6,
+        "typedFollowupPlayed": 6,
+        "sameHouseTypedFollowupPlayed": 6
+      },
+      "tactical-card-effects-v3": {
+        "costInHandMenus": 63,
+        "costLegalPlayMenus": 10,
+        "costPlayed": 0,
+        "visibleFundingOpenerMenus": 0,
+        "fundingOpenerPlayed": 0,
+        "costPlayedAfterVisibleFunding": 0,
+        "permissionSourceInHandMenus": 31,
+        "permissionSourceLegalMenus": 6,
+        "permissionSourcePlayed": 2,
+        "permissionFollowupLegalMenus": 2,
+        "permissionFollowupPlayed": 2,
+        "typedSourceInHandMenus": 29,
+        "typedSourceLegalMenus": 2,
+        "typedSourcePlayed": 2,
+        "typedPairVisibleMenus": 14,
+        "typedFollowupLegalMenus": 16,
+        "typedFollowupPlayed": 11,
+        "sameHouseTypedFollowupPlayed": 8
+      }
+    },
+    "replay": {
+      "replayReceiptSha256": "0117f0334ac11c812f2122e4d1798795270551853f8ae2691d02cdd443a10389",
+      "executionReceiptSha256": "851d515c404c326eed3fd01986ea0bc0d6bce817e3c0bfab24f6ed71be4068ea",
+      "actualExitCode": 0,
+      "selectionPlanSha256": "b013489938b2f245c5971b0c835177381221eacf06ba6908cc7b5eb296466015",
+      "replayScriptSha256": "5fcaa38766d18e6abbd0942e77dcf6d85a02e579b25d41eb371ae73e311ae023",
+      "traces": [
+        {
+          "stage": "confirmation",
+          "gameId": 0,
+          "status": "verified",
+          "numerics": {
+            "commands": 134,
+            "scoredActorMenus": 81
+          },
+          "family": "tactical-style-engine-v3",
+          "traceSha256": "2645502a03bafa45c5f6ad641ff13dc8decf4ef09015619b62d425fb1659bebb",
+          "commandSha256": "5c7ba412299e57d17671d747aebca1597fd80e264bbb7061782d9a39fda61fae",
+          "initialStateHash": "03e3b760a0e29c3dba8076e711128ce7f1951dc475cb7f752156e46a58ce9533",
+          "finalStateHash": "b4787c119569aeeaeb737ab297d8fa6602d747f5f0ebe998601859907314de62",
+          "stop": "victory",
+          "anomalous": false,
+          "exposures": {
+            "costInHandMenus": 10,
+            "costLegalPlayMenus": 0,
+            "costPlayed": 0,
+            "visibleFundingOpenerMenus": 0,
+            "fundingOpenerPlayed": 0,
+            "costPlayedAfterVisibleFunding": 0,
+            "permissionSourceInHandMenus": 16,
+            "permissionSourceLegalMenus": 4,
+            "permissionSourcePlayed": 1,
+            "permissionFollowupLegalMenus": 1,
+            "permissionFollowupPlayed": 1,
+            "typedSourceInHandMenus": 3,
+            "typedSourceLegalMenus": 2,
+            "typedSourcePlayed": 2,
+            "typedPairVisibleMenus": 3,
+            "typedFollowupLegalMenus": 4,
+            "typedFollowupPlayed": 4,
+            "sameHouseTypedFollowupPlayed": 4
+          }
+        },
+        {
+          "stage": "confirmation",
+          "gameId": 1,
+          "status": "verified",
+          "numerics": {
+            "commands": 136,
+            "scoredActorMenus": 57
+          },
+          "family": "tactical-style-engine-v3",
+          "traceSha256": "f7b31d1151507e1aa39b6320e8d66beaa11d84ca94628773d77dc77b2059fc33",
+          "commandSha256": "fd6b878ce909f4081107320f88b7e76d8670ad14d5f495e95ec12fb4b95e4404",
+          "initialStateHash": "03e3b760a0e29c3dba8076e711128ce7f1951dc475cb7f752156e46a58ce9533",
+          "finalStateHash": "fc3c3d83a2185d5bb0cc32a8db14b912748e04a20a4f8e03afb33c4c36c93731",
+          "stop": "victory",
+          "anomalous": false,
+          "exposures": {
+            "costInHandMenus": 0,
+            "costLegalPlayMenus": 0,
+            "costPlayed": 0,
+            "visibleFundingOpenerMenus": 0,
+            "fundingOpenerPlayed": 0,
+            "costPlayedAfterVisibleFunding": 0,
+            "permissionSourceInHandMenus": 0,
+            "permissionSourceLegalMenus": 0,
+            "permissionSourcePlayed": 0,
+            "permissionFollowupLegalMenus": 0,
+            "permissionFollowupPlayed": 0,
+            "typedSourceInHandMenus": 0,
+            "typedSourceLegalMenus": 0,
+            "typedSourcePlayed": 0,
+            "typedPairVisibleMenus": 0,
+            "typedFollowupLegalMenus": 0,
+            "typedFollowupPlayed": 0,
+            "sameHouseTypedFollowupPlayed": 0
+          }
+        },
+        {
+          "stage": "confirmation",
+          "gameId": 2,
+          "status": "verified",
+          "numerics": {
+            "commands": 139,
+            "scoredActorMenus": 71
+          },
+          "family": "tactical-style-engine-v3",
+          "traceSha256": "efbd5990c62b2cb793ac1e7c9f6b94cf5ef755a7d9586fe1482f64aa39de9bf8",
+          "commandSha256": "7d4d607e46b956e15da96ba21c841091af188e5a3b72cc9009660da4c62b2b6d",
+          "initialStateHash": "59bd6eed97ac6744c62c4c82c1d6d35f2adaa50b278eeb3bc9a605047f5c77c4",
+          "finalStateHash": "3ccb4b86e4d91640f0bbad27b7934ead125d9c1a1baff5adf0a90ef9703935f8",
+          "stop": "victory",
+          "anomalous": false,
+          "exposures": {
+            "costInHandMenus": 7,
+            "costLegalPlayMenus": 0,
+            "costPlayed": 0,
+            "visibleFundingOpenerMenus": 0,
+            "fundingOpenerPlayed": 0,
+            "costPlayedAfterVisibleFunding": 0,
+            "permissionSourceInHandMenus": 18,
+            "permissionSourceLegalMenus": 3,
+            "permissionSourcePlayed": 1,
+            "permissionFollowupLegalMenus": 1,
+            "permissionFollowupPlayed": 1,
+            "typedSourceInHandMenus": 5,
+            "typedSourceLegalMenus": 1,
+            "typedSourcePlayed": 1,
+            "typedPairVisibleMenus": 5,
+            "typedFollowupLegalMenus": 2,
+            "typedFollowupPlayed": 2,
+            "sameHouseTypedFollowupPlayed": 2
+          }
+        },
+        {
+          "stage": "confirmation",
+          "gameId": 3,
+          "status": "verified",
+          "numerics": {
+            "commands": 159,
+            "scoredActorMenus": 72
+          },
+          "family": "tactical-style-engine-v3",
+          "traceSha256": "e59281310d4555acc5c1967b9a2ca53ad808dd1cbbd9ac3346f862cc9361f5e0",
+          "commandSha256": "fa4be2b4f8ae242304f624e49691cb07ac5adde7ff2676e5b33c447081dcea2b",
+          "initialStateHash": "59bd6eed97ac6744c62c4c82c1d6d35f2adaa50b278eeb3bc9a605047f5c77c4",
+          "finalStateHash": "147ff0838b807fa5578c0d8edb57aa6c8343e4326c504d34a675e95612100d6f",
+          "stop": "victory",
+          "anomalous": false,
+          "exposures": {
+            "costInHandMenus": 0,
+            "costLegalPlayMenus": 0,
+            "costPlayed": 0,
+            "visibleFundingOpenerMenus": 0,
+            "fundingOpenerPlayed": 0,
+            "costPlayedAfterVisibleFunding": 0,
+            "permissionSourceInHandMenus": 0,
+            "permissionSourceLegalMenus": 0,
+            "permissionSourcePlayed": 0,
+            "permissionFollowupLegalMenus": 0,
+            "permissionFollowupPlayed": 0,
+            "typedSourceInHandMenus": 0,
+            "typedSourceLegalMenus": 0,
+            "typedSourcePlayed": 0,
+            "typedPairVisibleMenus": 0,
+            "typedFollowupLegalMenus": 0,
+            "typedFollowupPlayed": 0,
+            "sameHouseTypedFollowupPlayed": 0
+          }
+        },
+        {
+          "stage": "confirmation",
+          "gameId": 4,
+          "status": "verified",
+          "numerics": {
+            "commands": 141,
+            "scoredActorMenus": 75
+          },
+          "family": "tactical-card-effects-v3",
+          "traceSha256": "449833900258bfccea4cb1e800120e7f78caecdaa8e79f8c38c36b23a6984791",
+          "commandSha256": "367965a9b232acbf10b20e86cd6c2e7c77461b3ebb29c903c46d4e9c38ec6914",
+          "initialStateHash": "03e3b760a0e29c3dba8076e711128ce7f1951dc475cb7f752156e46a58ce9533",
+          "finalStateHash": "fe63436c37491554491cf7b1494a9651592045b9e030abe348e8c71af9409745",
+          "stop": "victory",
+          "anomalous": false,
+          "exposures": {
+            "costInHandMenus": 6,
+            "costLegalPlayMenus": 4,
+            "costPlayed": 0,
+            "visibleFundingOpenerMenus": 0,
+            "fundingOpenerPlayed": 0,
+            "costPlayedAfterVisibleFunding": 0,
+            "permissionSourceInHandMenus": 16,
+            "permissionSourceLegalMenus": 4,
+            "permissionSourcePlayed": 1,
+            "permissionFollowupLegalMenus": 1,
+            "permissionFollowupPlayed": 1,
+            "typedSourceInHandMenus": 3,
+            "typedSourceLegalMenus": 1,
+            "typedSourcePlayed": 1,
+            "typedPairVisibleMenus": 3,
+            "typedFollowupLegalMenus": 3,
+            "typedFollowupPlayed": 3,
+            "sameHouseTypedFollowupPlayed": 3
+          }
+        },
+        {
+          "stage": "confirmation",
+          "gameId": 5,
+          "status": "verified",
+          "numerics": {
+            "commands": 135,
+            "scoredActorMenus": 56
+          },
+          "family": "tactical-card-effects-v3",
+          "traceSha256": "bc05d28bb1b8601b71315819487fe858e600692e82a57a953e0999f00ca249c2",
+          "commandSha256": "395cc23798c9d4a0a36a509a46e2509f3726fa1da687969d4bc312b230d33210",
+          "initialStateHash": "03e3b760a0e29c3dba8076e711128ce7f1951dc475cb7f752156e46a58ce9533",
+          "finalStateHash": "a64c6bc2803e3546ed6c29270db33c374d09dcffa8caed199fe63f4581a82165",
+          "stop": "victory",
+          "anomalous": false,
+          "exposures": {
+            "costInHandMenus": 0,
+            "costLegalPlayMenus": 0,
+            "costPlayed": 0,
+            "visibleFundingOpenerMenus": 0,
+            "fundingOpenerPlayed": 0,
+            "costPlayedAfterVisibleFunding": 0,
+            "permissionSourceInHandMenus": 0,
+            "permissionSourceLegalMenus": 0,
+            "permissionSourcePlayed": 0,
+            "permissionFollowupLegalMenus": 0,
+            "permissionFollowupPlayed": 0,
+            "typedSourceInHandMenus": 0,
+            "typedSourceLegalMenus": 0,
+            "typedSourcePlayed": 0,
+            "typedPairVisibleMenus": 0,
+            "typedFollowupLegalMenus": 0,
+            "typedFollowupPlayed": 0,
+            "sameHouseTypedFollowupPlayed": 0
+          }
+        },
+        {
+          "stage": "confirmation",
+          "gameId": 6,
+          "status": "verified",
+          "numerics": {
+            "commands": 169,
+            "scoredActorMenus": 96
+          },
+          "family": "tactical-card-effects-v3",
+          "traceSha256": "405d939f58055f5640926f6ecd5a857f4399fda906cca9ea77f7e33976005553",
+          "commandSha256": "150c1f86e24f2fd8fccaf09083eb3abf905a3fb0cbd5c06e13085a6a0595f3e6",
+          "initialStateHash": "59bd6eed97ac6744c62c4c82c1d6d35f2adaa50b278eeb3bc9a605047f5c77c4",
+          "finalStateHash": "6d314700caa056bfb88352bf8be80e2a636dcba04ec782d3fe1fa2f173e15523",
+          "stop": "victory",
+          "anomalous": false,
+          "exposures": {
+            "costInHandMenus": 57,
+            "costLegalPlayMenus": 6,
+            "costPlayed": 0,
+            "visibleFundingOpenerMenus": 0,
+            "fundingOpenerPlayed": 0,
+            "costPlayedAfterVisibleFunding": 0,
+            "permissionSourceInHandMenus": 3,
+            "permissionSourceLegalMenus": 2,
+            "permissionSourcePlayed": 1,
+            "permissionFollowupLegalMenus": 1,
+            "permissionFollowupPlayed": 1,
+            "typedSourceInHandMenus": 11,
+            "typedSourceLegalMenus": 1,
+            "typedSourcePlayed": 1,
+            "typedPairVisibleMenus": 11,
+            "typedFollowupLegalMenus": 13,
+            "typedFollowupPlayed": 8,
+            "sameHouseTypedFollowupPlayed": 5
+          }
+        },
+        {
+          "stage": "confirmation",
+          "gameId": 7,
+          "status": "verified",
+          "numerics": {
+            "commands": 188,
+            "scoredActorMenus": 86
+          },
+          "family": "tactical-card-effects-v3",
+          "traceSha256": "73102d554ea760ef150f1506cf03112c4bfceadb29efdef6335b54daeb7e2235",
+          "commandSha256": "ce812bb5e2a397eb45b5a270fa10a2e48cd34094576711b0388c282c2f24c62d",
+          "initialStateHash": "59bd6eed97ac6744c62c4c82c1d6d35f2adaa50b278eeb3bc9a605047f5c77c4",
+          "finalStateHash": "6a89d116fd7fa1f178a306d9ab02bcaceff9e3db852655c390bcf82d2d986108",
+          "stop": "victory",
+          "anomalous": false,
+          "exposures": {
+            "costInHandMenus": 0,
+            "costLegalPlayMenus": 0,
+            "costPlayed": 0,
+            "visibleFundingOpenerMenus": 0,
+            "fundingOpenerPlayed": 0,
+            "costPlayedAfterVisibleFunding": 0,
+            "permissionSourceInHandMenus": 12,
+            "permissionSourceLegalMenus": 0,
+            "permissionSourcePlayed": 0,
+            "permissionFollowupLegalMenus": 0,
+            "permissionFollowupPlayed": 0,
+            "typedSourceInHandMenus": 15,
+            "typedSourceLegalMenus": 0,
+            "typedSourcePlayed": 0,
+            "typedPairVisibleMenus": 0,
+            "typedFollowupLegalMenus": 0,
+            "typedFollowupPlayed": 0,
+            "sameHouseTypedFollowupPlayed": 0
+          }
+        }
+      ],
+      "categoryCounts": {
+        "permissionFollowup": {
+          "eligible": 4,
+          "actualScoreChanged": 0,
+          "rankingLeaderChanged": 0,
+          "safeToExport": 4
+        },
+        "costPlay": {
+          "eligible": 0,
+          "actualScoreChanged": 0,
+          "rankingLeaderChanged": 0,
+          "safeToExport": 0
+        },
+        "typedFollowup": {
+          "eligible": 17,
+          "actualScoreChanged": 0,
+          "rankingLeaderChanged": 0,
+          "safeToExport": 17
+        },
+        "playPermission": {
+          "eligible": 4,
+          "actualScoreChanged": 4,
+          "rankingLeaderChanged": 1,
+          "safeToExport": 4
+        },
+        "typedSource": {
+          "eligible": 5,
+          "actualScoreChanged": 0,
+          "rankingLeaderChanged": 0,
+          "safeToExport": 5
+        },
+        "nativeDiscard": {
+          "eligible": 9,
+          "actualScoreChanged": 9,
+          "rankingLeaderChanged": 1,
+          "safeToExport": 9
+        },
+        "ownHandEffectDiscard": {
+          "eligible": 0,
+          "actualScoreChanged": 0,
+          "rankingLeaderChanged": 0,
+          "safeToExport": 0
+        },
+        "recoveryOrArchive": {
+          "eligible": 57,
+          "actualScoreChanged": 22,
+          "rankingLeaderChanged": 18,
+          "safeToExport": 53
+        },
+        "otherScoreChange": {
+          "eligible": 0,
+          "actualScoreChanged": 0,
+          "rankingLeaderChanged": 0,
+          "safeToExport": 0
+        }
+      },
+      "cases": [
+        {
+          "category": "permissionFollowup",
+          "selection": "largest absolute actual score change",
+          "stage": "confirmation",
+          "gameId": 0,
+          "family": "tactical-style-engine-v3",
+          "revision": 27,
+          "turn": 5,
+          "legalCount": 4,
+          "actualAction": {
+            "kind": "play",
+            "cardName": "Witch of the Wilds"
+          },
+          "observationSha256": "285e1630750b8fad1fdf676e8e131af5d7fc48abd5ac81567ef05e70959d4aab",
+          "own": {
+            "amber": 2,
+            "forgeAvailable": 2,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 1,
+            "archiveCount": 1,
+            "deckCount": 27,
+            "keys": 0
+          },
+          "opponent": {
+            "amber": 0,
+            "forgeAvailable": 0,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 26,
+            "keys": 0
+          },
+          "rankingLeaderChanged": false,
+          "baseline": {
+            "actualScore": 4.220000000000001,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Witch of the Wilds",
+              "score": 4.220000000000001
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 4.220000000000001,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Witch of the Wilds",
+              "score": 4.220000000000001
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.0
+        },
+        {
+          "category": "permissionFollowup",
+          "selection": "earliest other unchanged actual score",
+          "stage": "confirmation",
+          "gameId": 2,
+          "family": "tactical-style-engine-v3",
+          "revision": 48,
+          "turn": 8,
+          "legalCount": 5,
+          "actualAction": {
+            "kind": "play",
+            "cardName": "Halacor"
+          },
+          "observationSha256": "5b70f71d2c9af9a4b27c47aa56deb486caf05dca310a8a4eac54c7ab44550f09",
+          "own": {
+            "amber": 4,
+            "forgeAvailable": 4,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 1,
+            "archiveCount": 1,
+            "deckCount": 24,
+            "keys": 0
+          },
+          "opponent": {
+            "amber": 1,
+            "forgeAvailable": 1,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 22,
+            "keys": 0
+          },
+          "rankingLeaderChanged": false,
+          "baseline": {
+            "actualScore": 4.220000000000001,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Halacor",
+              "score": 4.220000000000001
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 4.220000000000001,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Halacor",
+              "score": 4.220000000000001
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.0
+        },
+        {
+          "category": "typedFollowup",
+          "selection": "largest absolute actual score change",
+          "stage": "confirmation",
+          "gameId": 0,
+          "family": "tactical-style-engine-v3",
+          "revision": 100,
+          "turn": 15,
+          "legalCount": 21,
+          "actualAction": {
+            "kind": "play",
+            "cardName": "Halacor"
+          },
+          "observationSha256": "c568000140a4e6f6f2efa846ddc3881d60761fc25e3a2f772387b8298167dff5",
+          "own": {
+            "amber": 2,
+            "forgeAvailable": 2,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 8,
+            "keys": 1
+          },
+          "opponent": {
+            "amber": 1,
+            "forgeAvailable": 1,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 23,
+            "keys": 1
+          },
+          "rankingLeaderChanged": false,
+          "baseline": {
+            "actualScore": 10.17,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Halacor",
+              "score": 10.17
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 10.17,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Halacor",
+              "score": 10.17
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.0
+        },
+        {
+          "category": "typedFollowup",
+          "selection": "earliest other unchanged actual score",
+          "stage": "confirmation",
+          "gameId": 0,
+          "family": "tactical-style-engine-v3",
+          "revision": 101,
+          "turn": 15,
+          "legalCount": 18,
+          "actualAction": {
+            "kind": "play",
+            "cardName": "Witch of the Eye"
+          },
+          "observationSha256": "ec6f3be79843067185d4d95e35fa915e4999ac3a1ea71b268ecb3b2764a40cc3",
+          "own": {
+            "amber": 3,
+            "forgeAvailable": 3,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 5,
+            "archiveCount": 0,
+            "deckCount": 8,
+            "keys": 1
+          },
+          "opponent": {
+            "amber": 1,
+            "forgeAvailable": 1,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 23,
+            "keys": 1
+          },
+          "rankingLeaderChanged": false,
+          "baseline": {
+            "actualScore": 9.99,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Witch of the Eye",
+              "score": 9.99
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 9.99,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Witch of the Eye",
+              "score": 9.99
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.0
+        },
+        {
+          "category": "playPermission",
+          "selection": "largest absolute actual score change",
+          "stage": "confirmation",
+          "gameId": 6,
+          "family": "tactical-card-effects-v3",
+          "revision": 19,
+          "turn": 4,
+          "legalCount": 5,
+          "actualAction": {
+            "kind": "play",
+            "cardName": "Phase Shift"
+          },
+          "observationSha256": "728fe83bcb8e911c04d19c31f341eabd33a7329ca29720aea0f52c7b9a66d7a9",
+          "own": {
+            "amber": 1,
+            "forgeAvailable": 1,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 4,
+            "archiveCount": 0,
+            "deckCount": 28,
+            "keys": 0
+          },
+          "opponent": {
+            "amber": 1,
+            "forgeAvailable": 1,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 26,
+            "keys": 0
+          },
+          "rankingLeaderChanged": true,
+          "baseline": {
+            "actualScore": 2.7,
+            "actualRank": 2,
+            "leader": {
+              "kind": "play",
+              "cardName": "Library of Babble",
+              "score": 2.9
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 2.9499999999999997,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Phase Shift",
+              "score": 2.9499999999999997
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.24999999999999956
+        },
+        {
+          "category": "typedSource",
+          "selection": "largest absolute actual score change",
+          "stage": "confirmation",
+          "gameId": 0,
+          "family": "tactical-style-engine-v3",
+          "revision": 99,
+          "turn": 15,
+          "legalCount": 24,
+          "actualAction": {
+            "kind": "play",
+            "cardName": "Hunting Witch"
+          },
+          "observationSha256": "8b4a9de00b9de2ac8d666260c9b5fac8c058884d0f3dac7e33438bb98a673ffd",
+          "own": {
+            "amber": 2,
+            "forgeAvailable": 2,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 7,
+            "archiveCount": 0,
+            "deckCount": 8,
+            "keys": 1
+          },
+          "opponent": {
+            "amber": 1,
+            "forgeAvailable": 1,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 23,
+            "keys": 1
+          },
+          "rankingLeaderChanged": false,
+          "baseline": {
+            "actualScore": 13.905000000000001,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Hunting Witch",
+              "score": 13.905000000000001
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 13.905000000000001,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Hunting Witch",
+              "score": 13.905000000000001
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.0
+        },
+        {
+          "category": "typedSource",
+          "selection": "earliest other unchanged actual score",
+          "stage": "confirmation",
+          "gameId": 0,
+          "family": "tactical-style-engine-v3",
+          "revision": 117,
+          "turn": 17,
+          "legalCount": 27,
+          "actualAction": {
+            "kind": "play",
+            "cardName": "Hunting Witch"
+          },
+          "observationSha256": "643a04bee9fc0a5947e6029d99f63e2dd96b126a6bb287008bd315986aa6693f",
+          "own": {
+            "amber": 2,
+            "forgeAvailable": 2,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 7,
+            "archiveCount": 0,
+            "deckCount": 5,
+            "keys": 2
+          },
+          "opponent": {
+            "amber": 2,
+            "forgeAvailable": 2,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 22,
+            "keys": 1
+          },
+          "rankingLeaderChanged": false,
+          "baseline": {
+            "actualScore": 13.905000000000001,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Hunting Witch",
+              "score": 13.905000000000001
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 13.905000000000001,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Hunting Witch",
+              "score": 13.905000000000001
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.0
+        },
+        {
+          "category": "nativeDiscard",
+          "selection": "largest absolute actual score change",
+          "stage": "confirmation",
+          "gameId": 7,
+          "family": "tactical-card-effects-v3",
+          "revision": 185,
+          "turn": 23,
+          "legalCount": 2,
+          "actualAction": {
+            "kind": "discard",
+            "cardName": "Ganger Chieftain"
+          },
+          "observationSha256": "b3c45d3dd92d507d56e78f41202e8fbca8de0c30882ce8457862d8a71e868740",
+          "own": {
+            "amber": 10,
+            "forgeAvailable": 10,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 4,
+            "archiveCount": 1,
+            "deckCount": 4,
+            "keys": 2
+          },
+          "opponent": {
+            "amber": 14,
+            "forgeAvailable": 14,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 1,
+            "deckCount": 18,
+            "keys": 2
+          },
+          "rankingLeaderChanged": true,
+          "baseline": {
+            "actualScore": -0.01666666666666672,
+            "actualRank": 2,
+            "leader": {
+              "kind": "endTurn",
+              "score": 0
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 0.5333333333333331,
+            "actualRank": 1,
+            "leader": {
+              "kind": "discard",
+              "cardName": "Ganger Chieftain",
+              "score": 0.5333333333333331
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.5499999999999998
+        },
+        {
+          "category": "recoveryOrArchive",
+          "selection": "largest absolute actual score change",
+          "stage": "confirmation",
+          "gameId": 0,
+          "family": "tactical-style-engine-v3",
+          "revision": 116,
+          "turn": 17,
+          "legalCount": 15,
+          "actualAction": {
+            "kind": "select",
+            "cardName": "Hunting Witch"
+          },
+          "observationSha256": "a72259eec87ca2ab89cb95ae69b19394219867f9ad25805250faf70b19c54fb5",
+          "own": {
+            "amber": 2,
+            "forgeAvailable": 2,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 5,
+            "keys": 2
+          },
+          "opponent": {
+            "amber": 2,
+            "forgeAvailable": 2,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 22,
+            "keys": 1
+          },
+          "rankingLeaderChanged": true,
+          "baseline": {
+            "actualScore": 1.0975,
+            "actualRank": 4,
+            "leader": {
+              "kind": "select",
+              "cardName": "Charette",
+              "score": 1.92
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 2.9974999999999996,
+            "actualRank": 1,
+            "leader": {
+              "kind": "select",
+              "cardName": "Hunting Witch",
+              "score": 2.9974999999999996
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 1.8999999999999997
+        },
+        {
+          "category": "recoveryOrArchive",
+          "selection": "earliest other unchanged actual score",
+          "stage": "confirmation",
+          "gameId": 0,
+          "family": "tactical-style-engine-v3",
+          "revision": 12,
+          "turn": 3,
+          "legalCount": 5,
+          "actualAction": {
+            "kind": "play",
+            "cardName": "Hysteria"
+          },
+          "observationSha256": "efec5c760ff221ac9b87c15ed2fa6660514abb664150a3b7985c4c79cc43ccbe",
+          "own": {
+            "amber": 1,
+            "forgeAvailable": 1,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 5,
+            "archiveCount": 0,
+            "deckCount": 29,
+            "keys": 0
+          },
+          "opponent": {
+            "amber": 0,
+            "forgeAvailable": 0,
+            "keyCost": 6,
+            "chains": 0,
+            "handCount": 6,
+            "archiveCount": 0,
+            "deckCount": 27,
+            "keys": 0
+          },
+          "rankingLeaderChanged": false,
+          "baseline": {
+            "actualScore": 1.8399999999999999,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Hysteria",
+              "score": 1.8399999999999999
+            },
+            "sameCardBestPlay": null
+          },
+          "candidate": {
+            "actualScore": 1.8399999999999999,
+            "actualRank": 1,
+            "leader": {
+              "kind": "play",
+              "cardName": "Hysteria",
+              "score": 1.8399999999999999
+            },
+            "sameCardBestPlay": null
+          },
+          "actualScoreDelta": 0.0
+        }
+      ],
+      "newStrengthSamples": 0,
+      "boundary": "Same actual policy family, same candidate-seat public observation. Recorded accepted command compared to two raw rankings before loop guard. Alternate ranking does not replay alternative outcomes."
+    },
+    "actualExitCode": 0,
+    "runtimeSha256": "811ef9359346ab9a41d72fa364bacd76ef99c75eeeae58f65f832f2cae2235ae",
+    "designSha256": "e40952f9552c8ed25ef8e9e5dfefcf6ad42e718609df1834b2f161800ec9a145",
+    "freezeSha256": "cab93a3f124ef00ddeb374827624cbcb1374cdc744ba19b214dd15a44345d271",
+    "deckReviewSha256": "b1abb54e75f12588d139303fc5b02bb6bd486efde47281372768b225e8e9e1b5",
+    "deckPairSha256": "5580c3ecbb0f0adeea539a53aa62611cd976fd6c5724f1aca7cfd3c983f4a55a",
+    "planReviewSha256": "ad7621a59211702e39a8dfbab24ac49f7fb8cee74981ccf40ade55a663f887f0",
+    "seedScreenSha256": "e0fc7d0366f8c505b90c16c10e1518c7fba7a0c638ff757a73fe35584c3ca2ef",
+    "summarySha256": "9b5bea072d5d458a8d7318f54807f661f679ac1c7b8e291520406041553cd775",
+    "resultsSha256": "2ff288149de03e6274fc9e17fe1a8c21126dbc0fd0542c40a0d8721cf035c1ac",
+    "executionReceiptSha256": "812e8f478f3b9b6c5a48528871c39e12a8edc6d6b614f40bffae8d0673da2250",
+    "primaryStrengthSamplesAdded": 0,
+    "scope": "A fixed two-deck sample selected for literal feature gaps without inspecting interim scores. All eight results are coverage diagnostics. Candidate-seat observations and accepted plays do not measure causal pool gain or win-rate benefit. No extra sample is assigned for replay.",
+    "acceptedNativeDiscardChecks": {
+      "nativeDiscards": 9,
+      "sameCardPlayableWithoutPublicScrap": 4,
+      "rawLeaderChanges": 1,
+      "rawLeaderChangesAmongSameCardPlayableWithoutPublicScrap": 0
+    },
+    "independentRowsReviewSha256": "8c0a4cf7441c3ed126330e2869cc4bf6aff088226b5c3bad2a19c150072cbf03",
+    "descriptiveOutcomeOnly": {
+      "candidateWins": 4,
+      "baselineWins": 4
+    }
+  },
+  "traceDiagnostics": {
+    "replayReceiptSha256": "b4af66f4275cd445cf590986ecdaa027865ba8138ed48d4c471bf3f2af29d5d9",
+    "executionReceiptSha256": "ee3f30b621448ceb1e918714f184b6524251ca382b65d8b60eacacaf2f264933",
+    "actualExitCode": 0,
+    "selectionPlanSha256": "481d222342fcebd40059dc8a70d4b982767250aa0bb4f233baabc016f7fd2ac0",
+    "replayScriptSha256": "e3fcf9c71a9c99fa3468c140c8db4b221d11c92db02dfd6bea82ec4af23748ae",
+    "traces": [
+      {
+        "stage": "development",
+        "gameId": 0,
+        "status": "verified",
+        "numerics": {
+          "commands": 185,
+          "scoredActorMenus": 70
+        },
+        "family": "tactical-style-engine-v3",
+        "traceSha256": "04aeccba54cca91e979e5226629a0c86581c290616dda04e24c169498d5c8395",
+        "commandSha256": "9392cf56575f2a589fc7f6999e6af41e9aa01462ced0f7fcc50c9839a4535b75",
+        "initialStateHash": "a38dbfdc8bba3bf15698bd5ffc31b546ccaf0c020386afcd710824954866add1",
+        "finalStateHash": "86abbd382238f0c64af02a742c031fa5f9d9385b9c6e7bafeecb77f70dbdaf2f"
+      },
+      {
+        "stage": "confirmation",
+        "gameId": 0,
+        "status": "verified",
+        "numerics": {
+          "commands": 152,
+          "scoredActorMenus": 61
+        },
+        "family": "tactical-style-engine-v3",
+        "traceSha256": "4f68f5f6a88c627b9c75eec34e0ead58d8f44cdb3720ee8a886f0aef232b6a65",
+        "commandSha256": "e6ae1ff50ca16d756ebc577fb2b2983d638c2ba5e18a1b359739c89effad2918",
+        "initialStateHash": "48db6ea50bafc2f5cdc0fad158f3817b67b46d95097b7fde9dd5fce1a43049cb",
+        "finalStateHash": "a62e406e43b814d0460f3259359c1cd827189d01ca289f9b8671f1f62da91e68"
+      },
+      {
+        "stage": "confirmation",
+        "gameId": 97,
+        "status": "verified",
+        "numerics": {
+          "commands": 143,
+          "scoredActorMenus": 69
+        },
+        "family": "tactical-style-engine-v3",
+        "traceSha256": "239db06f4921070712ae7bf2944cb639479eedb3598f45df9321ac68ac5a3d5c",
+        "commandSha256": "52d0169f6a23c746bf46d76d704c639dbbfbf13287dbf6c2437fd1b1ec2c8eef",
+        "initialStateHash": "f02d7424619a774620df284c2751cb70396bd25293108b3e9d4999ed5e26dce8",
+        "finalStateHash": "2b2cfc66f16aaf163223e25769f70b625a0c0a5d93b11054b08349ab129bec43"
+      },
+      {
+        "stage": "confirmation",
+        "gameId": 194,
+        "status": "verified",
+        "numerics": {
+          "commands": 249,
+          "scoredActorMenus": 94
+        },
+        "family": "tactical-style-engine-v3",
+        "traceSha256": "c439860e9f369fc5b1be75bb4e51472e33dd921f9582daec3bf63bb5db9588c3",
+        "commandSha256": "303518e86e54b1efbf5466abc2cbe7bbbab54ce1fa16dae8b51fb25db56aa75a",
+        "initialStateHash": "feee84c1fc39dd5622a4f1ba02732a7c31014eb9369aa5342a4c948002b99efe",
+        "finalStateHash": "baf8b36ff82968b0fb4cb81408358d485d95ab0b877f050416be185bfcb3395b"
+      },
+      {
+        "stage": "confirmation",
+        "gameId": 291,
+        "status": "verified",
+        "numerics": {
+          "commands": 167,
+          "scoredActorMenus": 83
+        },
+        "family": "tactical-style-engine-v3",
+        "traceSha256": "e8b3e876366bd3793c1b17c3a4cb698eee7db2843991f03b34f95381bf19b551",
+        "commandSha256": "bc8bd98d1b11bbd49da4cba032736893f717e504639fa9c2451593d460634e7c",
+        "initialStateHash": "edc972a70bc4644656e5bcd5848ec664b8ad583e5fcf7545c717460ae0b0de1f",
+        "finalStateHash": "f1f71c6c78b651071f7d3ebbe16b47aea06c6f29edb28866bcfe6e1d8fef58b7"
+      }
+    ],
+    "categoryCounts": {
+      "nativeDiscard": {
+        "eligible": 0,
+        "actualScoreChanged": 0,
+        "rankingLeaderChanged": 0,
+        "safeToExport": 0
+      },
+      "ownHandEffectDiscard": {
+        "eligible": 4,
+        "actualScoreChanged": 2,
+        "rankingLeaderChanged": 2,
+        "safeToExport": 4
+      },
+      "recoveryOrArchive": {
+        "eligible": 8,
+        "actualScoreChanged": 2,
+        "rankingLeaderChanged": 1,
+        "safeToExport": 8
+      },
+      "playPermission": {
+        "eligible": 0,
+        "actualScoreChanged": 0,
+        "rankingLeaderChanged": 0,
+        "safeToExport": 0
+      },
+      "otherScoreChange": {
+        "eligible": 0,
+        "actualScoreChanged": 0,
+        "rankingLeaderChanged": 0,
+        "safeToExport": 0
+      }
+    },
+    "cases": [
+      {
+        "category": "ownHandEffectDiscard",
+        "selection": "largest absolute actual score change",
+        "stage": "confirmation",
+        "gameId": 291,
+        "family": "tactical-style-engine-v3",
+        "revision": 129,
+        "turn": 13,
+        "legalCount": 5,
+        "actualAction": {
+          "kind": "select",
+          "cardName": "Witch of the Eye"
+        },
+        "observationSha256": "8d6ceb8e252a940ff89fa7f4348d825fe90f9fcac6af237273ab6647b631b22e",
+        "own": {
+          "amber": 2,
+          "forgeAvailable": 2,
+          "keyCost": 6,
+          "chains": 0,
+          "handCount": 5,
+          "archiveCount": 0,
+          "deckCount": 13,
+          "keys": 0
+        },
+        "opponent": {
+          "amber": 6,
+          "forgeAvailable": 6,
+          "keyCost": 6,
+          "chains": 0,
+          "handCount": 6,
+          "archiveCount": 0,
+          "deckCount": 9,
+          "keys": 2
+        },
+        "rankingLeaderChanged": true,
+        "baseline": {
+          "actualScore": -0.34199999999999997,
+          "actualRank": 2,
+          "leader": {
+            "kind": "select",
+            "cardName": "Memette",
+            "score": -0.2340000000000001
+          },
+          "sameCardBestPlay": null
+        },
+        "candidate": {
+          "actualScore": -0.027999999999999914,
+          "actualRank": 1,
+          "leader": {
+            "kind": "select",
+            "cardName": "Witch of the Eye",
+            "score": -0.027999999999999914
+          },
+          "sameCardBestPlay": null
+        },
+        "actualScoreDelta": 0.31400000000000006
+      },
+      {
+        "category": "ownHandEffectDiscard",
+        "selection": "earliest other unchanged actual score",
+        "stage": "confirmation",
+        "gameId": 97,
+        "family": "tactical-style-engine-v3",
+        "revision": 20,
+        "turn": 4,
+        "legalCount": 5,
+        "actualAction": {
+          "kind": "select",
+          "cardName": "Burn the Stockpile"
+        },
+        "observationSha256": "79d5c1ac78a95ff5f6d7a2e6a4e86e200db72ad8f6dcfc708ceeb1907010747d",
+        "own": {
+          "amber": 2,
+          "forgeAvailable": 2,
+          "keyCost": 6,
+          "chains": 0,
+          "handCount": 5,
+          "archiveCount": 0,
+          "deckCount": 27,
+          "keys": 0
+        },
+        "opponent": {
+          "amber": 3,
+          "forgeAvailable": 3,
+          "keyCost": 6,
+          "chains": 0,
+          "handCount": 6,
+          "archiveCount": 0,
+          "deckCount": 26,
+          "keys": 0
+        },
+        "rankingLeaderChanged": false,
+        "baseline": {
+          "actualScore": 0.05714285714285705,
+          "actualRank": 1,
+          "leader": {
+            "kind": "select",
+            "cardName": "Burn the Stockpile",
+            "score": 0.05714285714285705
+          },
+          "sameCardBestPlay": null
+        },
+        "candidate": {
+          "actualScore": 0.05714285714285705,
+          "actualRank": 1,
+          "leader": {
+            "kind": "select",
+            "cardName": "Burn the Stockpile",
+            "score": 0.05714285714285705
+          },
+          "sameCardBestPlay": null
+        },
+        "actualScoreDelta": 0.0
+      },
+      {
+        "category": "recoveryOrArchive",
+        "selection": "largest absolute actual score change",
+        "stage": "confirmation",
+        "gameId": 97,
+        "family": "tactical-style-engine-v3",
+        "revision": 52,
+        "turn": 8,
+        "legalCount": 9,
+        "actualAction": {
+          "kind": "select"
+        },
+        "observationSha256": "c2f0e4071842e34ec499da49bfd8a28e56d1aee84fe686bd8da7d68345c5db13",
+        "own": {
+          "amber": 6,
+          "forgeAvailable": 6,
+          "keyCost": 6,
+          "chains": 0,
+          "handCount": 6,
+          "archiveCount": 0,
+          "deckCount": 18,
+          "keys": 0
+        },
+        "opponent": {
+          "amber": 5,
+          "forgeAvailable": 5,
+          "keyCost": 6,
+          "chains": 0,
+          "handCount": 6,
+          "archiveCount": 0,
+          "deckCount": 16,
+          "keys": 0
+        },
+        "rankingLeaderChanged": false,
+        "baseline": {
+          "actualScore": 3.4799999999999995,
+          "actualRank": 1,
+          "leader": {
+            "kind": "select",
+            "score": 3.4799999999999995
+          },
+          "sameCardBestPlay": null
+        },
+        "candidate": {
+          "actualScore": 2.526,
+          "actualRank": 1,
+          "leader": {
+            "kind": "select",
+            "score": 2.526
+          },
+          "sameCardBestPlay": null
+        },
+        "actualScoreDelta": -0.9539999999999997
+      },
+      {
+        "category": "recoveryOrArchive",
+        "selection": "earliest other unchanged actual score",
+        "stage": "confirmation",
+        "gameId": 97,
+        "family": "tactical-style-engine-v3",
+        "revision": 51,
+        "turn": 8,
+        "legalCount": 17,
+        "actualAction": {
+          "kind": "reap"
+        },
+        "observationSha256": "784c80c0caf2b4502a884859162be15739649428e392c2b3d6fe6fd16d1761ff",
+        "own": {
+          "amber": 5,
+          "forgeAvailable": 5,
+          "keyCost": 6,
+          "chains": 0,
+          "handCount": 6,
+          "archiveCount": 0,
+          "deckCount": 18,
+          "keys": 0
+        },
+        "opponent": {
+          "amber": 5,
+          "forgeAvailable": 5,
+          "keyCost": 6,
+          "chains": 0,
+          "handCount": 6,
+          "archiveCount": 0,
+          "deckCount": 16,
+          "keys": 0
+        },
+        "rankingLeaderChanged": false,
+        "baseline": {
+          "actualScore": 10.733333333333333,
+          "actualRank": 1,
+          "leader": {
+            "kind": "reap",
+            "score": 10.733333333333333
+          },
+          "sameCardBestPlay": null
+        },
+        "candidate": {
+          "actualScore": 10.733333333333333,
+          "actualRank": 1,
+          "leader": {
+            "kind": "reap",
+            "score": 10.733333333333333
+          },
+          "sameCardBestPlay": null
+        },
+        "actualScoreDelta": 0.0
+      }
+    ],
+    "newStrengthSamples": 0,
+    "boundary": "Same actual policy family, same candidate-seat public observation. Recorded accepted command compared to two raw rankings before loop guard. Alternate ranking does not replay alternative outcomes."
+  },
+  "postHocNativeDiscardReview": {
+    "postHoc": true,
+    "selectionSha256": "e65a70f4befce47587dc08b901ce47c80528dfda473c1d64e31ff5fdea9bf506",
+    "reconstructionSha256": "31c632a80006d0afbe4bf6dd607ecbafdef822759cf7299ac77248b8be4f6392",
+    "publicEventsSha256": "c455580e79cf7d67a387a6dd9d10b885e7e771c98d05225132825b256bace6ee",
+    "reconstructionExecutionSha256": "084e185f5c6fb746a017936d3ff5bee1665d304e44ac5ad97e96f9420cb11e8f",
+    "reconstructionExitCode": 0,
+    "policyReconstructions": 4,
+    "savedCommandStreamsReplayed": 4,
+    "eventCount": 5,
+    "newStrengthSamples": 0,
+    "matchedGames": [
+      {
+        "id": 24,
+        "family": "tactical-style-engine-v3",
+        "expectedEvents": 1,
+        "commands": 221,
+        "commandSha256": "2dedab8b0e31b801a0e58eec2c059b26d1b062a90dfd2b59e57249f4960cba3a",
+        "finalStateHash": "5dce072ef8f7c033b66f78bd8fc7e305401b2196f67dd6aa3ea149a124fe466b",
+        "matchedOriginal": true
+      },
+      {
+        "id": 25,
+        "family": "tactical-style-engine-v3",
+        "expectedEvents": 1,
+        "commands": 198,
+        "commandSha256": "ebe19d2c89eb3b500eaf2021b574b3fc51d46a033056030ee2e1e98e565048b4",
+        "finalStateHash": "76f623ae66d7caf38bf49ab0c6e07a190779c03d8a05ec8e584460f7ce8fc55c",
+        "matchedOriginal": true
+      },
+      {
+        "id": 6,
+        "family": "tactical-card-effects-v3",
+        "expectedEvents": 1,
+        "commands": 248,
+        "commandSha256": "b480f5f0f6ab2dca4e28c617e7e8ec9ac3457e1cf3427144338cb6d085ac70be",
+        "finalStateHash": "ef4cf1169b108131894110bf12f3745aa009af9fdb6c35d2b4dde1acfa659639",
+        "matchedOriginal": true
+      },
+      {
+        "id": 28,
+        "family": "tactical-card-effects-v3",
+        "expectedEvents": 2,
+        "commands": 229,
+        "commandSha256": "29242cea3a459e9358d4f332e5c1b9a3eac19a7201df1ef729035591a39644d7",
+        "finalStateHash": "16097564c52145922a6e2f848315566084b26172989471cf65c1fa3406d1b934",
+        "matchedOriginal": true
+      }
+    ],
+    "events": [
+      {
+        "gameId": 24,
+        "family": "tactical-style-engine-v3",
+        "turn": 7,
+        "revision": 68,
+        "house": "saurian",
+        "cardName": "Pale Into Insignificance",
+        "observationSha256": "358fb74c81288c7d647a02c467036c2e67df0b6f94a3691abc20ac6b3fa56047",
+        "legalCount": 4,
+        "sameCardLegalPlayCount": 1,
+        "rankingLeaderChanged": true,
+        "candidateRawLeaderWasAccepted": true,
+        "ownCreatures": 2,
+        "opponentCreatures": 0,
+        "ownCreaturePowers": [
+          5,
+          5
+        ],
+        "opponentCreaturePowers": [],
+        "baseline": {
+          "discardScore": -0.07333333333333336,
+          "discardRank": 2,
+          "bestSameCardPlayScore": -2.15,
+          "bestSameCardPlayRank": 3,
+          "margin": 2.0766666666666667,
+          "leaderKind": "endTurn",
+          "leaderScore": 0
+        },
+        "candidate": {
+          "discardScore": 0.1286666666666666,
+          "discardRank": 1,
+          "bestSameCardPlayScore": -2.15,
+          "bestSameCardPlayRank": 3,
+          "margin": 2.2786666666666666,
+          "leaderKind": "discard",
+          "leaderScore": 0.1286666666666666,
+          "leaderCardName": "Pale Into Insignificance"
+        }
+      },
+      {
+        "gameId": 25,
+        "family": "tactical-style-engine-v3",
+        "turn": 8,
+        "revision": 78,
+        "house": "geistoid",
+        "cardName": "Ecto-Charge",
+        "observationSha256": "229578b9a2de409555d31f82d065d2fd81e3c0a82c2f11977b794a52b6c1e945",
+        "legalCount": 3,
+        "sameCardLegalPlayCount": 1,
+        "rankingLeaderChanged": false,
+        "candidateRawLeaderWasAccepted": true,
+        "ownCreatures": 4,
+        "opponentCreatures": 2,
+        "ownCreaturePowers": [
+          2,
+          2,
+          4,
+          6
+        ],
+        "opponentCreaturePowers": [
+          5,
+          5
+        ],
+        "baseline": {
+          "discardScore": 0.22666666666666668,
+          "discardRank": 1,
+          "bestSameCardPlayScore": -6.099999999999999,
+          "bestSameCardPlayRank": 3,
+          "margin": 6.326666666666665,
+          "leaderKind": "discard",
+          "leaderScore": 0.22666666666666668,
+          "leaderCardName": "Ecto-Charge"
+        },
+        "candidate": {
+          "discardScore": 0.42866666666666664,
+          "discardRank": 1,
+          "bestSameCardPlayScore": -6.099999999999999,
+          "bestSameCardPlayRank": 3,
+          "margin": 6.528666666666665,
+          "leaderKind": "discard",
+          "leaderScore": 0.42866666666666664,
+          "leaderCardName": "Ecto-Charge"
+        }
+      },
+      {
+        "gameId": 6,
+        "family": "tactical-card-effects-v3",
+        "turn": 16,
+        "revision": 183,
+        "house": "logos",
+        "cardName": "Submersive Principle",
+        "observationSha256": "deceb4fddd580e78c60a9a1869f92eb8966a6bf8831a59fc901e252b794d6acc",
+        "legalCount": 3,
+        "sameCardLegalPlayCount": 1,
+        "rankingLeaderChanged": false,
+        "candidateRawLeaderWasAccepted": true,
+        "ownCreatures": 10,
+        "opponentCreatures": 10,
+        "ownCreaturePowers": [
+          4,
+          4,
+          6,
+          7,
+          3,
+          9,
+          3,
+          2,
+          2,
+          4
+        ],
+        "opponentCreaturePowers": [
+          5,
+          5,
+          2,
+          5,
+          3,
+          5,
+          7,
+          2,
+          4,
+          5
+        ],
+        "baseline": {
+          "discardScore": 0.6466666666666667,
+          "discardRank": 1,
+          "bestSameCardPlayScore": -2.8999999999999995,
+          "bestSameCardPlayRank": 3,
+          "margin": 3.546666666666666,
+          "leaderKind": "discard",
+          "leaderScore": 0.6466666666666667,
+          "leaderCardName": "Submersive Principle"
+        },
+        "candidate": {
+          "discardScore": 0.7986666666666667,
+          "discardRank": 1,
+          "bestSameCardPlayScore": -2.8999999999999995,
+          "bestSameCardPlayRank": 3,
+          "margin": 3.698666666666666,
+          "leaderKind": "discard",
+          "leaderScore": 0.7986666666666667,
+          "leaderCardName": "Submersive Principle"
+        }
+      },
+      {
+        "gameId": 28,
+        "family": "tactical-card-effects-v3",
+        "turn": 11,
+        "revision": 111,
+        "house": "brobnar",
+        "cardName": "Stratosmack",
+        "observationSha256": "33bc1f05690ca031ebc4fb722109784bcbad8225c0c363b3108bf58800cead64",
+        "legalCount": 3,
+        "sameCardLegalPlayCount": 1,
+        "rankingLeaderChanged": false,
+        "candidateRawLeaderWasAccepted": true,
+        "ownCreatures": 3,
+        "opponentCreatures": 0,
+        "ownCreaturePowers": [
+          4,
+          5,
+          12
+        ],
+        "opponentCreaturePowers": [],
+        "baseline": {
+          "discardScore": 0.444,
+          "discardRank": 1,
+          "bestSameCardPlayScore": 0.30000000000000016,
+          "bestSameCardPlayRank": 2,
+          "margin": 0.14399999999999985,
+          "leaderKind": "discard",
+          "leaderScore": 0.444,
+          "leaderCardName": "Stratosmack"
+        },
+        "candidate": {
+          "discardScore": 0.5960000000000001,
+          "discardRank": 1,
+          "bestSameCardPlayScore": 0.30000000000000016,
+          "bestSameCardPlayRank": 2,
+          "margin": 0.29599999999999993,
+          "leaderKind": "discard",
+          "leaderScore": 0.5960000000000001,
+          "leaderCardName": "Stratosmack"
+        }
+      },
+      {
+        "gameId": 28,
+        "family": "tactical-card-effects-v3",
+        "turn": 19,
+        "revision": 210,
+        "house": "brobnar",
+        "cardName": "Hebe the Huge",
+        "observationSha256": "59127bfd5bb94fbeda13a956cf1f6fbfd7f588a06034473f3a71c2fbf0d3a590",
+        "legalCount": 4,
+        "sameCardLegalPlayCount": 2,
+        "rankingLeaderChanged": false,
+        "candidateRawLeaderWasAccepted": true,
+        "ownCreatures": 5,
+        "opponentCreatures": 2,
+        "ownCreaturePowers": [
+          4,
+          5,
+          4,
+          5,
+          2
+        ],
+        "opponentCreaturePowers": [
+          4,
+          6
+        ],
+        "baseline": {
+          "discardScore": 0.45733333333333337,
+          "discardRank": 1,
+          "bestSameCardPlayScore": 0.42000000000000004,
+          "bestSameCardPlayRank": 2,
+          "margin": 0.03733333333333333,
+          "leaderKind": "discard",
+          "leaderScore": 0.45733333333333337,
+          "leaderCardName": "Hebe the Huge"
+        },
+        "candidate": {
+          "discardScore": 0.7229333333333334,
+          "discardRank": 1,
+          "bestSameCardPlayScore": 0.42000000000000004,
+          "bestSameCardPlayRank": 2,
+          "margin": 0.3029333333333334,
+          "leaderKind": "discard",
+          "leaderScore": 0.7229333333333334,
+          "leaderCardName": "Hebe the Huge"
+        }
+      }
+    ],
+    "selection": "Earliest two confirmation game IDs per family containing an accepted candidate-seat native discard of a playable card without visible Scrap. All matching events in those four games. Outcome-independent, encounter-enriched post-hoc subset."
+  }
+}

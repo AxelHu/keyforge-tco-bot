@@ -14,6 +14,8 @@ export interface PublicCardUseValue {
   approximate: boolean;
   playableNow: boolean;
   currentScore?: number;
+  /** Bounded current-window priority only; never part of retained material Q or a terminal claim. */
+  currentKeyPriority?: boolean;
 }
 export interface PublicCardLifecycleContext {
   actor?: Seat;

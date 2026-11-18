@@ -1,5 +1,11 @@
 # 验证与兼容范围
 
+<!-- retention-sequence-064:start -->
+## 0.6.4 手牌等待与短出牌顺序
+
+候选 `751bfb5` 对冻结 0.6.3，开发与确认分别按固定计划运行 96、384 局。本地固定牌组确认集的完整四局单位中，新版合计 196 胜 188 负（51.04%）。两个家族的确认区间都覆盖 50%，这批对照未能证明新版提高了胜率。离线测试通过 619/619。 [本轮报告](retention-sequence-evaluation.md) · [公开证据](evidence/retention-sequence-2026-11-18.json)
+<!-- retention-sequence-064:end -->
+
 <!-- hand-opportunity-063:start -->
 ## 0.6.3 回收搭档、即时出牌与弃牌
 
