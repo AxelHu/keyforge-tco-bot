@@ -21,6 +21,8 @@ export interface PublicCardLifecycleContext {
   from?: PublicCardLocation;
   archiveTo?: Seat;
   archiveReturnToOwner?: boolean;
+  /** The candidate consumer settles a shared current hand window exactly once. */
+  deferCurrentHandOpportunity?: boolean;
   useValue?: (card: CardView, owner: Seat) => PublicCardUseValue | undefined;
 }
 export interface PublicCardMove {
@@ -200,8 +202,9 @@ export function assessCardLifecycle(
   const use: PublicCardUseValue = supplied && finite(supplied.score) && Math.abs(supplied.score) < 5000 &&
     (supplied.currentScore === undefined || (finite(supplied.currentScore) && Math.abs(supplied.currentScore) < 5000))
     ? supplied : { score: finite(fallbackQuality) ? fallbackQuality : 1, approximate: true, playableNow: false };
-  const before = opportunity(o, c, from, use);
-  const after = opportunity(o, c, move.to, use, move);
+  const regionUse = context.deferCurrentHandOpportunity ? { ...use, playableNow: false } : use;
+  const before = opportunity(o, c, from, regionUse);
+  const after = opportunity(o, c, move.to, regionUse, move);
   result.score = (c.owner === o.you ? 1 : -1) * (after.value - before.value);
   result.utilityApproximate = before.approximate || after.approximate;
   result.reasons.push(...before.reasons, ...after.reasons);

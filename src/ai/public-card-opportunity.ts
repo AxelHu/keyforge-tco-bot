@@ -4,6 +4,8 @@ import { publicCardLocation, type PublicCardUseValue } from './card-lifecycle-va
 import { contextualBoardWorth } from './public-card-value.js';
 import { publicPlayCapacity } from './public-guidance-guards.js';
 
+import { publicHandCardPlayable, type HandWindowOptions } from './public-hand-window.js';
+
 export interface PublicMaterialEstimate { score: number; approximate: boolean; unresolvedValues: boolean; }
 export type PublicMaterialEvaluator = (observation: Observation, actionId: string) => PublicMaterialEstimate;
 const board = (o: Observation) => o.players.flatMap((p) => [...p.battleline, ...p.artifacts, ...p.upgrades]);
@@ -89,18 +91,18 @@ function publicProbe(o: Observation, c: CardView, owner: Seat, action: Action): 
 }
 
 export function assessPublicCardUse(
-  o: Observation, c: CardView, owner: Seat, evaluate: PublicMaterialEvaluator,
+  o: Observation, c: CardView, owner: Seat, evaluate: PublicMaterialEvaluator, options?: HandWindowOptions,
 ): PublicCardUseValue | undefined {
   if (c.tokenCreature || c.copiedDefinition || c.definition !== c.spec.id ||
     (c.physicalParts?.length ?? 0) > 1) return undefined;
   const fallback = 1 + Math.max(0, contextualBoardWorth(o, c)) * (c.spec.kind === 'creature' ? 0.45 : 0.2) +
     Math.min(2, c.spec.amber) * 0.5;
-  const actual = owner === o.you ? o.legalActions.filter((x) => x.action.kind === 'play' &&
+  const actual = owner === o.you && !options?.projected ? o.legalActions.filter((x) => x.action.kind === 'play' &&
     x.action.card === c.id && !x.action.copy) : [];
   const current = actual.slice(0, 16).map((x) => evaluate(o, x.id));
   const currentScore = current.length ? Math.max(...current.map((x) => x.score)) : undefined;
   const actions: Action[] = c.spec.kind === 'upgrade'
-    ? board(o).filter((x) => x.spec.kind === 'creature').slice(0, 12)
+    ? board(o).filter((x) => x.spec.kind === (options && c.spec.upgrade?.attachToArtifact ? 'artifact' : 'creature')).slice(0, 12)
         .map((x) => ({ kind: 'play', card: c.id, target: x.id }))
     : [{ kind: 'play', card: c.id, ...(c.spec.kind === 'creature' ? { flank: 'left' as const } : {}) }];
   const probes = actions.map((action) => {
@@ -111,7 +113,16 @@ export function assessPublicCardUse(
   const material = probes.filter((x) => Number.isFinite(x.score) && Math.abs(x.score) < 5000).map((x) => x.score);
   const quality = Math.max(fallback, ...material, ...(currentScore === undefined ? [] : [currentScore]));
   const alreadyHeld = owner === o.you && o.players[owner].hand?.some((x) => x.id === c.id);
-  const playableNow = actual.length > 0 || (!alreadyHeld || o.phase !== 'main') && currentWindow(o, c, owner);
-  return { score: quality, currentScore: currentScore ?? (playableNow && material.length ? Math.max(...material) : undefined),
+  const playableNow = options ? owner === o.you && publicHandCardPlayable(o, c, options) : actual.length > 0 || (!alreadyHeld || o.phase !== 'main') && currentWindow(o, c, owner);
+  // A cross-house permission or a physical extra house keeps the actual active house.
+  // House-dependent effects in a future material probe may therefore have a different payoff.
+  let usableMaterial = material;
+  if (options && playableNow && currentScore === undefined) {
+    const currentProbes = o.activeHouse === c.effective.house ? probes : actions.map((action) =>
+      evaluate({ ...publicProbe(o, c, owner, action), activeHouse: o.activeHouse }, 'public-material-probe'));
+    usableMaterial = currentProbes.filter((x) => !x.unresolvedValues && Number.isFinite(x.score) &&
+      Math.abs(x.score) < 5000).map((x) => x.score);
+  }
+  return { score: quality, currentScore: currentScore ?? (playableNow && usableMaterial.length ? Math.max(...usableMaterial) : undefined),
     playableNow, approximate: true };
 }
