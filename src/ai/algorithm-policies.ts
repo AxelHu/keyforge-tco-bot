@@ -34,6 +34,8 @@ import {
 import { assessPublicReapControl } from './public-reap-control.js';
 import { knownRecoveredForge } from './recovery-forge.js';
 import { assessPublicCardUse } from './public-card-opportunity.js';
+import { assessPublicHandWindow, publicArtifactPlayTax } from './public-hand-window.js';
+import { assessHandOpportunityGroup, type HandOpportunityMove } from './hand-opportunity-group.js';
 import { assessLifecycleRefillDelta, publicCardLocation, type PublicCardMove, type PublicCardLocation,
   type PublicLifecycleCounts, type PublicCardLifecycleContext } from './card-lifecycle-value.js';
 import { publicPlayCapacity } from './public-guidance-guards.js';
@@ -52,6 +54,8 @@ export type AlgorithmName = 'tempo-v1' | 'tactical-v1';
 export interface PublicActionCorrections {
   /** Public card opportunity, physical destination and once-per-candidate refill displacement. */
   publicCardLifecycle?: boolean;
+  /** Shared current-hand budgets, net same-house partners and symmetric Play refill. */
+  publicHandOpportunityGroups?: boolean;
   publicReapControlRisk?: boolean;
   /** Scoped direct-destruction receipts, attributed to the destroyed public controller. */
   publicDestructionPayments?: boolean;
@@ -222,6 +226,7 @@ function assessAlgorithmProjection(
   let scrapFrame = false;
   // A copy supplies the rule tree, while source quantities refer to the physical card.
   let source = a.kind === 'play' && a.copy ? find(a.copy) : physicalSource;
+  const commandSource = source;
   const evaluatedInPlay = (id: string) =>
     (!features.contextualEffects || (!projectedLocations.has(id) && !predictedRemoved.has(id) && !uncertainLocations.has(id))) &&
     (inPlay(id) || !!(features.contextualEffects && !scrapFrame && a.kind === 'play' && physicalSource?.id === id &&
@@ -243,7 +248,12 @@ function assessAlgorithmProjection(
     ({ hand: hands[i], deck: p.deckCount, discard: p.discard.length })) as [PublicLifecycleCounts, PublicLifecycleCounts];
   const lifecycleDeltas: [PublicLifecycleCounts, PublicLifecycleCounts] = [0, 1].map(() =>
     ({ hand: 0, deck: 0, discard: 0 })) as [PublicLifecycleCounts, PublicLifecycleCounts];
+  // Playing from hand releases the same normal-refill space as discarding it.
+  // hands/counts already contain the departure; this changes only the counterfactual.
+  if (features.publicCardLifecycle && features.publicHandOpportunityGroups)
+    lifecycleDeltas[0].hand = hands[0] - me.handCount;
   let lifecycleRefillUnknown = false;
+  const handOpportunityMoves = new Map<string, HandOpportunityMove>();
   const bindings = new Map<string, CardView[]>();
   const scalarBindings = new Map<string, number>();
   // Scoped physical receipts; these are estimates from public destruction assessment,
@@ -873,8 +883,17 @@ function assessAlgorithmProjection(
         if (knownMove) lifecycleDeltas[side][pile] += delta;
       }
     }
+    const fromPlay = previous && ['battleline', 'artifacts', 'upgrades'].includes(previous.zone);
+    const primaryHouse = card.printedHouse ?? card.spec.house;
     const moved = { ...card, controller: card.owner,
+      ...(features.publicHandOpportunityGroups && fromPlay ? { effective: { ...card.effective,
+        house: primaryHouse, houses: [...new Set([primaryHouse, ...(card.bonusHouses ?? [])])] } } : {}),
       ...(knownMove ? { foreignArchiveHolder: knownMove.foreignArchiveHolder } : {}) };
+    if (features.publicHandOpportunityGroups && knownMove) {
+      const first = handOpportunityMoves.get(card.id);
+      handOpportunityMoves.set(card.id, { card: first?.card ?? card, from: first?.from ?? knownMove.from,
+        to: knownMove.to });
+    }
     const entry = (projectedEntries.get(card.id) ?? 0) + 1;
     projectedEntries.set(card.id, entry);
     publicCardEntries.set(moved, entry);
@@ -898,10 +917,32 @@ function assessAlgorithmProjection(
     if (!features.publicCardLifecycle || lifecycleRefillUnknown || chainGain !== 0 || uncertainSupplies.size ||
       uncertainCounts.has(`${o.you}:hand`) || uncertainCounts.has(`${opp}:hand`))
       return { score: 0, approximate: !!features.publicCardLifecycle && (lifecycleRefillUnknown || chainGain !== 0) };
-    const before = lifecycleCounts.map((n, i) => ({ hand: n.hand - lifecycleDeltas[i].hand,
-      deck: n.deck - lifecycleDeltas[i].deck, discard: n.discard - lifecycleDeltas[i].discard })) as [PublicLifecycleCounts, PublicLifecycleCounts];
+    const after = lifecycleCounts.map((n) => ({ ...n })) as [PublicLifecycleCounts, PublicLifecycleCounts];
+    const deltas = lifecycleDeltas.map((n) => ({ ...n })) as [PublicLifecycleCounts, PublicLifecycleCounts];
+    // Only an entirely public first ordinary action can prove this default tail.
+    // The contract does not expose all previously registered action-return effects.
+    // Add its supply at refill settlement, never to a draw inside its own Play text.
+    if (features.publicHandOpportunityGroups && a.kind === 'play' && c && c.owner === o.you &&
+      !a.copy && !a.asUpgrade && !a.otherHalf && c.spec.kind === 'action' && !c.copiedDefinition && !c.form &&
+      !c.tokenCreature && !c.physicalParts?.length && c.definition === c.spec.id &&
+      (me.hand ?? []).some((card) => card.id === c.id) && !projectedLocations.has(c.id) &&
+      !uncertainLocations.has(c.id) && !forecastUncertain && o.phase === 'main' && !o.pending &&
+      o.publicStateCoverage?.turnHistoryComplete === true && o.publicStateCoverage.effectsComplete === true &&
+      o.turnStep?.step === 3 && o.turnStep.performed[o.you] === 0 && o.playedThisTurn === 0 &&
+      Object.values(o.turnUsage).every((n) => n === 0) && !o.lasting.length && !o.leaveEffects.length &&
+      !o.cardEffects.length && !o.prophecies?.some((p) => p.active) &&
+      !o.players.some((p) => p.battleline.length || p.artifacts.length || p.upgrades.length) &&
+      !c.spec.unmodeled && !c.gainedTextBoxes?.length && !c.spec.conditionalAbilities?.length &&
+      !c.spec.reactions?.length && (c.spec.abilities?.play ?? []).every((e) =>
+        !('unmodeled' in e && e.unmodeled) && (e.kind === 'gain' || e.kind === 'loseOpponent' ||
+          e.kind === 'resource' && ['gain', 'lose', 'steal'].includes(e.operation))) &&
+      (c.resolvedBonusIcons ?? c.bonusIcons ?? []).every((icon) => icon === 'amber')) {
+      after[0].discard++; deltas[0].discard++;
+    }
+    const before = after.map((n, i) => ({ hand: n.hand - deltas[i].hand,
+      deck: n.deck - deltas[i].deck, discard: n.discard - deltas[i].discard })) as [PublicLifecycleCounts, PublicLifecycleCounts];
     const absolute = <T,>(xs: [T, T]): [T, T] => o.you === 0 ? xs : [xs[1], xs[0]];
-    return assessLifecycleRefillDelta(formulaContext().observation, absolute(before), absolute(lifecycleCounts));
+    return assessLifecycleRefillDelta(formulaContext().observation, absolute(before), absolute(after));
   }
   function cardUseValue(view: Observation, card: CardView, owner: Seat) {
     return assessPublicCardUse(view, card, owner, (probe, id) => {
@@ -909,7 +950,7 @@ function assessAlgorithmProjection(
         publicCardLifecycle: false, publicHouseDefenseOpportunities: false }, true);
       return { score: result.ordinaryScore, approximate: result.assessment.approximate,
         unresolvedValues: result.unresolvedValues };
-    });
+    }, features.publicHandOpportunityGroups ? { projected: true } : undefined);
   }
   function lifecycleContext(view: Observation, e: import('../contracts/observation.js').ApplySpec): PublicCardLifecycleContext | undefined {
     if (!features.publicCardLifecycle) return undefined;
@@ -918,10 +959,122 @@ function assessAlgorithmProjection(
     if (holder === -1) markUnknown();
     return { actor: o.you, archiveTo: holder === 1 ? opp : o.you,
       archiveReturnToOwner: e.archiveReturnToOwner,
+      deferCurrentHandOpportunity: features.publicHandOpportunityGroups,
       useValue: (card, owner) => {
         if (!cache.has(card.id)) cache.set(card.id, cardUseValue(view, card, owner));
         return cache.get(card.id);
       } };
+  }
+  /** Formula projection already increments playedThisTurn; the remaining public
+   * activity/permission counters belong to the real command that opened this window. */
+  function currentHandWindowView(view: Observation): Observation {
+    if (!['play', 'discard', 'reap', 'use', 'fight', 'unstun'].includes(a.kind) || !c) return view;
+    const handOperation = (a.kind === 'play' || a.kind === 'discard') &&
+      (me.hand ?? []).some((held) => held.id === c.id);
+    const useName = a.kind !== 'discard' ? (commandSource ?? c).spec.name : undefined;
+    const entryKind = a.kind === 'play' && a.asUpgrade ? 'upgrade' : commandSource?.spec.kind;
+    const receiving = commandSource?.spec.entersOpponentControl && ['creature', 'artifact'].includes(entryKind ?? '')
+      ? opp : o.you;
+    const omega = a.kind === 'play' && (!!commandSource?.spec.omega ||
+      !!commandSource && ['creature', 'artifact'].includes(entryKind ?? '') &&
+      o.players.some((p) => [...p.battleline, ...p.artifacts, ...p.upgrades].some((x) =>
+        x.controller !== receiving && x.spec.grantsEnemyOmega)));
+    const permission = 'permission' in a ? a.permission : undefined;
+    return { ...view, handOperations: view.handOperations + Number(handOperation),
+      turnUsage: useName ? { ...view.turnUsage, [useName]: (view.turnUsage[useName] ?? 0) + 1 } : view.turnUsage,
+      turnStep: view.turnStep ? { ...view.turnStep, omega: view.turnStep.omega || omega,
+        performed: view.turnStep.performed.map((n, seat) => n + Number(seat === o.you)) as [number, number] }
+        : { step: 3, performed: [Number(o.you === 0), Number(o.you === 1)], omega: !!omega },
+      permissions: view.permissions.map((p) => p.id !== permission ? p : { ...p,
+        remaining: p.remaining === null ? null : Math.max(0, p.remaining - 1),
+        uniqueRemaining: p.uniqueRemaining === null ? null : Math.max(0, p.uniqueRemaining - Number(!p.used.includes(c.id))),
+        used: p.used.includes(c.id) ? p.used : [...p.used, c.id] }) };
+  }
+  function handOpportunities() {
+    const empty = { score: 0, approximate: false, reasons: [] as string[] };
+    if (!features.publicCardLifecycle || !features.publicHandOpportunityGroups || !handOpportunityMoves.size)
+      return empty;
+    const held = (l: PublicCardLocation) => l.seat === o.you && (l.zone === 'hand' || l.zone === 'archives');
+    const moves = [...handOpportunityMoves.values()].filter((m) =>
+      (held(m.from) || held(m.to)) && (m.from.zone !== m.to.zone || m.from.seat !== m.to.seat));
+    if (!moves.length) return empty;
+    if (uncertainPools.size || uncertainCounts.has(`${o.you}:hand`) || uncertainFormulaZones.has(`${o.you}:hand`) ||
+      uncertainCounts.has(`${o.you}:archives`) || uncertainFormulaZones.has(`${o.you}:archives`) ||
+      [...uncertainFormulaZones, ...uncertainCounts].some((zone) => /:(battleline|artifacts|upgrades)$/.test(zone)) ||
+      moves.some((m) => uncertainLocations.has(m.card.id))) return { ...empty, approximate: true };
+    const after = currentHandWindowView(formulaContext().observation);
+    const finalHand = after.players[o.you].hand;
+    if (!finalHand || finalHand.length !== after.players[o.you].handCount)
+      return { ...empty, approximate: true };
+    const zones = ['hand', 'archives', 'discard', 'purged', 'battleline', 'artifacts', 'upgrades'] as const;
+    const players = after.players.map((p) => ({ ...p, ...Object.fromEntries(zones.map((zone) =>
+      [zone, p[zone] ? [...p[zone]!] : undefined])), faceupArchives: p.faceupArchives && [...p.faceupArchives] })) as Observation['players'];
+    let resolving = [...after.resolving];
+    // Undo complete physical moves, not just the hand list: a retained card such
+    // as Routine Job must not see the same restored copy in hand and discard.
+    for (const m of moves) {
+      for (const p of players) {
+        for (const zone of zones) if (p[zone]) p[zone] = p[zone]!.filter((card) => card.id !== m.card.id);
+        p.faceupArchives = p.faceupArchives?.filter((card) => card.id !== m.card.id);
+        if (p.revealedTop?.id === m.card.id) p.revealedTop = undefined;
+      }
+      resolving = resolving.filter((card) => card.id !== m.card.id);
+      for (const [location, delta] of [[m.to, -1], [m.from, 1]] as const) {
+        const p = players[location.seat];
+        if (location.zone === 'hand') p.handCount += delta;
+        else if (location.zone === 'archives') p.archiveCount += delta;
+        else if (location.zone === 'deck') p.deckCount += delta;
+      }
+      const p = players[m.from.seat];
+      if (m.from.zone === 'resolving') resolving.push(m.card);
+      else if (m.from.zone === 'deck') {
+        if (m.from.position === 'top') p.revealedTop = m.card;
+      } else if (m.from.zone !== 'hand' && m.from.zone !== 'archives' || m.from.seat === o.you) {
+        p[m.from.zone]?.push(m.card);
+      } else if (m.from.zone === 'archives') {
+        (p.faceupArchives ??= []).push(m.card);
+      }
+    }
+    const before = { ...after, players, resolving };
+    // Each cache is confined to this exact public view; no reuse across branches or observations.
+    const window = (view: Observation) => {
+      const cache = new Map<string, ReturnType<typeof cardUseValue>>();
+      return assessPublicHandWindow(view, view.players[o.you].hand ?? [], (card) => {
+        if (!cache.has(card.id)) cache.set(card.id, cardUseValue(view, card, o.you));
+        return cache.get(card.id);
+      }, { projected: true });
+    };
+    const trigger = a.kind === 'play' ? 'play' : a.kind === 'reap' ? 'reap' : a.kind === 'use' ? 'action' : undefined;
+    const changesWindow = (value: unknown): boolean => {
+      if (!value || typeof value !== 'object') return false;
+      const row = value as Record<string, unknown>;
+      return row.kind === 'lasting' && ['noPlay', 'noActions', 'noCreatures', 'onlyPlayHouse', 'playLimit',
+        'noNamedPlayUse', 'noMatchingPlay'].includes(String(row.rule)) || Object.values(row).some(changesWindow);
+    };
+    const unresolvedWindow = forecastUncertain || trigger && changesWindow(commandSource?.spec.abilities?.[trigger]);
+    const none = { score: 0, selectedIds: [] as string[] };
+    const oldWindow = unresolvedWindow ? none : window(before), newWindow = unresolvedWindow ? none : window(after);
+    const partners = assessHandOpportunityGroup(before, moves, {
+      beforeExcludedImmediateIds: new Set(oldWindow.selectedIds),
+      excludedImmediateIds: new Set(newWindow.selectedIds),
+    });
+    const immediate = newWindow.score - oldWindow.score;
+    return { score: immediate + partners.score, approximate: true,
+      reasons: [...(immediate ? ['shared current hand opportunity settled once from initial and final holdings'] : []),
+        ...partners.reasons] };
+  }
+  /** Direct target prompts defer every selected card until Done/max; score the same
+   * complete visible prefix on both Select and Done. chooseCards already binds it. */
+  function directPendingGroup(target?: CardView): CardView[] | undefined {
+    const q = o.pending;
+    const op = q?.intent?.kind === 'target-operation' ? q.intent.operation : q?.kind === 'archive' ? 'archive' : undefined;
+    if (!features.publicHandOpportunityGroups || !q || q.actor !== o.you || !['returnHand', 'archive'].includes(op ?? '')) return;
+    const ids = q.selected ?? [];
+    if (new Set(ids).size !== ids.length || q.selectedCount !== undefined && q.selectedCount !== ids.length ||
+      q.max !== undefined && ids.length > q.max) return;
+    const selected = ids.map(find);
+    if (selected.some((card) => !card || !publicCardLocation(o, card))) return;
+    return [...new Map([...selected as CardView[], ...(target ? [target] : [])].map((card) => [card.id, card])).values()];
   }
   function evalScrap(card: CardView, depth: number) {
     const parentContext = preparedContext();
@@ -1026,6 +1179,7 @@ function assessAlgorithmProjection(
       lifecycleCounts: lifecycleCounts.map((x) => ({ ...x })),
       lifecycleDeltas: lifecycleDeltas.map((x) => ({ ...x })),
       lifecycleRefillUnknown,
+      handOpportunityMoves: [...handOpportunityMoves],
       scalarBindings: [...scalarBindings],
       projectedLocations: [...projectedLocations],
       projectedEntries: [...projectedEntries],
@@ -1088,6 +1242,8 @@ function assessAlgorithmProjection(
       drawSupply[i] = s.drawSupply[i];
       createdTokens[i] = s.createdTokens[i];
     }
+    handOpportunityMoves.clear();
+    for (const [id, move] of s.handOpportunityMoves) handOpportunityMoves.set(id, move);
     scalarBindings.clear();
     for (const [key, n] of s.scalarBindings) scalarBindings.set(key, n);
     projectedEntries.clear();
@@ -1201,7 +1357,7 @@ function assessAlgorithmProjection(
       !forecastUncertain &&
       (skip || pool[1] + Math.max(0, foe.forgeAvailable - foe.amber) < otherCost);
     return (
-      score + lifecycleRefill().score +
+      score + lifecycleRefill().score + handOpportunities().score +
       (pool[0] - initial[0]) * 3.5 -
       (pool[1] - initial[1]) * 3.2 +
       draws * 1.2 -
@@ -1440,6 +1596,17 @@ function assessAlgorithmProjection(
         for (const location of possibilities) uncertainFormulaZones.add(`${location.seat}:${location.zone}`);
         projectedLocations.delete(id); uncertainLocations.add(id);
       }
+    }
+    // A common final physical location is not enough if the opportunity ledger
+    // still describes the pre-random hand visit. Merge both ledgers together.
+    for (const id of new Set(outcomes.flatMap((s) => s.handOpportunityMoves.map(([id]) => id)))) {
+      const first = new Map(outcomes[0].handOpportunityMoves).get(id);
+      if (first && !uncertainLocations.has(id) && outcomes.every((s) => {
+        const other = new Map(s.handOpportunityMoves).get(id);
+        return other && other.from.seat === first.from.seat && other.from.zone === first.from.zone &&
+          other.to.seat === first.to.seat && other.to.zone === first.to.zone && other.to.position === first.to.position;
+      })) handOpportunityMoves.set(id, first);
+      else handOpportunityMoves.delete(id);
     }
     for (const id of outcomes[0].removed) if (outcomes.every((s) => s.removed.includes(id))) predictedRemoved.add(id);
     for (const id of new Set(outcomes.flatMap((s) => s.predictedCaptured.map(([id]) => id)))) {
@@ -2903,6 +3070,11 @@ function assessAlgorithmProjection(
         approximate = true;
         break;
       }
+      if (features.publicHandOpportunityGroups) {
+        const tax = source.spec.kind === 'artifact' ? publicArtifactPlayTax(o, o.you) : 0;
+        pool[0] = Math.max(0, pool[0] - (source.spec.playAmberCost ?? 0) - tax);
+        if (tax) gain(1, tax);
+      }
       if (features.physicalBonuses) {
         const blocked = [...foe.battleline, ...foe.artifacts].some((x) => x.spec.blocksOpponentBonusIcons);
         const icons =
@@ -2924,7 +3096,7 @@ function assessAlgorithmProjection(
           }
         reasons.push('v2: full visible bonus sequence, including native amber exactly once');
       } else gain(0, source.spec.amber);
-      pool[0] = Math.max(0, pool[0] - (source.spec.playAmberCost ?? 0));
+      if (!features.publicHandOpportunityGroups) pool[0] = Math.max(0, pool[0] - (source.spec.playAmberCost ?? 0));
       score =
         source.spec.kind === 'creature'
           ? boardWorth(source)
@@ -3114,7 +3286,7 @@ function assessAlgorithmProjection(
             (target.effective.house === o.activeHouse ? 1.5 : 0);
           score = target.controller === o.you ? -worth : worth;
         } else if (features.contextualEffects) {
-          applyTargets([target], { operation: op, amount: o.pending.amount }, 0);
+          applyTargets(directPendingGroup(target) ?? [target], { operation: op, amount: o.pending.amount }, 0);
           if (op === 'returnHand' && !forecastUncertain && knownRecoveredForge(o, target, pool[0], { publicRecoveryWindow: features.publicCardLifecycle })) {
             score += 7000;
             reasons.push('card-aware: recover a publicly payable next-play third-key route');
@@ -3127,7 +3299,7 @@ function assessAlgorithmProjection(
         break;
       }
       if (o.pending?.kind === 'archive') {
-        if (features.publicCardLifecycle) applyTargets([target], { operation: 'archive' }, 0);
+        if (features.publicCardLifecycle) applyTargets(directPendingGroup(target) ?? [target], { operation: 'archive' }, 0);
         else score = target.effective.house === o.activeHouse ? -0.5 : 1.5;
         break;
       }
@@ -3221,7 +3393,13 @@ function assessAlgorithmProjection(
           (o.pending?.selected ?? []).flatMap((id) => (find(id) ? [find(id)!] : [])),
         );
         evalEffects(continuation.then);
-      } else score = -0.3;
+      } else {
+        const selected = directPendingGroup();
+        if (selected && features.publicCardLifecycle) {
+          const operation = o.pending?.intent?.kind === 'target-operation' ? o.pending.intent.operation : 'archive';
+          applyTargets(selected, { operation, amount: o.pending?.amount }, 0);
+        } else score = -0.3;
+      }
       break;
     }
     case 'endTurn':
@@ -3229,6 +3407,9 @@ function assessAlgorithmProjection(
       reasons.push('end remains legal; do not force every card');
       break;
   }
+  const handGroup = handOpportunities();
+  score += handGroup.score; approximate ||= handGroup.approximate;
+  reasons.push(...handGroup.reasons.map((reason) => 'hand-opportunity: ' + reason));
   const refill = lifecycleRefill();
   score += refill.score; approximate ||= refill.approximate;
   if (features.publicCardLifecycle && chainGain !== 0 && lifecycleDeltas.some((n) => n.hand || n.deck || n.discard))

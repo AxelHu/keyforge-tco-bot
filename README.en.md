@@ -33,6 +33,14 @@ engine, game server, game UI and historical match data are not included.
 
 ## Compatibility and current validation
 
+<!-- hand-opportunity-063:start -->
+### 0.6.3 hand recovery and discard decisions
+
+In four recorded positions from one game, 0.6.2 ranked a native discard first. After accounting for refill space released by playing the same card, 0.6.3 ranked playing it first in all four. Recovered cards share the available play slots, permissions and amber. Same-house partners that remain in hand contribute a separate, bounded future value. The final offline suite passed 579/579 tests.
+
+Across complete four-game units, the candidate went 49–47 (51.04%) in development and 197–187 (51.30%) in confirmation. Both family intervals include 50%. The experiment used 12 fixed decks and two policy families. [Method and results in Chinese](docs/hand-opportunity-evaluation.md) · [Public evidence](docs/evidence/hand-opportunity-2026-11-18.json)
+<!-- hand-opportunity-063:end -->
+
 <!-- card-lifecycle-062:start -->
 ### 0.6.2 card lifecycle valuation
 
@@ -57,7 +65,7 @@ Results are not pooled. The 849 completed games from superseded candidates remai
 
 The bot supports the Fuzhou deployment and international TCO. Current maintenance tests focus on **Fuzhou and owned-account games**. International matchmaking against other people has been paused since 2026-11-17; the adapter and English chat configuration remain available.
 
-The new 0.6.2 validation focuses on lifecycle valuation, public-input replay and the fixed local comparison. The 0.6.1 formula evidence retains its historical attribution. Existing server evidence includes 0.5.3 localized capture allocation and 0.5.2 preparation retirement and delivery recovery, each attributed to its actual source and scope. Current results, historical failures and server evidence are collected in the [validation record](docs/validation.md).
+Version 0.6.3 evaluates shared play opportunities and native discards. The 0.6.2 validation focuses on lifecycle valuation, public-input replay and the fixed local comparison. The 0.6.1 formula evidence retains its historical attribution. Existing server evidence includes 0.5.3 localized capture allocation and 0.5.2 preparation retirement and delivery recovery, each attributed to its actual source and scope. Current results, historical failures and server evidence are collected in the [validation record](docs/validation.md).
 
 Managed operation targets **Linux or Linux inside WSL**, with Node.js **22.12–24.x**, Python 3 and Chromium. Native Windows and macOS supervision has not been validated.
 
