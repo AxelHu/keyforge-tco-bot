@@ -20,7 +20,9 @@ export function rankCardAwareV3(
   o: Observation,
   publicCorrections: PublicActionCorrections = {},
 ): ActionAssessment[] {
-  publicCorrections = { publicCardLifecycle: true, publicHandOpportunityGroups: true, ...publicCorrections };
+  publicCorrections = { publicCardLifecycle: true, publicHandOpportunityGroups: true,
+    publicCardRetention: true, publicPlaySequences: true, publicSemanticPlayPartners: true,
+    publicMinimumForgeCost: true, ...publicCorrections };
   const inherited = rankCardAwareV2(o, publicCorrections);
   const cards = new Map<string, CardView>(
     [

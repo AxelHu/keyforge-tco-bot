@@ -1,4 +1,5 @@
 import type { CardView, House, Observation } from '../contracts/observation.js';
+import { retainedPlayPartnerCount } from './retained-play-partners.js';
 import type { PublicCardLocation } from './card-lifecycle-value.js';
 
 export interface HandOpportunityMove {
@@ -8,6 +9,8 @@ export interface HandOpportunityMove {
 }
 
 export interface HandOpportunityGroupOptions {
+  /** Add typed, incremental play-trigger value for retained hand partners. */
+  semanticPlayPartners?: boolean;
   /** Physical cards already allocated a jointly feasible play in this candidate. */
   excludedImmediateIds?: ReadonlySet<string>;
   /** Initial allocation when a newly arrived card displaces an earlier immediate play. */
@@ -17,12 +20,16 @@ export interface HandOpportunityGroupOptions {
 const partnerValue = 0.3;
 const groupLimit = 1.2;
 const archiveWeight = 0.5;
+// One additional pool amber has 2.5 play-opportunity value, discounted for later use.
+// Replace the generic partner value already present in this same house.
+const semanticPremium = 2.5 / 2 - partnerValue;
+type HouseOpportunity = { access: number; links: number };
 type Holdings = { hand: Map<string, CardView>; archives: Map<string, CardView> };
 
 function houseOpportunities(o: Observation, holdings: Holdings, archivesComplete: boolean,
-  excluded: ReadonlySet<string> | undefined): Map<House, number> {
+  excluded: ReadonlySet<string> | undefined, boardOrigins?: ReadonlySet<string>): Map<House, HouseOpportunity> {
   const me = o.players[o.you];
-  const counts = new Map<House, number>();
+  const groups = new Map<House, CardView[]>();
   const anchors = new Set<House>();
   // A displayed alternate face or joined entity does not establish the identity
   // of a normally playable physical card after its projected movement.
@@ -32,7 +39,11 @@ function houseOpportunities(o: Observation, holdings: Holdings, archivesComplete
     c.giganticBonusIcons !== undefined || c.physicalParts !== undefined
     ? [] : new Set((c.effective.houses ?? [c.effective.house]).filter((h) => me.houses.includes(h)));
   for (const c of holdings.hand.values())
-    for (const h of houses(c)) counts.set(h, (counts.get(h) ?? 0) + 1);
+    for (const h of houses(c)) {
+      const group = groups.get(h);
+      if (group) group.push(c);
+      else groups.set(h, [c]);
+    }
 
   if (archivesComplete && holdings.archives.size && o.publicStateCoverage?.effectsComplete !== false) {
     const blocked = o.players.some((p) => [...p.battleline, ...p.artifacts, ...p.upgrades].some((c) =>
@@ -41,7 +52,10 @@ function houseOpportunities(o: Observation, holdings: Holdings, archivesComplete
       for (const h of houses(c)) anchors.add(h);
   }
   // A visible archive supplies at most half of one partner, regardless of pile size.
-  return new Map([...counts].map(([h, n]) => [h, partnerValue * (n - 1 + (anchors.has(h) ? archiveWeight : 0))]));
+  return new Map([...groups].map(([h, cards]) => [h, {
+    access: partnerValue * (cards.length - 1 + (anchors.has(h) ? archiveWeight : 0)),
+    links: boardOrigins ? retainedPlayPartnerCount(o, h, cards, boardOrigins) : 0,
+  }]));
 }
 
 /** Incremental future same-house access only. Each candidate earns its best single-house
@@ -79,16 +93,26 @@ export function assessHandOpportunityGroup(o: Observation, moves: readonly HandO
     }
   }
   const archivesComplete = before.archives.size === me.archiveCount;
+  // A returned permanent previously supplied its own board trigger. Putting it in hand
+  // cannot create a new future trigger with a retained follower.
+  const boardOrigins = options.semanticPlayPartners ? new Set(changes.filter(({ from }) =>
+    from.zone === 'battleline' || from.zone === 'artifacts' || from.zone === 'upgrades').map((m) => m.card.id)) : undefined;
   const old = houseOpportunities(o, before, archivesComplete,
-    options.beforeExcludedImmediateIds ?? options.excludedImmediateIds);
-  const next = houseOpportunities(o, after, archivesComplete, options.excludedImmediateIds);
-  let gain = 0, loss = 0;
+    options.beforeExcludedImmediateIds ?? options.excludedImmediateIds, boardOrigins);
+  const next = houseOpportunities(o, after, archivesComplete, options.excludedImmediateIds, boardOrigins);
+  let gain = 0, loss = 0, gainAccess = 0, lossAccess = 0;
   for (const h of new Set([...old.keys(), ...next.keys()])) {
-    const delta = (next.get(h) ?? 0) - (old.get(h) ?? 0);
-    gain = Math.max(gain, delta);
-    loss = Math.min(loss, delta);
+    const first = old.get(h), last = next.get(h);
+    const access = (last?.access ?? 0) - (first?.access ?? 0);
+    const delta = access + semanticPremium * ((last?.links ?? 0) - (first?.links ?? 0));
+    if (delta > gain) { gain = delta; gainAccess = access; }
+    if (delta < loss) { loss = delta; lossAccess = access; }
   }
-  const score = Math.max(-groupLimit, Math.min(groupLimit, gain + loss));
-  return score ? { score, approximate: true, reasons: ['future same-house hand opportunity, net of visible partners'] }
-    : unchanged;
+  // Only a net typed gain or loss in the selected houses extends that direction's
+  // legacy access bound. Two extra links at most, even for dual-house batches.
+  const total = gain + loss;
+  const premium = Math.max(-2 * semanticPremium, Math.min(2 * semanticPremium, total - (gainAccess + lossAccess)));
+  const score = Math.max(-groupLimit + Math.min(0, premium), Math.min(groupLimit + Math.max(0, premium), total));
+  return score ? { score, approximate: true, reasons: ['future same-house hand opportunity, net of visible partners',
+    ...(Math.abs(premium) > 1e-9 ? ['retained same-house play order changes incremental pool amber'] : [])] } : unchanged;
 }

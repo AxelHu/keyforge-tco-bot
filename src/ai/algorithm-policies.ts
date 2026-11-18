@@ -34,7 +34,8 @@ import {
 import { assessPublicReapControl } from './public-reap-control.js';
 import { knownRecoveredForge } from './recovery-forge.js';
 import { assessPublicCardUse } from './public-card-opportunity.js';
-import { assessPublicHandWindow, publicArtifactPlayTax } from './public-hand-window.js';
+import { assessPublicHandWindow, publicArtifactPlayTax, projectPublicPlaySequenceOpener, publicHandWindowAvailable } from './public-hand-window.js';
+import { assessPublicCardRetention } from './public-card-retention.js';
 import { assessHandOpportunityGroup, type HandOpportunityMove } from './hand-opportunity-group.js';
 import { assessLifecycleRefillDelta, publicCardLocation, type PublicCardMove, type PublicCardLocation,
   type PublicLifecycleCounts, type PublicCardLifecycleContext } from './card-lifecycle-value.js';
@@ -56,6 +57,14 @@ export interface PublicActionCorrections {
   publicCardLifecycle?: boolean;
   /** Shared current-hand budgets, net same-house partners and symmetric Play refill. */
   publicHandOpportunityGroups?: boolean;
+  /** Timing discount for retained physical hand material; ordinary refill is separate. */
+  publicCardRetention?: boolean;
+  /** One modeled funding/permission opener followed by a shared public play allocation. */
+  publicPlaySequences?: boolean;
+  /** Incremental typed play-trigger value between retained same-house cards. */
+  publicSemanticPlayPartners?: boolean;
+  /** Current candidate respects a printed minimum forge cost and explicit existing key color. */
+  publicMinimumForgeCost?: boolean;
   publicReapControlRisk?: boolean;
   /** Scoped direct-destruction receipts, attributed to the destroyed public controller. */
   publicDestructionPayments?: boolean;
@@ -945,12 +954,31 @@ function assessAlgorithmProjection(
     return assessLifecycleRefillDelta(formulaContext().observation, absolute(before), absolute(after));
   }
   function cardUseValue(view: Observation, card: CardView, owner: Seat) {
+    // A pool-changing projection can leave conditional forge sources stale. Reserve
+    // a critical response only against the unchanged, complete public funding/table.
+    const keyTiming = !!features.publicCardRetention && owner === o.you && view.activePlayer === owner &&
+      view.publicStateCoverage?.effectsComplete !== false && view.publicStateCoverage?.turnHistoryComplete !== false &&
+      !forecastUncertain && (me.keys.length === 2 || foe.keys.length === 2) &&
+      pool[0] === initial[0] && pool[1] === initial[1] && ownCost === me.keyCost && otherCost === foe.keyCost &&
+      !predictedRemoved.size && !projectedFields.size && !publicControlChanged && !createdTokens.some(Boolean) &&
+      ![...projectedLocations.keys()].some((id) => inPlay(id)) &&
+      view.players.every((p, seat) => {
+        const original = o.players[seat];
+        const ids = (player: typeof p) => [...player.battleline, ...player.artifacts, ...player.upgrades].map((c) => c.id).join('|');
+        return p.amber === original.amber && p.forgeAvailable === original.forgeAvailable &&
+          p.keyCost === original.keyCost && ids(p) === ids(original);
+      });
     return assessPublicCardUse(view, card, owner, (probe, id) => {
       const result = assessAlgorithmProjection(probe, id, 'tempo-v1', { ...features,
-        publicCardLifecycle: false, publicHouseDefenseOpportunities: false }, true);
+        publicCardLifecycle: false, publicHouseDefenseOpportunities: false,
+        publicCardRetention: false, publicPlaySequences: false, publicSemanticPlayPartners: false }, true);
       return { score: result.ordinaryScore, approximate: result.assessment.approximate,
-        unresolvedValues: result.unresolvedValues };
-    }, features.publicHandOpportunityGroups ? { projected: true } : undefined);
+        unresolvedValues: result.unresolvedValues,
+        currentKeyPriority: keyTiming && ((probe.players[owner === 0 ? 1 : 0].keys.length === 2 &&
+          !probe.players[owner === 0 ? 1 : 0].forgeBlocked && result.assessment.deniesKey) ||
+          probe.players[owner].keys.length === 2 && result.assessment.projectedKey) };
+    }, features.publicHandOpportunityGroups ? { projected: true,
+      terminalDiscard: features.publicCardRetention, keyTiming } : undefined);
   }
   function lifecycleContext(view: Observation, e: import('../contracts/observation.js').ApplySpec): PublicCardLifecycleContext | undefined {
     if (!features.publicCardLifecycle) return undefined;
@@ -1035,15 +1063,24 @@ function assessAlgorithmProjection(
         (p.faceupArchives ??= []).push(m.card);
       }
     }
-    const before = { ...after, players, resolving };
+    // A native discard has not happened in the keep counterfactual. In particular,
+    // it must not consume the first-turn/Alpha opportunity before valuing its loss.
+    const before = features.publicCardRetention && a.kind === 'discard' ? o : { ...after, players, resolving };
     // Each cache is confined to this exact public view; no reuse across branches or observations.
-    const window = (view: Observation) => {
+    const valueIn = (view: Observation) => {
       const cache = new Map<string, ReturnType<typeof cardUseValue>>();
-      return assessPublicHandWindow(view, view.players[o.you].hand ?? [], (card) => {
+      return (card: CardView) => {
         if (!cache.has(card.id)) cache.set(card.id, cardUseValue(view, card, o.you));
         return cache.get(card.id);
-      }, { projected: true });
+      };
     };
+    const beforeValue = valueIn(before), afterValue = valueIn(after);
+    const window = (view: Observation, use: ReturnType<typeof valueIn>) =>
+      assessPublicHandWindow(view, view.players[o.you].hand ?? [], use, {
+        projected: true, terminalDiscard: features.publicCardRetention,
+        ...(features.publicPlaySequences ? { reprice: (next: Observation, card: CardView) =>
+          cardUseValue(next, card, o.you), playPermissionEstimate: 1.5 } : {}),
+      });
     const trigger = a.kind === 'play' ? 'play' : a.kind === 'reap' ? 'reap' : a.kind === 'use' ? 'action' : undefined;
     const changesWindow = (value: unknown): boolean => {
       if (!value || typeof value !== 'object') return false;
@@ -1053,28 +1090,76 @@ function assessAlgorithmProjection(
     };
     const unresolvedWindow = forecastUncertain || trigger && changesWindow(commandSource?.spec.abilities?.[trigger]);
     const none = { score: 0, selectedIds: [] as string[] };
-    const oldWindow = unresolvedWindow ? none : window(before), newWindow = unresolvedWindow ? none : window(after);
+    const oldWindow = unresolvedWindow ? none : window(before, beforeValue),
+      newWindow = unresolvedWindow ? none : window(after, afterValue);
+    const oldAllocated = new Set(oldWindow.selectedIds), newAllocated = new Set(newWindow.selectedIds);
     const partners = assessHandOpportunityGroup(before, moves, {
-      beforeExcludedImmediateIds: new Set(oldWindow.selectedIds),
-      excludedImmediateIds: new Set(newWindow.selectedIds),
+      beforeExcludedImmediateIds: oldAllocated, excludedImmediateIds: newAllocated,
+      semanticPlayPartners: features.publicSemanticPlayPartners,
     });
-    const immediate = newWindow.score - oldWindow.score;
-    return { score: immediate + partners.score, approximate: true,
+    // A retained card displaced from a shared current slot needs the same timing
+    // adjustment as a newly arrived card. Repeated visits coalesce to the final state.
+    const touched = new Set(moves.map((m) => m.card.id));
+    for (const id of oldAllocated) if (!newAllocated.has(id)) touched.add(id);
+    for (const id of newAllocated) if (!oldAllocated.has(id)) touched.add(id);
+    const wait = (view: Observation, use: ReturnType<typeof valueIn>, allocated: Set<string>) =>
+      features.publicCardRetention ? assessPublicCardRetention(view,
+        (view.players[o.you].hand ?? []).filter((card) => touched.has(card.id)), use,
+        !unresolvedWindow && publicHandWindowAvailable(view, { terminalDiscard: true }) ? allocated : undefined)
+        : { score: 0, reasons: [] as string[] };
+    const oldWait = wait(before, beforeValue, oldAllocated), newWait = wait(after, afterValue, newAllocated);
+    const immediate = newWindow.score - oldWindow.score, retention = newWait.score - oldWait.score;
+    return { score: immediate + partners.score + retention, approximate: true,
       reasons: [...(immediate ? ['shared current hand opportunity settled once from initial and final holdings'] : []),
-        ...partners.reasons] };
+        ...partners.reasons,
+        ...(retention ? ['retained hand timing settled once from initial and final holdings'] : [])] };
   }
   /** Direct target prompts defer every selected card until Done/max; score the same
    * complete visible prefix on both Select and Done. chooseCards already binds it. */
   function directPendingGroup(target?: CardView): CardView[] | undefined {
     const q = o.pending;
     const op = q?.intent?.kind === 'target-operation' ? q.intent.operation : q?.kind === 'archive' ? 'archive' : undefined;
-    if (!features.publicHandOpportunityGroups || !q || q.actor !== o.you || !['returnHand', 'archive'].includes(op ?? '')) return;
+    const supported = ['returnHand', 'archive', ...(features.publicCardRetention ? ['discard'] : [])];
+    if (!features.publicHandOpportunityGroups || !q || q.actor !== o.you || !supported.includes(op ?? '')) return;
     const ids = q.selected ?? [];
     if (new Set(ids).size !== ids.length || q.selectedCount !== undefined && q.selectedCount !== ids.length ||
       q.max !== undefined && ids.length > q.max) return;
     const selected = ids.map(find);
     if (selected.some((card) => !card || !publicCardLocation(o, card))) return;
-    return [...new Map([...selected as CardView[], ...(target ? [target] : [])].map((card) => [card.id, card])).values()];
+    const group = [...new Map([...selected as CardView[], ...(target ? [target] : [])].map((card) => [card.id, card])).values()];
+    if (op === 'discard' && group.some((card) => {
+      const location = publicCardLocation(o, card);
+      return card.owner !== o.you || location?.seat !== o.you || location.zone !== 'hand';
+    })) return;
+    return group;
+  }
+  /** A real ordinary Play may open a resource/permission route without moving another
+   * card. Its own effect value is already priced; only remaining-hand interaction is added. */
+  function actionSequenceOpportunity() {
+    const empty = { score: 0, reasons: [] as string[] };
+    if (!features.publicPlaySequences || materialProbe || a.kind !== 'play' || !c ||
+      a.copy || a.asUpgrade || a.otherHalf || a.entryOverride || a.position !== undefined ||
+      forecastUncertain || handOpportunityMoves.size || uncertainPools.size) return empty;
+    // A mixed play/use allowance can preserve an independent unpriced board use.
+    // This native replacement is scoped to unambiguous pure-play grants.
+    const grants = (c.spec.abilities?.play ?? []).filter((e) => e.kind === 'permission');
+    if (grants.some((e) => e.mode !== 'play')) return empty;
+    const after = projectPublicPlaySequenceOpener(o, c, a.permission, a.flank ?? 'left', false, true);
+    if (!after) return empty;
+    const existing = new Set(o.permissions.map((p) => p.id));
+    const before: Observation = { ...after,
+      players: after.players.map((p, seat) => ({ ...p, amber: o.players[seat].amber,
+        forgeAvailable: o.players[seat].forgeAvailable, forgeSources: o.players[seat].forgeSources })) as Observation['players'],
+      permissions: after.permissions.filter((p) => existing.has(p.id)),
+    };
+    const window = (view: Observation) => assessPublicHandWindow(view, view.players[o.you].hand ?? [],
+      (card) => cardUseValue(view, card, o.you), { projected: true, playPermissionEstimate: 1.5 });
+    const oldWindow = window(before), nextWindow = window(after);
+    const limit = 12 + Number(nextWindow.keyPriorityUsed && !oldWindow.keyPriorityUsed) * 160;
+    const opened = Math.max(0, Math.min(limit, nextWindow.score - oldWindow.score));
+    // The generic estimate is replaced by the same allowance's concrete use.
+    const score = opened - grants.length * 1.5;
+    return score ? { score, reasons: ['remaining hand route repriced after a public funding or permission opener'] } : empty;
   }
   function evalScrap(card: CardView, depth: number) {
     const parentContext = preparedContext();
@@ -2094,6 +2179,21 @@ function assessAlgorithmProjection(
           ? intent.selection
           : undefined;
     if (locator) {
+      if (features.publicCardRetention && intent?.kind === 'target-operation') {
+        const direct = publicEffectAt(locator, 'target');
+        if (direct && direct.operation === intent.operation && !direct.unmodeled) {
+          const selected = o.pending.selected ?? [];
+          const offered = [...selected, ...o.legalActions.flatMap((entry) =>
+            entry.action.kind === 'select' ? [entry.action.target] : [])];
+          if (new Set(selected).size !== selected.length ||
+            o.pending.selectedCount !== undefined && o.pending.selectedCount !== selected.length ||
+            o.pending.max !== undefined && (selected.length > o.pending.max || o.pending.max > (direct.max ?? 1)) ||
+            offered.some((id) => !find(id))) markUnknown();
+          // A direct target locator is not a chooseCards continuation. Its actual
+          // complete prefix is handled by the operation consumer below.
+          return;
+        }
+      }
       const effect = publicEffectAt(locator, 'chooseCards');
       const selected = o.pending.selected ?? [];
       const offered = [
@@ -2431,6 +2531,10 @@ function assessAlgorithmProjection(
           break;
         }
         case 'forgeEffect': {
+          if (features.publicMinimumForgeCost && e.color && me.keys.includes(e.color)) {
+            reasons.push('public forge effect names an already forged key color');
+            break;
+          }
           if (materialProbe && (me.forgeBlocked || [...publicBoard(0), ...publicBoard(1)].some((card) =>
             [card.spec, ...(card.gainedTextBoxes ?? [])].some((d) => d.prohibitsForging ||
               d.forbiddenKeyOrdinal === me.keys.length + 1 || d.forgeRestrictions?.length || d.forgeIntercept ||
@@ -2440,7 +2544,8 @@ function assessAlgorithmProjection(
             break;
           }
           if (uncertainPools.has(0)) { markUnknown(); break; }
-          const cost = Math.max(0, e.fixedCost ?? ownCost + value(e.delta) - value(e.reduction));
+          const cost = Math.max(0, features.publicMinimumForgeCost ? e.minimumCost ?? 0 : 0,
+            e.fixedCost ?? ownCost + value(e.delta) - value(e.reduction));
           const storage = Math.max(0, me.forgeAvailable - me.amber);
           if (pool[0] + storage >= cost) {
             if (features.contextualEffects && forecastUncertain) {
@@ -3407,6 +3512,9 @@ function assessAlgorithmProjection(
       reasons.push('end remains legal; do not force every card');
       break;
   }
+  const sequence = actionSequenceOpportunity();
+  score += sequence.score;
+  if (sequence.score) { approximate = true; reasons.push(...sequence.reasons); }
   const handGroup = handOpportunities();
   score += handGroup.score; approximate ||= handGroup.approximate;
   reasons.push(...handGroup.reasons.map((reason) => 'hand-opportunity: ' + reason));

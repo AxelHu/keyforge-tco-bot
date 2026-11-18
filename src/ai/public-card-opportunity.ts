@@ -6,7 +6,7 @@ import { publicPlayCapacity } from './public-guidance-guards.js';
 
 import { publicHandCardPlayable, type HandWindowOptions } from './public-hand-window.js';
 
-export interface PublicMaterialEstimate { score: number; approximate: boolean; unresolvedValues: boolean; }
+export interface PublicMaterialEstimate { score: number; approximate: boolean; unresolvedValues: boolean; currentKeyPriority?: boolean; }
 export type PublicMaterialEvaluator = (observation: Observation, actionId: string) => PublicMaterialEstimate;
 const board = (o: Observation) => o.players.flatMap((p) => [...p.battleline, ...p.artifacts, ...p.upgrades]);
 
@@ -91,7 +91,7 @@ function publicProbe(o: Observation, c: CardView, owner: Seat, action: Action): 
 }
 
 export function assessPublicCardUse(
-  o: Observation, c: CardView, owner: Seat, evaluate: PublicMaterialEvaluator, options?: HandWindowOptions,
+  o: Observation, c: CardView, owner: Seat, evaluate: PublicMaterialEvaluator, options?: HandWindowOptions & { keyTiming?: boolean },
 ): PublicCardUseValue | undefined {
   if (c.tokenCreature || c.copiedDefinition || c.definition !== c.spec.id ||
     (c.physicalParts?.length ?? 0) > 1) return undefined;
@@ -117,12 +117,18 @@ export function assessPublicCardUse(
   // A cross-house permission or a physical extra house keeps the actual active house.
   // House-dependent effects in a future material probe may therefore have a different payoff.
   let usableMaterial = material;
+  let currentEstimates = current;
   if (options && playableNow && currentScore === undefined) {
     const currentProbes = o.activeHouse === c.effective.house ? probes : actions.map((action) =>
       evaluate({ ...publicProbe(o, c, owner, action), activeHouse: o.activeHouse }, 'public-material-probe'));
+    currentEstimates = currentProbes;
     usableMaterial = currentProbes.filter((x) => !x.unresolvedValues && Number.isFinite(x.score) &&
       Math.abs(x.score) < 5000).map((x) => x.score);
   }
   return { score: quality, currentScore: currentScore ?? (playableNow && usableMaterial.length ? Math.max(...usableMaterial) : undefined),
-    playableNow, approximate: true };
+    playableNow, approximate: true,
+    ...(options?.keyTiming && playableNow && c.spec.kind === 'action' && currentEstimates.length === 1 &&
+      !currentEstimates[0].unresolvedValues && currentEstimates[0].currentKeyPriority
+      ? { currentKeyPriority: true } : {}),
+  };
 }
