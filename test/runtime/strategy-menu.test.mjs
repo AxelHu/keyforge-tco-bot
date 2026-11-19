@@ -30,7 +30,7 @@ const cli = (packageRoot, args) => spawnSync(process.execPath,
 
 test('synchronous menu snapshot matches the actual built strategy registry exactly', () => {
   assert.deepEqual(REGISTERED_CODE_POLICY_IDS, CODE_POLICY_IDS);
-  assert.equal(new Set(REGISTERED_CODE_POLICY_IDS).size, 89);
+  assert.equal(new Set(REGISTERED_CODE_POLICY_IDS).size, 92);
   assert.equal(COMMON_STRATEGIES.length, 5);
   for (const row of COMMON_STRATEGIES) assert.ok(CODE_POLICY_IDS.includes(row.policyId));
   assert.equal(COMMON_STRATEGIES[0].policyId, DEFAULT_CODE_POLICY);
@@ -40,7 +40,7 @@ test('common and complete menus preserve every strategy without treating all ent
   const common = JSON.parse(strategyCommand(['list', '--json']));
   const all = JSON.parse(strategyCommand(['list', '--all', '--json']));
   assert.equal(common.shownCount, 5);
-  assert.equal(all.shownCount, 89);
+  assert.equal(all.shownCount, 92);
   assert.deepEqual(new Set(all.strategies.map((x) => x.policyId)), new Set(CODE_POLICY_IDS));
   assert.equal(common.strategies.filter((x) => x.default).length, 1);
   assert.ok(common.strategies.every((x) => x.group === 'common' && x.historicalRating.currentImplementationMayDiffer));
@@ -162,7 +162,7 @@ test('menu and preflight work with installed dependencies but no build; frozen s
   }
   const listed = cli(isolated, ['strategies', 'list', '--all', '--json']);
   assert.equal(listed.status, 0, listed.stderr);
-  assert.equal(JSON.parse(listed.stdout).shownCount, 89);
+  assert.equal(JSON.parse(listed.stdout).shownCount, 92);
   const initialized = cli(isolated, ['init', ...initArgs(path.join(isolated, 'settings')), '--policy', 'tactical-toc-v2']);
   assert.equal(initialized.status, 0, initialized.stderr);
   const config = JSON.parse(initialized.stdout).config;

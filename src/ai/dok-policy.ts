@@ -3,6 +3,7 @@ import type { Action, CardView, Observation, Seat } from '../contracts/observati
 import type { Policy } from './policies.js';
 import { rankForgeAware } from './forge-lock-policy.js';
 import { neutralBattlelineReorder } from './reorder-policy.js';
+import type { OpeningPolicyContext } from './opening-policy.js';
 
 export const DOK_POLICY_IDS = [
   'tactical-dok-card-v1',
@@ -38,6 +39,8 @@ export interface DokDecisionAudit {
 }
 /** Constructor-only data. Never added to Observation, model content, legal actions or engine state. */
 export interface CodeStrategyContext {
+  /** Optional complete public physical deck; never a hidden shuffle or engine state. */
+  opening?: OpeningPolicyContext;
   dok?: {
     /** Frozen normalized keyforge-dok-advisor-cache-v1 JSON; no fetch or file access occurs here. */
     cache?: unknown;

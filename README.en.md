@@ -33,6 +33,10 @@ engine, game server, game UI and historical match data are not included.
 
 ## Compatibility and current validation
 
+### 0.6.6 experimental opening candidates
+
+Three opt-in ToC candidates isolate first-turn house choice, mulligan, and their combination. The original 89 IDs retain their behavior. Mulligan estimation requires a complete public physical deck list and keeps the hand when that input is unavailable. There are no new win-rate or Elo claims, and the common menu and default policy remain unchanged. [Method and API](docs/opening-policy-candidates.md)
+
 ### 0.6.5 hand valuation and seven-policy Elo
 
 In the 192-game version comparison, 0.6.5 recorded 96 wins and 96 losses (50.00%) in complete four-game units. Every four-game unit split 2–2. The resulting [50%, 50%] intervals carry no sampling variation across these units and do not establish a population win rate of 50% or a win-rate gain. A separate seven-policy round robin completed 1,008 games and contributed 1,008 games to the Elo fit. The full offline suite passed 636/636. [Method, ratings and all head-to-head records](docs/calibration-and-strategy-elo.md) · [Rating data](docs/data/strategy-elo-20261118.json)
@@ -144,7 +148,7 @@ node bin/kf-auto.mjs strategies show tactical-style-engine-v3
 ```
 
 The common menu lists **Engine V3 (default), ToC V2, Cycle V2, Effects V4 and
-Control V2**. All **89 registered code-policy IDs** from the predecessor remain
+Control V2**. Three experimental opening policies bring the complete menu to 92 entries. All **89 registered code-policy IDs** from the predecessor remain
 available, including specialist, experimental and historical entries.
 
 Menu commands do not contact a server, open a browser or modify existing

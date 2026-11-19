@@ -192,6 +192,13 @@ export function assessAlgorithm(
 ): ActionAssessment {
   return assessAlgorithmProjection(o, actionId, mode, features).assessment;
 }
+/** Expose represented-value uncertainty to bounded public valuation consumers. */
+export function assessAlgorithmWithUncertainty(
+  o: Observation, actionId: string, mode: AlgorithmName = 'tactical-v1', features: AlgorithmFeatures = {},
+): ActionAssessment & { unresolvedValues: boolean } {
+  const result = assessAlgorithmProjection(o, actionId, mode, features);
+  return { ...result.assessment, unresolvedValues: result.unresolvedValues };
+}
 /** Private projection details are also reused by house-choice opportunity probes.
  * The public action assessment and its historical serialization stay unchanged.
  */
