@@ -93,7 +93,10 @@ export const REGISTERED_CODE_POLICY_IDS = Object.freeze([
   "tactical-toc-v2",
   "tactical-style-cycle-v2",
   "tactical-style-engine-v3",
-  "tactical-style-control-v2"
+  "tactical-style-control-v2",
+  "tactical-toc-opening-house-v1",
+  "tactical-toc-opening-mulligan-v1",
+  "tactical-toc-opening-v1"
 ]);
 const registered = new Set(REGISTERED_CODE_POLICY_IDS);
 export const COMMON_STRATEGIES = Object.freeze([
@@ -126,6 +129,8 @@ export function strategyDetails(id) {
     description = '针对预言、季度或潮汐机制的候选；请按牌组机制选择，不能按版本数字判断强弱。';
   } else if (id.startsWith('tactical-dok-')) {
     description = '高级 DoK 特征扩展；需调用方注入 CodeStrategyContext，CLI 不会自动获取外部评级数据。';
+  } else if (id.startsWith('tactical-toc-opening-')) {
+    description = '开局实验候选；选屋与调度可分别对照，尚无强度评级。调度需完整公开实体牌表，缺失时保留起手。';
   } else if (id === 'tactical-ladder-balanced-v2') {
     description = '保留的历史均衡对照；在该历史六候选面板中 Elo 点估计最低，默认常用菜单不展示。';
   } else if (['random', 'explore', 'greedy'].includes(id)) {

@@ -9,3 +9,5 @@
 [0.6.4 手牌等待与短出牌顺序](docs/retention-sequence-evaluation.md)
 
 [0.6.3 回收、出牌与弃牌估值](docs/hand-opportunity-evaluation.md)
+
+[0.6.6 开局实验候选与完整公开牌表 API](docs/opening-policy-candidates.md)

@@ -33,6 +33,7 @@ export {
   recommendedCodePolicyForDeck,
 } from './strategy-catalog.js';
 import { neutralBattlelineReorder } from './reorder-policy.js';
+import { OPENING_POLICY_IDS, openingPolicy, type OpeningPolicyId } from './opening-policy.js';
 import { LADDER_POLICY_IDS, ladderPolicy, type LadderFamily, type LadderVariant } from './ladder-policy.js';
 /** Compatibility entrypoints for version-pinned historical controls. This is not a recommendation. */
 export const CURRENT_CODE_BASELINES = Object.freeze({
@@ -56,6 +57,7 @@ export const EXPERIMENTAL_TACTICAL_CANDIDATES = Object.freeze([
   ...ENGINE_RECOVERY_POLICY_IDS,
   ...TACTICAL_STRENGTH_POLICY_IDS,
   ...STYLE_UPGRADE_POLICY_IDS,
+  ...OPENING_POLICY_IDS,
 ] as const);
 /** Training-selected versions used by the deck×policy rating campaign, not a silently promoted champion. */
 export const TRAINED_CODE_POLICIES = Object.freeze({
@@ -112,6 +114,7 @@ export const CODE_POLICY_IDS = [
   ...ENGINE_RECOVERY_POLICY_IDS,
   ...TACTICAL_STRENGTH_POLICY_IDS,
   ...STYLE_UPGRADE_POLICY_IDS,
+  ...OPENING_POLICY_IDS,
 ] as const;
 /** The optional seed controls exploration only. Never pass the engine's RNG state to a policy. */
 export function createCodePolicy(
@@ -143,6 +146,8 @@ function createRegisteredCodePolicy(
     return (rng >>> 0) / 4294967296;
   };
   const explore = randomPolicy(next);
+  if (OPENING_POLICY_IDS.includes(id as OpeningPolicyId))
+    return openingPolicy(id as OpeningPolicyId, strategyContext?.opening);
   if (id === 'tullibint-well-island-guided-v5') return guidedIslandPolicyV5();
   if (id.endsWith('-prophecy-guided-v5')) return prophecyGuidedPolicyV5(id.split('-')[0] as LadderFamily);
   if (id === 'tullibint-well-island-guided-v4') return guidedIslandPolicy();
