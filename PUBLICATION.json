@@ -5,7 +5,7 @@
   "license": "MIT",
   "licenseScope": "Original implementation and authored knowledge; separately attributed third-party text retains its underlying rights. See NOTICE.md.",
   "strategySelection": {
-    "registeredPolicies": 89,
+    "registeredPolicies": 92,
     "commonPolicies": 5,
     "defaultPolicy": "tactical-style-engine-v3",
     "allRegisteredPoliciesRemainSelectable": true,
@@ -17,7 +17,8 @@
     ],
     "unknownPolicyRejectedBeforeInitializationOrPreflight": true,
     "offlinePreflightWorksWithoutBuild": true,
-    "strategyAlgorithmSourceChanged": true
+    "strategyAlgorithmSourceChanged": true,
+    "originalRegisteredPoliciesUnchanged": 89
   },
   "historicalStrategyBenchmark": {
     "id": "strategy-elo-20261113",
@@ -58,19 +59,171 @@
     "summaryTextUsedForCodeFeatureClassification": false,
     "legacySummaryFeaturesUsedForCodeFeatureClassification": false
   },
-  "schema": "keyforge-tco-publication-v15",
-  "version": "0.6.5",
-  "date": "2026-11-18",
-  "publicationStatus": "validated-offline-with-version-confirmation-and-seven-policy-ratings",
-  "codeCommit": "aa718bb10a7d7002fd4591cddda6ac5865d30d93",
+  "schema": "keyforge-tco-publication-v16",
+  "version": "0.6.6",
+  "date": "2026-11-19",
+  "publicationStatus": "experimental-candidate-implementation-focused-regressions-only",
+  "codeCommit": "ebc1826dd3a84729ec9083160dffae72f7629294",
   "validatedFiles": [
+    {
+      "path": ".gitignore",
+      "sha256": "433bcf539afcb915a813f930ba726386ae312ca26013587d10c37e96809a4a5b"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "9826cc7b61d70e0bad7e938c5d1b049c29ece942368c325abe2d1def1afbdc0a"
+    },
+    {
+      "path": "NOTICE.md",
+      "sha256": "58f73ddd82e812057e37eeab97d3c7b739e17cb10a1dbd89ea3bc1f5845c407b"
+    },
+    {
+      "path": "README.en.md",
+      "sha256": "4d32ccb2b7a30dc1d60ae52a0cb80c096de32a1fc2a103bf5e1fe156c9286435"
+    },
+    {
+      "path": "README.md",
+      "sha256": "6eb12829146249144d1382ffeecf189cec6762932a3f76a227d0a98f9ac13213"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "sha256": "84b461f5fc181d73c9b86b7cf3c0ebe6f1e1425bd9705e30ae425fb2d355e98e"
+    },
     {
       "path": "bin/kf-auto.mjs",
       "sha256": "a0cd9b46ee6cbfa35c5e20a7f42e1314a1d5674a40bec9fb9cc601307fba87c2"
     },
     {
+      "path": "docs/architecture.md",
+      "sha256": "a156c12699bd5b7e97d5d54a4b896affef2ce8a4b046a18cc7a20dffb15dbaa9"
+    },
+    {
+      "path": "docs/calibration-and-strategy-elo.md",
+      "sha256": "f59a66a938f3e599db798483e9e39376e70c4c04725144af428a3b3bfb2684b7"
+    },
+    {
+      "path": "docs/card-knowledge.md",
+      "sha256": "7e2f3d04e3e933db94149b7488532e729345107fe15236c04ccd21726053a465"
+    },
+    {
+      "path": "docs/card-lifecycle-evaluation.md",
+      "sha256": "b17d0b31c0f5711ca5f563b587c544706f70b7fab7b845a34f9b87b1eba9b0f8"
+    },
+    {
+      "path": "docs/contextual-formula-evaluation.md",
+      "sha256": "fe42ce552d81c23768b1b4b272231d1a686618c1e8396fa3be81e7d2089dde17"
+    },
+    {
       "path": "docs/data/strategy-elo-20261113.json",
       "sha256": "71ef1e3fb685f80808c5b97574dfb6d743b6cf8d0f31749f1e4c277c6c12cc08"
+    },
+    {
+      "path": "docs/data/strategy-elo-20261118.json",
+      "sha256": "5730de124b4bad893c0aac262f6c809ef5d27158d44540388971431b117e7f5d"
+    },
+    {
+      "path": "docs/evidence/calibration-elo-2026-11-18.json",
+      "sha256": "d2a91c836e20cdb50f83d116e4863282d74b905188c8620d359d6a0732893275"
+    },
+    {
+      "path": "docs/evidence/card-lifecycle-2026-11-18.json",
+      "sha256": "fe43676d68f59be88bf3b008a38ebbe2201f51ee6e352806f24bda49c76340ca"
+    },
+    {
+      "path": "docs/evidence/contextual-formulas-2026-11-17.json",
+      "sha256": "4c8ba9b5ff0d0f9b6bad95b7fe9febc0b97841e70dd12e6400f46a7f9adbd0b1"
+    },
+    {
+      "path": "docs/evidence/fuzhou-recovery-2026-11-17.json",
+      "sha256": "9719b746ea95d8f8f48715ba4edbf2728fde9c1c66167b621a574a285b9cce9f"
+    },
+    {
+      "path": "docs/evidence/hand-opportunity-2026-11-18.json",
+      "sha256": "28a4553e2e30f9e09c342801f46c0eb06b5cab6580594549fe2a4be77d8a41cc"
+    },
+    {
+      "path": "docs/evidence/hypnotic-single-aember-2026-11-17.json",
+      "sha256": "118ebd9e91a69ab5f43a7c9252e43178b265d223937224fa8f76715cec51c3f4"
+    },
+    {
+      "path": "docs/evidence/international-2026-11-16.json",
+      "sha256": "80f803d0c01373638716b80d29ce6427691362dc2ba7a363bd5e21907b580275"
+    },
+    {
+      "path": "docs/evidence/international-disconnect-2026-11-16.json",
+      "sha256": "6f8fc922e52e8eb65f16096fcfe9456f39947f41effdde1c7401aced44ad4ade"
+    },
+    {
+      "path": "docs/evidence/international-soak-2026-11-16.json",
+      "sha256": "99b4e0ad5394822d2753acd872648bbd88d79efa9378bf4d88a5663a79e14055"
+    },
+    {
+      "path": "docs/evidence/preparation-retirement-2026-11-17.json",
+      "sha256": "80b290927d7cdbc74fd5ccb145f9feb0859071378631148caf00cd443afefc71"
+    },
+    {
+      "path": "docs/evidence/retention-sequence-2026-11-18.json",
+      "sha256": "6a6cbf0a6bd1f0838609461ab83d5a87f511115fef664bd89654f592c746f6fd"
+    },
+    {
+      "path": "docs/evidence/structured-semantics-2026-11-17.json",
+      "sha256": "c772490db7e220701fad214bf0d845be6e97d16c993758761798f8e4283d6640"
+    },
+    {
+      "path": "docs/hand-opportunity-evaluation.md",
+      "sha256": "66f2c9217da3ef111e3dd914cfdecd0cbdeb3780e3517db48e01ae198b60fdfb"
+    },
+    {
+      "path": "docs/international-disconnected-exit.md",
+      "sha256": "52a762875fb0c247d33f38957f09b5709326c3c6936a58ef15e900a0141a33b9"
+    },
+    {
+      "path": "docs/international-network.md",
+      "sha256": "423fe811e6359e0f91d956daebc7cce9dbe78e1aa1a9ec4c06d42c904251fd26"
+    },
+    {
+      "path": "docs/international-tco.md",
+      "sha256": "a64541cddfbddb8f698e6621869fae9730be49ec144fa1bd4012e415d922fc00"
+    },
+    {
+      "path": "docs/localized-capture-validation.md",
+      "sha256": "fc1bf7d82199ad043f4f7c7b330277ed6cc0d6e55b2316f2201f3b3c510f92b1"
+    },
+    {
+      "path": "docs/opening-policy-candidates.md",
+      "sha256": "52fb68f37172751dc584a4e26bce352d968f1c5cb192f54b23dc931663184ff0"
+    },
+    {
+      "path": "docs/operations.md",
+      "sha256": "b082cfac25362cc415293a90e6ce79d78fc90b2e2bd4e5cd653db6e1d2aa0030"
+    },
+    {
+      "path": "docs/preparation-retirement.md",
+      "sha256": "7e09815866b9c2446e4feb989bfade2e6a61f2904698726ae5326d4580926228"
+    },
+    {
+      "path": "docs/recovery-validation.md",
+      "sha256": "fb33d1a3f9ee4645c98da025dd248e1abc956c1f278eba04827b51a05eaee473"
+    },
+    {
+      "path": "docs/retention-sequence-evaluation.md",
+      "sha256": "b51a1d430b4f4f3a93e55716be0f63948ae39da8ce3353e95f2d9912539eb59e"
+    },
+    {
+      "path": "docs/runtime-notes.md",
+      "sha256": "f18c2e335974c11e60ec5cfa99f6ab23dea85cb65799b95267e98e49c8b03042"
+    },
+    {
+      "path": "docs/strategy-guide.md",
+      "sha256": "ae533791dc615724750f663b6366356e5073107e5bf211423154e8ad930df29a"
+    },
+    {
+      "path": "docs/structured-strategy-semantics.md",
+      "sha256": "1698fdea6d12a75613eacdfd7e753f8a5157ffd6a286d073a7fb134a8825baa2"
+    },
+    {
+      "path": "docs/validation.md",
+      "sha256": "dc3174951a0932b574b3a5daa5068a09168c3816e8cf1e3a6af6592f2f9b061a"
     },
     {
       "path": "examples/campaign.example.json",
@@ -86,11 +239,11 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "ad64d2d83b14f9b0c74e311fd12f64de1697ca455cd6b13ce625fae3d17b24b7"
+      "sha256": "b7b78671dfe035807458e113a9dcc0ff1f0d2d71a2dc8be5b3dc88c160b3d746"
     },
     {
       "path": "package.json",
-      "sha256": "ebaccc5f3a354b191040c395dfb3bc73d4ec11feea43c5c12104653631c19d44"
+      "sha256": "37d2611f583651b13bb1f20ac029d30d2b3e255d198e836a56457b074a3d1e28"
     },
     {
       "path": "scripts/browser-smoke.mjs",
@@ -146,7 +299,7 @@
     },
     {
       "path": "src/ai/algorithm-policies.ts",
-      "sha256": "2cd2dfb04dfe49e3a7d79dc96fa9b3378e3393f9059ec479011a40172f28ce14"
+      "sha256": "ca52f6eb4cd56a271ee1a88da9123f900baf925125ab550efa19c4f9107156c3"
     },
     {
       "path": "src/ai/card-aware-policy.ts",
@@ -174,7 +327,7 @@
     },
     {
       "path": "src/ai/code-strategies.ts",
-      "sha256": "4bb0224dd1a0cfbfb2c8280be1262fff92482d764fe4660f6bb199e0f15314e1"
+      "sha256": "a0e782f552bb104e98dd5edb1692eda5cb553ee7798e0238529607c4bda59936"
     },
     {
       "path": "src/ai/competitive-policy.ts",
@@ -182,7 +335,7 @@
     },
     {
       "path": "src/ai/dok-policy.ts",
-      "sha256": "84165bbab56f10621ee6044a66003105af31b35e6a7c2d4ee0054d82347b5c75"
+      "sha256": "585b720828922bd9dfa72277382f6adb8a484fd88a59d83cd2d8c0b173bbe0a5"
     },
     {
       "path": "src/ai/dsf-cache-layout.ts",
@@ -227,6 +380,14 @@
     {
       "path": "src/ai/mirror-input.ts",
       "sha256": "de55cf849500c03761445fe26859229bf7278edb904e94b2c3df66f668fa6a93"
+    },
+    {
+      "path": "src/ai/opening-deck.ts",
+      "sha256": "e21c45b6fb68b2cbe4528dabda9709328013d012d1d072a4d3b3b9b5f7ddd27f"
+    },
+    {
+      "path": "src/ai/opening-policy.ts",
+      "sha256": "99a8ed44867a56446d3530151a2e21850b63088b71229c5dae90703281447f0a"
     },
     {
       "path": "src/ai/persona-styles.ts",
@@ -502,7 +663,7 @@
     },
     {
       "path": "test/runtime/strategy-menu.test.mjs",
-      "sha256": "382fe091d6e75a2924d10cf08b97d0ff69f029db9dbe6d2e8e3b430185cf8b50"
+      "sha256": "b16ed4e4f2aed9a907e710f68784e0aa59627d7d316dacd9a9836d99495d0f9e"
     },
     {
       "path": "test/strategy/allocation-effect-localization.test.mjs",
@@ -551,6 +712,10 @@
     {
       "path": "test/strategy/native-prompt-semantics.test.mjs",
       "sha256": "d3ade510a817e77f9df64241dfc76032a7e089bfb4950b54ea79d3096676bc08"
+    },
+    {
+      "path": "test/strategy/opening-policy.test.mjs",
+      "sha256": "d107e2c79952f417da7ce1628eb5843cc9081fa5663bcd30b31b539a959c122d"
     },
     {
       "path": "test/strategy/public-card-retention.test.mjs",
@@ -850,15 +1015,15 @@
     },
     {
       "path": "tools/strategy-menu.mjs",
-      "sha256": "44010497983db91da9094c3048b159cfc81b09be02b8450a72fe14e6aa339f55"
+      "sha256": "bd799d9e2f4e3bf9e1efd645075f4b3198fd7e510badeff65b07f00ef5847ff6"
     },
     {
       "path": "tsconfig.json",
       "sha256": "941d61fa59858195473dd4c0e67e02e24c5e9e67629109b8a9cb153372dae552"
     }
   ],
-  "validatedSourceDigest": "faac0adfe841ac55a191c0eeb9ffb63e6e736bb0b3fbb34b0796718d1e7850d4",
-  "validatedFilesScope": "Code, tests, commands, tools, examples, manifests, TypeScript configuration and historical data from the candidate commit. The later seven-policy data and release report are bound separately.",
+  "validatedSourceDigest": "dd63312c2af9a85e718203a0e9874db62c801929d3f759930854aa610b7d0be7",
+  "validatedFilesScope": "All tracked files at the implementation commit except PUBLICATION.json. The later opening evidence and publication metadata are bound separately; historical files retain their original scope.",
   "historicalValidation": [
     {
       "version": "0.4.0",
@@ -1070,6 +1235,22 @@
       "evidenceSha256": "6a6cbf0a6bd1f0838609461ab83d5a87f511115fef664bd89654f592c746f6fd",
       "detailsRetainedInHistoricalPublication": true,
       "rerunForCurrentRelease": false
+    },
+    {
+      "version": "0.6.5",
+      "codeCommit": "aa718bb10a7d7002fd4591cddda6ac5865d30d93",
+      "publicationCommit": "51d8cdbf2d11633ed00830fef7f9a88cf00eba1c",
+      "record": "https://github.com/AxelHu/keyforge-tco-bot/blob/51d8cdbf2d11633ed00830fef7f9a88cf00eba1c/PUBLICATION.json",
+      "publicationSha256": "3fa87a2854481f8a4c61b0f64175782f4397b2c174f942d999c9fa6b07b67e36",
+      "validatedSourceDigest": "faac0adfe841ac55a191c0eeb9ffb63e6e736bb0b3fbb34b0796718d1e7850d4",
+      "validatedInputCount": 198,
+      "offlineTests": 636,
+      "versionComparisonGames": 192,
+      "strategyRatingGames": 1008,
+      "evidence": "docs/evidence/calibration-elo-2026-11-18.json",
+      "evidenceSha256": "d2a91c836e20cdb50f83d116e4863282d74b905188c8620d359d6a0732893275",
+      "detailsRetainedInHistoricalPublication": true,
+      "rerunForCurrentRelease": false
     }
   ],
   "operatingPolicy": {
@@ -1086,142 +1267,65 @@
     "futureInternationalTaskEnabled": false
   },
   "validation": {
+    "scope": "Experimental candidate implementation + focused regression only; no full-game strength validation.",
     "implementation": {
-      "sourceCommit": "aa718bb10a7d7002fd4591cddda6ac5865d30d93",
+      "sourceCommit": "ebc1826dd3a84729ec9083160dffae72f7629294",
       "strategyAlgorithmSourceChanged": true,
-      "change": "Compare play against the same hand waiting value and check public payment, board and future house dependencies.",
+      "change": "Opt-in first-turn house and public-deck mulligan candidates; historical IDs and defaults retain their decision paths.",
       "build": {
         "actualExitCode": 0,
         "inputsUnchanged": true,
-        "inputCount": 194,
-        "compiledJsCount": 80,
-        "receiptSha256": "3b565ca38c0379a4348b103a29ee321ff1dd3d9f025d9fc0bdd4a08f0fa29546"
+        "receiptSha256": "6a9b527642387b5cd136b831ab31b1705ac7aa71b810a6765025608308493693"
       },
       "fullOffline": {
-        "passed": 636,
+        "passed": 648,
         "failed": 0,
         "cancelled": 0,
         "skipped": 0,
         "todo": 0,
         "actualExitCode": 0,
-        "receiptSha256": "3b565ca38c0379a4348b103a29ee321ff1dd3d9f025d9fc0bdd4a08f0fa29546",
-        "previousTests": 619,
-        "testCountDifferenceFromBaseline": 17,
-        "earlierFullSuiteAttempts": []
+        "previousTests": 636,
+        "testCountDifferenceFromBaseline": 12,
+        "receiptSha256": "6a9b527642387b5cd136b831ab31b1705ac7aa71b810a6765025608308493693"
       },
       "coreValidation": {
         "coreChangedThisRelease": false,
         "coreSuiteRerunThisRelease": false,
-        "priorReleasePassed": 13,
-        "priorPublicationSha256": "e9e378dfbecf51f45f1e44481163332084fa563e89fd6d68d5d3b34aa753f859",
-        "priorRecord": "https://github.com/AxelHu/keyforge-tco-bot/blob/823adad7acce30cbd4c8622a6abca611041a6cbb/PUBLICATION.json",
-        "qualification": "Historical referee suite. The fixed local comparison uses its frozen referee runtime; current client tests are recorded separately."
+        "frozenEngineOpeningWitnesses": 2,
+        "newCompleteGames": 0
       }
     },
-    "localDiagnostics": {
-      "existingTraceCount": 2,
-      "scoredMenus": 212,
-      "leaderChanges": 0,
-      "newGames": 0,
-      "receiptSha256": "fd7ea201f63747ec0260cd887c2f933bd2113edc9493c6a85579120f3ee68e41"
-    },
     "currentEvidence": {
-      "path": "docs/evidence/calibration-elo-2026-11-18.json",
-      "sha256": "d2a91c836e20cdb50f83d116e4863282d74b905188c8620d359d6a0732893275",
-      "report": "docs/calibration-and-strategy-elo.md",
-      "reportSha256": "f59a66a938f3e599db798483e9e39376e70c4c04725144af428a3b3bfb2684b7"
+      "path": "docs/evidence/opening-candidates-2026-11-19.json",
+      "sha256": "fbe4db091d4e5a71e57459806adfd975301774a0d89f6a977d5902ad934af3b6",
+      "report": "docs/opening-policy-candidates.md",
+      "reportSha256": "52fb68f37172751dc584a4e26bce352d968f1c5cb192f54b23dc931663184ff0"
     },
-    "localComparisons": {
-      "mainBaselineSourceCommit": "751bfb5616f9612c75fd782b5571a07d92b56619",
-      "candidateSourceCommit": "aa718bb10a7d7002fd4591cddda6ac5865d30d93",
-      "selfEngineSourceCommit": "8b92cc1cd25d2b617abce5cb9616fbc29ff4e501",
-      "mainRuntimeManifestSha256": "c5007f705cf8697e3f1afe06e7794722e0bdc60bdb15627716757fbb0a418fd2",
-      "confirmation": {
-        "plannedGames": 192,
-        "naturalGames": 192,
-        "cleanUnits": 48,
-        "primaryGames": 192,
-        "candidateWins": 96,
-        "baselineWins": 96,
-        "candidateWinRate": 0.5,
-        "technicalGames": 0,
-        "anomalousGames": 0,
-        "actualExitCode": 0,
-        "families": {
-          "tactical-style-engine-v3": {
-            "units": 24,
-            "games": 96,
-            "candidateWins": 48,
-            "baselineWins": 48,
-            "candidateWinRate": 0.5,
-            "interval": [
-              0.5,
-              0.5
-            ],
-            "bootstrapComputed": true,
-            "degenerate": true,
-            "unitsByCandidateWins": {
-              "0": 0,
-              "1": 0,
-              "2": 24,
-              "3": 0,
-              "4": 0
-            }
-          },
-          "tactical-card-effects-v3": {
-            "units": 24,
-            "games": 96,
-            "candidateWins": 48,
-            "baselineWins": 48,
-            "candidateWinRate": 0.5,
-            "interval": [
-              0.5,
-              0.5
-            ],
-            "bootstrapComputed": true,
-            "degenerate": true,
-            "unitsByCandidateWins": {
-              "0": 0,
-              "1": 0,
-              "2": 24,
-              "3": 0,
-              "4": 0
-            }
-          }
-        },
-        "executionReceiptSha256": "d512909843742b38556c76124f1fb592bff515518ca58038690fa1e752fa5be6",
-        "analysisSha256": "c921fe1ecbe01b592aba093fe49516cf9d960d10aa56da15641310a1546ab37a",
-        "independentReviewSha256": "e1be5af12064488b3b37aca0577722b349953e41a9c0ba6e5b9378102fbe1010"
-      },
-      "league": {
-        "completedGames": 1008,
-        "naturalGames": 1008,
-        "anomalousGames": 0,
-        "completeBlocks": 12,
-        "ratingGames": 1008,
-        "sameSixSensitivityGames": 720,
-        "independentReviewSha256": "e47171c601a180e6e232372c256ec51fb43839bcd9c9eee10fe254fcd447c48b"
-      },
-      "resultsPooled": false,
-      "finalCandidateGames": 1200,
-      "primaryComparisonGames": 192,
-      "newEloRatingGames": 1008,
-      "newOnlineGames": 0
+    "openingIntegration": {
+      "firstPlayerSeats": [
+        0,
+        1
+      ],
+      "seed": 18,
+      "publicPhysicalDeckBound": true,
+      "newCompleteGames": 0,
+      "guardInterventions": 0,
+      "receiptSha256": "904e6547bcced6054d65be780eb92d0e188277f066763d19e258a1824bc2ffec"
     },
     "packageBoundary": {
       "status": "passed",
-      "files": 396,
-      "moduleEdges": 1155,
-      "findings": 0,
       "actualExitCode": 0,
-      "receiptSha256": "07bc7ed70ec0471c5274e02b37b6c9b91aa0752144fbeeb6d56e17b7559db8d5",
-      "inputSnapshotSha256": "caa2c85ebe02bb7e23929a46486b6fa491d67175b23a33ac1a9094470317842e",
-      "sourceCommit": "aa718bb10a7d7002fd4591cddda6ac5865d30d93",
-      "evidenceSha256": "d2a91c836e20cdb50f83d116e4863282d74b905188c8620d359d6a0732893275",
+      "files": 405,
+      "moduleEdges": 1183,
+      "findings": 0,
+      "receiptSha256": "386637fe38210c048df25d013337581b24aead31831b5cac9b2cd90a063e40a5",
+      "sourceCommit": "ebc1826dd3a84729ec9083160dffae72f7629294",
+      "evidenceSha256": "fbe4db091d4e5a71e57459806adfd975301774a0d89f6a977d5902ad934af3b6",
       "oldReceiptReuseAllowed": false,
-      "scope": "Current 0.6.5 public files, compiled modules and final evidence verified against the complete before-check inventory. Only validation.packageBoundary is excluded from normalized PUBLICATION."
+      "scope": "Current 0.6.6 implementation, compiled modules and opening evidence; no private engine or filesystem dependencies."
     },
-    "newStrategyRatingGames": 1008,
+    "newCompleteGames": 0,
+    "newStrategyRatingGames": 0,
     "newOnlineGames": 0,
     "existingDeployedCampaignRuntimesChanged": false
   },
@@ -1239,7 +1343,7 @@
     ],
     "strategyAlgorithmSourceChanged": true,
     "guide": "docs/international-tco.md",
-    "currentRuntimeLiveStatus": "0.6.5-no-new-online-games",
+    "currentRuntimeLiveStatus": "0.6.6-no-new-online-games",
     "historicalAcceptanceEvidence": "docs/evidence/international-2026-11-16.json",
     "networkAndSoakEvidence": "docs/evidence/international-soak-2026-11-16.json",
     "networkGuide": "docs/international-network.md",
@@ -1286,6 +1390,8 @@
     "ratedPolicies": 7,
     "registeredPolicies": 89,
     "completeBlocks": 12,
-    "resultsSha256": "280a0349dd9b161f460f90a1b245a3d93b4d10947603397a3185a6bbe9f14aeb"
+    "resultsSha256": "280a0349dd9b161f460f90a1b245a3d93b4d10947603397a3185a6bbe9f14aeb",
+    "isCurrentVersionRating": false,
+    "qualification": "Retained frozen 0.6.5 panel. New 0.6.6 opening candidates have no ratings and are not pooled into these results."
   }
 }

@@ -1,0 +1,285 @@
+{
+  "schema": "kf-experimental-opening-validation-v1",
+  "version": "0.6.6",
+  "date": "2026-11-19",
+  "sourceCommit": "ebc1826dd3a84729ec9083160dffae72f7629294",
+  "scope": "Experimental candidate implementation and focused decision regressions only; the full offline client suite also passed. No new full-game comparison, Elo or strength claim.",
+  "candidateIds": [
+    "tactical-toc-opening-house-v1",
+    "tactical-toc-opening-mulligan-v1",
+    "tactical-toc-opening-v1"
+  ],
+  "previousRegisteredIdsUnchanged": 89,
+  "registeredIds": 92,
+  "defaultAndCommonPoliciesChanged": false,
+  "implementationValidation": {
+    "command": "npm test",
+    "buildExitCode": 0,
+    "offlineExitCode": 0,
+    "counts": {
+      "tests": 648,
+      "pass": 648,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "newOpeningRegressions": 12,
+    "durationMilliseconds": 34935.237858,
+    "receiptSha256": "6a9b527642387b5cd136b831ab31b1705ac7aa71b810a6765025608308493693",
+    "covered": [
+      "seed-18 hand and both first-player seats",
+      "ordinary one-card house opportunity and Phase Shift exception",
+      "upgrades without an opening attachment target",
+      "later-turn and historical-ID delegation",
+      "complete physical public multiset and exact visible-hand binding",
+      "good keep and poor mulligan for both seats and turn roles",
+      "n-minus-one redraw cost, independent deterministic sampling and order invariance",
+      "missing public information and unresolved-value keep fallback"
+    ]
+  },
+  "frozenRefereeOpeningWitness": {
+    "schema": "kf-opening-candidate-integration-v1",
+    "at": "2026-11-19T10:04:27.568Z",
+    "runtimeId": "011b4418bf3d7e858a97dbfe75325a18e2360fdf5e16433bee683f1fdb9450fd",
+    "engineSource": "8b92cc1cd25d2b617abce5cb9616fbc29ff4e501",
+    "nodeVersion": "v22.22.3",
+    "runtimeManifestSha256": "0b667f784f48ee965badcdb8d313d866be1ccc09533fe31a8ce3387e99cce749",
+    "poolSha256": "af8285a455cb57c865232c6fd41c0f3873b95244dba31758dfbd096432293586",
+    "probeSha256": "f93553e09f616528ce028f033e1938152a2e870b59df2743aa1bc8b7974aecce",
+    "deckId": "000db9fb-1bfe-48b0-a803-4bb5f03ddb57",
+    "seed": 18,
+    "publicPhysicalDeckBound": true,
+    "firstTurns": [
+      {
+        "firstPlayer": 0,
+        "actions": [
+          {
+            "kind": "mulligan-audit",
+            "seat": 0,
+            "status": "unsupported-opening",
+            "decision": "keep",
+            "milliseconds": 21.689957999999933
+          },
+          {
+            "seat": 0,
+            "phase": "mulligan",
+            "action": {
+              "kind": "keep"
+            },
+            "card": null,
+            "afterStateHash": "d685aa602e3bb363747211f00bc562e17e6ce9307c028863083941265cd5aa32"
+          },
+          {
+            "kind": "mulligan-audit",
+            "seat": 1,
+            "status": "unsupported-opening",
+            "decision": "keep",
+            "milliseconds": 2.6502100000000155
+          },
+          {
+            "seat": 1,
+            "phase": "mulligan",
+            "action": {
+              "kind": "keep"
+            },
+            "card": null,
+            "afterStateHash": "32032797a88df16b98355951028ef4a8151ad895e4a2f7014ac07950c815c371"
+          },
+          {
+            "seat": 0,
+            "phase": "house",
+            "action": {
+              "kind": "house",
+              "house": "saurian"
+            },
+            "card": null,
+            "baseline": {
+              "kind": "house",
+              "house": "mars"
+            },
+            "candidateScores": [
+              {
+                "action": {
+                  "kind": "house",
+                  "house": "saurian"
+                },
+                "score": 3.8
+              },
+              {
+                "action": {
+                  "kind": "house",
+                  "house": "ekwidon"
+                },
+                "score": 3.3200000000000003
+              },
+              {
+                "action": {
+                  "kind": "house",
+                  "house": "mars"
+                },
+                "score": 0.3
+              }
+            ],
+            "afterStateHash": "37c0b4088a7c7d65b91151d6479a7e2f68075ec4eed9869afd46e35fa0c31bd3"
+          },
+          {
+            "seat": 0,
+            "phase": "main",
+            "action": {
+              "kind": "play",
+              "card": "card-10"
+            },
+            "card": "Hedonistic Intent",
+            "afterStateHash": "863b840ed5fc76ab72b85d47ddee3a7d81a99f94f2660ffb4a6f45b1f0829181"
+          },
+          {
+            "seat": 0,
+            "phase": "main",
+            "action": {
+              "kind": "endTurn"
+            },
+            "card": null,
+            "afterStateHash": "3c99d07a883d929d4572fd71c6d0f3df1516ed9c459b5efdf43f1cffdebe4b7c"
+          }
+        ]
+      },
+      {
+        "firstPlayer": 1,
+        "actions": [
+          {
+            "kind": "mulligan-audit",
+            "seat": 1,
+            "status": "unsupported-opening",
+            "decision": "keep",
+            "milliseconds": 2.706805000000031
+          },
+          {
+            "seat": 1,
+            "phase": "mulligan",
+            "action": {
+              "kind": "keep"
+            },
+            "card": null,
+            "afterStateHash": "f8012910c979ddc0d36d8887f8190742edd816430b99c65a4b3b6f6334740146"
+          },
+          {
+            "kind": "mulligan-audit",
+            "seat": 0,
+            "status": "unsupported-opening",
+            "decision": "keep",
+            "milliseconds": 2.204902999999831
+          },
+          {
+            "seat": 0,
+            "phase": "mulligan",
+            "action": {
+              "kind": "keep"
+            },
+            "card": null,
+            "afterStateHash": "b18fe775226a0e4c1ba55c38475a9eccfe1f6d4645b330d0437514501cb11287"
+          },
+          {
+            "seat": 1,
+            "phase": "house",
+            "action": {
+              "kind": "house",
+              "house": "mars"
+            },
+            "card": null,
+            "baseline": {
+              "kind": "house",
+              "house": "ekwidon"
+            },
+            "candidateScores": [
+              {
+                "action": {
+                  "kind": "house",
+                  "house": "mars"
+                },
+                "score": 4.703
+              },
+              {
+                "action": {
+                  "kind": "house",
+                  "house": "saurian"
+                },
+                "score": 3.5
+              },
+              {
+                "action": {
+                  "kind": "house",
+                  "house": "ekwidon"
+                },
+                "score": 3.14
+              }
+            ],
+            "afterStateHash": "1e3727248b62a405cf6d5e4952b95fd56b016a8c658b5c287707e92be2c61895"
+          },
+          {
+            "seat": 1,
+            "phase": "main",
+            "action": {
+              "kind": "play",
+              "card": "card-5",
+              "flank": "left"
+            },
+            "card": "Ironyx Vatminder",
+            "afterStateHash": "67690a55294b83a77c5df55aac5077421ef35a80bda1309d6a755beed6de812c"
+          },
+          {
+            "seat": 1,
+            "phase": "choice",
+            "action": {
+              "kind": "choose",
+              "option": "left"
+            },
+            "card": null,
+            "afterStateHash": "8d3fcf277d6f5191b1a2d8b9216ef4a21e894837bf21b2c62877657febd9b97b"
+          },
+          {
+            "seat": 1,
+            "phase": "main",
+            "action": {
+              "kind": "endTurn"
+            },
+            "card": null,
+            "afterStateHash": "451280d35b6cdd478e36a8f5bedafc5f10c9adf19e1c58ef5a7408d3adf230ba"
+          },
+          {
+            "seat": 1,
+            "phase": "choice",
+            "action": {
+              "kind": "select",
+              "target": "card-5"
+            },
+            "card": null,
+            "afterStateHash": "e4ca46e3f5fe9423cc9bb6ec66da652a81cc710875329dc6905b27b6ffbbb3e3"
+          }
+        ]
+      }
+    ],
+    "completeGames": 0,
+    "guardInterventions": 0
+  },
+  "resourceBudget": {
+    "redrawSamples": 32,
+    "cardsPerDeck": 36,
+    "singleCardEstimatesPerDecision": "36 times available house count; 108 for three houses",
+    "singleCardEstimatesSharedAcrossRedrawSamples": true,
+    "runsOnlyAtMulligan": true,
+    "timingQualification": "Observed local regression durations are functional receipts, not a throughput benchmark or production latency guarantee."
+  },
+  "limitations": {
+    "mulliganRequiresCompletePublicPhysicalDeckContext": true,
+    "cliAutomaticallyProvidesPhysicalDeckContext": false,
+    "anyUnresolvedDeckCardValueKeepsOriginalHand": true,
+    "actualSeed18DeckMulligan": "public physical deck bound, strategic valuation unsupported, keep",
+    "all500OwnerDecksValidatedForMulliganCoverage": false,
+    "fullTurnComboOpponentResponseAndEndTurnRefillSimulation": false
+  },
+  "newCompleteGames": 0,
+  "newStrategyRatingGames": 0,
+  "newOnlineGames": 0,
+  "existingDeployedCampaignRuntimesChanged": false
+}
